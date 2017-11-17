@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+     <ui:define name="cuerpo">
+                      
+
+                <h:form id="f1">
+                   
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+                <br />
+                <p:commandButton value="#{etiq.nuevoTipo}" style="margin-left: 43.5%;" action="#{tipomedico.setVisible1(true)}" onclick="recarga()"/>
+                <br />
+                <br />
+ 
+      <p:dataTable var="tipo" value="#{tipomedico.lista}" id="tipomedicos" editable="true" 
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="2,3,4,5,6,7,8,9,10"
+                                 paginator="true" rows="13"
+                                 emptyMessage="No Hay Datos">
+           
+         
+          
+          <p:ajax event="rowEdit" listener="#{tipomedico.onEdit}" update=":f2:mensajes" />   
+          <p:ajax event="rowEditCancel" listener="#{tipomedico.onCancel}" />
+                         
+        
+           
+          <f:facet name="header">
+ 
+               <p:row>
+                <p:column><center><h:outputLabel value="#{etiq.tipomedico}"/></center></p:column>   
+               </p:row>
+          
+                    </f:facet>
+                <p:column headerText="Descripcion"
+                          filterBy="#{tipo.descripcion}"
+                          filterMatchMode="startsWith">
+                    <h:outputText value="#{tipo.descripcion}"/>
+                </p:column>
+    
+          
+                   
+    
+                   
+                    <p:column headerText="Clave">
+                             <f:facet name="header">
+                            <h:outputLabel value="#{etiq.clave}" />
+                        </f:facet>
+                        <h:outputText value="#{tipo.claveTipo}" />
+                        </p:column>
+                        
+                        <p:column headerText="Descripcion">
+                           <f:facet name="header">
+                            <h:outputLabel value="#{etiq.descripcion}" />
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{tipo.descripcion}" />
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{tipo.descripcion}" style="text-transform: uppercase" required="true" />
+                            </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                   
+         
+                      
+                     
+                     <p:column style="width:6%"> 
+                        <p:rowEditor />                                                            
+                    </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+        
+         
+          <h:form id="f2">
+                    <p:growl id="mensajes"  showDetail="true" />
+               
+                    <p:dialog visible="#{tipomedico.visible1}" id="nuevo" header="#{etiq.nuevoTipo}">
+                        <p:outputLabel value="#{etiq.descripcion}: " />
+                        <p:inputText id="desc" value="#{tipomedico.tipo.descripcion}" style="text-transform: uppercase" required="true" /><br /><br />
+                        <p:commandButton value="#{etiq.agregar}" action="#{tipomedico.almacena()}" update=":f1:tipomedicos mensajes" onclick="recarga()" style="margin-left: 30%" />
+                        
+                    </p:dialog>
+                </h:form>
+            
+        </ui:define>
+    </ui:composition>
+</html>

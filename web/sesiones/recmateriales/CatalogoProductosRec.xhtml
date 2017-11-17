@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+        
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+            <center>
+                <h:form id="formc" class="centrar">
+                    <br/><br/>
+                    <p:growl id="msgs" showDetail="true" />
+                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                    <h2><p:outputLabel value="#{etiq.admcatalogo}"/></h2>
+                    
+                    <center>
+                        <p:dataTable id="dtCatalogoProd" value="" rows="9" editable="true" paginator="true"
+                                     paginatorPosition="bottom" var="oCatP" style="width: 1200px" 
+                                     selection="" rowKey="" >
+
+                            <p:column headerText="#{etiq.cveproducto}">
+                                <h:outputText value="" />
+                            </p:column>
+                            <p:column headerText="#{etiq.descproduc}">
+                                <h:outputText value="" />
+                            </p:column>
+                            <p:column headerText="#{etiq.presentacion}">
+                                <h:outputText value="" />
+                            </p:column>
+                            <p:column headerText="#{etiq.existencia}">
+                                <h:outputText value="" />
+                            </p:column>
+                            
+                            <f:facet name="footer">
+                                <p:commandButton value="Modificar producto catálogo" icon="ui-icon-pencil" >
+                                    <!--<p:ajax update=":modificacatal" />-->
+                                </p:commandButton>
+                                <p:commandButton value="Eliminar producto catálogo" icon="ui-icon-pencil" >
+                                    <!--<p:ajax update=":modificacatal" />-->
+                                </p:commandButton>
+                                <p:commandButton value="Agregar producto catálogo" icon="ui-icon-pencil" oncomplete="PF('dlgCat').show()">
+                                    <!--<p:ajax update=":modificacatal" />-->
+                                </p:commandButton>
+                            </f:facet>
+
+                        </p:dataTable>
+                    </center>
+                </h:form>
+            </center>
+            </div>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                <f:facet name="start">
+                    <p:graphicImage value="/imgs/loading.gif" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+            
+            
+            <p:dialog id="dlgCatalogo" widgetVar="dlgCat" position="center" closable="true" dynamic="true" resizable="false"
+                appendTo="@(body)" modal="true">
+                          
+                <center>
+                    <h3>Administraci&oacute;n cat&aacute;talogo de productos</h3>
+                </center>
+                <h:form id="modificacatal">
+                    <p:panelGrid id="panelD" style="width: 320px; border-style: solid">
+                        <p:row>
+                            <p:column style="width: 50%;">
+                                <p:outputLabel value="#{etiq.clave}" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="txtClave" value="" size="12" disabled="">
+                                    <p:ajax />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.descripcion}" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="txtDescripc" value="" size="18" disabled="">
+                                    <p:ajax />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.presentacion}" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="txtPresentac" value="" size="16" disabled="">
+                                    <p:ajax />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.existencia}" />
+                            </p:column>
+                            <p:column>
+                                <p:spinner id="numexist" value="" min="0" size="15"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:commandButton style=" " value="#{etiq.guardar}" icon="ui-icon-disk"
+                                                 actionListener="#{oCatal}" update="">
+                                </p:commandButton>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="Regresar" icon="ui-icon-arrowreturn-1-w" 
+                                                 oncomplete="PF('dlgCat').hide()">
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+</html>

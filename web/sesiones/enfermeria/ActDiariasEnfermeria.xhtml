@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div id="actEnfer">
+                    <h:form id="busca">
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.infDiarioActEnf}"/></h3>
+                        <p:accordionPanel styleClass="centrar" style=" width: 45%; font-weight: bold;">
+                            <p:tab title="#{etiq.bus}" >
+                                <p:outputPanel styleClass="centrar">
+                                    <p:panelGrid columns="3">
+                                        <p:outputLabel value="#{etiq.servicio}:"/>
+                                        <p:outputLabel for="fecPorServ" value="#{etiq.fecha}:"/>
+                                        <p:outputLabel/>
+                                        <p:selectOneMenu effect="puff" id="cmbAreas" value="#{oBActEnf.buscaActividades.cabeceraAct.areaServicio.clave}"
+                                                         required="true"  converterMessage="Selecciona un servicio">
+                                            <f:selectItem itemLabel="SELECCIONA UN SERVICIO" itemValue="-" noSelectionOption="true"/>
+                                            <f:selectItems value="#{oBActEnf.arrServicios}" var="oS" itemLabel="#{oS.areaServicio.descripcion}" itemValue="#{oS.areaServicio.clave}"/>
+                                            <p:ajax event="change"/>
+                                        </p:selectOneMenu>
+                                        <p:calendar size="8" value="#{oBActEnf.buscaActividades.cabeceraAct.fechaRegistroo}" id="fecPorServ"  
+                                                    effect="puff" pattern="dd/MM/yyyy" locale="es" required="true"
+                                                    readonlyInput="true" showOn="button" converterMessage="Selecciona una fecha" >
+                                            <p:ajax event="dateSelect"/>
+                                        </p:calendar>
+                                        <p:commandButton value="Buscar" icon="ui-icon-search" >
+                                            <p:ajax listener="#{oBActEnf.buscaActividadesEnfermeria}" update=":enferAct :enferAct:msgs :enferAct:acde :enferAct:pan1"/>
+                                        </p:commandButton>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <div style="margin-bottom: 15px;"/>
+                    </h:form>
+                    <h:form id="enferAct">                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>              
+                        <p:outputPanel id="acde" rendered="#{not empty oBActEnf.arrActividades}" >                            
+                            <p:panelGrid style="width:950px;">
+                                <p:row>
+                                    <p:column style="width: 3%; border-color: transparent; font-size: 12px; color: black; padding: 0px;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.ser}:"/>
+                                    </p:column>
+                                    <p:column style="width: 40%;border-color: transparent;font-size: 12px; color: black;">
+                                        <p:outputLabel value="#{oBActEnf.buscaActividades.cabeceraAct.areaServicio.descripcion}"/>
+                                    </p:column>
+                                    <p:column style="width: 4%;border-color: transparent; color: black;padding: 0px;font-size: 12px;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.fechaa1}:"/>
+                                    </p:column>
+                                    <p:column style="width: 20%;border-color: transparent;font-size: 12px; color: black;">
+                                        <p:outputLabel value="#{oBActEnf.buscaActividades.cabeceraAct.fechaStr2}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 3px;"/>
+                            <p:outputPanel style="width: 950px; margin: 0 auto; " styleClass="centro"  >
+                                <p:dataTable value="#{oBActEnf.arrActividades}" var="oT" emptyMessage="">
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column style="width: 1%;color: black; vertical-align: bottom;" rowspan="2" headerText=""/>              
+                                            <p:column style="width: 37%; font-size: 12px; font-weight: bold; color: black; vertical-align: bottom;" rowspan="2" headerText="#{etiq.actd}"/>                                          
+                                            <p:column style="width: 11%; font-size: 12px; font-weight: bold; color: black; padding-bottom: 0px; padding-top: 0px;"
+                                                      colspan="3" headerText="#{etiq.turnoo}"/>                                           
+                                            <p:column style="width:4%; font-size: 12px; font-weight: bold; color: black; vertical-align: bottom; " rowspan="2" headerText="#{etiq.total}"/>                                            
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style=" font-size: 11px; text-align: center; color: black;padding-bottom: 0px; padding-top: 0px;" headerText="#{etiq.turMat}"/>                                            
+                                            <p:column style=" font-size: 11px; text-align: center; color: black;padding-bottom: 0px; padding-top: 0px;" headerText="#{etiq.turVesp}"/>                                            
+                                            <p:column style=" font-size: 11px; text-align: center; color: black;padding-bottom: 0px; padding-top: 0px;" headerText="#{etiq.turNoc}"/>                                            
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:subTable value="#{oT.arrActividades}" var="oS" >
+                                        <p:columnGroup type="header">
+                                            <p:row>                                       
+                                                <p:column colspan="2" headerText="#{oT.nombreTipoActividad}" styleClass="ui-widget-header"
+                                                          style="font-size: 13px; border-color: black; color: black; font-weight: bold; text-align: center;"/>
+                                                <p:column colspan="4" headerText="" style="border-color: black;"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="border-color: black; font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                            <p:outputLabel value="#{oS.tipoActividad.claveParametro}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                            <p:outputLabel value="#{oS.tipoActividad.valor}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                            <p:outputLabel value="#{oS.cantidadMatSt}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                            <p:outputLabel value="#{oS.cantidadVesStr}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                            <p:outputLabel value="#{oS.cantidadNocStr}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                            <p:outputLabel value="#{oS.totalStr}"/>
+                                        </p:column>
+                                    </p:subTable>                                    
+                                </p:dataTable>                            
+                            </p:outputPanel>
+                        </p:outputPanel>
+                        <p:panelGrid rendered="#{not empty oBActEnf.arrActividades}" id="pan1" >
+                            <p:row>
+                                <p:column styleClass="ui-widget-header centrar">                                    
+                                    <p:commandButton icon="ui-icon-folder-open" value="#{etiq.imprimir}"
+                                                     onclick="PF('imprimirInformeActividades').show()" update=":ActImprime"/>                                                            
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>      
+                </div>
+                <p:dialog modal="true" widgetVar="imprimirInformeActividades" showEffect="puff" hideEffect="puff" 
+                          resizable="false" header="" height="610" width="1000">
+                    <h:form id="ActImprime">
+                        <p:outputPanel style=" width: 100%; background-color: white;" styleClass="centrar">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="45" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; ">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}" style="font-size: 13px;"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}" style="font-size: 13px;"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.infDiarioActEnf}" style="font-size: 13px;"/></b>                                    
+                                    </p:column>
+                                    <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120" height="45"  align="left"/>
+                                    </p:column>
+                                </p:row>                                          
+                            </p:panelGrid>
+                            <div style="margin-bottom: 6px;"/>
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column style="width: 3%; border-color: transparent; font-size: 12px; color: black; padding: 0px;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.ser}:"/>
+                                    </p:column>
+                                    <p:column style="width: 40%;border-color: transparent;font-size: 12px; color: black;">
+                                        <p:outputLabel value="#{oBActEnf.buscaActividades.cabeceraAct.areaServicio.descripcion}"/>
+                                    </p:column>
+                                    <p:column style="width: 4%;border-color: transparent; color: black;padding: 0px;font-size: 12px;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.fechaa1}:"/>
+                                    </p:column>
+                                    <p:column style="width: 20%;border-color: transparent;font-size: 12px; color: black;">
+                                        <p:outputLabel value="#{oBActEnf.buscaActividades.cabeceraAct.fechaStr2}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 3px;"/>
+                            <p:dataTable value="#{oBActEnf.arrActividades}" var="oT" emptyMessage="">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column style="width: 1.5%;color: black; vertical-align: bottom;" rowspan="2" headerText=""/>              
+                                        <p:column style="width: 37%; font-size: 12px; font-weight: bold; color: black; vertical-align: bottom;" rowspan="2" headerText="#{etiq.actd}"/>                                          
+                                        <p:column style="width: 11%; font-size: 12px; font-weight: bold; color: black; padding-bottom: 0px; padding-top: 0px;"
+                                                  colspan="3" headerText="#{etiq.turnoo}"/>                                           
+                                        <p:column style="width:4%; font-size: 12px; font-weight: bold; color: black; vertical-align: bottom; " rowspan="2" headerText="#{etiq.total}"/>                                            
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style=" font-size: 11px; text-align: center; color: black;padding-bottom: 0px; padding-top: 0px;" headerText="#{etiq.turMat}"/>                                            
+                                        <p:column style=" font-size: 11px; text-align: center; color: black;padding-bottom: 0px; padding-top: 0px;" headerText="#{etiq.turVesp}"/>                                            
+                                        <p:column style=" font-size: 11px; text-align: center; color: black;padding-bottom: 0px; padding-top: 0px;" headerText="#{etiq.turNoc}"/>                                            
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:subTable value="#{oT.arrActividades}" var="oS" >
+                                    <p:columnGroup type="header">
+                                        <p:row>                                       
+                                            <p:column colspan="2" headerText="#{oT.nombreTipoActividad}" styleClass="ui-widget-header"
+                                                      style="font-size: 13px; border-color: black; color: black; font-weight: bold; text-align: center; padding-bottom: 0px; padding-top: 0px"/>
+                                            <p:column colspan="4" headerText="" style="border-color: black;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="border-color: black; font-size: 12px; padding-bottom: 0px; padding-top: 0px; padding-left: 1px">
+                                        <p:outputLabel value="#{oS.tipoActividad.claveParametro}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px; text-align: left;">
+                                        <p:outputLabel value="#{oS.tipoActividad.valor}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oS.cantidadMatSt}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oS.cantidadVesStr}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oS.cantidadNocStr}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;font-size: 12px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oS.totalStr}"/>
+                                    </p:column>
+                                </p:subTable>                                    
+                            </p:dataTable>
+                            <p:panelGrid style="width: 100%;margin-top: 3px;">
+                                <p:row>
+                                    <p:column colspan="5" style="font-size: 12px; border-color: transparent; text-align: center; padding-bottom: 0px; color:black;">
+                                        <p:outputLabel value="#{etiq.nombreFirma}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 11px; border-color: transparent; text-align: center; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{etiq.matut}"/>
+                                    </p:column>
+                                    <p:column style="width: 6px; border-color: transparent;"/>
+                                    <p:column style="font-size: 11px; border-color: transparent; text-align: center; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{etiq.vesper}"/>
+                                    </p:column>
+                                    <p:column style="width: 6px; border-color: transparent;"/>
+                                    <p:column style="font-size: 11px; border-color: transparent; text-align: center; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{etiq.nocturn}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 10px; border-color: transparent;border-bottom-color: black; text-align: center; width: 33%;">
+                                        <p:outputLabel value="#{oBActEnf.buscaActividades.cabeceraAct.enfermeraMAT.nombres}"/>
+                                    </p:column>
+                                    <p:column style="width: 6px; border-color: transparent;"/>
+                                    <p:column style="font-size: 10px; border-color: transparent;border-bottom-color: black;text-align: center; width: 33%;">
+                                        <p:outputLabel value="#{oBActEnf.buscaActividades.cabeceraAct.enfermeraVES.nombres}"/>
+                                    </p:column>
+                                    <p:column style="width: 6px; border-color: transparent;"/>
+                                    <p:column style="font-size: 10px; border-color: transparent; border-bottom-color: black;text-align: center; width: 33%;">
+                                        <p:outputLabel value="#{oBActEnf.buscaActividades.cabeceraAct.enfermeraNOC.nombres}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>                        
+                    </h:form>
+                    <div style=" margin-bottom: 4px;"/>
+                    <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":ActImprime"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('imprimirInformeActividades').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                </p:dialog>
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                  <f:facet name="start">
+                       <p:graphicImage value="/imgs/loading.gif" />
+                  </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>   
+</html>
+

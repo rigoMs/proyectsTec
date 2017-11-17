@@ -1,0 +1,500 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div id="SupervicionUci">
+                    <h:form id="UCISupervicion">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <p:accordionPanel styleClass="centrar" style=" width: 26%; font-weight: bold;">
+                            <p:tab title="#{etiq.ser}:->" >
+                                <p:outputPanel styleClass="centrar">
+                                    <p:panelGrid columns="2" style="width: 100%;">
+                                    <p:outputLabel value="#{etiq.servicio}:"/>                                       
+                                    <p:outputLabel/>
+                                    <p:selectOneMenu effect="puff" id="cmbAreas" value="#{oUCIPac.areaServicio}">
+                                        <f:selectItem itemLabel="Elegir servicio" itemValue="" noSelectionOption="true"/>                                         
+                                        <f:selectItems value="#{oUCIPac.arrServicio}" var="oAr" itemLabel="#{oAr.descripcion}" itemValue="#{oAr.clave}"/>
+                                    </p:selectOneMenu>
+                                    <p:commandButton value="Buscar" icon="ui-icon-search"
+                                                     update=":UCISupervicion :UCISupervicion:panel1  :UCISupervicion:tabUCI :UCISupervicion:msgs" actionListener="#{oUCIPac.buscaPacienteEnServicio}">                                                                             
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <p:panelGrid style=" width: 99%;" id="panel1" rendered="#{oUCIPac.pacientesUCI !=null}">
+                            <p:row>
+                                <p:column style="width: 70%; text-align: center; border-color: #ffffff;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.hojaUci}:"/>&nbsp;<p:outputLabel value="#{oUCIPac.servicioUCI}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.fechaa1}:"/>&nbsp;&nbsp;<p:outputLabel value="#{oUCIPac.fechaActual}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-color: #ffffff;" colspan="2"/><!--separacion-->                                  
+                            </p:row>               
+                        </p:panelGrid>
+                        <br/>
+                        <p:tabView dynamic="true" id="tabUCI" rendered="#{oUCIPac.pacientesUCI !=null}">
+                            <p:tab title="#{etiq.porRelacionCama}">                                 
+                                <p:panelGrid style="width: 100%;">
+                                    <p:row>
+                                        <p:column style="border-color: #ffffff; border-bottom-color: darkgray;">
+                                            <p:dataTable paginator="true" rows="5" value="#{oUCIPac.pacientesUCI}"
+                                                         var="oPacUCI" widgetVar="dataUCI" id="tableUCI" emptyMessage="#{etiq.msjRegVacios}" >
+                                                <p:column style="width:5%; text-align: center;" headerText="#{etiq.camaM}">
+                                                    <p:outputLabel value="#{oPacUCI.cama.numero}"/>
+                                                </p:column>
+                                                <p:column filterBy="#{oPacUCI.paciente.expediente.numero}" style="width:10%; text-align: center;" headerText="#{etiq.exp2}">
+                                                    <p:outputLabel value="#{oPacUCI.paciente.expediente.numero}"/>
+                                                </p:column>
+                                                <p:column style="width: 10%; text-align: center;" headerText="#{etiq.fechMay}">
+                                                    <p:outputLabel value="#{oPacUCI.fechaIngreso}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </p:outputLabel>
+                                                </p:column>
+                                                <p:column style="  width: 28%; text-align: center;" headerText="#{etiq.nombrePaMay}">
+                                                    <p:outputLabel value="#{oPacUCI.paciente.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="width: 33%; text-align: center;" headerText="#{etiq.diagnst}">
+                                                    <p:outputLabel value="#{oPacUCI.diagIngreso.descripcionDiag}"/>
+                                                </p:column>
+                                                <p:column headerText="">                                            
+                                                    <p:commandButton  icon="ui-icon-folder-open" title="Registrar procedimiento" >                                                
+                                                        <p:ajax listener="#{oUCIPac.buscarPaciente(oPacUCI.paciente.folioPaciente)}" update=":frm-ucipro:prouci :UCISupervicion:msgs :frm-ucipro:proceEnf :frm-ucipro:procePor :frm-ucipro:obs1 :frm-ucipro:obs2"/>
+                                                    </p:commandButton>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <div class=" centrar" >
+                                                <p:commandButton  icon="ui-icon-folder-open" title="Ver Detalles" value="#{etiq.verDetallesPac}"
+                                                                  actionListener="#{oUCIPac.buscaProcedimientosAplicados}" update=":UCISupervicion:msgs" >
+                                                </p:commandButton>
+                                                &nbsp;
+                                                <p:commandButton icon="ui-icon-folder-open" title="#{etiq.imprimir}"
+                                                                 value="#{etiq.imprimir} Hoja" onclick="PF('imprimirUCI').show()" update=":impUCIvacio">
+                                                </p:commandButton>
+                                            </div>                                    
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:tab>                            
+                        </p:tabView>                       
+                    </h:form>
+                </div>              
+                
+                <p:dialog modal="true" widgetVar="registrarProcedimiento" showEffect="puff" hideEffect="puff" resizable="false" header="#{etiq.agregarProcPac}" height="550">
+                    <h:form id="frm-ucipro">
+                        <p:outputPanel id="prouci">
+                        <p:panelGrid style="width:900px;">
+                            <p:row>
+                                <p:column style="width:30px;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.camaM}"/>
+                                </p:column>
+                                <p:column  style="width:100px;">
+                                    <p:outputLabel value="#{oUCIPac.buscaPaciente.episodio.cama.numero}"/>
+                                </p:column>
+                                <p:column style="width:35px;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.noEXPM}"/>
+                                </p:column>
+                                <p:column style="width: 140px;">
+                                    <p:outputLabel value="#{oUCIPac.buscaPaciente.episodio.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column style="width:35px;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.nombreM}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oUCIPac.buscaPaciente.episodio.paciente.nombreCompleto}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header" style=" text-align: center;">
+                                    <p:outputLabel value="#{etiq.apliProPac}"/>
+                                </p:column>
+                            </p:row>                                
+                        </p:panelGrid>
+                        <!---->
+                        <div style=" margin-bottom: 2px;"/>
+                        <p:panelGrid style="width:900px;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="text-align: center; width: 20%; ">
+                                    <p:outputLabel for="proceEnf" value="#{etiq.procEnf}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style=" text-align:center; width: 15%;">
+                                    <p:outputLabel value="#{etiq.procPor}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center; width: 2%;">
+                                    <p:outputLabel value="#{etiq.procValor}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 8%;">
+                                    
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:selectOneMenu id="proceEnf" value="#{oUCIPac.procedimientoUCI.procedimientoEnfermeria.valor}" >
+                                        <p:ajax event="change" listener="#{oUCIPac.onProceChange()}" update=":frm-ucipro:procePor  :UCISupervicion:msgs"/>
+                                        <f:selectItem itemLabel="Selecciona un procedimiento" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{oUCIPac.listaPorcedimientos}" var="oPr" itemValue="#{oPr.procedimientoEnfermeria.valor}" itemLabel="#{oPr.procedimientoEnfermeria.valor}"/>                                        
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="procePor" value="#{oUCIPac.procedimientoUCI.procedimientoEnfermeriaPor.descripcion}" disabled="#{oUCIPac.disable}">
+                                        <f:selectItem itemLabel="procedimiento por" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{oUCIPac.listaProcedimientoPor}" var="oProPor" itemLabel="#{oProPor.descripcion}" itemValue="#{oProPor.descripcion}"/>
+                                        <p:ajax event="change"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column styleClass="centrar">
+                                    <p:selectBooleanCheckbox value="#{oUCIPac.procedimientoUCI.valorProc}" disabled="true"/> 
+                                </p:column>
+                                <p:column styleClass="centrar">
+                                    <p:commandButton value="#{etiq.agregar}" icon="ui-icon-plusthick">
+                                        <p:ajax listener="#{oUCIPac.agregarProcedimiento()}" update=":frm-ucipro:tblProAgr :UCISupervicion:msgs :frm-ucipro:proceEnf :frm-ucipro:procePor" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                            
+                        </p:panelGrid>
+                        <div style=" margin-bottom: 2px;"/>
+                        <p:panelGrid style="width:900px;" styleClass="centrar">
+                            <p:row>
+                                <p:column>
+                                    <p:dataTable paginator="true" rows="5" id="tblProAgr" value="#{oUCIPac.proceAgregado}" var="oProceAgre"  emptyMessage="Sin Procedimientos">
+                                        <f:facet name="header">
+                                            <p:outputLabel value="PROCEDIMIENTOS AGREGADO"/>
+                                        </f:facet>
+                                        <p:column headerText="PROCEDIMIENTO SELECCIONADO" style=" width: 20%;">
+                                            <p:outputLabel value="#{oProceAgre.procedimientoEnfermeria.valor}"/>
+                                        </p:column>
+                                        <p:column headerText="APLICADO POR" style=" width: 15%;">
+                                            <p:outputLabel value="#{oProceAgre.procedimientoEnfermeriaPor.descripcion}"/>
+                                        </p:column>
+                                        <p:column headerText="VALOR" style="width: 3%;">                                       
+                                            <p:selectBooleanCheckbox value="#{oProceAgre.valorProc}" disabled="true"/>
+                                        </p:column>
+                                        <p:column style="width: 8%;">
+                                            <p:commandButton value="Eliminar" icon="ui-icon-minus">
+                                                <p:ajax listener="#{oUCIPac.eliminarProcedimietoAgregado(oProceAgre)}" update=":frm-ucipro:tblProAgr :UCISupervicion:msgs "/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid >         
+                        
+                        <p:panelGrid style="width:900px;" styleClass="centrar">
+                            <p:row>
+                                <p:column style="width: 50%"  styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.obserPacM}"/>
+                                </p:column>
+                                <p:column style="width: 50%"  styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.obserGenerPacM}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:inputTextarea id="obs1" cols="40" rows="2" value="#{oUCIPac.buscaPaciente.observacionPaciente}" onkeyup="this.value=this.value.toUpperCase()">
+                                        <p:ajax event="valueChange"/>                                        
+                                    </p:inputTextarea>
+                                </p:column>
+                                <p:column>
+                                    <p:inputTextarea id="obs2" cols="40" rows="2" value="#{oUCIPac.buscaPaciente.observacionGeneral}" onkeyup="this.value=this.value.toUpperCase()">
+                                        <p:ajax event="valueChange"/>                                       
+                                    </p:inputTextarea>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <div class="centrar">
+                                        <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk">
+                                            <p:ajax listener="#{oUCIPac.guardarProcedimientoUCI}" update=":UCISupervicion:msgs"/>
+                                        </p:commandButton>&nbsp;
+                                        <p:commandButton onclick="PF('registrarProcedimiento').hide()" value="#{etiq.cerrar}" icon="ui-icon-close">
+                                        </p:commandButton>
+                                    </div>  
+                                </p:column>
+                                
+                            </p:row>
+                        </p:panelGrid>
+                        </p:outputPanel>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog modal="true" showEffect="puff" hideEffect="puff" header="#{etiq.detallesProcPac}" widgetVar="verdetalles" height="600" width="1350" resizable="false">
+                    <h:form id="verDetalles">
+                        <p:outputPanel id="imp">
+                            <p:dataTable id="hojaUCI2" value="#{oUCIPac.arrProcedimientosAplic}" var="oProA" emptyMessage="" style=" text-align: center;">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column style="width:23px; text-align: center;" headerText="#{etiq.camaM}" />
+                                    <p:column style="width:50px; font-size: 13px;" headerText="#{etiq.exp2}"/>
+                                    <p:column style="width: 47px;" headerText="#{etiq.fechMay}"/>
+                                    <p:column style="  width: 165px;" headerText="#{etiq.nombrePaMay}"/>
+                                    <p:column style="width: 168px;" headerText="#{etiq.diagnst}"/>
+                                    <p:column style=" width: 6px; height: 155px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/venoclisis.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/cateter.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/transfucion.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/npt.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/pvc.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/sondas.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/glicemias.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/curaciones.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/monitoreo.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/ventilador.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/oxigenotera.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/fisioterapia.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/ejerResp.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/secresiones.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/lavado.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/nebuliza.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/ejerVesical.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/dialisisP.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/aseoOc.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 150px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/colutorio.png') no-repeat;"/>
+                                    
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column style="border-color: black;">
+                                <b><p:outputLabel style=" color: black; text-align: center; font-size: 11px;" value="#{oProA.episodio.cama.numero}"/></b>
+                            </p:column>
+                            <p:column style="border-color: black;font-size: 11px;">
+                                <b><p:outputLabel value="#{oProA.episodio.paciente.expediente.numero}"/></b>
+                            </p:column>
+                            <p:column style="border-color: black;">
+                                <b><p:outputLabel style="font-size: 10px;" value="#{oProA.episodio.fechaIngreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </b>
+                            </p:column>
+                            <p:column style="border-color: black;">
+                                <b><p:outputLabel style="font-size: 10px;" value="#{oProA.episodio.paciente.nombreCompleto}"/></b>
+                            </p:column>
+                            <p:column style="border-color: black; padding: 1px; padding-top: 0px;">
+                                <b><p:outputLabel style="font-size: 9px;" value="#{oProA.episodio.diagIngreso.descripcionDiag}"/></b>
+                            </p:column>
+                            <!-- parte de procedimiento-->
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.venoclisis}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.cateter}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.transfusion}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.NPT}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.PVC}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.sondas}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.glicemias}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.colutorios}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.monitoreo}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.ventilador}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.oxigeno}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.fisioPulmonar}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.ejercicioResp}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.aspiracionSecre}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.lavadoBronq}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.nebulizaciones}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.ejercicioVesical}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.dialisisPeritonial}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oProA.aseosOculares}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">  
+                                <p:selectBooleanCheckbox value="#{oProA.colutorios}" disabled="true"/>
+                            </p:column>
+                            
+                        </p:dataTable>
+                        
+                        <br/>
+                        <br/>
+                        <p:outputPanel style="" styleClass="centrar">
+                            <p:dataTable id="obserPac" value="#{oUCIPac.arrProcedimientosAplic}" var="oObs" rendered="true">
+                                <p:column style="width:6%; border-color: black; color: black; font-weight: bold; font-size: 13px;" headerText="#{etiq.camM}">
+                                    <p:outputLabel value="#{oObs.episodio.cama.numero}" style="font-size:11px; font-weight: normal;"/>
+                                </p:column>
+                                <p:column style="width:47%; border-color: black; color: black; font-weight: bold; font-size: 13px;" headerText="#{etiq.obserPacM}">
+                                    <p:outputLabel value="#{oObs.observacionPaciente}" style="font-size:11px; font-weight: normal;"/> 
+                                </p:column>
+                                <p:column style="width:47%; border-color: black; color: black; font-weight: bold; font-size: 13px;" headerText="#{etiq.obserGenerPacM}">
+                                    <p:outputLabel value="#{oObs.observacionGeneral}" style="font-size:11px; font-weight: normal;"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                        </p:outputPanel>
+                        <br/>
+                        <br/>
+                        <p:outputPanel styleClass="centrar">
+                            <p:commandButton onclick="PF('verdetalles').hide()" value="#{etiq.cerrar}" icon="ui-icon-close">
+                            </p:commandButton>                           
+                        </p:outputPanel>                       
+                    </h:form>                    
+               </p:dialog>       
+                
+               <p:dialog modal="true" showEffect="puff" hideEffect="puff" header="#{etiq.hojaUCIimp}" widgetVar="imprimirUCI" height="600" width="1350" resizable="false">
+                   <h:form id="impUCIvacio">
+                        <p:outputPanel id="impUCI2" style=" background: white; background-color: white; width: 1320px;">
+                            <p:panelGrid style="width:100%">
+                                <p:row>
+                                    <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="40" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; ">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hojaUci}:"/></b>&nbsp;<p:outputLabel value="#{oUCIPac.servicioUCI}"/>
+                                        &nbsp; &nbsp;&nbsp;<b>  <p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oUCIPac.fechaActual}"/>
+                                    </p:column>
+                                    <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120"  style=" height: 100%;" align="left"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>    
+                            <p:dataTable id="hojaUCI3" value="#{oUCIPac.pacientesUCI}" var="oPacUci" emptyMessage="" style=" text-align: center;">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column style="width:23px; text-align: center; font-size: 12px; background: white; color: black; font-weight: bold;" headerText="#{etiq.camaM}" />
+                                        <p:column style="width:58px; text-align: center; font-size: 12px; background: white; color: black; font-weight: bold;" headerText="#{etiq.exp2}"/>
+                                        <p:column style="width: 47px; text-align: center; font-size: 12px; background: white; color: black; font-weight: bold;" headerText="#{etiq.fechMay}"/>
+                                        <p:column style="  width: 170px; text-align: center; font-size: 13px; background: white; color: black; font-weight: bold;" headerText="#{etiq.nombrePaMay}"/>
+                                        <p:column style="width: 190px; text-align: center; font-size: 13px; background: white; color: black; font-weight: bold;" headerText="#{etiq.diagnst}"/>
+                                        <p:column headerText="#{etiq.venoclisis}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.cateter}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.tras}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.npt}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.pvc}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.sondas}" style=" width: 4px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.glicemias}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.curaciones}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.monitoreo}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.vent}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.oxiT}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.fisioTe}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 10px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.ejercRes}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 10px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.aspSecr}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 10px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.lavBronq}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 10px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.nebuliza}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.ejerVes}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.dialis}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.aseosOc}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                        <p:column headerText="#{etiq.culatorios}" style=" width: 4px; height: 160px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 12px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+
+                                    </p:row>
+                                </p:columnGroup>
+                            <p:column style=" border-color: black; background-color: white; padding: 1px; padding-left: 3px; text-align: center;">
+                                <p:outputLabel style="text-align: center; font-size: 10px;" value="#{oPacUci.cama.numero}"/>
+                            </p:column>
+                            <p:column style=" border-color: black; background-color: white; padding: 1px;padding-left: 3px; text-align: center;">
+                                <p:outputLabel value="#{oPacUci.paciente.expediente.numero}" style="text-align: center; font-size: 10px;"/>
+                            </p:column>
+                            <p:column style=" border-color: black; background-color: white; padding: 1px;padding-left: 3px; text-align: center;">
+                                <p:outputLabel style="font-size: 10px;" value="#{oPacUci.fechaIngreso}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column  style=" border-color: black; background-color: white; padding: 1px;padding-left: 3px; text-align: center;">
+                                <p:outputLabel style="font-size: 10px;" value="#{oPacUci.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column style=" border-color: black; background-color: white;padding: 1px;padding-left: 3px; text-align: center;">
+                                <p:outputLabel style="font-size: 8px;color:black;" value="#{oPacUci.diagIngreso.descripcionDiag}"/>
+                            </p:column>
+                            <!-- parte de procedimiento-->
+                            <p:column style=" border-color: black; background-color: white;"/> 
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                            <p:column style=" border-color: black; background-color: white;"/>  
+                        </p:dataTable>                            
+                        <p:outputPanel style="width: 100%;" styleClass="centrar">
+                            <p:dataTable id="obserPac" value="#{oUCIPac.pacientesUCI}" var="oObsv" rendered="true">
+                                <p:column style="width:32px; background: white; color: black; border-color: black; font-size: 12px; font-weight: bold;" headerText="#{etiq.camaM}">
+                                    <p:outputLabel value="#{oObsv.cama.numero}" style="font-weight: normal; font-size: 11px;"/>
+                                </p:column>
+                                <p:column style="width:49.5%; background: white; color: black; border-color: black; font-size: 13px;  font-weight: bold;" headerText="#{etiq.obserPacM}">
+                                    <p:outputLabel value=""/> 
+                                </p:column>
+                                <p:column style="width:44.9%; background: white; color: black; border-color: black; font-size: 13px; font-weight: bold;" headerText="#{etiq.obserGenerPacM}">
+                                    <p:outputLabel value=""/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                        </p:outputPanel>                        
+                        <br/>
+                        <p:outputPanel styleClass="centrar">
+                            <p:commandButton value="imprimir" icon="ui-icon-print">
+                                <p:printer target="impUCI2"/>
+                            </p:commandButton>&nbsp;
+                            <p:commandButton onclick="PF('imprimirUCI').hide()" value="#{etiq.cerrar}" icon="ui-icon-close">
+                            </p:commandButton>                            
+                        </p:outputPanel>    
+                    </h:form>                    
+                </p:dialog>
+                
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+</html>
+

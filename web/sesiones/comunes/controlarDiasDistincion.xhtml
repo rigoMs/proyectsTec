@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.controlarDiasDist}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+
+        <div class="centrado_texto">
+            <p:dialog widgetVar="dlgConfirm"
+                      position="center" closable="false" 
+                      dynamic="true" resizable="false"
+                      appendTo="@(body)" modal="true"
+                      width="500px">
+                <center>
+                <h:outputText value=""></h:outputText>
+                <br/>
+                    <p:commandButton value="#{etiq.aceptar}" oncomplete="PF('dlgConfirm').hide()"></p:commandButton>
+                    <p:commandButton value="#{etiq.cancelar}" oncomplete="PF('dlgConfirm').hide()"></p:commandButton>
+                </center>
+            </p:dialog>
+            <p:dialog widgetVar="dlgDiasDist"
+                      position="center" closable="false" 
+                      dynamic="true" resizable="false"
+                      appendTo="@(body)" modal="true"
+                      width="600px">
+                <center>
+                    <h:form>
+                         <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                               <p:column colspan="2" styleClass="ui-widget-header"><center> 
+                                <h:outputText value="#{etiq.datosPaciente}"/> </center></p:column>   
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel class="negrita" value="#{etiq.nombrePaciente}:"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:outputLabel value="Daniel L&oacute;pez Rosas"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.domicilio}:"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:outputLabel value="Carr La Conduza Carretera de PEMEX s/n Col Centro 94900 Omealca, Ver."/>
+                            </p:column>
+                        </p:row>
+                            <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.noExp}:"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:outputLabel value="10008000"/>
+                            </p:column>
+                            </p:row>
+                    </p:panelGrid>
+                        <p:dataTable>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.diasDist}"></h:outputText>
+                            </f:facet>
+                            <p:column headerText="#{etiq.dia}">
+                                <h:outputText></h:outputText>
+                            </p:column>
+                            <p:column headerText="#{etiq.fecha}">
+                                <h:outputText></h:outputText>
+                            </p:column>
+                            <p:column headerText="#{etiq.pago}">
+                                <h:outputText></h:outputText>
+                            </p:column>
+                            <f:facet name="footer">
+                                <h:outputText value="#{etiq.totalDias}:"></h:outputText>
+                                <br/>
+                                <h:outputText value="#{etiq.subsidio}:"></h:outputText>
+                                <br/>
+                                <br/>
+                                <p:commandButton value="#{etiq.agregarCargoDist}" oncomplete="PF('dlgConfirm').show()">
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.cancelarCargoDist}" oncomplete="PF('dlgConfirm').show()">
+                                </p:commandButton>
+                            </f:facet>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="#{etiq.regresar}" oncomplete="PF('dlgDiasDist').hide()">
+                        </p:commandButton>
+                    </h:form>
+                </center>
+            </p:dialog>
+            <center>
+            <h:form>
+                <p:dataTable id="dtPacDist"  rows="5" value="">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.pacHospDist}"/>
+                    </f:facet>
+                    <p:column width="20">
+                        
+                    </p:column>
+                    <p:column headerText="#{etiq.cuenta}" width="50">
+                        <h:outputText value="113344"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.nombrePaciente}">
+                        <h:outputText value="Daniel" />
+                    </p:column>
+                    <p:column headerText="#{etiq.appat}">
+                        <h:outputText value="L&oacute;pez" />
+                    </p:column>
+                    <p:column headerText="#{etiq.apmat}">
+                        <h:outputText value="Rosas" />
+                    </p:column>
+                    <f:facet  name="footer" >
+                        <p:commandButton value="#{etiq.detalles}" oncomplete="PF('dlgDiasDist').show()">
+                        </p:commandButton>
+                    </f:facet>
+                </p:dataTable> 
+            </h:form>
+            </center>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</html>

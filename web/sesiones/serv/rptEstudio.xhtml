@@ -1,0 +1,545 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporte} #{etiq.deestudios}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            
+            <p:tabView id="rptpatologia">
+                <p:tab id="rptcitcer" title="#{etiq.repCitCervical}">
+                    <h:form id="frm1">
+                        <p:panelGrid columns="5" styleClass="frm_centrado">
+                            <p:outputLabel id="fechaIni1" value="De: " styleClass="mensaje"/>
+                            <p:calendar id="f1"  effect="fold" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealPat.fecha}" maxdate="#{EstRealPat.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="f2"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="f2"  effect="fold" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealPat.fechaDos}" onkeypress="return validaCaracter(event)" mindate="#{EstRealPat.fecha}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar>  
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealPat.listaReportes(1)}" update=":rptpatologia:frm1:tblrepcitcerv :rptpatologia:frm1:f1 :rptpatologia:frm1:f2" />
+                        </p:panelGrid>   
+                        <br/>
+                        <p:dataTable id="tblrepcitcerv" 
+                                     value="#{EstRealPat.reportes}" 
+                                     var="oRepCerv" 
+                                     emptyMessage="No hay registros"
+                                     paginator="true"
+                                     rows="10"
+                                     selectionMode="single"
+                                     rowKey="#{oRepCerv.identificador}"
+                                     selection="#{EstRealPat.seleReporte}"
+                                     >
+                        <f:facet name="header">
+                            <h:outputText value="Reporte de Citología Cervico-Vaginal" styleClass="mensaje"/>
+                        </f:facet>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.fecEntrega}" styleClass="mensaje" />
+                            </f:facet>
+                            <h:outputText value="#{oRepCerv.fechaEntrArchivo}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.noEstudio}" styleClass="mensaje"/>
+                            </f:facet>
+                            <h:outputText value="#{oRepCerv.numeroEstudio}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nompac}" styleClass="mensaje"/>
+                            </f:facet>
+                            <h:outputText value="#{oRepCerv.episodio.paciente.nombres} #{oRepCerv.episodio.paciente.apPaterno} #{oRepCerv.episodio.paciente.apMaterno}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.numexpe}" styleClass="mensaje"/>
+                            </f:facet>
+                            <h:outputText value="#{oRepCerv.episodio.paciente.expediente.numero}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.servicio}" styleClass="mensaje"/>
+                            </f:facet>
+                            <h:outputText value="#{oRepCerv.episodio.area.descripcion}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                            </f:facet>
+                            <h:outputText value="#{oRepCerv.episodio.medicoTratante.nombres} #{oRepCerv.episodio.medicoTratante.apPaterno} #{oRepCerv.episodio.medicoTratante.apMaterno}" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton value="Detalles" icon="ui-icon-search" process="tblrepcitcerv" actionListener="#{EstRealPat.detalleRepCerv}" update=":rptpatologia:frm1:repCerv" oncomplete="PF('dlgDetRepCerv').show()"/>
+                            <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                <p:printer target=":rptpatologia:frm1:tblrepcitcerv" />
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:dataTable>
+                    <p:dialog header="Detalles de Reporte Cervical" widgetVar="dlgDetRepCerv"
+                              height="60%" width="70%" resizable="false" modal="true">
+                        <p:outputPanel id="repCerv">
+                            <p:panelGrid id="pRepCerv" rendered="#{not empty EstRealPat.repPat}">
+                              <f:facet name="header">
+                                  <p:row>
+                                      <p:column colspan="4">
+                                          <h:outputText value="#{etiq.repCitCervical}" styleClass="mensaje" />
+                                      </p:column>
+                                  </p:row>
+                              </f:facet>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.noEstudio}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.numeroEstudio}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.nompac}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.paciente.nombres} #{EstRealPat.repPat.episodio.paciente.apPaterno} #{EstRealPat.repPat.episodio.paciente.apMaterno}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.numexpe}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.paciente.expediente.numero}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.servicio}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.area.descripcion}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.medicoTratante.nombres} #{EstRealPat.repPat.episodio.medicoTratante.apPaterno} #{EstRealPat.repPat.episodio.medicoTratante.apMaterno}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.tipoCitologia}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.tipoCitol.valor}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.citologia}" styleClass="mensaje" />
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.citAdecuada}" />
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.porque}" styleClass="mensaje" />
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.razonCitolAdecuada}" />
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.cateGeneral}" styleClass="mensaje" />
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.catGral.valor}" />
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.porque}" styleClass="mensaje" />
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.razonPosNeg}" />
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.notasOComen}" styleClass="mensaje" />
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.notas}" />
+                                  </p:column>
+                              </p:row>    
+                          </p:panelGrid>
+                            <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                <p:printer target=":rptpatologia:frm1:pRepCerv" />
+                            </p:commandButton>
+                          </p:outputPanel> 
+                      </p:dialog>
+                    </h:form>
+                </p:tab>
+                <p:tab title="#{etiq.repCitLiqCor}">
+                    <h:form id="frm2">
+                        <p:panelGrid columns="5" styleClass="frm_centrado">
+                            <p:outputLabel id="fechaIni2" value="De: " styleClass="mensaje"/>
+                            <p:calendar id="f3"  effect="fold" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealPat.fecha}" maxdate="#{EstRealPat.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="f4"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin2" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="f4"  effect="fold" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealPat.fechaDos}" onkeypress="return validaCaracter(event)" mindate="#{EstRealPat.fecha}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar>  
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealPat.listaReportes(2)}" update=":rptpatologia:frm2:tblrepliqcor :rptpatologia:frm2:f3 :rptpatologia:frm2:f4" />
+                        </p:panelGrid>   
+                        <br/>
+                        <p:dataTable id="tblrepliqcor"
+                                     value="#{EstRealPat.reportes}"
+                                    var="oRepLiq"  
+                                    emptyMessage="No hay registros"
+                                    paginator="true"
+                                    rows="10"
+                                    rowKey="#{oRepLiq.identificador}"
+                                    selectionMode="single"
+                                    selection="#{EstRealPat.seleReporte}"
+                                    >
+                            <f:facet name="header">
+                                <h:outputText value="Reporte de Liquidos Corporales" styleClass="mensaje"/>
+                            </f:facet>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.fecEntrega}" styleClass="mensaje" />
+                                </f:facet>
+                                <h:outputText value="#{oRepLiq.fechaEntrArchivo}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.noEstudio}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepLiq.numeroEstudio}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.nompac}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepLiq.episodio.paciente.nombres} #{oRepLiq.episodio.paciente.apPaterno} #{oRepLiq.episodio.paciente.apMaterno}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.numexpe}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepLiq.episodio.paciente.expediente.numero}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.servicio}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepLiq.episodio.area.descripcion}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepLiq.episodio.medicoTratante.nombres} #{oRepLiq.episodio.medicoTratante.apPaterno} #{oRepLiq.episodio.medicoTratante.apMaterno}" />
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton value="Detalles" icon="ui-icon-search" process="tblrepliqcor" actionListener="#{EstRealPat.detalleRepLiq}" update=":rptpatologia:frm2:repLiq" oncomplete="PF('dlgDetRepLiq').show()"/>
+                                <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                    <p:printer target=":rptpatologia:frm2:tblrepliqcor" />
+                                </p:commandButton>
+                            </f:facet>
+                        </p:dataTable>
+                        
+                        <p:dialog header="Detalles de Reporte de Líquidos Corporales" widgetVar="dlgDetRepLiq"
+                                height="60%" width="70%" resizable="false" modal="true">
+                        <p:outputPanel id="repLiq" >
+                            <p:panelGrid id="pRepLiq" rendered="#{not empty EstRealPat.repPat}">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="4">
+                                            <h:outputText value="Reporte de Citología de Líquidos Corporales Normales/Patológicos Diversos"  styleClass="mensaje"/>
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.noEstudio}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.numeroEstudio}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.nompac}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.paciente.nombres} #{EstRealPat.repPat.episodio.paciente.apPaterno} #{EstRealPat.repPat.episodio.paciente.apMaterno}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.numexpe}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.paciente.expediente.numero}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.servicio}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.area.descripcion}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.medicoTratante.nombres} #{EstRealPat.repPat.episodio.medicoTratante.apPaterno} #{EstRealPat.repPat.episodio.medicoTratante.apMaterno}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.tipoProcedimiento}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.tipoProcedimiento.valor}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.fechaRecepcion}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.fechaRecepcion}"/>
+                                  </p:column>
+                                   <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.materialEnviado}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.materialEnviado}"/>
+                                  </p:column>
+                              </p:row>
+                                <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.problemaCli}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.paciente.diagcie.descripcionDiag}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.descTecnica}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.descripcionTecnica}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.descMacros}" styleClass="mensaje"/> 
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.descripMacro}"/>
+                                  </p:column>
+                              </p:row>
+                          </p:panelGrid>
+                          <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                <p:printer target=":rptpatologia:frm2:pRepLiq" />
+                            </p:commandButton>
+                      </p:outputPanel>
+                      </p:dialog>
+                    </h:form>
+                    
+                </p:tab>
+                <p:tab title="#{etiq.repBiopsia}">
+                    <h:form id="frm3">
+                        <p:panelGrid columns="5" styleClass="frm_centrado">
+                            <p:outputLabel id="fechaIni3" value="De: " styleClass="mensaje"/>
+                            <p:calendar id="f5"  effect="fold" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealPat.fecha}" maxdate="#{EstRealPat.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="f6"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin3" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="f6"  effect="fold" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealPat.fechaDos}" onkeypress="return validaCaracter(event)" mindate="#{EstRealPat.fecha}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar>  
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealPat.listaReportes(3)}" update=":rptpatologia:frm3:tblrepbiop :rptpatologia:frm3:f5 :rptpatologia:frm3:f6" />
+                        </p:panelGrid>    
+                        <br/>
+                        <p:dataTable id="tblrepbiop" 
+                                     value="#{EstRealPat.reportes}"
+                                    var="oRepBio"
+                                    paginator="true"
+                                    rows="10"
+                                    rowKey="#{oRepBio.identificador}"
+                                    selection="#{EstRealPat.seleReporte}"
+                                    selectionMode="single"
+                                    emptyMessage="No hay registros">
+                            <f:facet name="header">
+                                <h:outputText value="Reporte de Patología Quirúrgica" styleClass="mensaje"/>
+                            </f:facet>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.fecEntrega}" styleClass="mensaje" />
+                                </f:facet>
+                                <h:outputText value="#{oRepBio.fechaEntrArchivo}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.noEstudio}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepBio.numeroEstudio}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.nompac}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepBio.episodio.paciente.nombres} #{oRepBio.episodio.paciente.apPaterno} #{oRepBio.episodio.paciente.apMaterno}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.numexpe}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepBio.episodio.paciente.expediente.numero}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.servicio}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepBio.episodio.area.descripcion}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRepBio.episodio.medicoTratante.nombres} #{oRepBio.episodio.medicoTratante.apPaterno} #{oRepBio.episodio.medicoTratante.apMaterno}" />
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton value="Detalles" icon="ui-icon-search" process="tblrepbiop" actionListener="#{EstRealPat.detalleRepBiop}" update=":rptpatologia:frm3:repBiop" oncomplete="PF('dlgDetRepBiop').show()"/>
+                                <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                    <p:printer target=":rptpatologia:frm3:tblrepbiop" />
+                                </p:commandButton> 
+                            </f:facet>
+                        </p:dataTable>
+                        <p:dialog header="Detalles de Reporte de Patología Quirúrgica" widgetVar="dlgDetRepBiop"
+                                height="60%" width="60%" resizable="false" modal="true">
+                        <p:outputPanel id="repBiop" >
+                            <p:panelGrid id="prepbiop" rendered="#{not empty EstRealPat.repPat}">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="4">
+                                            <h:outputText value="Reporte de Patología Quirúrgica" styleClass="mensaje" />
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.noEstudio}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.numeroEstudio}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.nompac}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.paciente.nombres} #{EstRealPat.repPat.episodio.paciente.apPaterno} #{EstRealPat.repPat.episodio.paciente.apMaterno}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.numexpe}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.paciente.expediente.numero}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.servicio}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.area.descripcion}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.episodio.medicoTratante.nombres} #{EstRealPat.repPat.episodio.medicoTratante.apPaterno} #{EstRealPat.repPat.episodio.medicoTratante.apMaterno}"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.tipoProcedimiento}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.tipoProcedimiento.valor}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.fechaRecepcion}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.fechaRecepcion}"/>
+                                  </p:column>
+                              </p:row>
+                               <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.descMacros}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.descripMacro}"/>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.descMicros}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.descripMicro}"/> 
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column colspan="1" rowspan="1">
+                                      <h:outputText value="#{etiq.diagnostico}" styleClass="mensaje"/>
+                                  </p:column>
+                                  <p:column colspan="3" rowspan="1">
+                                      <h:outputText value="#{EstRealPat.repPat.impresionDiagnostica}"/>
+                                  </p:column>
+                              </p:row>   
+                          </p:panelGrid>
+                          <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                <p:printer target=":rptpatologia:frm3:prepbiop" />
+                          </p:commandButton>
+                         </p:outputPanel>
+                      </p:dialog>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

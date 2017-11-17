@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.regNuevosRec}"/>
+        </h2>
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        <br/>
+        <div class="centrado_texto">
+            <p:dialog id="dlgConfirm"
+                      position="center" closable="false" 
+                      dynamic="true" resizable="false"
+                      appendTo="@(body)" modal="true"
+                      widgetVar="dlgC" header="¡#{etiq.atencion}!" styleClass="centrado_texto_negritas">
+                <h:form>
+                    <h:outputText value="#{etiq.asignarFolios} #{oRegRecibos.recibo.valor}:"></h:outputText>
+                    <br/><br/>
+                    <h:outputText value="#{oRegRecibos.rangoRecibosUrg} a #{etiq.cajaUrg}"></h:outputText>
+                    <br/>
+                    <h:outputText value="#{oRegRecibos.rangoRecibosCE} a #{etiq.cajaCE}"></h:outputText>
+                    <br/><br/>
+                    <h:outputText value="#{etiq.operacionNoPodraDeshacerse}."></h:outputText>
+                    <br/><br/>
+                    <p:commandButton actionListener="#{oRegRecibos.preGuarda}" value="#{etiq.aceptar}" update=":formulario"></p:commandButton>
+                    <p:commandButton  value="#{etiq.cancelar}" onclick="PF('dlgC').hide()"></p:commandButton>
+                </h:form>
+            </p:dialog>
+            <h:form id="formulario">
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid style="width: 45%;">
+                    <p:row>
+                        <p:column colspan="2" styleClass="ui-widget-header">
+                            <h:outputLabel class="requerido" value="*"/>
+                            <p:outputLabel value="#{etiq.tipoRec}:"></p:outputLabel>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:selectOneMenu id="cmbTipoRecibo" required="true" requiredMessage="SELECCIONE UN TIPO DE RECIBO" 
+                                             value="#{oRegRecibos.recibo.tipoParametro}">
+                                <f:selectItem itemLabel="Seleccione"></f:selectItem>
+                                <f:selectItems value="#{oRegRecibos.tiposRecibo}" var="oRec" 
+                                               itemLabel="#{oRec.valor}" itemValue="#{oRec.tipoParametro}" >
+                                </f:selectItems>
+                                <p:ajax listener="#{oRegRecibos.setRecibo}"></p:ajax>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel class="requerido" value="*"/>
+                            <h:outputLabel value="#{etiq.folioi}:"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel class="requerido" value="*"/>
+                            <h:outputText value="#{etiq.foliof}:"></h:outputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:inputText id="txtFolioInicial" required="true" requiredMessage="Ingrese el folio inicial." 
+                                         label="Folio Inicial" type="number"  value="#{oRegRecibos.folioi}">
+                                <f:validateDoubleRange minimum="1"></f:validateDoubleRange>    
+                                <p:ajax listener="#{oRegRecibos.habilitaCampo}" update="outTotalRec txtCantidadRecibosUrg txtCantRecCE"></p:ajax>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="txtFolioFinal" required="true" requiredMessage="Ingrese el folio final." 
+                                         label="Folio Final" type="number" value="#{oRegRecibos.foliof}">
+                                <f:validateDoubleRange minimum="#{oRegRecibos.folioFinalMin}"></f:validateDoubleRange>
+                                <p:ajax listener="#{oRegRecibos.habilitaCampo}" update="outTotalRec txtCantidadRecibosUrg txtCantRecCE"></p:ajax>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="2">
+                            <h:outputText value="#{etiq.totalRecibos}: "></h:outputText>
+                            <h:outputText id="outTotalRec" value="#{oRegRecibos.totalRecibos}"></h:outputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="2">
+                            <h:outputLabel class="requerido" value="*"/>
+                            <h:outputText value="#{etiq.cantRecibos} #{etiq.cajaAuxUrg}"></h:outputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:inputText disabled="#{oRegRecibos.disDatos}" id="txtCantidadRecibosUrg" required="true" 
+                                         type="number" value="#{oRegRecibos.cantRecUrg}" label="#{etiq.cantRecibos} #{etiq.cajaAuxUrg}">
+                                <f:validateDoubleRange minimum="1" maximum="#{oRegRecibos.maxCantRecCajaUrg}"></f:validateDoubleRange>
+                                <p:ajax listener="#{oRegRecibos.calculaCantRec()}" update="txtCantRecCE"></p:ajax>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="2">
+                            <h:outputText value="#{etiq.cantRecibos} #{etiq.cajaAuxCE}"></h:outputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:inputText id="txtCantRecCE" value="#{oRegRecibos.cantRecCE}" disabled="true"></p:inputText>
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <center>
+                                    <p:commandButton value="#{etiq.guardar}" actionListener="#{oRegRecibos.preDialogo}" update="mensajes :dlgConfirm"></p:commandButton>
+                                </center>
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

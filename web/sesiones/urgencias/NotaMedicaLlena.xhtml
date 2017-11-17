@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+
+   <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Nota M&eacute;dica </title>
+    </h:head>
+   
+    
+    <div>
+        <p:growl id="messages" showDetail="true"/>
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+        
+         
+        <h:form class="centrar">
+        <c:choose>
+        <c:when test="${oNotaLlena.ope=='a' || oNotaLlena.folioPac gt 0 }">  
+       <div style=" margin: 0 auto; text-align: center; clear: both">
+                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/EncabezadoReporteTurno.jpg" 
+                         align="middle" style="border: 0" height="90" width="900"/>
+                     
+      </div>
+         <div style="margin-top: 0; margin-bottom: 0; margin: 0; text-align: center; font-weight: bold; font-size: 15px;">
+            <p style="margin-top: 0; margin-bottom: 0; margin: 0; text-align: center;color: black;" >SERVICIOS DE SALUD DE VERACRUZ</p>
+            <p style="margin-top: 0; margin-bottom: 0; margin: 0; text-align: center;color: black;">HOSPITAL REGIONAL RIO BLANCO</p>
+            <p style="margin-top: 0; margin-bottom: 0; margin: 0; text-align: center;color: black;">NOTA MÉDICA DE ATENCIÓN EN URGENCIAS PRIMER CONTACTO</p>
+        </div>
+            <br/>
+         <p:panelGrid styleClass="frm_centrado" style="width: 75%">
+         <f:facet name="header">
+             <p:row>
+                 <p:column colspan="6">
+                     <h:outputText style="color: black;" value="#{etiq.notaUrgs}"/>
+                </p:column>
+            </p:row>
+        </f:facet>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" style="color: black;" colspan="2"><h:outputLabel value="#{etiq.fechaHoraIngreso}:"/> </p:column>
+                  <p:column styleClass="ui-widget-header" style="color: black;"><h:outputLabel value="#{etiq.folioIngreso}:"/></p:column>
+                  <p:column styleClass="ui-widget-header" style="color: black;"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                  <p:column styleClass="ui-widget-header" style="color: black;"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                  <p:column styleClass="ui-widget-header" style="color: black;"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column colspan="2"><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.fechaIngresoStr}" /> </p:column>
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.folioAdmision}" /></p:column>                  
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.paciente.nombres}" /></p:column>
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.paciente.apPaterno}" /></p:column>
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.paciente.apMaterno}"/></p:column>
+             </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.fechanac}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.edad}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel style="color: black;" value="#{etiq.sexo}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.referencia}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.derechohabiente}:" /></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.numero}:"/></p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.paciente.fechaNacTexto}" /></p:column>
+                
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.paciente.calculaEdad()}" /></p:column>
+                
+                <p:column>
+                    <p:outputLabel id="sexo" style="color: black;" value="#{oNotaLlena.notaLlena.paciente.sexoP}"/>
+                  </p:column>
+                
+                 <p:column>
+                     <p:outputLabel value="#{oNotaLlena.notaLlena.paciente.referencia.tipo} #{oNotaLlena.notaLlena.paciente.referencia.descripcion}" style=" color: black; font-size: 10px"></p:outputLabel>
+                 </p:column>
+                
+                 <p:column><p:outputLabel style="color: black;"  value="#{oNotaLlena.notaLlena.paciente.seg.derechohabienteP}" /></p:column>
+                
+                 <p:column><p:outputLabel style="color: black;"  value="#{oNotaLlena.notaLlena.paciente.seg.numero}" /></p:column>
+             </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:" style="color: black;"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:" style="color: black;"/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.tipoDeCama}:" style="color: black;"/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.folioCertificadoDef}:" style="color: black;"/></p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column><p:outputLabel style="color: black;"  value="#{oNotaLlena.notaLlena.paciente.curp}" /></p:column>
+                 <p:column><p:outputLabel style="color: black;"  value="#{oNotaLlena.notaLlena.paciente.expediente.numero}"/></p:column>
+             
+                 <p:column colspan="2">
+                     <p:outputLabel  style="color: black;"  id="tipCa" value="#{oNotaLlena.notaLlena.tipoCamaUrgs}" />
+                  </p:column>
+                
+                 <p:column colspan="2"><p:outputLabel  style="color: black;" value="#{oNotaLlena.notaLlena.paciente.folioDefuncion}"  /></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.fecha}, #{etiq.horaAtencion}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.triage}:" /></p:column>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel style="color: black;" value="#{etiq.tipoDeUrgs}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.peso}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.talla}:"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel  style="color: black;" value="#{oNotaLlena.notaLlena.fechaCompleta}"/>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel  style="color: black;"  id="triage" value="#{oNotaLlena.notaLlena.triageColor}"/>
+                  </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:outputLabel id="tipoUrg"  style="color: black;" value="#{oNotaLlena.notaLlena.tipoUrgs}" />
+                 </p:column>
+                 
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.paciente.peso}"/><p:outputLabel style="color: black;" value=" #{etiq.kg}"/></p:column>
+                
+                 <p:column><p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.paciente.talla}"/><p:outputLabel style="color: black;" value=" #{etiq.cm}"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.signosVitales}:" style="color: black;" class="mensaje"/></p:column>
+                 
+                 <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.motivoAtencion}:" style="color: black;" class="mensaje"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column><h:outputLabel style="color: black;" value="#{etiq.ta}:"/><br/>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.TA}" id="ta"/>
+                 </p:column>
+                 
+                 <p:column><h:outputLabel style="color: black;" value="#{etiq.fc}:"/><br/>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.FC}" id="fc"/>
+                 </p:column>
+                 <p:column><h:outputLabel style="color: black;" value="#{etiq.fr}:"/><br/>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.FR}" id="fr"/>
+                 </p:column>
+                 
+                 <p:column><h:outputLabel style="color: black;" value="#{etiq.temp}:"/><br/>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.temp}" id="temp"/>
+                 </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:outputLabel id="motAtn" value="#{oNotaLlena.notaLlena.motivoAtencion}" style="color: black; font-size: 12px" />
+                 </p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel style="color: black;" value="" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel style="color: black;" value="#{etiq.glasgow}" class="mensaje"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel style="color: black;" value="#{etiq.aspecto}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.ocular}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.verbal}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.motora}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel style="color: black;" value="#{etiq.total}:" class="mensaje"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column colspan="2">
+                     <p:outputLabel id="aspec" style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.aspecto}"  />
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.ngOcular}" id="ocular"/>
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.ngVerbal}" id="verbal" />
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.signosVitales.ngMotora}" id="motora"/>
+                 </p:column>
+                 <p:column><p:outputLabel style="color: black;"  id="total" value="#{oNotaLlena.notaLlena.signosVitales.ngTotal}"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel style="color: black;" value="#{etiq.considerar}" class="mensaje"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column><p:outputLabel  style="color: black;" value="#{etiq.motivoConsulta}:"/></p:column>
+                 <p:column style=" text-align: justify" colspan="5">
+                     <table>
+                         <tr>
+                             <td>
+                                <p:outputLabel style="color: black; font-size: 12px; text-align: justify" value="#{oNotaLlena.notaLlena.motivoConsulta}"/>
+                             </td>
+                         </tr>
+                     </table>
+                </p:column>
+             </p:row>
+          
+             <p:row>
+                 <p:column><p:outputLabel value="#{etiq.indicaciones}:"/></p:column>
+                 <p:column style=" text-align: justify" colspan="5">
+                     <table>
+                         <tr>
+                             <td>
+                                 <p:outputLabel style="color: black; font-size: 12px; text-align: justify" value="#{oNotaLlena.notaLlena.observaciones}"/>
+                             </td>
+                         </tr>
+                     </table>
+                </p:column>
+             </p:row>
+         </p:panelGrid>
+            <p:panelGrid style="width: 75%">
+              <p:row>
+                 <p:column colspan="6"  style="color: black;" styleClass="ui-widget-header"><p:outputLabel value="MÉDICO"/></p:column>
+              </p:row>
+             <p:row>
+                 <p:column colspan="3" style="width: 35%">
+                     <p:outputLabel style="color: black;" value="NOMBRE: " styleClass="mensaje"/>
+                     <p:outputLabel style="color: black;" value="#{oNotaLlena.notaLlena.medicoRecibe.nombres} #{oNotaLlena.admisionUrgs.medicoRecibe.apPaterno} #{oNotaLlena.admisionUrgs.medicoRecibe.apMaterno}" />
+                     
+                  </p:column>
+                 <p:column style="width: 15%">
+                     <p:outputLabel  style="color: black;" value="CÉDULA: " styleClass="mensaje"/>
+                      <p:outputLabel style="color: black;" value="#{oNotaLlena.admisionUrgs.medicoRecibe.cedProf}"/>
+                 </p:column>
+                 <p:column colspan="2" style="width: 25%; text-align: left;">
+                      <p:outputLabel style="color: black;" value="FIRMA:" styleClass="mensaje"/>
+                 </p:column>
+             </p:row>
+            </p:panelGrid>
+         
+         </c:when> 
+          <c:otherwise>
+              <h1>El Paciente ya se encuentra Admitido u Hospitalizado</h1>
+          </c:otherwise>
+        </c:choose> 
+    </h:form>
+       
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+     </div>
+ 
+
+</html>

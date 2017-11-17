@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+
+        <ui:define name="cuerpo">
+            <div>
+
+             <h:form class="centrar">
+                 <br/>
+                 <p:growl id="messages" showDetail="true"/>
+                 <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                 <h2><h:outputLabel value="#{etiq.reporteEgresosHosp}"/></h2>
+                 <p:panelGrid styleClass="frm_centrado" id="RegPaciente"> 
+                <f:facet name="header">
+                     <p:row>
+                         <p:column>
+                         <h:outputLabel value="#{etiq.areaServicio}"/>
+                        </p:column>
+                    </p:row>
+                </f:facet>                                        
+
+                     <p:row>
+                         <p:column>
+                             <p:selectOneMenu id="rbSRN1" value="#{oReporteHosp.ASerHRRB.clave}">                                            
+                                 <f:selectItem itemLabel="SELECCIONA" itemValue="" />                                            
+                                 <f:selectItems value="#{oReporteHosp.listaAreasServicioHosp}" var="areaSer" 
+                                                itemLabel="#{areaSer.descripcion}" itemValue="#{areaSer.clave}"/>                                       
+                             </p:selectOneMenu>  
+                          </p:column>                                     
+                      </p:row>              
+                    <p:row>
+                         <p:column styleClass="ui-widget-header">
+                         <h:outputLabel value="#{etiq.rangoFechas}"/>
+                        </p:column>
+                    </p:row>                    
+
+                     <p:row>
+                         <p:column>
+                             <p:outputLabel value="#{etiq.fechaEmisionDel}: "/>
+
+                             <p:calendar id="fechaIni"  effect="fold" required="true" value="#{oReporteHosp.fechaIni}" maxdate="#{oReporteHosp.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                 <p:ajax event="dateSelect" update="fechaFin"/>
+                             </p:calendar>
+                            <p:outputLabel value=" #{etiq.al}: "/>
+                            <p:calendar id="fechaFin"  effect="fold" required="true" value="#{oReporteHosp.fechaFin}" mindate="#{oReporteHosp.fechaIni}" maxdate="#{oReporteHosp.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar>
+                          </p:column>                                     
+                      </p:row> 
+                <p:row>
+                    <p:column>            
+                        <p:commandButton id="bGenerar" styleClass="frm_login" value="#{etiq.consultar}" icon="ui-icon-search" action="#{oReporteHosp.generar()}" update=":resultados:reporte"/>                  
+                        <br/> 
+                    </p:column>
+                </p:row>
+                </p:panelGrid>
+                 </h:form>
+                 <br/><br/>
+                 <h:form id="resultados">
+                    <div class="tabla_pacEnc">
+                        <p:dataTable id="reporte" var="oEgresos" value="#{oReporteHosp.hospitalizacion}" widgetVar="tablaEgresos"
+                                      emptyMessage="No Existen Pacientes Con Este Criterio" filteredValue="#{oReporteHosp.filtroHospitalizacion}">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.reporteEgre}"/>
+                                <p:commandButton id="toggler" type="button" value="Columnas" style="float:right" icon="ui-icon-calculator" />
+                                <p:columnToggler datasource="reporte" trigger="toggler" />                                 
+                            </f:facet>                                                                                    
+                            
+                            <p:column headerText="#{etiq.expediente}" style="width: 7%">
+                                <h:outputText value="#{oEgresos.paciente.expediente.numero}" />
+                            </p:column>
+                                
+                            <p:column headerText="#{etiq.servicio}" style="width: 7%">
+                                <h:outputText value="#{oEgresos.episodioMedico.area.descripcion}" />
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.nombres}">
+                                <h:outputText value="#{oEgresos.paciente.nombres}" />
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.appat}">
+                                <h:outputText value="#{oEgresos.paciente.apPaterno}" />
+                            </p:column>
+
+                            <p:column headerText="#{etiq.apmat}">
+                                <h:outputText value="#{oEgresos.paciente.apMaterno}" />
+                            </p:column>
+
+                            <p:column filterBy="#{oEgresos.paciente.edad}" headerText="#{etiq.edad}" filterMatchMode="exact" style="width: 10%">
+                                <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('tablaEgresos').filter()" >
+                                            <f:selectItem itemLabel="Elige" itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItem itemLabel="0 DÍAS - 1 MES" itemValue="9"/>
+                                            <f:selectItem itemLabel="1 MES - 1 AÑO" itemValue="0"/>
+                                            <f:selectItem itemLabel="1 AÑO - 2 AÑOS" itemValue="1"/>
+                                            <f:selectItem itemLabel="2 AÑOS - 6 AÑOS" itemValue="2"/>
+                                            <f:selectItem itemLabel="6 AÑOS - 12 AÑOS" itemValue="3"/>
+                                            <f:selectItem itemLabel="12 AÑOS - 18 AÑOS" itemValue="4"/>
+                                            <f:selectItem itemLabel="18 AÑOS - 30 AÑOS" itemValue="5"/>
+                                            <f:selectItem itemLabel="31 AÑOS - 40 AÑOS" itemValue="6"/>
+                                            <f:selectItem itemLabel="41 AÑOS - 50 AÑOS" itemValue="7"/>
+                                            <f:selectItem itemLabel="51 AÑOS Y Más" itemValue="8"/>
+                                        </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{oEgresos.paciente.edadNumero}" />
+                                <h:outputText value="#{oEgresos.paciente.edad}" style="display: none"/>
+                            </p:column>                                                           
+                            
+                            <p:column headerText="#{etiq.talla}" style="width: 5%">
+                                <h:outputText value="#{oEgresos.paciente.talla}" />
+                            </p:column>
+
+                            <p:column headerText="#{etiq.peso}" style="width: 5%">
+                                <h:outputText value="#{oEgresos.paciente.peso}"/>
+                            </p:column>
+                            
+                            <p:column filterBy="#{oEgresos.episodioMedico.afePrincipal.CIE10.descripcionDiag}" 
+                                      headerText="#{etiq.diagnostico}" 
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{oEgresos.episodioMedico.afePrincipal.CIE10.descripcionDiag}"/>
+                            </p:column>                         
+                            
+                            <p:column headerText="#{etiq.cie10}" style="width: 5%">
+                                <h:outputText value="#{oEgresos.episodioMedico.afePrincipal.CIE10.clave}"/>
+                            </p:column>  
+                            
+                            <p:column headerText="#{etiq.causes}" style="width: 5%">
+                                <h:outputText value="#{oEgresos.episodioMedico.afePrincipal.CIE10.causes.clave}"/>
+                            </p:column>  
+
+                            <p:column filterBy="#{oEgresos.episodioMedico.motivoEgresoP}" 
+                                      headerText="#{etiq.motivoEgreso}" filterMatchMode="exact">
+                                <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('tablaEgresos').filter()" >
+                                            <f:selectItem itemLabel="Elige" itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItem itemLabel="CURACIÓN" itemValue="CURACIÓN"/>
+                                            <f:selectItem itemLabel="MEJORÍA" itemValue="MEJORÍA"/>
+                                            <f:selectItem itemLabel="VOLUNTARIO" itemValue="VOLUNTARIO"/>
+                                            <f:selectItem itemLabel="PASE A OTRO HOSPITAL" itemValue="PASE A OTRO HOSPITAL"/>
+                                            <f:selectItem itemLabel="DEFUNCIÓN" itemValue="DEFUNCIÓN"/>
+                                            <f:selectItem itemLabel="OTRO MOTIVO" itemValue="OTRO MOTIVO"/>
+                                        </p:selectOneMenu>
+                                </f:facet>
+                                    <h:outputText value="#{oEgresos.episodioMedico.motivoEgresoP}"/>
+                            </p:column>        
+                            
+                            <p:column filterBy="#{oEgresos.paciente.municipio.descripcionMun}" 
+                                      headerText="#{etiq.municipio}" 
+                                      filterMatchMode="contains">
+                                   <h:outputText value="#{oEgresos.paciente.municipio.descripcionMun}"/>
+                            </p:column>     
+                            
+                            <p:column filterBy="#{oEgresos.paciente.ciudad.descripcionCiu}" 
+                                      headerText="#{etiq.localidad}" 
+                                      filterMatchMode="contains">
+                                <h:outputText value="#{oEgresos.paciente.ciudad.descripcionCiu}"/>
+                            </p:column>                              
+                            
+                           </p:dataTable>
+                    </div>
+                     <br/><br/>
+                     <center>
+                     <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" styleClass="frm_centrado">
+                         <p:dataExporter type="xls" target="reporte" fileName="Reporte Egresos Hospitalarios #{oReporteHosp.fechaI} - #{oReporteHosp.fechaF}" postProcessor="#{oReporteHosp.postProcessXLS}"/>
+                     </p:commandButton>
+                     </center>
+                </h:form>
+                 <br/><br/>
+
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>              
+             </div>
+       </ui:define>
+       </ui:composition>
+      
+</html>

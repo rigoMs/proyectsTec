@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.registrar} #{etiq.destinos}"/>
+        </h2>
+       
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <center>
+                    
+                        <p:dialog id="dlgRegistrarDestino" widgetVar="dlgRD"  position="center" closable="false" dynamic="true" resizable="false"
+                                  appendTo="@(body)" modal="true" >
+                            <center>
+                                <h3>Destino</h3>
+                                <h:form id="hola">
+                                    <p:panelGrid id="panelDatos">
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.id}" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtID" value="#{oDestinoJB.currentDestino.idDestino}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.nombre} #{etiq.destino}" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtNombre" value="#{oDestinoJB.currentDestino.nombre}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                             </p:row>
+                                        
+                                         <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.tel}" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtTelefono" value="#{oDestinoJB.currentDestino.tel}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.domicilio}" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtDireccion" value="#{oDestinoJB.currentDestino.calleNum}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                             </p:row>
+                      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.colonia}" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtColonia" value="#{oDestinoJB.currentDestino.colonia}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                                <h:outputLabel id="Estado" value="Estado" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="enti" value="#{oDestinoJB.currentDestino.direcc.ciudadCP.ciudad.estado.claveEdo}"  >
+                                                    <p:ajax update="muni" event="valueChange" listener="#{oDestinoJB.llenaMunicipios}"/>
+                                                    <f:selectItem itemLabel="Seleccione" />
+                                                    <f:selectItems value="#{oDestinoJB.arrEdo}" var="oEdo" 
+                                                                   itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                                                   </p:selectOneMenu>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputLabel id="Municipio" value="Municipio" />
+                                            </p:column>
+                                             <p:column >
+                                                 <p:selectOneMenu id="muni" value="#{oDestinoJB.currentDestino.direcc.ciudadCP.ciudad.municipio.claveMun}" >
+                                                     <p:ajax update="loc" event="valueChange" listener="#{oDestinoJB.llenaCiudad}"/>
+                                                    <f:selectItem itemLabel="Seleccione" />
+                                                    <f:selectItems value="#{oDestinoJB.arrMun}" var="oMun" 
+                                                                   itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                                                   </p:selectOneMenu>
+                                             </p:column>
+                                            <p:column>
+                                                <h:outputLabel id="Localidad" value="Localidad" />
+                                            </p:column>
+                                             <p:column>
+                                                 <p:selectOneMenu  id="loc" value="#{oDestinoJB.currentDestino.direcc.ciudadCP.ciudad.claveCiu}" >
+                                                     <p:ajax update="codp" event="valueChange" listener="#{oDestinoJB.llenaCP()}"/>
+                                                    <f:selectItem itemLabel="Seleccione" />
+                                                    <f:selectItems value="#{oDestinoJB.arrCiu}" var="oCiu"
+                                                                   itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                                                   </p:selectOneMenu>
+                                             </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputLabel id="Cp" value="Cod. Postal" />
+                                            </p:column>
+                                             <p:column>
+                                                 <p:selectOneMenu id="codp" value="#{oDestinoJB.currentDestino.direcc.ciudadCP.cp}" >
+                                                     <p:ajax></p:ajax>
+                                                   <f:selectItem itemLabel="Seleccione"  />
+                                                   <f:selectItems value="#{oDestinoJB.arrCP}" var="oCP" 
+                                                                  itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                                                  </p:selectOneMenu>
+                                           </p:column>
+                                        </p:row>
+                                      
+                                    </p:panelGrid>
+                                    
+                                    <br/><br/><p:commandButton value="#{etiq.guardar}" update=":formR:msg">
+                                        <p:ajax listener="#{oDestinoJB.guarda()}"  />
+                                    </p:commandButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <p:commandButton value="#{etiq.volver}" oncomplete="PF('dlgRD').hide()"/>
+                              
+                                </h:form>
+                            </center>
+                        </p:dialog>
+                <h:form id="formR" > 
+                    <p:growl id="msg" sticky="true" showDetail="true"/> 
+                        <p:dataTable   id="dtRegistrarDestino" rows="5" editable="true" paginator="true" paginatorPosition="bottom" 
+                                       var="oD" style="width: 1200px" value="#{oDestinoJB.listaDestino}"  selection="#{oDestinoJB.selectedDestino}" rowKey="#{oD.idDestino}" >
+                          <p:ajax event="rowSelectRadio"/>
+                            <p:column selectionMode="single"/>
+                            <p:column headerText="#{etiq.id}" >
+                                <p:outputLabel value="#{oD.idDestino}" />
+                               
+                            </p:column >
+                            
+                            <p:column headerText="#{etiq.nombre} #{etiq.destino}">
+                                <p:outputLabel value="#{oD.nombre}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.tel}">
+                                <p:outputLabel value="#{oD.tel}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.domicilio}">
+                                <p:outputLabel  value="#{oD.calleNum}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.colonia}">
+                                <p:outputLabel value="#{oD.colonia}"/>
+                            </p:column>
+                            
+                            <p:column headerText="CP">
+                                <p:outputLabel value="#{oD.direcc.ciudadCP.cp}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Estado">
+                                <p:outputLabel value="#{oD.direcc.ciudadCP.ciudad.estado.descripcionEdo}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Ciudad">
+                                <p:outputLabel value="#{oD.direcc.ciudadCP.ciudad.descripcionCiu}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Municipio">
+                                <p:outputLabel value="#{oD.direcc.ciudadCP.ciudad.municipio.descripcionMun}"/>
+                            </p:column>
+                            
+                           
+                            <f:facet name="footer">
+                                <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-pencil" oncomplete="PF('dlgRD').show()">
+                                    <p:ajax update=":formR:msg :dlgRegistrarDestino" listener="#{oDestinoJB.confNuevo()}"/>
+                                  
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.eliminar}" icon="ui-icon-pencil" >
+                                    <p:ajax update=":formR:msg :dlgRegistrarDestino" listener="#{oDestinoJB.confDestino(1)}"/>
+                                  
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil">
+                                    <p:ajax update=":formR:msg :dlgRegistrarDestino" listener="#{oDestinoJB.confDestino(2)}"/>
+                              
+                                </p:commandButton>
+                                
+                                  
+                            </f:facet>
+                            <f:facet name="header">                              
+                                <p:outputLabel value="#{etiq.administrar} #{etiq.destinos}"></p:outputLabel>
+                            </f:facet>
+                        </p:dataTable> 
+                    </h:form></center>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

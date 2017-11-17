@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+    
+    <ui:define name="cuerpo">
+     <h:form>
+        <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+        <h3 class="centrado_texto"><p:outputLabel id="titCambCons" value="#{etiq.cambiarConsultorio}"/></h3>
+        
+        <p:dataTable id="tablaConsul" var="oCamVar" 
+                     value="#{oCamCons.listaCitasPorMedico}" 
+                     emptyMessage="#{etiq.noDatos}">
+              <f:facet name="header">
+                  <p:outputLabel id="titVac" value="#{etiq.cambiarConsultorio}"/>
+              </f:facet>
+             
+           <p:columnGroup type="header">
+            <p:row>
+                <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="centrado_texto" style="width: 30%">
+                </p:column>
+                <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="centrado_texto columnamed">
+                </p:column>
+                <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="centrado_texto columnamed">
+                </p:column>
+                <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="centrado_texto">
+                </p:column>
+                <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="centrado_texto columnamed">
+                </p:column>
+                <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="">
+                </p:column>
+                <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="columnamed3">
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column headerText="#{etiq.primVez}" styleClass="centrado_texto columnamed2">
+                </p:column>
+                <p:column headerText="#{etiq.subs}" styleClass="centrado_texto columnamed2">
+                </p:column>
+                <p:column headerText="#{etiq.total}" styleClass="centrado_texto columnamed2">
+                </p:column>
+            </p:row>
+           </p:columnGroup>
+                
+                <p:column>
+                    <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{oCamVar.turno.clave}" />
+                </p:column>
+                <p:column styleClass="centrado_texto">
+                    <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                </p:column>
+                <p:column styleClass="centrado_texto">
+                    <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                </p:column>
+                <p:column styleClass="centrado_texto">
+                 <h:outputText value="#{oCamVar.maximo}" />
+                </p:column>
+                <p:column styleClass="centrado_texto">
+                    <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                </p:column>
+                <p:column styleClass="centrado_texto">
+                    <h:outputText value="#{oCamVar.citasSubs}"/>
+                </p:column>
+                <p:column styleClass="centrado_texto">
+                    <h:outputText value="#{oCamVar.citasTotales}" />
+                </p:column>
+                <p:column  styleClass="centrado_texto">
+                    <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="CambiaPacDeCons" ajax="false">
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                      <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                    </p:commandButton>
+                </p:column>
+         </p:dataTable>
+              
+       </h:form>
+       <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+     </p:ajaxStatus>  
+    </ui:define>
+    </ui:composition>
+</html>

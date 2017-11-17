@@ -1,0 +1,520 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"      
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div id="solicitud">
+                    <h:form id="busca">     
+                        <br/>
+                        <p:accordionPanel styleClass="centrar" style=" width: 30%; font-weight: bold;">
+                            <p:tab title="#{etiq.ser}" >
+                                <p:outputPanel styleClass="centrar" style="width:100%; margin: 0px;">
+                                    <p:panelGrid style="width:100%;">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header">
+                                                <p:outputLabel value="#{etiq.servicio}:"/>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:selectOneMenu effect="puff" id="cmbAreas" value="#{oStdDietas.areaServicio}">
+                                                    <p:ajax event="change" listener="#{oStdDietas.buscaPacientesEnServicioSeleccionado()}" update=":frmPres"/>
+                                                    <f:selectItem itemLabel="Elegir servicio" itemValue="" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{oStdDietas.arrServicios}" var="oS" itemLabel="#{oS.servicio.descripcion}" itemValue="#{oS.servicio.clave}"/>                                            
+                                               </p:selectOneMenu>
+                                            </p:column>
+                                        </p:row>                                                               
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <div style="margin-bottom: 15px;"/>
+                    </h:form>
+                    <h:form id="frmPres">
+                        <br/>
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <!-- <h3 class="centrado_texto"><h:outputLabel value="#{etiq.solicPres}"/></h3>-->
+                        <p:panelGrid style="width: 98%;" rendered="#{not empty oStdDietas.arrrgloPacienteStd}">
+                            <p:row>
+                                <p:column colspan="3" style="font-weight: bold; font-size: 15pt; text-align:  center; border-color:  #ffffff; border-bottom-color:  darkgrey;">
+                                    <p:outputLabel value="#{etiq.solicPres}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="width: 33%;">
+                                    <b><p:outputLabel value="#{etiq.servicio}:"/></b>&nbsp;<p:outputLabel value="#{oStdDietas.servicio}"/>
+                                </p:column>
+                                <p:column style="width: 33%;">
+                                    <b><p:outputLabel value="#{etiq.fecha}:"/></b>&nbsp;<p:outputLabel value="#{oStdDietas.fechaActual}"/>
+                                </p:column>
+                                <p:column style="width: 33%;">
+                                    <b><p:outputLabel value="#{etiq.oSolEnf}:"/></b>&nbsp;<p:outputLabel value="#{oStdDietas.personal.nombreCompleto}"/> 
+                                </p:column>                                    
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3" style="padding: 0px;">
+                                    <p:dataTable id="solicPres" var="oPacD" value="#{oStdDietas.arrrgloPacienteStd}"
+                                                 emptyMessage="#{etiq.msjRegVacios}" style="text-align: center;" paginator="true" rows="15">
+                                        <p:column headerText="#{etiq.noExpediente}" style="width: 6.5%;font-weight:  bold;">
+                                            <p:outputLabel style="font-size: 11px;" value="#{oPacD.episodio.paciente.expediente.numero}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nombPa}" style="width: 20%;font-weight:  bold;">
+                                            <p:outputLabel style="font-size: 11px;" value="#{oPacD.episodio.paciente.nombreCompleto}"/>&nbsp;
+                                        </p:column>
+                                        <p:column headerText="#{etiq.eda2}" style="width: 4%;font-weight:  bold;" >
+                                            <p:outputLabel style="font-size: 11px;" value="#{oPacD.episodio.paciente.edadNumero}"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.sex2}" style="width: 4%;font-weight:  bold;">
+                                            <p:outputLabel value="#{oPacD.episodio.paciente.sexoP}"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nuCama}" style="width: 5.5%;font-weight:  bold;">
+                                            <p:outputLabel value="#{oPacD.episodio.cama.numero}"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.tipDieta}" style="width: 15%;font-weight:  bold;">
+                                            <p:outputLabel value="#{oPacD.dietas.nombre}" style="font-size: 11px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.obs2}" style="width: 19%;font-weight:  bold;">
+                                            <p:outputLabel value="#{oPacD.observacion}" style="font-size: 11px;"/> 
+                                        </p:column>
+                                        <p:column style="width: 7%;" headerText="">
+                                            <p:commandButton  icon="ui-icon-circle-plus" title="Registrar" oncomplete="PF('registrarPreS').show()" disabled="#{oPacD.disableRegistrar}">
+                                                <p:ajax listener="#{oStdDietas.buscarPaciente(oPacD.episodio.paciente.folioPaciente, oPacD.episodio.paciente.claveEpisodio)}" update=":solicitudDietas :solicitudDietas:sDieta :solicitudDietas:sObser"/>
+                                            </p:commandButton>&nbsp;
+                                            <p:commandButton  icon="ui-icon-document" title="Modificar" disabled="#{oPacD.disableModificar}">
+                                                <p:ajax listener="#{oStdDietas.buscaSolictudDietaPaciente(oPacD.episodio.paciente.folioPaciente, oPacD.episodio.paciente.claveEpisodio,oPacD.idDetalleDietas, oPacD.dietas.folioDieta)}"
+                                                        update=":ModificarDieta_p  :ModificarDieta_p:sDieta1 :ModificarDieta_p:sObser1"/>
+                                            </p:commandButton> 
+                                        </p:column>
+                                    </p:dataTable>
+                                    
+                                </p:column>
+                                
+                            </p:row>
+                            <p:row>
+                                <div class="centrar">
+                                    <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center; margin: 0 auto;">
+                                        <p:commandButton icon="ui-icon-folder-open" value="#{etiq.imprimir} Solicitud Vacia" 
+                                                         oncomplete="PF('imprimirSolicitudDietas').show()" 
+                                                         update=":impStdVacia">
+                                        </p:commandButton>
+                                        &nbsp;
+                                        <p:commandButton icon="ui-icon-folder-open" value="#{etiq.imprimir} Solicitud Llena"
+                                                         actionListener="#{oStdDietas.buscaSolicitudDietas}" update=":Stdllena :frmPres:msgs">
+                                        </p:commandButton>
+                                        &nbsp;
+                                        <p:commandButton  icon="ui-icon-plus" value="#{etiq.agra} Paciente" onclick="PF('pacAgregar').show();">
+                                        </p:commandButton>
+                                    </p:column>
+                                </div>
+                            </p:row>                      
+                        </p:panelGrid>
+                        <br/>
+                        <br/>
+                        <p:outputPanel id="pacAgre" style="width: 1300px;" styleClass="centrar">
+                        <div class="centrar">
+                            <p:dataTable paginator="true" rows="5" id="tablaPac" var="oPacEnc" 
+                                         value="#{oBuscarPaciente.paciente.buscarPacienteDatos()}" 
+                                         emptyMessage="#{etiq.noRegistro}" rendered="#{not empty oBuscarPaciente.paciente.buscarPacienteDatos()}" >
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.oBuscPac}"/>
+                                </f:facet>
+                                <p:column >
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                    </f:facet>
+                                        <h:outputText value="#{oPacEnc.apPaterno}"/>
+                                </p:column>
+                                <p:column width="">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                    </f:facet>
+                                       <h:outputText value="#{oPacEnc.apMaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                    </f:facet>
+                                        <h:outputText value="#{oPacEnc.nombres}"/>
+                                </p:column>
+                                <p:column style="width: 9%">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                                    </f:facet>
+                                        <h:outputText value="#{oPacEnc.fechaNac}"/>
+                                </p:column>                               
+                                <p:column style="width: 7%">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.edadNumero}"/>
+                                </p:column>
+                                <p:column width="90">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                        </f:facet>
+                                    <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                                </p:column>
+                                <p:column style="width: 8%">
+                                    <f:facet name="header">
+                                       <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                                </p:column>
+                                <p:column width="100">                                        
+                                    <p:commandButton icon="ui-icon-folder-open" value="#{etiq.agra}">
+                                        <p:ajax listener="#{oStdDietas.buscarPacienteDatos(oPacEnc.folioPaciente, oPacEnc.claveEpisodio)}"
+                                                update=":solicitudDietas  :solicitudDietas:sDieta :solicitudDietas:sObser"/>
+                                    </p:commandButton>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton icon="ui-icon-folder-open" value="#{etiq.limp}" update=":frmPres:pacAgre  :sol34:pacBuscar">
+                                        <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.nombres}" value=""/>
+                                        <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.apPaterno}" value=""/>
+                                        <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.apMaterno}" value=""/>
+                                        <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.folioPaciente}" value="#{0}"/>
+                                    </p:commandButton>
+                                </f:facet>
+                            </p:dataTable>
+                        </div>
+                    </p:outputPanel>
+                    </h:form>
+                    
+                </div>
+                <div class="centrar">
+                    <p:dialog modal="true" header="#{etiq.registraDieta}" showEffect="puff" hideEffect="puff" resizable="false" widgetVar="registrarPreS" width="820">
+                        <div class="centrar">
+                            <h:form id="solicitudDietas">
+                               <p:panelGrid id="pgFro1" style="width: 700px;" >
+                                   <p:row>
+                                       <p:column styleClass="ui-widget-header" style="width: 8%;" >
+                                           <p:outputLabel value="EXP:"/>
+                                       </p:column>
+                                       <p:column style="width: 15%;">
+                                           <p:outputLabel value="#{oStdDietas.solicitdDieta.episodio.paciente.expediente.numero}"/>
+                                       </p:column>
+                                       <p:column styleClass="ui-widget-header" style="width: 18%;">
+                                           <p:outputLabel value="#{etiq.nombPa}:"/>
+                                       </p:column>
+                                       <p:column>
+                                           <p:outputLabel value="#{oStdDietas.solicitdDieta.episodio.paciente.nombreCompleto}"/>
+                                       </p:column>
+                                   </p:row>
+                                </p:panelGrid>
+                                <div style=" margin-bottom: 2px;"/>                                
+                                <p:panelGrid style="width: 700px;">
+                                    <p:row>
+                                        <p:column style="width: 45%" styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.tipDieta}"/> 
+                                        </p:column>
+                                        <p:column style="width: 55%;" styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.obs2}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                    <p:column>
+                                        <p:selectOneMenu id="sDieta" effect="puff"   value="#{oStdDietas.solicitdDieta.dietas.folioDieta}">
+                                            <f:selectItem itemValue=""  itemLabel="Selecciona Dieta" noSelectionOption="true"/>
+                                            <f:selectItems value="#{oStdDietas.listaDietas}" var="oDieta" itemLabel="#{oDieta.nombre}" itemValue="#{oDieta.folioDieta}"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputTextarea id="sObser" cols="40" rows="2" value="#{oStdDietas.solicitdDieta.observacion}" onkeyup="this.value= this.value.toUpperCase()">                                            
+                                        </p:inputTextarea>
+                                    </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:panelGrid>
+                                    <div class="centrar">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header">
+                                                <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" actionListener="#{oStdDietas.guardarSolicitudDietas()}"
+                                                                 update=":frmPres:solicPres :frmPres:msgs :frmPres:solicPres">                                                    
+                                                </p:commandButton>
+                                            </p:column>
+                                             
+                                        </p:row>
+                                    </div>
+                                </p:panelGrid>
+                            </h:form>
+                        </div>                        
+                    </p:dialog>
+                </div>
+                <p:dialog modal="true" header="#{etiq.modifSolDieta}" showEffect="puff" hideEffect="puff" resizable="false" widgetVar="modificarDieta" width="820">
+                    <div class="centrar">
+                        <h:form id="ModificarDieta_p">
+                           <p:panelGrid id="pgFro1" style="width: 700px;" >
+                               <p:row>
+                                   <p:column styleClass="ui-widget-header" style="width: 8%;" >
+                                       <p:outputLabel value="EXP:"/>
+                                   </p:column>
+                                   <p:column style="width: 15%;">
+                                       <p:outputLabel value="#{oStdDietas.modificarDieta.episodio.paciente.expediente.numero}"/>
+                                   </p:column>
+                                   <p:column styleClass="ui-widget-header" style="width: 18%;">
+                                       <p:outputLabel value="#{etiq.nombPa}:"/>
+                                   </p:column>
+                                   <p:column>
+                                       <p:outputLabel value="#{oStdDietas.modificarDieta.episodio.paciente.nombreCompleto}"/>
+                                   </p:column>
+                               </p:row>
+                            </p:panelGrid>
+                            <div style=" margin-bottom: 2px;"/>                                
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column style="width: 45%" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.tipDieta}"/> 
+                                    </p:column>
+                                    <p:column style="width: 55%;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.obs2}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                <p:column>
+                                    <p:selectOneMenu id="sDieta1"  value="#{oStdDietas.modificarDieta.dietas.folioDieta}">
+                                        <f:selectItem itemValue=""  itemLabel="Selecciona Dieta" noSelectionOption="true"/>
+                                        <f:selectItems value="#{oStdDietas.listaDietas}" var="oDiet" itemLabel="#{oDiet.nombre}" itemValue="#{oDiet.folioDieta}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <p:inputTextarea id="sObser1" cols="40" rows="2" value="#{oStdDietas.modificarDieta.observacion}" onkeyup="this.value= this.value.toUpperCase()">                                            
+                                    </p:inputTextarea>
+                                </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid>
+                                <div class="centrar">
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:commandButton value="#{etiq.modificar}" icon="ui-icon-disk" actionListener="#{oStdDietas.modificarDietaPaciente()}"
+                                                             update=":frmPres:solicPres :frmPres:msgs :ModificarDieta_p">                                                
+                                            </p:commandButton>
+                                        </p:column>
+                                          
+                                    </p:row>
+                                </div>
+                            </p:panelGrid>
+                        </h:form>
+                    </div>                        
+                </p:dialog>
+                        
+                <p:dialog modal="true" widgetVar="imprimirSolicitudDietas" showEffect="puff" hideEffect="puff" header="" width="910" height="600" resizable="false">
+                    <h:form id="impStdVacia">
+                        <p:outputPanel id="prescripcionPr1">
+                            <p:panel id="pr1" style="border-color: black; width: 870px;padding: 0px; border-width: 1.5px;">                                
+                                <p:panelGrid style="width:100%;">
+                                    <p:row>
+                                        <p:column  style=" height: 50px; border-color:  transparent; width: 12%">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="45" align="right"/>
+                                        </p:column>
+                                        <p:column style=" width: 76%; text-align: center; border-color: transparent;">
+                                            <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                            <b><p:outputLabel value="#{etiq.hrrbM}"/></b>                                    
+                                        </p:column>
+                                        <p:column style="width : 12%; height: 50px;border-color: transparent;">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120" height="45"  align="left"/>
+                                        </p:column>
+                                    </p:row>                                          
+                                </p:panelGrid>
+                            </p:panel>                            
+                            <p:outputPanel style="width: 850px; text-align: center; font-size: 14pt; font-weight: bold;">
+                                <p:outputLabel value="#{etiq.solicPres}"/>
+                            </p:outputPanel>
+                            
+                            <p:panel style="border-color: black; width: 870px; border-width: 1.5px;">
+                                <p:panelGrid style="height: 28px; width: 95%;">
+                                    <p:row>
+                                         <p:column  style=" border-color:  transparent; width: 25%;">
+                                             <b><p:outputLabel value="#{etiq.servicio}:"/> </b>
+                                             &nbsp;<p:outputLabel value="#{oStdDietas.servicio}"/>
+                                         </p:column>                                        
+                                        <p:column style="width: 15%; border-color: transparent;" >
+                                            <b> <p:outputLabel value="#{etiq.fecha}:"/></b>
+                                            &nbsp;<p:outputLabel value="#{oStdDietas.fechaActual}"/>
+                                        </p:column>
+                                        <p:column  style="border-color:  transparent; width: 35%;">
+                                            <b><p:outputLabel value="#{etiq.oSolEnf}:"/></b>
+                                            &nbsp;<p:outputLabel value="#{oStdDietas.personal.nombreCompleto}"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:panel>                            
+                            <div style="height: 4px;"/>                          
+                            <p:outputPanel style="width: 878px;">
+                                <div class="centrar">
+                                    <p:dataTable id="solicPres" var="oPacc" value="#{oStdDietas.arrPaciente}" emptyMessage="#{etiq.msjRegVacios}" style="text-align: center;">
+                                        <p:column headerText="#{etiq.noExpediente}" style="width: 8%;font-weight:  bold; font-size:11px; text-align: center;border-color: black; color: black;">
+                                            <p:outputLabel value="#{oPacc.paciente.expediente.numero}" style="font-size: 10px;"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nombPa}" style="width: 22%;font-weight:  bold; font-size:11px;text-align: center; border-color: black; color: black;">
+                                            <p:outputLabel value="#{oPacc.paciente.nombreCompleto}" style="font-size: 10px;"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.eda2}" style="width: 5%;font-weight:  bold; font-size:11px;text-align: center;border-color: black; color: black;" >
+                                            <p:outputLabel value="#{oPacc.paciente.edadNumero}" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.sex2}" style="width: 4.2%;font-weight:  bold; font-size:11px;text-align: center;border-color: black;color: black;">
+                                            <p:outputLabel value="#{oPacc.paciente.sexoP}" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nuCama}" style="width: 6%;font-weight:  bold;font-size:11px; text-align: center;border-color: black; color: black;">
+                                            <p:outputLabel value="#{oPacc.cama.numero}" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.tipDieta}" style="width: 12%;font-weight:  bold; font-size:11px; text-align: center;border-color: black;color: black;">
+                                             <p:outputLabel value="" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.obs2}" style="width: 20%;font-weight:  bold; font-size:11px; text-align: center;border-color: black; color: black;">
+                                             <p:outputLabel value="" style="font-size: 10px;"/> 
+                                        </p:column>                                       
+                                    </p:dataTable>
+                                </div>
+                            </p:outputPanel>                            
+                        </p:outputPanel>
+                        <p:panelGrid>
+                            <p:row>
+                                <div class="centrar">
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print" >
+                                            <p:printer target="prescripcionPr1" />
+                                        </p:commandButton>&nbsp;
+                                        <p:commandButton onclick="PF('imprimirSolicitudDietas').hide();" value="#{etiq.cerrar}" icon="ui-icon-close">
+                                        </p:commandButton>
+                                    </p:column>                                    
+                                </div>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>                 
+                </p:dialog>
+                        
+                <p:dialog modal="true" widgetVar="presPrint" showEffect="puff" hideEffect="puff" header="" width="950" height="600" resizable="false">
+                    <h:form id="Stdllena">
+                        <p:outputPanel id="prescripcionPr">
+                            <p:panel id="pr1" style="border-color: black; width: 97%;padding: 0px; border-width: 1px;" >                                 
+                                <p:panelGrid style="width:100%;">
+                                    <p:row>
+                                        <p:column  style=" height: 50px; border-color:  transparent; width: 12%">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="45" align="right"/>
+                                        </p:column>
+                                        <p:column style=" width: 76%; text-align: center; border-color: transparent;">
+                                            <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                            <b><p:outputLabel value="#{etiq.hrrbM}"/></b>                                    
+                                        </p:column>
+                                        <p:column style="width : 12%; height: 50px;border-color: transparent;">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120" height="45"  align="left"/>
+                                        </p:column>
+                                    </p:row>                                          
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:outputPanel style="width: 870px; text-align: center; font-size: 14pt; font-weight: bold;">
+                                <p:outputLabel value="#{etiq.solicPres}"/>
+                            </p:outputPanel>
+                            <p:panel style="border-color: black; width: 96.4%; border-width: 1px;">
+                                <p:panelGrid style="height: 28px; width: 100%;">
+                                    <p:row>
+                                         <p:column  style=" border-color:  #ffffff; width: 30%;">
+                                             <b><p:outputLabel value="#{etiq.servicio}: "/> </b>
+                                             <p:outputLabel value="#{oStdDietas.servicio}"/>
+                                         </p:column>                                        
+                                        <p:column style="width: 25%; border-color: #ffffff;" >
+                                            <b> <p:outputLabel value="#{etiq.fecha}:"/></b>&nbsp;
+                                            <p:outputLabel value="#{oStdDietas.fechaSolicitud}"/>
+                                        </p:column>
+                                        <p:column  style="border-color:  #ffffff; width: 35%;">
+                                            <b><p:outputLabel value="#{etiq.oSolEnf}:"/></b>
+                                            <p:outputLabel value="#{oStdDietas.personalString}"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:panel>
+                            <div style="height: 3px;"/>                          
+                            <p:outputPanel style="width: 97%;">
+                                <div class="centrar">
+                                    <p:dataTable id="solicPres" value="#{oStdDietas.arrSolDietas}" var="oStd" emptyMessage="#{etiq.msjRegVacios}" style="text-align: center;">
+                                        <p:column headerText="#{etiq.noExpediente}" style="width: 7%;font-weight:  bold; font-size:11px; text-align: center;border-color: black; color: black;">
+                                            <p:outputLabel value="#{oStd.episodio.paciente.expediente.numero}" style="font-size: 10px;"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nombPa}" style="width: 20%;font-weight:  bold; font-size:11px;text-align: center; border-color: black; color: black;">
+                                            <p:outputLabel value="#{oStd.episodio.paciente.nombreCompleto}" style="font-size: 10px;"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.eda2}" style="width: 5%;font-weight:  bold; font-size:11px;text-align: center;border-color: black; color: black;" >
+                                            <p:outputLabel value="#{oStd.episodio.paciente.edadNumero}" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.sex2}" style="width: 4.2%;font-weight:  bold; font-size:11px;text-align: center;border-color: black; color: black;">
+                                            <p:outputLabel value="#{oStd.episodio.paciente.sexoP}" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nuCama}" style="width: 6%;font-weight:  bold;font-size:11px; text-align: center;border-color: black; color: black;">
+                                            <p:outputLabel value="#{oStd.episodio.cama.numero}" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.tipDieta}" style="width: 16%;font-weight:  bold; font-size:11px; text-align: center;border-color: black; color: black;">
+                                            <p:outputLabel value="#{oStd.dietas.nombre}" style="font-size: 10px;"/> 
+                                        </p:column>
+                                        <p:column headerText="#{etiq.obs2}" style="width: 16%;font-weight:  bold; font-size:11px; text-align: center;border-color: black; color: black;">
+                                            <p:outputLabel value="#{oStd.observacion}" style="font-size: 10px;"/> 
+                                        </p:column>                                       
+                                    </p:dataTable>
+                                </div>
+                            </p:outputPanel>                            
+                        </p:outputPanel>
+                        <p:panelGrid>
+                            <p:row>
+                                <div class="centrar">
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print" >
+                                            <p:printer target="prescripcionPr" />
+                                        </p:commandButton>&nbsp;
+                                        <p:commandButton onclick="PF('presPrint').hide();" value="#{etiq.cerrar}" icon="ui-icon-close">
+                                        </p:commandButton>
+                                    </p:column>                                    
+                                </div>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>                 
+                </p:dialog>
+                
+                <p:dialog modal="true" widgetVar="pacAgregar" showEffect="puff" hideEffect="puff" header="" width="900" resizable="false">
+                    <h:form id="sol34"> 
+                    <p:outputPanel id="pacBuscar" style=" width: 870px;" styleClass="centrar">
+                         <p:accordionPanel>
+                                 <p:tab title="#{etiq.buscarDatosBasicos}">
+                                     <p:panelGrid columns="4" >
+                                         <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                         <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                         <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                         <h:outputLabel />
+                                         <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPaciente.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>                        
+                                         <p:inputText styleClass="bordes" id="app" value="#{oBuscarPaciente.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                         <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPaciente.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                         <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" update=":frmPres:pacAgre:tablaPac" ajax="false">
+                                             <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{0}"/>
+                                         </p:commandButton>
+                                     </p:panelGrid>
+                                 </p:tab>
+                                 <p:tab title="#{etiq.buscarPorExpediente}">
+                                     <p:panelGrid columns="3" styleClass="frmlogin">
+                                         <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                         <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPaciente.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                                             <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                             <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                                         </p:inputText>
+                                         <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" update=":frmPres:pacAgre:tablaPac" ajax="false">
+                                             <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{1}"/>
+                                         </p:commandButton>
+                                     </p:panelGrid>
+                                     <p:message for="exp" id="mentExp"></p:message>
+                                 </p:tab>
+                         </p:accordionPanel>
+                    </p:outputPanel>
+                    </h:form>
+                </p:dialog>
+                
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>            
+        </ui:composition>
+</html>
+

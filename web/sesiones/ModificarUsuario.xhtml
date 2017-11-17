@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div>
+                    <p:growl id="grunuidos" showDetail="true"/>
+                    <p:panel>
+                    <h:form>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <h2 class="centrado_texto"><h:outputLabel value="#{etiq.modificar} #{etiq.usuario}"/></h2>
+
+                        <p:panelGrid styleClass="frmlogin centrado_texto">
+                            <f:facet name="header">
+                                <!-- •	El sistema mostrará los datos del usuario como su Nombre(s), Apellido Paterno, 
+                                Apellido Materno, Id de usuario, No. de Tarjeta, Fecha de Nacimiento 
+                                y una lista desplegable para que el Administrador elija un perfil según sea el área de desempeño 
+                                del usuario.-->                 
+                                <p:row>
+                                    <p:column colspan="4" styleClass="ui-widget-header encabezados">
+                                        <h:outputLabel value="#{etiq.datosDelPersonal}"/>
+                                    </p:column>
+                                </p:row>
+
+                            </f:facet>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.curpTarjeta}:"/>
+                                </p:column>                    
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputMask styleClass="negrita" mask="aaaa999999aaaaaa99" id="curp" disabled="#{oEdicionUsu.habilitaCurp()}" 
+                                                 value="#{oEdicionUsu.usu.personal.curp}" style="text-transform: uppercase;">
+                                        <p:ajax update="noTar oculto tApp tApm tNom tArea tfecN " event="valueChange"/>
+                                    </p:inputMask>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel class="negrita" value="#{etiq.noTarjeta}" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputMask  mask="9?9999" styleClass="negrita" id="noTar" disabled="#{oEdicionUsu.habilitaTarjeta()}" 
+                                                  value="#{oEdicionUsu.usu.personal.noTarjeta}">
+                                        <p:ajax update="oculto curp tApp tApm tNom tArea tfecN " event="valueChange"/>
+                                    </p:inputMask>
+                                </p:column>
+                            </p:row>                  
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:"/></p:column>
+
+                            </p:row>                
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel id="oculto" value="#{oEdicionUsu.usu.buscarPorCURP()}" styleClass="mostrarbtn"/>
+                                    <h:outputLabel id="tNom" value="#{oEdicionUsu.usu.personal.nombres}"/>
+                                </p:column>
+                                <p:column><h:outputLabel id="tApp" value="#{oEdicionUsu.usu.personal.apPaterno}"/></p:column>
+                                <p:column><h:outputLabel id="tApm" value="#{oEdicionUsu.usu.personal.apMaterno}"/></p:column>
+                                <p:column><h:outputLabel id="tfecN" value="#{oEdicionUsu.usu.personal.fechaNac}"/></p:column>
+
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.areaServicio}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.area}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.puesto}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.turno}"/></p:column>
+                            </p:row>
+                            <p:row>                    
+                                <p:column>
+                                    <p:selectOneMenu id="tArea" value="#{oEdicionUsu.usu.personal.status}">
+                                        <f:selectItem itemLabel="SIN AREA" itemValue="" />
+                                        <f:selectItems value="#{oEdicionUsu.listaAreas}" var="oAre" 
+                                                       itemLabel="#{oAre.valor}" itemValue="#{oAre.claveParametro}#{oAre.tipoParametro.trim()}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+
+                                <p:column><p:outputLabel value="#{oEdicionUsu.usu.personal.personalAreaServ.areaServ.descripcion}"/></p:column>
+                                <p:column><p:outputLabel value="#{oEdicionUsu.usu.personal.personalAreaServ.puesto.descripcion}"/></p:column>
+                                <p:column><p:outputLabel value="#{oEdicionUsu.usu.personal.personalAreaServ.turno.descripcion}" /></p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="4"  styleClass="ui-widget-header">
+                                    <h:outputLabel class="negrita" value="#{etiq.datosUsuario} "/>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputLabel class="negrita" value="#{etiq.cuenta}"/>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <p:inputText id="idUsu" value="#{oEdicionUsu.usu.idUsuario}" required="true" 
+                                                 readonly="#{oEdicionUsu.habilitaCuenta()}"  onkeyup="this.value = this.value.toUpperCase();" 
+                                                 maxlength="10" onkeypress="return validaCaracter(event);" requiredMessage="Se requiere un Usuario" />
+                                    <p:inputText id="idUsu2" value="#{oEdicionUsu.usu.idUsuario2}" styleClass="mostrarbtn"/>
+                                </p:column>
+                            </p:row>                  
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputLabel class="negrita" value="#{etiq.password}: "/>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <p:password id="password1" value="#{oEdicionUsu.usu.password}" feedback="true" required="#{oEdicionUsu.nuevo}"
+                                                promptLabel="#{etiq.introduzcaPassword}" weakLabel="#{etiq.passwordDebil}" requiredMessage="Se necesita una contraseña"
+                                                goodLabel="#{etiq.passwordNivelMedio}" strongLabel="#{etiq.passwordFuerte}" match="password2" 
+                                                maxlength="10" onkeypress="return validaCaracter(event);" style="text-transform: initial;"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputLabel class="negrita" value="#{etiq.confirmar} "/>
+                                    <h:outputLabel class="negrita" value="#{etiq.password}:"/>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <p:password value="#{oEdicionUsu.usu.password}" id="password2" maxlength="10" 
+                                                onkeypress="return validaCaracter(event);" style="text-transform: initial;"/>
+                                </p:column>
+                            </p:row>                 
+
+                            <p:row>
+                                <p:column colspan="4" styleClass="ui-widget-header">
+                                    <h:outputLabel value="#{etiq.perfil}:"/>
+                                </p:column>
+                            </p:row>                
+                            <p:row>
+                                <p:column colspan="4">
+                                    <p:pickList id="PojoPickList" value="#{oEdicionUsu.perfiles}" var="perfil"
+                                                itemLabel="#{perfil.descripcion}" itemValue="#{perfil}"
+                                                converter="entityConverter" showCheckbox="true"
+                                                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains">
+                                        <f:facet name="sourceCaption">Perfiles Disponibles</f:facet>
+                                        <f:facet name="targetCaption">Perfiles usados</f:facet>
+
+                                    </p:pickList>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="centrado_texto" colspan="4">
+                                    <p:commandButton value="#{etiq.modificarReg}"  action="#{oEdicionUsu.realizaModificacion()}" 
+                                                     icon="ui-icon-disk" ajax="false"/>
+                                </p:column>                  
+                            </p:row>
+                        </p:panelGrid>
+                        <p:message for="password1" id="menpass1"></p:message>
+                        <p:message for="password2" id="menpass2"></p:message>
+                        <p:message for="idUsu" id="menidUsu"></p:message>
+                    </h:form>
+                    
+                    <h:form>
+                        <center>
+                                    <p:commandButton value="#{etiq.volver}" action="#{oEdicionUsu.recargaListas()}"
+                                                     icon="ui-icon-arrowreturnthick-1-w" ajax="false" style="text-align: center;" />
+                        </center>
+                    </h:form>
+                    </p:panel>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus>
+                </div>
+            </ui:define> 
+        </ui:composition>
+    </h:body>
+</html>

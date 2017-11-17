@@ -1,0 +1,462 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div>
+                    <h:form id="busca">
+                        <br/>
+                        <p:accordionPanel styleClass="centrar" style=" width: 500px; font-weight: bold;">
+                            <p:tab title="#{etiq.buscarXfecha}" >
+                                <p:outputPanel styleClass="centrar">
+                                <p:panelGrid columns="4">                                    
+                                    <p:outputLabel for="fecPorServ" value="#{etiq.fecha} De:"/>
+                                    <p:outputLabel/>  
+                                    <p:outputLabel value="#{etiq.fecha} A:" for="fechaA"/>
+                                    <p:outputLabel/>
+                                    <p:calendar size="8" id="fecPorServ" effect="puff" value="#{oBToco.reporteMensual.fechaInicio}" 
+                                                pattern="dd/MM/yyyy" locale="es" required="true"
+                                                readonlyInput="true" showOn="button" requiredMessage="ERROR, Seleccione La Fecha de Inicio">
+                                        <p:ajax/>
+                                    </p:calendar>
+                                    <p:outputLabel value="A"/>
+                                    <p:calendar size="8" id="fechaA" effect="puff" value="#{oBToco.reporteMensual.fechaFin}"
+                                                pattern="dd/MM/yyyy" locale="es" required="true"
+                                                readonlyInput="true" showOn="button" requiredMessage="ERROR, Seleccione La Fecha de Fin">
+                                        <p:ajax event="dateSelect" listener="#{oBToco.validaFechaFinal}" update=":reporteToco :reporteToco:msgs"/>
+                                    </p:calendar>
+                                    <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBToco.buscaReporteMensualToco}" 
+                                                     update=":reporteToco :reporteToco:render :reporteToco:p1 :reporteToco:p2 ">                                        
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>                        
+                    </h:form>
+                    <h:form id="reporteToco">                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>                       
+                        <p:outputPanel id="render" rendered="#{oBToco.rendering}">                            
+                            <p:panelGrid style="width: 1330px;" id="p1" rendered="#{oBToco.rendering}">
+                                <p:row>
+                                    <p:column style="text-align: center; width: 75%; border-bottom-color: transparent;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.concentradoToco}"/>
+                                    </p:column>
+                                    <p:column style="width: 5%; border-bottom-color: transparent;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.fechaa1}:"/>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: transparent;">
+                                        <p:outputLabel value="DEL"/>&nbsp;
+                                        <p:outputLabel value="#{oBToco.reporteMensual.fechaInicioStr2}"/>&nbsp; <p:outputLabel value="AL"/>&nbsp;
+                                        <p:outputLabel value="#{oBToco.reporteMensual.fechaFinStr2}"/>
+                                    </p:column>
+                                </p:row>                               
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 1330px;"  id="p2" rendered="#{oBToco.rendering}">
+                                <p:row>
+                                    <p:column style="width: 4%;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.unidad}:"/>  
+                                    </p:column>
+                                    <p:column style="width: 6%;">
+                                        <p:outputLabel value=""/> 
+                                    </p:column>
+                                    <p:column style="width: 5%;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.juridig}"/>
+                                    </p:column>
+                                    <p:column style="width:20%;">
+                                        <p:outputLabel value="VII"/>
+                                    </p:column>
+                                    <p:column style="width: 6%;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.local}:"/>
+                                    </p:column>
+                                    <p:column style="width:21%;">
+                                        <p:outputLabel value="RIO BLANCO"/>
+                                    </p:column>
+                                    <p:column style="width: 3%;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.ser}:"/>
+                                    </p:column>
+                                    <p:column style="width:15%;">
+                                        <p:outputLabel value="TOCOCIRUGIA"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 5px;"/>
+                            <p:outputPanel  id="render2" styleClass="centrar" style="width: 1330px;">
+                                <p:dataTable value="#{oBToco.arrMensualToco}" var="oRT" emptyMessage="">
+                                    <p:columnGroup type="header">
+                                        <p:row>                                            
+                                            <p:column style="font-size: 10px; width: 3.3%;" rowspan="3"  headerText="#{etiq.dia}"/>
+                                            <p:column colspan="2"  style="font-size: 10px; width: 10%;" headerText="#{etiq.abortosAt}"/>
+                                            <p:column colspan="4" style="font-size: 10px; width: 17%;" headerText="#{etiq.nacimientoAt}"/>
+                                            <p:column colspan="4" style="font-size: 10px; width: 17%;" headerText="#{etiq.nacidosVivos}"/>                                            
+                                            <p:column colspan="2" style="font-size: 10px; width: 9%;" headerText="#{etiq.defunFetales}"/>
+                                            <p:column rowspan="3" style="width: 2.2%; font-size: 10px;" headerText="#{etiq.liu}"/>
+                                            <p:column colspan="2" style="font-size: 10px; width: 3%;" headerText="#{etiq.def}"/>
+                                            <p:column colspan="9" style="font-size: 10px; width: 40%; " headerText="#{etiq.actPlanf}"/>                                            
+                                        </p:row> 
+                                           <p:row>
+                                            <p:column rowspan="2" style="font-size: 10px;" headerText="#{etiq.total}"/>
+                                            <p:column rowspan="2" style="font-size: 10px;" headerText="#{etiq.madresMenos}"/>
+                                            <p:column rowspan="2" style="font-size: 9px; padding: 0px;" headerText="#{etiq.outocico}"/>
+                                            <p:column rowspan="2" style="font-size: 8px;" headerText="#{etiq.partoDis}"/>
+                                            <p:column rowspan="2" style="font-size: 8px; text-transform: uppercase" headerText="#{etiq.cesarea}"/>
+                                            <p:column rowspan="2" style="font-size: 10px;" headerText="#{etiq.madresMenos}"/>
+                                            <p:column colspan="2" style="font-size: 10px;" headerText="#{etiq.semanas1}"/>
+                                            <p:column colspan="2" style="font-size: 10px;" headerText="#{etiq.semanas2}"/>
+                                            <p:column rowspan="2" style="font-size: 10px;" headerText="#{etiq.semanas3}"/>
+                                            <p:column rowspan="2" style="font-size: 10px;" headerText="#{etiq.semanas4}"/>
+                                            <p:column rowspan="2" style="font-size: 10px;color: black; background: wheat; writing-mode: vertical-lr; transform: rotate(180deg); background-color: transparent;  " headerText="#{etiq.tocoMaterna}"/>
+                                            <p:column rowspan="2" style="font-size: 10px;color: black;background: wheat; writing-mode: vertical-rl;transform: rotate(180deg); background-color:  transparent; " headerText="#{etiq.tocoRN}"/>
+                                            <p:column colspan="3" style="font-size: 10px; width: 30%;" headerText="#{etiq.inserDiu}" />
+                                            <p:column colspan="3"  style="font-size: 10px; width: 40%;" headerText="#{etiq.oclusi}" />
+                                            <p:column rowspan="2" style="font-size: 10px; ;" headerText="#{etiq.solohor}" />
+                                            <p:column rowspan="2" style="font-size: 9px; ;" headerText="#{etiq.acepM}" />
+                                            <p:column rowspan="2" style=" width: 10%; font-size: 10px; " headerText="#{etiq.otb}" />
+                                        </p:row>   
+                                        <p:row>
+                                            <p:column style="font-size: 8px;" headerText="#{etiq.menorG}"/>                                                
+                                            <p:column style="font-size: 8px;" headerText="#{etiq.masG}"/>
+                                            <p:column style="font-size: 8px;" headerText="#{etiq.menorG}"/>                                                
+                                            <p:column style="font-size: 8px;" headerText="#{etiq.masG}"/>
+                                            <p:column style="font-size: 8px;"  headerText="#{etiq.postParto}"/>
+                                            <p:column style="font-size: 8px;"  headerText="#{etiq.transces}"/>
+                                            <p:column style="font-size: 8px;"  headerText="#{etiq.potsAborto}"/>
+                                            <p:column style="font-size: 8px;"  headerText="#{etiq.postParto}"/>
+                                            <p:column style="font-size: 8px;"  headerText="#{etiq.transces}"/>
+                                            <p:column style="font-size: 8px;"  headerText="#{etiq.potsAborto}"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;" >
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.diaStr}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 10px;" value="#{oRT.totalAbortos}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.madresMenor20A}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.partoEutocico}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.partoDistocico}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.cesare}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.madresMenor20N}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.s2500grMenorV35}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.s2500grMayorV35}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.s2500grMenorV37}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.s2500grMayorV37}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.DF20a26}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.DF27Mas}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.LUI}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.DFMaterna}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.DFRN}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.DUIPostParto}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.DIUCesarea}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.DIUPostAborto}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.OTSPostParto}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.OTSCesarea}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.OTSPostAborto}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.solucionesHormonales}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.acp20Anhos}"/>
+                                    </p:column>
+                                    <p:column style="padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel style="font-size: 11px;" value="#{oRT.OTB}"/>
+                                    </p:column>  
+                                    <p:columnGroup type="footer">
+                                        <p:row>
+                                            <p:column footerText="#{etiq.total}:" style="font-size: 9px; padding: 0px;"/>
+                                            <p:column footerText="#{oBToco.legrados}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.madresMenos20Legrado}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.partoEutocico}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.partoDisctocico}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.cesarea}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.madreMenor20Nac}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.menos2500gr35}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.mayor2500gr35}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.menor2500gr36}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.mayor2500gr36}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.n20a26Semanas}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.n26MasSemanas}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.lui}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.DFMaterna}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.DFRn}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.DIUParto}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.DIUCesara}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.DIUAborto}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.OTSParto}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.OTSCesarea}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.TSAborto}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.solHor}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.acp20}" style="font-size: 10px;"/>
+                                            <p:column footerText="#{oBToco.OTB}" style="font-size: 10px;"/>
+                                        </p:row>
+                                    </p:columnGroup>                                    
+                                </p:dataTable>
+                            </p:outputPanel>
+                            <div style="margin-bottom: 5px;"/>
+                            <p:panelGrid style="" id="boton">
+                                <p:row>
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-folder-open" value="Abrir Para #{etiq.imprimir}" oncomplete="PF('ReporteTocoImp').show()" update=":ImpTocoRep">
+                                    
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>                                
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                            
+                            
+                <p:dialog modal="true" resizable="false" header="" height="600" widgetVar="ReporteTocoImp" showEffect="puff" hideEffect="puff">
+                    <h:form id="ImpTocoRep">
+                        <p:outputPanel style=" width: 1300px;background-color: white; background: white;">
+                            <p:panelGrid style="width: 100%;">
+                                <p:row>
+                                    <p:column style=" width: 75.25%; background: white; color: black;  text-align: center; border-color: black;">
+                                         <p:outputLabel value="#{etiq.concentradoToco}"/>
+                                    </p:column>
+                                    <p:column style="background: white; color: black; border-color: black;">
+                                        <p:outputLabel value="#{etiq.fechaa1}"/>&nbsp;
+                                        <p:outputLabel value="DEL"/>&nbsp;
+                                        <p:outputLabel value="#{oBToco.reporteMensual.fechaInicioStr2}"/>&nbsp; <p:outputLabel value="AL"/>&nbsp;
+                                        <p:outputLabel value="#{oBToco.reporteMensual.fechaFinStr2}"/>
+                                    </p:column>                                        
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid style=" width: 100%; background-color: white; background: white;">
+                                <p:row>
+                                    <p:column style=" width:5%; border-color: black; background-color: white;  ">
+                                        <p:outputLabel value="#{etiq.unidad}:"/>&nbsp;<p:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column style=" width:5%; border-color: black; background-color: white; ">
+                                        <p:outputLabel value="#{etiq.juridig}"/>&nbsp;<p:outputLabel value="VII"/>
+                                    </p:column>
+                                    <p:column style=" width:5%; border-color: black; background-color: white; ">
+                                        <p:outputLabel value="#{etiq.local}"/>&nbsp;<p:outputLabel value="RIO BLANCO"/>
+                                    </p:column>
+                                    <p:column style=" width:5%; border-color: black; background-color: white; ">
+                                        <p:outputLabel value="#{etiq.ser}:"/>&nbsp;<p:outputLabel value="TOCOCIRUGIA"/>
+                                    </p:column>
+                                    
+                                </p:row>
+                            </p:panelGrid>
+                            <p:dataTable value="#{oBToco.arrMensualToco}" var="oR" emptyMessage="">
+                                <p:columnGroup type="header">
+                                    <p:row>                                            
+                                        <p:column style="font-size: 10px; width: 3%;color: black; background: white;" rowspan="3"  headerText="#{etiq.dia}"/>
+                                        <p:column colspan="2"  style="font-size: 10px; width: 10%; color: black;background: white;" headerText="#{etiq.abortosAt}"/>
+                                        <p:column colspan="4" style="font-size: 10px; width: 17%;color: black;background: white;" headerText="#{etiq.nacimientoAt}"/>
+                                        <p:column colspan="4" style="font-size: 10px; width: 17%;color: black;background: white;" headerText="#{etiq.nacidosVivos}"/>                                            
+                                        <p:column colspan="2" style="font-size: 10px; width: 9%;color: black;background: white;" headerText="#{etiq.defunFetales}"/>
+                                        <p:column rowspan="3" style="width: 2%; color: black;background: white; font-size: 10px;" headerText="#{etiq.liu}"/>
+                                        <p:column colspan="2" style="font-size: 10px; width: 3%;color: black;background: white;" headerText="#{etiq.def}"/>
+                                        <p:column colspan="9" style="font-size: 10px; width: 40%;color: black; background: white;" headerText="#{etiq.actPlanf}"/>                                            
+                                    </p:row>
+                                       <p:row>
+                                        <p:column rowspan="2" style="font-size: 10px;color: black;background: white;" headerText="#{etiq.total}"/>
+                                        <p:column rowspan="2" style="font-size: 10px;color: black;background: white;" headerText="#{etiq.madresMenos}"/>
+                                        <p:column rowspan="2" style="font-size: 9px;color: black;background: white; padding: 0px;" headerText="#{etiq.outocico}"/>
+                                        <p:column rowspan="2" style="font-size: 8px;color: black;background: white; padding: 0px;" headerText="#{etiq.partoDis}"/>
+                                        <p:column rowspan="2" style="font-size: 8px;color: black;background: white; text-transform: uppercase" headerText="#{etiq.cesarea}"/>
+                                        <p:column rowspan="2" style="font-size: 10px;color: black;background: white;" headerText="#{etiq.madresMenos}"/>
+                                        <p:column  colspan="2" style="font-size: 10px;color: black;background: white;" headerText="#{etiq.semanas1}"/>
+                                        <p:column  colspan="2" style="font-size: 10px;color: black;background: white;" headerText="#{etiq.semanas2}"/>
+                                        <p:column rowspan="2" style="font-size: 10px;color: black;background: white;" headerText="#{etiq.semanas3}"/>
+                                        <p:column rowspan="2" style="font-size: 10px;color: black;background: white;" headerText="#{etiq.semanas4}"/>
+                                        <p:column rowspan="2" style="font-size: 10px;color: black;background: white;writing-mode: vertical-lr; transform: rotate(180deg); background-color: transparent;  " headerText="#{etiq.tocoMaterna}"/>
+                                        <p:column rowspan="2" style="font-size: 10px;color: black;background: white; writing-mode: vertical-rl;transform: rotate(180deg); background-color:  transparent; " headerText="#{etiq.tocoRN}"/>
+                                        <p:column  colspan="3" style="font-size: 10px; width: 30%;color: black;background: white;" headerText="#{etiq.inserDiu}" />
+                                        <p:column  colspan="3"  style="font-size: 10px; width: 40%;color: black;background: white;" headerText="#{etiq.oclusi}" />
+                                        <p:column rowspan="2" style="font-size: 10px; color: black;background: white;" headerText="#{etiq.solohor}" />
+                                        <p:column rowspan="2" style="font-size: 9px; color: black;background: white;" headerText="#{etiq.acepM}" />
+                                        <p:column rowspan="2" style=" width: 10%; font-size: 10px;color: black;background: white;" headerText="#{etiq.otb}" />
+                                    </p:row>   
+                                    <p:row>
+                                        <p:column style="font-size: 8px; color: black;background: white;" headerText="#{etiq.menorG}"/>                                                
+                                        <p:column style="font-size: 8px;color: black;background: white;" headerText="#{etiq.masG}"/>
+                                        <p:column style="font-size: 8px;color: black;background: white;" headerText="#{etiq.menorG}"/>                                                
+                                        <p:column style="font-size: 8px;color: black;background: white;" headerText="#{etiq.masG}"/>
+                                        <p:column style="font-size: 8px; color: black;background: white;"  headerText="#{etiq.postParto}"/>
+                                        <p:column style="font-size: 8px;color: black;background: white;"  headerText="#{etiq.transces}"/>
+                                        <p:column style="font-size: 8px;color: black;background: white;"  headerText="#{etiq.potsAborto}"/>
+                                        <p:column style="font-size: 8px;color: black;background: white;"  headerText="#{etiq.postParto}"/>
+                                        <p:column style="font-size: 8px;color: black;background: white;"  headerText="#{etiq.transces}"/>
+                                        <p:column style="font-size: 8px;color: black;background: white;"  headerText="#{etiq.potsAborto}"/>
+                                    </p:row>
+                                </p:columnGroup>
+                                 <p:column style=" background: white; border-color: black; padding-top: 0px; padding-bottom: 0px;">
+                                     <p:outputLabel style="font-size: 11px;" value="#{oR.diaStr}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.totalAbortos}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.madresMenor20A}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.partoEutocico}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.partoDistocico}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.cesare}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.madresMenor20N}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.s2500grMenorV35}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.s2500grMayorV35}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.s2500grMenorV37}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.s2500grMayorV37}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.DF20a26}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.DF27Mas}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.LUI}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.DFMaterna}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.DFRN}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.DUIPostParto}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.DIUCesarea}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.DIUPostAborto}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.OTSPostParto}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.OTSCesarea}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.OTSPostAborto}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.solucionesHormonales}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.acp20Anhos}"/>
+                                </p:column>
+                                <p:column style=" background: white; border-color: black;padding-top: 0px; padding-bottom: 0px;">
+                                    <p:outputLabel style="font-size: 10px;" value="#{oR.OTB}"/>
+                                </p:column>
+                                 <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column footerText="#{etiq.total}:" style="font-size: 9px; padding: 0px; color: black; background: white;"/>
+                                        <p:column footerText="#{oBToco.legrados}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.madresMenos20Legrado}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.partoEutocico}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.partoDisctocico}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.cesarea}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.madreMenor20Nac}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.menos2500gr35}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.mayor2500gr35}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.menor2500gr36}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.mayor2500gr36}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.n20a26Semanas}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.n26MasSemanas}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.lui}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.DFMaterna}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.DFRn}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.DIUParto}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.DIUCesara}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.DIUAborto}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.OTSParto}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.OTSCesarea}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.TSAborto}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.solHor}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.acp20}" style="font-size: 10px;background: white;"/>
+                                        <p:column footerText="#{oBToco.OTB}" style="font-size: 10px;background: white;"/>
+                                    </p:row>
+                                </p:columnGroup>   
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                    <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":ImpTocoRep"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('ReporteTocoImp').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                </p:dialog>           
+                            
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+</html>
+

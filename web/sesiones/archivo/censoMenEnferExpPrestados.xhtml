@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+<div class="centrado_texto">
+    <h:form id="frmInicio" styleClass="centrar">
+        <br/>
+        <p:growl id="msgs" showDetail="true" />
+        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+        <h3><h:outputLabel style="text-transform: uppercase" value="#{etiq.censoMensual}"/></h3>
+        <p:panelGrid  styleClass="centrar">
+            <p:row>
+                <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.rangoFechas}"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.del}"/></p:column>
+                <p:column>
+                    <p:calendar id="txtFechIni" value="#{oCMEarchJB.objReporte.fechaIni}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                        <p:ajax event="dateSelect"/>
+                    </p:calendar>
+                </p:column>
+                <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.al}"/></p:column>
+                <p:column>
+                    <p:calendar id="txtFechFin" value="#{oCMEarchJB.objReporte.fechaFin}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                        <p:ajax event="dateSelect" listener="#{oCMEarchJB.validaFecha()}" update=":frmInicio:msgs"/>
+                    </p:calendar>
+                </p:column>
+            </p:row>
+            <f:facet name="footer">
+                <p:row>
+                    <p:column colspan="4" styleClass="centrar" >
+                        <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                            <p:ajax listener="#{oCMEarchJB.buscaInformacion()}" 
+                                    update=":frmInicio :frmInicio:dtRptCensoMensu :frmInicio:dtRptDefMenCirugia :frmInicio:dtRptDefMenGO :frmInicio:dtRptDefMenMI :frmInicio:dtRptDefMenNEO :frmInicio:dtRptDefMenPED :frmInicio:msgs"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </f:facet>
+        </p:panelGrid>
+        <br/>
+        <p:panel id="pgInicio" rendered="#{oCMEarchJB.render}" style="border-style: none; text-align: center">
+        <!-- .................. -->
+        <p:dataTable id="dtRptCensoMensu" var="oRpt"
+                            paginator="false" 
+                            value="#{oCMEarchJB.listaCENSO}"
+                            paginatorPosition="bottom" 
+                            rows="10" 
+                            emptyMessage="#{etiq.noRegistros}" 
+                            styleClass="centrar" style="width: 750px" >
+            <f:facet name="header" > 
+                <h:outputText style="font-weight: bold; " value="#{etiq.movimientos} #{etiq.del} "/>
+                <p:outputLabel style="text-align: right" value="#{oCMEarchJB.objReporte.fechaIni}">
+                    <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                </p:outputLabel>
+                <p:outputLabel value=" #{etiq.al} " style="font-weight: bold; "/>
+                <p:outputLabel style="text-align: right" value="#{oCMEarchJB.objReporte.fechaFin}">
+                     <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                 </p:outputLabel>
+            </f:facet>
+            <p:column style="width: 18%" styleClass="textoIzq" >
+                <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.servicio}"/> </f:facet>
+                <p:outputLabel style="font-size: 12px;text-align: left" value="#{oRpt.servicio.descripcion}"/>
+            </p:column>   
+            <p:column style="width: 10%">
+                <f:facet name="header" > <h:outputText  style="font-weight: bold; " value="#{etiq.ingresos}"/> </f:facet>
+                <p:outputLabel style="font-size: 12px" value="#{oRpt.ingresos}"/>
+            </p:column> 
+            <p:column style="width: 10%">
+                <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.egresos}"/> </f:facet>
+                <p:outputLabel style="font-size: 12px" value="#{oRpt.egresos}"/>
+            </p:column> 
+            <p:column style="width: 17%">
+                <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.defunciones}"/> </f:facet>
+                <p:outputLabel style="font-size: 12px" value="#{oRpt.defunciones}"/>
+            </p:column> 
+            <p:column style="width: 18%">
+                <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.sumEgreYDefun}"/> </f:facet>
+                <p:outputLabel style="font-size: 12px" value="#{oRpt.sumaEgreDefun}"/>
+            </p:column> 
+            <p:column style="width: 10%">
+                <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.faltantes}"/> </f:facet>
+                <p:outputLabel style="font-size: 12px" value="#{oRpt.faltantes}"/>
+            </p:column> 
+        </p:dataTable>
+        <h3><h:outputLabel style="text-transform: uppercase" rendered="#{oCMEarchJB.render}" value="#{etiq.defPorServ}"/></h3>
+        <!--::::::::::::::::::::::::::::::::::::::-->
+        <p:dataTable id="dtRptDefMenCirugia" var="oRpt"
+                    paginator="false" 
+                    value="#{oCMEarchJB.listaDefuncionesCIRUGIA}"
+                    paginatorPosition="bottom" 
+                    rows="10" 
+                    emptyMessage="#{etiq.noDef}" 
+                    styleClass="centrar">
+            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase " value="#{etiq.cirugia}"/> </f:facet>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.noExp}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.expediente.numero}"/>
+            </p:column>
+            <p:column style="width: 15%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.nombre}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.nombreCompleto}"/>
+            </p:column>
+            <p:column style="width: 9%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.edad}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.edadNumero}"/>
+            </p:column>
+            <p:column style="width: 8%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.sexo}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.sexoP}"/>
+            </p:column>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.cama}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+            </p:column>
+            <p:column style="width: 12%">
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.defuncion}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </p:outputLabel>
+            </p:column>
+        </p:dataTable>
+        <!--::::::::::::::::::::::::::::::::::::::-->
+        <br/>
+        <p:dataTable id="dtRptDefMenGO" var="oRpt"
+                     value="#{oCMEarchJB.listaDefuncionesGO}"
+                    paginator="false" 
+                    paginatorPosition="bottom" 
+                    rows="10" 
+                    emptyMessage="#{etiq.noDef}" 
+                    styleClass="centrar">
+            <f:facet name="header" > <h:outputText style="font-weight: bold;text-transform: uppercase " value="#{etiq.gineco}"/> </f:facet>
+           <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.noExp}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.expediente.numero}"/>
+            </p:column>
+            <p:column style="width: 15%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.nombre}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.nombreCompleto}"/>
+            </p:column>
+            <p:column style="width: 9%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.edad}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.edadNumero}"/>
+            </p:column>
+            <p:column style="width: 8%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.sexo}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.sexoP}"/>
+            </p:column>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.cama}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+            </p:column>
+            <p:column style="width: 12%">
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.defuncion}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </p:outputLabel>
+            </p:column>
+        </p:dataTable>
+        <!--::::::::::::::::::::::::::::::::::::::-->
+        <br/>
+        <p:dataTable id="dtRptDefMenMI" var="oRpt"
+                    paginator="false" 
+                    value="#{oCMEarchJB.listaDefuncionesMI}"
+                    paginatorPosition="bottom" 
+                    rows="10" 
+                    emptyMessage="#{etiq.noDef}" 
+                    styleClass="centrar">
+            <f:facet name="header" > <h:outputText style="font-weight: bold;text-transform: uppercase " value="#{etiq.mi}"/> </f:facet>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.noExp}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.expediente.numero}"/>
+            </p:column>
+            <p:column style="width: 15%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.nombre}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.nombreCompleto}"/>
+            </p:column>
+            <p:column style="width: 9%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.edad}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.edadNumero}"/>
+            </p:column>
+            <p:column style="width: 8%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.sexo}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.sexoP}"/>
+            </p:column>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.cama}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+            </p:column>
+            <p:column style="width: 12%">
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.defuncion}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </p:outputLabel>
+            </p:column>
+        </p:dataTable>
+        <!--::::::::::::::::::::::::::::::::::::::-->
+        <br/>
+        <p:dataTable id="dtRptDefMenNEO" var="oRpt"
+                    paginator="false"
+                    value="#{oCMEarchJB.listaDefuncionesNEO}"
+                    paginatorPosition="bottom" 
+                    rows="10" 
+                    emptyMessage="#{etiq.noDef}" 
+                    styleClass="centrar">
+            <f:facet name="header" > <h:outputText style="font-weight: bold;text-transform: uppercase " value="#{etiq.neonatologia}"/> </f:facet>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.noExp}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.expediente.numero}"/>
+            </p:column>
+            <p:column style="width: 15%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.nombre}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.nombreCompleto}"/>
+            </p:column>
+            <p:column style="width: 9%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.edad}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.edadNumero}"/>
+            </p:column>
+            <p:column style="width: 8%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.sexo}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.sexoP}"/>
+            </p:column>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.cama}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+            </p:column>
+            <p:column style="width: 12%">
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.defuncion}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </p:outputLabel>
+            </p:column>
+        </p:dataTable>
+        <!--::::::::::::::::::::::::::::::::::::::-->
+        <br/>
+        <p:dataTable id="dtRptDefMenPED" var="oRpt"
+                    paginator="false" 
+                    value="#{oCMEarchJB.listaDefuncionesPED}"
+                    paginatorPosition="bottom" 
+                    rows="10" 
+                    emptyMessage="#{etiq.noDef}" 
+                    styleClass="centrar">
+            <f:facet name="header" > <h:outputText style="font-weight: bold;text-transform: uppercase " value="#{etiq.pedia}"/> </f:facet>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.noExp}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.expediente.numero}"/>
+            </p:column>
+            <p:column style="width: 15%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.nombre}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.nombreCompleto}"/>
+            </p:column>
+            <p:column style="width: 9%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.edad}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.edadNumero}"/>
+            </p:column>
+            <p:column style="width: 8%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.sexo}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.paciente.sexoP}"/>
+            </p:column>
+            <p:column style="width: 12%" >
+                <f:facet name="header" > <h:outputText  style="width: 12px " value="#{etiq.cama}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+            </p:column>
+            <p:column style="width: 12%">
+                <f:facet name="header" > <h:outputText style="width: 12px " value="#{etiq.defuncion}"/> </f:facet>
+                <p:outputLabel style="width: 12px;font-size: 11px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </p:outputLabel>
+            </p:column>
+        </p:dataTable>
+        </p:panel>
+        <br/>
+        <p:commandButton rendered="#{oCMEarchJB.render}" value="#{etiq.imprimir}" icon="ui-icon-print" ajax="false">
+            <p:printer target="pgInicio"/>
+        </p:commandButton>
+    </h:form>
+    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+        <f:facet name="start">  
+            <p:graphicImage value="/imgs/loading.gif" />  
+        </f:facet>    
+    </p:ajaxStatus> 
+</div>
+</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+       <h:form id="frmeti">
+            <p:growl id="mensajes"  showDetail="true" />
+           <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+           <h2><center><h:outputLabel value="#{etiq.imprimirCodigo}"/></center></h2>
+           <p:panelGrid style="margin-top:30px" id="buscafeca"> 
+          <f:facet name="header">
+        <p:row>
+           <p:column><center><h:outputLabel value="#{etiq.buscarPac}"/> </center></p:column>   
+        </p:row>
+    </f:facet>
+          <p:row>
+              <p:column> <h:outputLabel value="#{etiq.id} "/>
+                  <p:inputText id="id1" value="#{codigo.paci.idNacional}"  required="true" requiredMessage="INGRESAR NUMERO DE ID SALVAR"/> 
+                  <p:commandButton value="#{etiq.buscar}" action="#{codigo.bus()}" update="al mensajes" onclick="recarga()">
+                  </p:commandButton> 
+              </p:column>
+          </p:row>
+      </p:panelGrid> 
+             <p:growl id="msgs" showDetail="true" /> 
+             <p:dialog visible="#{codigo.visible}" id="al" header="#{etiq.imprimirCodigo}" widgetVar="dlgtem" closable="true" width="350"  height="100" resizable="false">
+                   <b><h:outputLabel value="#{etiq.nombre} "/></b>
+                   <h:outputLabel id="nombrec" value="#{codigo.paci.nombreCompleto}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.codigoBarras} "/></b>
+            <h:outputLabel id="edad" value="#{codigo.paci.idNacional}"/>
+            <br/>
+            <br/>
+            <p:commandButton type="submit"   value="#{etiq.imprimir}" onclick="imprime('')"/>         
+            <p:commandButton type="submit" value="#{etiq.cerrar}" action="#{codigo.cerrar()}" onclick="recarga()"/>  
+        </p:dialog>
+        </h:form>     
+    </ui:define>
+</ui:composition>
+</html>

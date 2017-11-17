@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">
+           <div class="buscar">
+           <h:form id="busqueda">
+            <br/><br/>
+            <p:growl id="msgs" showDetail="true" />
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+            <h3 class="centrado_texto"><h:outputLabel value="#{oBuscarPac.pagina}"/></h3>
+
+               <p:accordionPanel>
+                   <p:ajax event="tabChange" listener="#{oBuscarPac.requerir}" update="@this, nom app exp" />
+                   <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                    <p:panelGrid columns="4" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <h:outputLabel />
+                        <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPac.paciente.nombres}" required="#{oBuscarPac.nom}" onkeyup="this.value=this.value.toUpperCase();" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{oBuscarPac.paciente.apPaterno}" required="#{oBuscarPac.nom}" onkeyup="this.value=this.value.toUpperCase();" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPac.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" action="PacientesEncontrados" ajax="false">
+                            <f:setPropertyActionListener target="#{oBuscarPac.paciente.opcionUrg}" value="#{0}"/>
+                        </p:commandButton>
+                    </p:panelGrid>
+                   </p:tab>        
+                   <p:tab title="#{etiq.buscarPorExpediente}" id="tabE">
+                    <p:panelGrid columns="3" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                        <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPac.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero"  required="#{oBuscarPac.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                        </p:inputText>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" action="PacientesEncontrados" ajax="false">
+                            <f:setPropertyActionListener target="#{oBuscarPac.paciente.opcionUrg}" value="#{1}"/>
+                        </p:commandButton>
+                    </p:panelGrid>
+                       <p:message for="exp" id="mentExp"></p:message>
+                   </p:tab>
+               </p:accordionPanel>
+	    <br/>
+            <div class="centrar">
+            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                <f:setPropertyActionListener target="#{oBuscarPac.paciente.nombres}" value=""/>
+                <f:setPropertyActionListener target="#{oBuscarPac.paciente.apPaterno}" value=""/>
+                <f:setPropertyActionListener target="#{oBuscarPac.paciente.apMaterno}" value=""/>
+                <f:setPropertyActionListener target="#{oBuscarPac.paciente.expediente.numero}" value="#{0}"/>
+            </p:commandButton>
+            </div>
+            </h:form>
+               
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+            </div>
+            <br/> <br/>
+          </ui:define> 
+    </ui:composition>
+</html>

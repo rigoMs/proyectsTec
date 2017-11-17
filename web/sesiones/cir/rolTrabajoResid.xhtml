@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporte} #{etiq.diasGuard}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:panelGrid id="panel">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.nombre} #{etiq.resid}"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="selResid" value="#{oTrabajoResid.residentes.noTarjeta}">
+                                <f:selectItem itemLabel="Elegir Residente" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oTrabajoResid.listaResidentes}" var="oResid" 
+                                               itemLabel="#{oResid.nombreCompleto}" itemValue="#{oResid.noTarjeta}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.fechaInicial}"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar  id="fecIni"  value="#{oTrabajoResid.fechaInicio}"
+                                         effect="explode" required="true" locale="es">
+                            </p:calendar>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.fechaFinal}"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar  id="fecFin"  value="#{oTrabajoResid.fechaFin}"
+                                         effect="explode" required="true" locale="es">
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton icon="ui-icon-search" value="#{etiq.buscar}" 
+                                             actionListener="#{oTrabajoResid.buscaSolicitudes()}"
+                                             update="tabla_ProcResid"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <!--tabla que muestras a que procedimientos qx a entrado-->
+                <p:dataTable   id="tabla_ProcResid" 
+                               value="#{oTrabajoResid.listaProcedimientos}"
+                               var="oProce"
+                               emptyMessage="#{etiq.noRegistro}" 
+                               style="width: 1820px; visibility: #{oTrabajoResid.visibilidad}" 
+                               styleClass="frm_centrado">
+                    <p:column style="width: 40px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.fecha}"/>
+                        </f:facet>
+                        <p:outputLabel value="#{oProce.fechaProgramada}"/>
+                    </p:column>
+                    <p:column style="width: 150px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.medAnes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProce.anestesio.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 150px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.medCir}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProce.cirujano.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 150px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.resid}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProce.residente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 60px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.qx}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProce.quirofanos.nombre}"/>
+                    </p:column>
+                    <p:column style="width: 150px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.proceQx}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProce.CIE9.descripcion}"/>
+                    </p:column>
+                    <p:column style="width: 150px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.anestesia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProce.anestEspecifica.descripcion}"/>
+                    </p:column>
+                    <p:column style=" width: 220px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombre} del Paciente"/>
+                        </f:facet>
+                        <h:outputText value="#{oProce.episodioMedico.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}"/>
+                    </f:facet>
+                </p:dataTable>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

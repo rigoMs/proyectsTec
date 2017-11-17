@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">
+           <div class="buscar">
+           <h:form id="busqueda">
+            <br/><br/>
+            <p:growl id="msgs" showDetail="true" />
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+            <h3 class="centrado_texto"><h:outputLabel value="#{etiq.buscarUrg}"/></h3>
+
+               <p:accordionPanel>
+                <p:tab title="#{etiq.buscarDatosBasicos}">
+                    <p:panelGrid columns="4" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <h:outputLabel />
+                        <p:inputText styleClass="bordes" id="nom" value="#{oPacUrg.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{oPacUrg.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{oPacUrg.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" action="#{oPacUrg.paciente.OpcionPacUrgs(0)}" ajax="false"/>
+                    </p:panelGrid>
+                </p:tab>        
+                <p:tab title="#{etiq.buscarPorExpediente}">
+                    <p:panelGrid columns="3" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                        <p:inputText styleClass="bordes" id="exp" value="#{oPacUrg.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                        </p:inputText>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" action="#{oPacUrg.paciente.OpcionPacUrgs(1)}" ajax="false"/>
+                    </p:panelGrid>
+                    <p:message for="exp" id="mentExp"></p:message>
+                </p:tab>
+                <p:tab title="#{etiq.buscarPorFecha}">
+                    <p:panelGrid columns="3" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.fecha}"/>
+                        <p:calendar  id="tFecConsulta" value="#{oPacUrg.paciente.fechaConsulta}" effect="fold" locale="es" required="true"  requiredMessage="Error: Se requiere una fecha"  disabledWeekends="true" pattern="dd/MM/yy"  readonlyInput="true"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" action="#{oPacUrg.paciente.OpcionPacUrgs(2)}" ajax="false"/>
+                    </p:panelGrid>
+                </p:tab>
+               </p:accordionPanel>
+            <br/>
+            <div class="centrar">
+            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                <f:setPropertyActionListener target="#{oPacUrg.paciente.nombres}" value=""/>
+                <f:setPropertyActionListener target="#{oPacUrg.paciente.apPaterno}" value=""/>
+                <f:setPropertyActionListener target="#{oPacUrg.paciente.apMaterno}" value=""/>
+                <f:setPropertyActionListener target="#{oPacUrg.paciente.expediente.numero}" value="#{0}"/>
+            </p:commandButton>
+            </div>
+            
+            </h:form>
+            </div>
+            <br/> <br/>
+          </ui:define> 
+        </ui:composition>
+</html>

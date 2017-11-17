@@ -1,0 +1,2091 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+
+  <ui:define name="cuerpo">
+    <div class="centrado_texto">
+             
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+    <h3 class="centrado_texto"><p:outputLabel id="titCambCons" value="#{etiq.generarReporte}"/></h3>
+            
+            <h:form>
+                <h:panelGrid columns="3" class="frm_centrado">
+                    <h:outputLabel id="fecCambCons" value="#{etiq.fecha}:" class="mensaje"/>
+                    <p:calendar  id="tFecConsulta" 
+                                 value="#{oGenRepor.cita.fechaAux}" 
+                                 effect="fold" locale="es" required="true" 
+                                 requiredMessage="Error: Se requiere una fecha" 
+                                 disabledWeekends="true" pattern="dd/MM/yy" 
+                                 readonlyInput="true">
+                        <p:ajax/>
+                    </p:calendar> 
+                    <p:commandButton value="#{etiq.consultar}"
+                                     actionListener="#{oGenRepor.buscaCitas}"
+                                     icon="ui-icon-search" 
+                                     update="tablaConsul tablaConsul2 tablaConsul3 tablaConsul4 tablaConsul5 tablaConsul6 tablaConsul7 tablaConsul8 tablaConsul9 tablaConsul10 tablaConsul11 tablaConsul12 tablaConsul13 tablaConsul14 tablaConsul15 tablaConsul16 tablaConsul17 tablaConsul18">
+                    </p:commandButton>
+                </h:panelGrid>
+
+
+                <p:dataTable id="tablaConsul" var="oRepor" 
+                             value="#{oGenRepor.arrCitas1}" 
+                             emptyMessage="#{etiq.noDatos}" >
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 01"/> 
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul2" var="oRepor" 
+                      value="#{oGenRepor.arrCitas2}" 
+                      emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 02"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul3" var="oRepor" 
+                      value="#{oGenRepor.arrCitas3}" 
+                      emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 03"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************--> 
+         <p:dataTable id="tablaConsul4" var="oRepor" 
+                      value="#{oGenRepor.arrCitas4}" 
+                      emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 04"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul5" var="oRepor" 
+                      value="#{oGenRepor.arrCitas5}" 
+                      emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 05"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul6" var="oRepor" 
+                      value="#{oGenRepor.arrCitas6}" 
+                      emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 06"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul7" var="oRepor" 
+                      value="#{oGenRepor.arrCitas7}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 07"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul8" var="oRepor" 
+                      value="#{oGenRepor.arrCitas8}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 08"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul9" var="oRepor" 
+                      value="#{oGenRepor.arrCitas9}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 09"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul10" var="oRepor" 
+                      value="#{oGenRepor.arrCitas10}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 10"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul11" var="oRepor" 
+                      value="#{oGenRepor.arrCitas11}" 
+                      emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 11"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul12" var="oRepor" 
+                      value="#{oGenRepor.arrCitas12}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 12"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul13" var="oRepor" 
+                      value="#{oGenRepor.arrCitas13}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 13"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul14" var="oRepor" 
+                      value="#{oGenRepor.arrCitas14}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 14"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul15" var="oRepor" 
+                      value="#{oGenRepor.arrCitas15}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 15"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul16" var="oRepor" 
+                      value="#{oGenRepor.arrCitas16}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 16"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul17" var="oRepor" 
+                      value="#{oGenRepor.arrCitas17}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 17"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <br/>
+         <!--**************************************************************************************-->
+         <p:dataTable id="tablaConsul18" var="oRepor" 
+                      value="#{oGenRepor.arrCitas18}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.consultorio} 18"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="columnamed4 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.sexo}:" styleClass="columnachica">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.sexo}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.sexoP}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.edad}:" styleClass="columnamed7">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.edad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.edadNumero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tel}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tel}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.entidad}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.entidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.municipio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.municipio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.municipio.descripcionMun}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass="columnadiez">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.cie10}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.cie10}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.causes}:" styleClass="columnamed2">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.causes}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.causes.clave}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}" class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.folioPago}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioPago}"/>
+                        </f:facet>
+                        <h:outputText value=" #{oRepor.folioPago} " class="mostrarbtn"/>
+                    </p:column>
+             
+                    <p:column headerText="#{etiq.referencia}:" width="0">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.referencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.referencia.descripcion}" class="mostrarbtn"/>
+                    </p:column>
+         </p:dataTable>
+         <!--**************************************************************************************-->
+         <br/>
+         <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false">
+             <pe:exporter type="xlsx" target="tablaConsul,tablaConsul2,tablaConsul3,tablaConsul4,tablaConsul5,tablaConsul6,tablaConsul7,tablaConsul8,tablaConsul9,tablaConsul10,tablaConsul11,tablaConsul12,tablaConsul13,tablaConsul14,tablaConsul15,tablaConsul16,tablaConsul17,tablaConsul18" fileName="Reporte_#{oGenRepor.cita.obtenFechaAux()}" datasetPadding="3" postProcessor="#{oGenRepor.cita.postProcessXLS}"/>
+         </p:commandButton>
+       </h:form>
+   </div>
+   
+        <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>    
+  </ui:define>      
+</ui:composition>
+</html>

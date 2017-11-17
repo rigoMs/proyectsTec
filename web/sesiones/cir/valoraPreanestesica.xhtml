@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.valoracionPreanestesica}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <div class="centrado_texto">
+            <h:form>
+                 <p:panelGrid id="panelBusquedaPac">
+                     <p:row>
+                         <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                         <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                         <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                     </p:row>
+                     <p:row>
+                         <p:column>
+                             <p:inputText styleClass="bordes" id="nom" 
+                                          maxlength="50" size="39"
+                                          value="#{oValoraPre.nomPac}"
+                                          onkeyup="this.value=this.value.toUpperCase();"
+                                          onkeypress="return validaCaracter(event);" />
+                             
+                         </p:column>
+                         <p:column>
+                             <p:inputText styleClass="bordes" id="app" 
+                                          maxlength="50" size="39"
+                                          value="#{oValoraPre.appPac}"
+                                          onkeyup="this.value=this.value.toUpperCase();"
+                                          onkeypress="return validaCaracter(event);" />
+                         </p:column>
+                         <p:column>
+                             <p:inputText styleClass="bordes" id="apm" 
+                                          maxlength="50" size="39"
+                                          value="#{oValoraPre.apmPac}"        
+                                          onkeyup="this.value=this.value.toUpperCase();" 
+                                          onkeypress="return validaCaracter(event);" />
+                         </p:column>
+                     </p:row>         
+                     <p:row>
+                         <p:column styleClass="ui-widget-header">
+                             <p:outputLabel value="#{etiq.buscarPorExpediente}"/>
+                         </p:column>
+                         <p:column>
+                             <p:inputText styleClass="bordes" id="exp" 
+                                          value="#{oValoraPre.numExpPac}" 
+                                          converterMessage="#{etiq.err.capturaCaractEsp}">
+                                 <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                 <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                             </p:inputText>
+                         </p:column>
+                         <p:column styleClass="ui-widget-header"/>
+                     </p:row>
+                 </p:panelGrid>
+                <br/>
+                <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" 
+                                 actionListener="#{oValoraPre.buscaPacienteValoracion()}" update="tablaPacSel seleccion">
+                </p:commandButton>
+                <p:message for="exp" id="mentExp"/>
+                <br/>
+                <br/>
+                <div class="tabla_pacEncSel"> 
+                    <p:dataTable id="tablaPacSel" var="oPacEnc"
+                                 value="#{oValoraPre.listaDatosPaciente}" 
+                                 emptyMessage="#{etiq.noRegistro}" 
+                                 style="visibility:#{oValoraPre.visibilidadTabla}; width: 1300px;"
+                                 styleClass="frm_centrado"
+                                 rowKey="#{oPacEnc.episodioMedico.paciente.folioPaciente}"
+                                 selection="#{oValoraPre.seleccionado}">
+                        <f:facet name="header">  
+                            <h:outputText value="#{etiq.pacEncontrados}"/>
+                        </f:facet>
+                        <p:ajax event="rowSelectRadio"></p:ajax>
+                        <p:column selectionMode="single" style=" width: 15px;"></p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                            </f:facet>
+                            <h:outputText value="#{oPacEnc.episodioMedico.paciente.apPaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                            </f:facet>
+                            <h:outputText value="#{oPacEnc.episodioMedico.paciente.apMaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                            </f:facet>
+                            <h:outputText value="#{oPacEnc.episodioMedico.paciente.nombres}"/>
+                        </p:column>
+                        <p:column style="width: 9%">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                            </f:facet>
+                            <h:outputText value="#{oPacEnc.episodioMedico.paciente.fechaNac}"><f:convertDateTime pattern="dd-MM-yyyy"/></h:outputText>
+                        </p:column>
+                        <p:column style="width: 5%">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                            </f:facet>
+                            <h:outputText value="#{oPacEnc.episodioMedico.paciente.edadNumero}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                            </f:facet>
+                            <h:outputText value="#{oPacEnc.episodioMedico.paciente.curp}"/>
+                        </p:column>
+                        <p:column style="width: 70px;">                                        
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.expediente}"/>
+                            </f:facet>
+                            <h:outputText value="#{oPacEnc.episodioMedico.paciente.expediente.numero}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton value="#{etiq.llenarValoraPrean}" icon="ui-icon-pencil"
+                                     id="seleccion" onclick="PF('dialogoInfPac').show();" style=" visibility: #{oValoraPre.visibilidadTabla}">
+                        <p:ajax listener="#{oValoraPre.llenaDatosPaciente()}" update="valoracionPreanes"></p:ajax>
+                    </p:commandButton>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+                <div id="Panel_valoracion">  
+                    <p:dialog header="Elige Paciente" widgetVar="dialogoInfPac" id="dialogoInfPac" 
+                              style=" width: 1000px;" resizable="false" modal="true" >
+                        <p:panelGrid id="valoracionPreanes" style=" visibility: #{oValoraPre.visibilidadTabla};">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.nombrePaciente}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oValoraPre.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">                                       
+                                    <p:outputLabel value="#{etiq.expediente}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oValoraPre.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.segpop}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oValoraPre.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.sexo}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oValoraPre.procedimientos.episodioMedico.paciente.sexoP}" />
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.fechaYhora}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oValoraPre.fechaHoy}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.resid}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="RESID1"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.diagnostico}"/>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oValoraPre.procedimientos.episodioMedico.diagIngreso.descripcionDiag}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.proceQx}"/>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <h:outputLabel value="#{oValoraPre.procedimientos.CIE9.descripcion}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="6">
+                                    <p:outputLabel value="#{etiq.valoracion}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"/>
+                                <p:column colspan="4">
+                                    <p:inputTextarea value="#{oValoraPre.notaPre}" cols="65" rows="4">
+                                        <p:ajax></p:ajax>
+                                    </p:inputTextarea>
+                                </p:column>  
+                                <p:column styleClass="ui-widget-header"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.requiereIntercon}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneRadio>
+                                        <f:selectItem itemLabel="Si" itemValue="si"/>
+                                        <f:selectItem itemLabel="No" itemValue="no"/>
+                                    </p:selectOneRadio>
+                                </p:column>
+                            </p:row>
+                            <f:facet name="footer" class="frm_centrado">
+                                <p:row>
+                                    <p:column colspan="6">
+                                        <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}" 
+                                                         actionListener="#{oValoraPre.registraValoracion()}" onclick="PF(dialogoInfPac.hide());">
+                                            <p:ajax ></p:ajax>
+                                        </p:commandButton>
+                                        &nbsp;&nbsp;
+                                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                            <p:printer target="valoracionPreanes"/>
+                                        </p:commandButton>
+                                    </p:column>                        
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:dialog>
+                </div>            
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                <f:facet name="start">  
+                    <p:graphicImage value="/imgs/loading.gif" />  
+                </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>
+</ui:composition>
+</h:body>
+</html>

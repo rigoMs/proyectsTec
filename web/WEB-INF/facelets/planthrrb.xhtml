@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="icon" type="image/png" href="#{facesContext.externalContext.requestContextPath}/imgs/logo-veracruz.png" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>HRRB</title>
+        <h:outputScript library="js" name="calendar_es.js" />
+        
+        <script language="javascript" type="text/javascript"> 
+    var DATA_FOLDER = "C:\\Program Files\\Brother bPAC3 SDK\\Templates\\etiquetaEstudioLaboratorio.lbx";
+    var FOLDER="C:\\Program Files\\Brother bPAC3 SDK\\Templates\\CodigodeBarrasPaciente.lbx";
+    function recarga(){
+        location.replace();
+    }
+    function DoPrint(strExport)
+    {
+        var objDoc = new ActiveXObject("bpac.Document");
+        if(#{etiqueta.bhora}){
+            if(objDoc.Open(DATA_FOLDER) !== false)
+            { 
+                objDoc.GetObject("Nombre").Text = "#{etiqueta.paci.nombreCompleto}";
+                objDoc.GetObject("Edad").Text = "#{etiqueta.edad}";
+                objDoc.GetObject("Fecha").Text = "#{etiqueta.agendEtiq.fechaCita}";
+                objDoc.GetObject("sexo").Text = "#{etiqueta.paci.sexos}";
+                objDoc.GetObject("hora").Text = "#{etiqueta.agendEtiq.hora}";
+					
+                if(strExport === "")
+                {
+                    //objDoc.SetMediaByName(objDoc.Printer.GetMediaName(), true);
+                    objDoc.StartPrint("", 0);
+                    objDoc.PrintOut(1, 0);
+                    objDoc.StartPrint("", 0);
+                    objDoc.PrintOut(1, 0);
+                    objDoc.Close();
+                    objDoc.EndPrint();
+                } 
+            }
+        }
+        else{
+            if(objDoc.Open(DATA_FOLDER) !== false)
+            { 
+                objDoc.GetObject("Nombre").Text = "#{etiqueta.paci.nombreCompleto}";
+                objDoc.GetObject("Edad").Text = "#{etiqueta.edad}";
+                objDoc.GetObject("Fecha").Text = "#{etiqueta.agendEtiq.fechaCita}";
+                objDoc.GetObject("sexo").Text = "#{etiqueta.paci.sexos}";
+                objDoc.GetObject("hora").Text = "";
+
+                if(strExport === "")
+                {
+                    //objDoc.SetMediaByName(objDoc.Printer.GetMediaName(), true);
+                    objDoc.StartPrint("", 0);
+                    objDoc.PrintOut(1, 0);
+                    objDoc.StartPrint("", 0);
+                    objDoc.PrintOut(1, 0);
+                    objDoc.Close();
+                    objDoc.EndPrint();
+                }
+            }
+        }
+    }   
+    function imprime(strExport)
+    {
+        var objDoc = new ActiveXObject("bpac.Document");
+                
+        if(objDoc.Open(FOLDER) !== false)
+        { 
+            objDoc.GetObject("codigo").Text ="#{codigo.paci.idNacional}";					
+            if(strExport === "")
+            {
+                //objDoc.SetMediaByName(objDoc.Printer.GetMediaName(), true);
+                objDoc.StartPrint("", 0);
+                objDoc.PrintOut(1, 0);
+                objDoc.Close();
+                objDoc.EndPrint();
+            }
+        }
+    }   
+    function validaCaracter(pEvent){
+        if (pEvent.keyCode===39){
+            return false; //Cuando le haces esto le impides la escritura del caracter en la caja
+        }
+    }
+    </script>      
+    </h:head>
+    <h:body>
+        <div id="page-wrap">
+        <div id="top">
+            <table width="98%" border="0">
+            <tr>
+                <td width="15%">
+                    <div align="center">
+                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg"
+                             alt="SSAVER" align="middle"/>
+                    </div>
+                </td>
+                <td>
+                    <div align="center">
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+                        <h1 id="siteName">
+                        <h:outputText styleClass="ui-theme"
+                            value="#{etiq.hrrb}"/>
+                        </h1>
+                        <h2 id="sisName">
+                        <h:outputText styleClass="ui-theme"
+                            value="#{etiq.siece}"/>
+                        </h2>
+                    </div>
+                </td>
+                <td width="15%">
+                    <div align="center">
+                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg"
+                             alt="SSAHRRB" align="middle" height="90" width="234"/>
+                    </div>
+                </td>
+            </tr>
+            </table>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="menu">   
+            <h:form id="frm">
+                <p:menubar model="#{oMenuJB.modeloMenu}" styleClass="menu"></p:menubar>
+            </h:form>
+            </ui:insert> 
+            
+            <ui:insert name="cuerpo">
+                Contenido por omision
+            </ui:insert>
+        </div>
+    </div>
+        <div id="bottom">
+            <h:form class="footer">
+                <h:outputLink value="nosotros.html" target="_blank"><h:outputLabel value="#{etiq.nosotros}"/></h:outputLink>
+                | <h:commandLink><h:outputLabel value="#{etiq.mapa}"/></h:commandLink>
+                | <h:commandLink><h:outputLabel value="#{etiq.politicas}"/></h:commandLink>
+                | <h:commandLink><h:outputLabel value="#{etiq.contacto}"/></h:commandLink> | 
+                <h:outputLabel value="#{etiq.hrrb2014}"/>
+                <pe:ajaxErrorHandler rendered="false" />
+            </h:form>
+        </div>
+    </h:body>
+
+</html>

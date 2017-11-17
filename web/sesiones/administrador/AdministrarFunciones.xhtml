@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+
+                <p:growl id="grunuidos" showDetail="true"/>
+
+                <p:ajaxStatus style=" position: absolute; bottom: 50%; left: 50%; " >
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+
+                <p:panel header="Funciones">
+                    <h:form id="listaDeFunciones">
+                        <p:panel>
+                            <p:autoComplete id="inputFuncionesBusq" dropdown="true" maxResults="10" style="text-transform: initial;"
+                                            queryDelay="300" size="50" minQueryLength="3" styleClass="bordes"
+                                            value="#{adminFunciones.nombre}" completeMethod="#{adminFunciones.completaFuncion}"
+                                            />
+                            <p:spacer width="40" />
+                            <p:commandButton id="buscarFuncion" value="#{etiq.buscar}" icon="ui-icon-search" update=":listaDeFunciones"/>
+                            <p:spacer width="5" />
+                            <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-plus" oncomplete="PF('dialogModFunc').show()"
+                                             update=":dialogModFunc" actionListener="#{adminFunciones.nuevaFuncion()}">
+                                <f:setPropertyActionListener target="#{adminFunciones.tituloVentana}" value="#{etiq.nuevo}" />
+                            </p:commandButton>
+
+                        </p:panel>
+                        <p:separator/>
+                        <p:dataTable id="tablaFunciones" var="oFuncEnc" value="#{adminFunciones.listaFunciones}" paginator="true" rows="15" 
+                                     lazy="true">
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.clave}" />
+                                </f:facet>
+                                <h:outputText value="#{oFuncEnc.clave}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombrede} #{etiq.funcion}"/>
+                                </f:facet>
+                                <h:outputText value="#{oFuncEnc.descripcion}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.menu}" />
+                                </f:facet>
+                                <h:outputText value="#{oFuncEnc.menu.descripcion}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.ruta}" />
+                                </f:facet>
+                                <h:outputText value="#{oFuncEnc.llamada}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="Acciones"/>
+                                </f:facet>
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil" oncomplete="PF('dialogModFunc').show()" 
+                                                 update=":dialogModFunc" actionListener="#{adminFunciones.preparaModificar(oFuncEnc)}" >
+                                    <f:setPropertyActionListener target="#{adminFunciones.tituloVentana}" value="#{etiq.modificar}" />
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.eliminar}" icon="ui-icon-cancel" oncomplete="PF('dialogoBorrarFuncion').show()"
+                                                 update=":dialogoBorrarFuncion" actionListener="#{adminFunciones.preparaEliminar(oFuncEnc)}">
+
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+
+                <p:dialog id="dialogModFunc" widgetVar="dialogModFunc" closable="true" visible="false" resizable="false" dynamic="true" modal="true">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{adminFunciones.tituloVentana}" />
+                    </f:facet>
+
+
+                    <h:form id="panelEdicionFuncion" rendered="#{adminFunciones.renderEdicion}">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.nombre} *"/></p:column>
+                                <p:column>
+                                    <p:inputText maxlength="150" size="60" required="true" value="#{adminFunciones.funcion.descripcion}" 
+                                                 validatorMessage="Nombre requerido" style="text-transform: initial;"/>
+                                </p:column>
+                                <p:column rowspan="6">
+                                    <p:commandButton id="guardarFuncion" value="Guardar" style="margin-top:5px"
+                                                     action="#{adminFunciones.guardarFuncion()}" oncomplete="PF('dialogModFunc').hide()" 
+                                                     update=":listaDeFunciones :grunuidos" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.clave} *" /></p:column>
+                                <p:column>
+                                    <p:inputText maxlength="10" required="true" value="#{adminFunciones.funcion.clave}" style="text-transform: initial;"
+                                                 readonly="#{adminFunciones.noModificar}" validatorMessage="Clave requerida"  />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.rutaDeFunc} *" /></p:column>
+                                <p:column>
+                                    <p:inputText maxlength="300" size="60" required="true" value="#{adminFunciones.funcion.llamada}" 
+                                                 readonly="#{adminFunciones.noModificar}" validatorMessage="Ruta requerida" style="text-transform: initial;"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.menu} *" /></p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="listaMenus" value="#{adminFunciones.funcion.menu.claveMenu}" required="true" 
+                                                     validatorMessage="Asigne la función a un menú">
+                                        <f:selectItems value="#{adminFunciones.todosMenus}" var="menu" 
+                                                       itemLabel="#{menu.descripcion}" itemValue="#{menu.claveMenu}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.icono}" /></p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="listaIconos" value="#{adminFunciones.funcion.icono.clave}" >
+                                        <f:selectItems value="#{adminFunciones.todosIconos}" var="icono"
+                                                       itemLabel="#{icono.nombre}" itemValue="#{icono.clave}" />
+                                        <p:ajax update="prevIcon" listener="#{adminFunciones.funcion.icono.buscar()}" />
+                                    </p:selectOneMenu>
+                                    <p:spacer width="10px" />
+                                    <p:commandButton id="prevIcon" icon="#{adminFunciones.funcion.icono.nombre}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:pickList id="PojoPickList" value="#{adminFunciones.internas}" var="funcion"
+                                                itemLabel="#{funcion.descripcion}" itemValue="#{funcion}"
+                                                converter="entityConverter" showCheckbox="true"
+                                                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains">
+
+                                        <f:facet name="sourceCaption">Internas disponibles</f:facet>
+                                        <f:facet name="targetCaption">Internas de la funcion</f:facet>
+
+                                        <p:column>
+                                            <h:outputText value="#{funcion.llamada}"/>
+                                        </p:column>
+                                        <p:column >
+                                            <h:outputText value="en"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{funcion.menu.descripcion}"/>
+                                        </p:column>
+                                    </p:pickList>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+
+                </p:dialog>
+
+                <p:dialog id="dialogoBorrarFuncion" widgetVar="dialogoBorrarFuncion" closable="true" visible="false" resizable="false" dynamic="true" modal="true">
+                    <f:facet name="header" >
+                        <p:outputLabel value="#{etiq.confirmar}" />
+                    </f:facet>
+
+                    <h:form id="formEliminarFuncion" rendered="#{adminFunciones.renderEliminar}">    
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:outputLabel value="#{etiq.preguntaEliminarFuncion} #{adminFunciones.funcion.descripcion}?" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.eliminar}" action="#{adminFunciones.eliminarFuncion()}" 
+                                                     oncomplete="PF('dialogoBorrarFuncion').hide()" update=":listaDeFunciones :grunuidos" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.cancelar}" onclick="PF('dialogoBorrarFuncion').hide()" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+            </div>
+        </ui:define>
+    </ui:composition>
+
+</html>

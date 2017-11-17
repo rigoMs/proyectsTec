@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.MaterialCaducar}"/>
+                </h2>
+
+
+                <br/>
+                <div  >
+                    <h:form id="proximosCaducar">
+                        <p:panelGrid style="margin-top:20px; width: 1000px">
+                            <f:facet name="header">                                 
+                                <p:row>
+                                    <p:column colspan="30">
+                                        <h:outputLabel value="Informacion de materiales por caducar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet> 
+                            <p:row> 
+                                <p:column>
+                                    <p:dataTable var="oCad" 
+                                                 value="#{oCaducida.lista}" 
+                                                 id="caducidadMaterial" 
+                                                 emptyMessage="#{etiq.noMedicamentosCaducar}"                                      
+                                                 paginator="true"
+                                                 paginatorPosition="bottom"
+                                                 rows="10" 
+                                                 currentPageReportTemplate="currentPage"
+                                                 filteredValue="#{oExistencia.matFiltrado}"
+                                                 style="margin-bottom:20px;text-align: center; background-color:  blue;" 
+                                                 >
+
+                                        <p:column headerText="#{etiq.clave}" width="10%" >
+                                            <h:outputLabel value="#{oCad.primero.inv.material.claveMaterial}"/>
+                                        </p:column>                
+                                        <p:column headerText="#{etiq.nombre}" width="20%" >    
+
+                                            <h:outputLabel value="#{oCad.primero.inv.material.nombre}"/>                      
+                                        </p:column>
+
+
+                                        <p:column headerText="#{etiq.invFisico}" width="5%">
+                                            <h:outputLabel value="#{oCad.primero.inv.existencia}"/>                        
+                                        </p:column>
+                                        <p:column headerText="#{etiq.lote}" width="5%">
+                                            <h:outputLabel value="#{oCad.primero.inv.lote}"/>        
+                                        </p:column>
+                                        <p:column headerText="#{etiq.caducidad}" width="10%">
+                                            <h:outputLabel value="#{oCad.primero.inv.caducidad}"/>&nbsp;&nbsp;                        
+                                            <h:commandButton style="background-color:#{oCad.semaforo}; width:10px; height:10px" disabled="true"  rendered="#{oCaducida.verEdicion}"/>  
+                                        </p:column>                
+                                    </p:dataTable>
+                                    <div style="text-align: center"> 
+                                        <p:column>    
+                                            <p:outputLabel  title="Exportar PDF" value="Exportar" styleClass="mensaje" />
+                                            <h:commandLink id="pdf"   >
+                                                <p:graphicImage value="/imgs/pdf.jpg" width="30" />
+                                                <poue:exporter type="pdf" target="caducidadMaterial" fileName="Caducidad Materiales"
+                                                               orientation="center"  cellFontColor="#090908" cellFontStyle="oblique" facetBackground="#8CF09B" 
+                                                               tableTitle="Materiales Proximos a Caducar"  cellFontSize="8" fontName="Verdana" 
+                                                               facetFontSize="10"  facetFontStyle="italic" />                                    
+                                            </h:commandLink>                                     
+                                        </p:column>
+                                        </div>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

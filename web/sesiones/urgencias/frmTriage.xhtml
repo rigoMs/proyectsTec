@@ -1,0 +1,1244 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org./TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:body>
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq"/>
+            <ui:define name="cuerpo">
+            <div class="buscar">
+                    <h:form id="busqueda">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.generaValoracionTriage}"/></h3>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel />
+                                    <p:inputText styleClass="bordes" id="nom" value="#{triage.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="app" value="#{triage.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{triage.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{triage.buscarDatosPacienteregistroTriage(0)}" 
+                                                    update=":busqueda:destino:tblResultado">
+                                        <f:setPropertyActionListener target="#{triage.confirmaBandera}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>                                
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmLogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{triage.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                                    </p:inputText>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{triage.buscarDatosPacienteregistroTriage(1)}"
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{triage.confirmaBandera}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <div class="centrar">
+                            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                                <f:setPropertyActionListener target="#{triage.paciente.nombres}" value=""/>
+                                <f:setPropertyActionListener target="#{triage.paciente.apPaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{triage.paciente.apMaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{triage.paciente.expediente.numero}" value="#{0}"/>
+                            </p:commandButton>
+                        </div>
+                        <br/>
+                        <p:outputPanel id="destino" styleClass="centrar">
+                                <p:dataTable id="tblResultado" var="oPacEnc"
+                                             value="#{triage.pacienteDatos}"
+                                            emptyMessage="#{etiq.noRegistro}" 
+                                            paginator="true" 
+                                            rows="4"                                            
+                                            rendered="#{not empty triage.pacienteDatos}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                </f:facet>
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.fechanac}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.fechaNac}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>                                
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.nombres}"/>
+                                </p:column>
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.appat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.apPaterno}"/>
+                                </p:column>
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.apmat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.apMaterno}"/>
+                                </p:column>
+                                <p:column style="width: 110px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Ctrl"/>
+                                    </f:facet>
+                                   <p:commandButton id="btnDetalles" icon="ui-icon-plusthick" value="#{etiq.buscarNotas}">
+                                       <p:ajax listener="#{triage.metodoCargaDatosGenearal(oPacEnc, 0, null)}" 
+                                               oncomplete="PF('NotaP').show()" update=":hTriage :oNotas"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <br/><br/>
+                <div class="frm_centrado">
+                    <h:form id="hTriage">                                               
+                        <p:tabView id="contenedor" rendered="#{triage.confirmaBandera}" dynamic="true">
+                            <p:ajax event="tabChange" listener="#{triage.requerir}" update="@this"/>
+                            <p:tab title="#{etiq.notaT00}" id="tab1">
+                                <p:panelGrid styleClass="frm_centrado" id="notaGineco">
+                                    <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6"><p:outputLabel value="#{etiq.notaGinecoobstetricia}"/></p:column>
+                                    </p:row>
+                                    </f:facet>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="4"><p:outputLabel value=""/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.folioUrg}:"/></p:column>
+                                        <!--[01]INFORMACION QUE VIENE DE LA BASE DE DATOS-->
+                                        <p:column> <p:outputLabel value="#{triage.episodioMedico.admisionUrgs.folioAdmision}"/></p:column>
+                                        <!--******************************************-->
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.segpop}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fecha}:"/></p:column>
+                                    </p:row>
+                                    <!--[02]INFORMACION QUE VIENE DE LA BASE DE DATOS-->
+                                    <p:row>
+                                        <p:column><p:outputLabel value="#{triage.episodioMedico.paciente.nombres}"/></p:column>
+                                        <p:column><p:outputLabel value="#{triage.episodioMedico.paciente.apPaterno}"/></p:column>
+                                        <p:column><p:outputLabel value="#{triage.episodioMedico.paciente.apMaterno}"/></p:column>
+                                        <p:column><p:outputLabel  value="#{triage.episodioMedico.paciente.seguro.numero}"/></p:column>
+                                        <p:column><p:outputLabel value="#{triage.episodioMedico.paciente.expediente.numero}"/></p:column>
+                                        <p:column>
+                                            <p:outputLabel  value="#{triage.episodioMedico.fechaIngreso}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.hora}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}:"/></p:column>
+                                        <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.motivoConsulta}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.telefono1}:"/></p:column>
+                                    </p:row>
+                                    <!--[03]INFORMACION QUE VIENE DE LA BASE DE DATOS-->
+                                    <p:row>
+                                        <p:column><p:outputLabel value="#{triage.hora}"/></p:column>
+                                        <p:column><p:outputLabel value="#{triage.episodioMedico.paciente.edadNumero}"/></p:column>
+                                        <p:column colspan="3"><p:outputLabel value="#{triage.episodioMedico.admisionUrgs.motivoConsulta}"/></p:column>
+                                        <p:column><p:outputLabel value="#{triage.episodioMedico.paciente.telefono}"/></p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.unidadMedRef}:"/></p:column>
+                                        <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                                    </p:row>
+                                    <!--[03]INFORMACION QUE VIENE DE LA BASE DE DATOS-->
+                                    <p:row>
+                                        <p:column colspan="3"><p:outputLabel value="#{triage.episodioMedico.paciente.referencia.tipo} "/>
+                                                            <p:outputLabel value="#{triage.episodioMedico.paciente.referencia.descripcion}"/>
+                                        </p:column>
+                                        <p:column colspan="3"><p:outputLabel value="#{triage.episodioMedico.paciente.ciudad.descripcionCiu} "/>
+                                            <p:outputLabel value="#{triage.episodioMedico.paciente.colonia} "/>
+                                            <p:outputLabel value="#{triage.episodioMedico.paciente.calleNum}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.talla}"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.peso}"/></p:column>
+                                    </p:row>
+                                    <!--[03]INFORMACION QUE VIENE DE LA BASE DE DATOS-->
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <p:outputLabel value="#{triage.episodioMedico.paciente.fechaNac}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column colspan="2"><h:outputLabel value="#{triage.episodioMedico.paciente.talla}"/><p:outputLabel value=" #{etiq.cm}"/></p:column>
+                                        <p:column colspan="2"><h:outputLabel value="#{triage.episodioMedico.paciente.peso}"/><p:outputLabel value=" #{etiq.kg}"/></p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.signosVitales}"/></p:column>
+                                    </p:row>
+                                    <!--[04]INFORMACION QUE VIENE DE LA BASE DE DATOS-->
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.ta}:"/></p:column>
+                                        <p:column>
+                                            <p:inputText size="10" styleClass="bordes" 
+                                                         value="#{triage.notaEmbarazo.epiMed.signosVitales.TA}" placeholder="000/000" 
+                                                         required="true" requiredMessage="#{ertiq.notificacion3}"
+                                                        validator="mx.gob.hrrb.validadores.ValidaEntradaTA">        
+                                                <p:ajax event="valueChange" update=":busqueda:msgs"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fc}:"/></p:column>
+                                        <p:column>
+                                            <p:inputText size="10" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.signosVitales.FC}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fr}"/></p:column>                                        
+                                        <p:column>
+                                            <p:inputText size="10" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.signosVitales.FR}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="2" style="background-color: #FF0000; text-align: center">
+                                            <b><p:outputLabel value="#{etiq.codRojo} #{etiq.hora}:"/></b>
+                                            <p:calendar id="h1" value="#{triage.notaEmbarazo.horaCodigoRojo}" 
+                                                        locale="es" pattern="HH:mm" timeOnly="true" size="6" readonlyInput="true" disabled="#{triage.controlaHoraRojo}">
+                                                <p:ajax event="dateSelect" listener="#{triage.onDateSelectRojo}" update="hatn codRoj0 codRoj1 codRoj2 codRoj3 codRoj4 codRoj5 codRoj6 codRoj7 codRoj8 codRoj9 codAma0 codAma1 codAma2 codAma3 codAma4 codAma5 codAma6 codAma7 codVer0 codVer1 codVer2 codVer3 h2 h3"/>
+                                            </p:calendar>
+                                        </p:column>
+                                        <p:column colspan="2" style="background-color: #ffff00; text-align: center">
+                                            <b><p:outputLabel for="h2" value="#{etiq.codAma} #{etiq.hora}:  "/></b>
+                                            <p:calendar id="h2" value="#{triage.notaEmbarazo.horaCodigoAmarillo}" 
+                                                        locale="es" pattern="HH:mm" timeOnly="true" size="6" readonlyInput="true" disabled="#{triage.controlaHoraAma}">
+                                                <p:ajax event="dateSelect" listener="#{triage.onDateSelectAmarillo}" update="hatn codAma0 codAma1 codAma2 codAma3 codAma4 codAma5 codAma6 codAma7 codRoj0 codRoj1 codRoj2 codRoj3 codRoj4 codRoj5 codRoj6 codRoj7 codRoj8 codRoj9 codVer0 codVer1 codVer2 codVer3 h1 h3"/>
+                                            </p:calendar>
+                                        </p:column>
+                                        <p:column colspan="2" style="background-color: #00cc33; text-align: center">
+                                            <b><p:outputLabel for="h3" value="#{etiq.codVer} #{etiq.hora}:  "/></b>
+                                            <p:calendar id="h3" value="#{triage.notaEmbarazo.horaCodigoVerde}" 
+                                                        locale="es" pattern="HH:mm" timeOnly="true" size="6" readonlyInput="true" disabled="#{triage.controlaHoraVer}">
+                                                <p:ajax event="dateSelect" listener="#{triage.onDateSelectVerde}" update="hatn codVer0 codVer1 codVer2 codVer3 codRoj0 codRoj1 codRoj2 codRoj3 codRoj4 codRoj5 codRoj6 codRoj7 codRoj8 codRoj9 codAma0 codAma1 codAma2 codAma3 codAma4 codAma5 codAma6 codAma7 h1 h2"/>
+                                            </p:calendar>
+                                        </p:column>
+                                    </p:row>
+                                    <!--[05]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column colspan="2" style="text-align: left">
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor0}" disabled="#{triage.codigoRojo}" id="codRoj0">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor0()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo1}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor1}" disabled="#{triage.codigoRojo}" id="codRoj1">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor1()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo2}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor2}" disabled="#{triage.codigoRojo}" id="codRoj2">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor2()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo3}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor3}" disabled="#{triage.codigoRojo}" id="codRoj3">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor3()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo4}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor4}" disabled="#{triage.codigoRojo}" id="codRoj4">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor4()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo5}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor5}" disabled="#{triage.codigoRojo}" id="codRoj5">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor5()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo6}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor6}" disabled="#{triage.codigoRojo}" id="codRoj6">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor6()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo7}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor7}" disabled="#{triage.codigoRojo}" id="codRoj7">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor7()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo8}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor8}" disabled="#{triage.codigoRojo}" id="codRoj8">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor8()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo9}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codRojValor9}" disabled="#{triage.codigoRojo}" id="codRoj9">
+                                                <p:ajax listener="#{triage.asignaCodigoRojoValor9()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codRojo10}"/>
+                                            <br/>
+                                            <b><p:outputLabel value="#{etiq.notifCodRojo}"/></b>
+                                        </p:column>
+                                        <p:column colspan="2" style="vertical-align: text-top; text-align: left;">
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor0}" disabled="#{triage.codigoAmarillo}" id="codAma0">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor0()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo1}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor1}" disabled="#{triage.codigoAmarillo}" id="codAma1">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor1()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo2}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor2}" disabled="#{triage.codigoAmarillo}" id="codAma2">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor2()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo3}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor3}" disabled="#{triage.codigoAmarillo}" id="codAma3">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor3()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo4}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor4}" disabled="#{triage.codigoAmarillo}" id="codAma4">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor4()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo5}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor5}" disabled="#{triage.codigoAmarillo}" id="codAma5">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor5()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo6}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor6}" disabled="#{triage.codigoAmarillo}" id="codAma6">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor6()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo7}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codAmaValor7}" disabled="#{triage.codigoAmarillo}" id="codAma7">
+                                                <p:ajax listener="#{triage.asignaCodigoAmarilloValor7()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codAmarillo8}"/>                                            
+                                            <br/>
+                                            <b><p:outputLabel value="#{etiq.notifCodAmarillo}"/></b>
+                                        </p:column>
+                                        <p:column colspan="2" style="vertical-align: text-top; text-align: left;">                                            
+                                            <p:selectBooleanCheckbox value="#{triage.codVerValor0}" disabled="#{triage.codigoVerde}" id="codVer0">
+                                                <p:ajax listener="#{triage.asignaCodigoVerdeValor0()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codVerde1}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codVerValor1}" disabled="#{triage.codigoVerde}" id="codVer1">
+                                                <p:ajax listener="#{triage.asignaCodigoVerdeValor1()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codVerde2}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codVerValor2}" disabled="#{triage.codigoVerde}" id="codVer2">
+                                                <p:ajax listener="#{triage.asignaCodigoVerdeValor2()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codVerde3}"/>
+                                            <br/>
+                                            <p:selectBooleanCheckbox value="#{triage.codVerValor3}" disabled="#{triage.codigoVerde}" id="codVer3">
+                                                <p:ajax listener="#{triage.asignaCodigoVerdeValor3()}"/>
+                                            </p:selectBooleanCheckbox>
+                                            <p:outputLabel value="#{etiq.codVerde4}"/>
+                                            <br/>
+                                            <b><p:outputLabel value="#{etiq.notifCodVerde}"/></b>
+                                        </p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.horaAtencion}:"/></p:column>
+                                        <p:column colspan="5" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.medico1erCon}:"/></p:column>
+                                    </p:row>
+                                    <!--[05]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel id="hatn" value="#{triage.FormatoHora()}" rendered="true"/>
+                                            <p:outputLabel value=" Hrs"/>                                            
+                                        </p:column> 
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                        <p:column colspan="2">                                            
+                                            <p:selectOneMenu id="lstMed" effect="fold" value="#{triage.notaEmbarazo.medicoSupervisor.nombres}"
+                                                             required="#{triage.tab1}" requiredMessage="#{etiq.notificacion1}">
+                                                <f:selectItem itemLabel="#{etiq.notificacion11}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems value="#{triage.listMedicoUrgencias}" var="oMedico" itemLabel="#{oMedico.nombreCompleto}" itemValue="#{oMedico.nombres} #{oMedico.apPaterno} #{oMedico.apMaterno}"/>
+                                                <p:ajax event="valueChange" listener="#{triage.cedula}" update="CedulaProf"/>                                                
+                                            </p:selectOneMenu>                                            
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                                        <p:column><p:outputLabel id="CedulaProf" value="#{triage.notaEmbarazo.medicoSupervisor.cedProf}" /></p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.antecedentesFam}"/></p:column>
+                                    </p:row>
+                                    <!--[05]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.padre}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecHeredoFamiliares.padre}" 
+                                                         size="40" styleClass="bordes" style="text-transform: uppercase;" required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>    
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.madre}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecHeredoFamiliares.madre}" 
+                                                         size="40" styleClass="bosrdes" style="text-transform: uppercase;" required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.abueloPat}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecHeredoFamiliares.abueloPaterno}" size="40" styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.abuelaPat}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecHeredoFamiliares.abuelaPaterna}" size="40" styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>                                        
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.abueloMat}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText size="40" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecHeredoFamiliares.abueloMaterno}" styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.abuelaMat}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText size="40" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecHeredoFamiliares.abuelaMaterna}" styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.otros}"/></p:column>
+                                        <p:column>
+                                            <p:selectOneRadio value="#{triage.habilitaInput}">
+                                                    <f:selectItem itemLabel="SÍ" itemValue="true" />
+                                                    <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                    <p:ajax event="valueChange" listener="#{triage.habilitaInputComp()}" update=":hTriage :hTriage:contenedor:notaGineco input" process="@this"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                        <p:column colspan="4">
+                                            <p:inputText id="input" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecHeredoFamiliares.otros}"
+                                                        size="80" styleClass="bordes" style="text-transform: uppercase;" 
+                                                        rendered="#{triage.habilitaInput}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.antPerNoPato}"/></p:column>
+                                    </p:row>
+                                    <!--[06]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.originaria}:"/></p:column>
+                                        <p:column colspan="2" rendered="#{triage.originaria0}">
+                                            <p:outputLabel value="#{triage.episodioMedico.paciente.lugarNacimiento}"/>
+                                        </p:column>
+                                        <p:column colspan="2" rendered="#{triage.originaria1}">
+                                            <p:inputText size="40" value="#{triage.notaEmbarazo.epiMed.paciente.lugarNacimiento}" 
+                                                        styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.radica}:"/></p:column>
+                                        <p:column colspan="2" rendered="#{triage.radica0}">
+                                            <p:outputLabel value="#{triage.episodioMedico.paciente.ciudad.descripcionCiu}"/>
+                                        </p:column>
+                                        <p:column colspan="2" rendered="#{triage.radica1}">
+                                            <p:inputText  size="40" value="#{triage.notaEmbarazo.epiMed.ciudad.descripcionCiu}"
+                                                          styleClass="bordes" style="text-transform: uppercase;" 
+                                                          required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.edoCivil}:"/>
+                                        </p:column>
+                                        
+                                        <p:column colspan="2">                                            
+                                            <p:selectOneMenu id="edoCivil" value="#{triage.notaEmbarazo.epiMed.paciente.edoCivilStr}" effect="fold"
+                                                             required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"></f:selectItem>
+                                                <f:selectItems value="#{triage.listEstadoCivil}" var="oEstadoCivil" 
+                                                               itemLabel="#{oEstadoCivil.valor}" itemValue="#{oEstadoCivil.claveParametro}#{oEstadoCivil.tipoParametro}"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.escolaridad}:"/></p:column>
+                                        <p:column colspan="2">                                            
+                                            <p:selectOneMenu id="escolaridad" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecNoPatologicos.escolaridad}" 
+                                                             effect="fold" required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems value="#{triage.listEscolaridad}" var="oListaEscolaridad" itemLabel="#{oListaEscolaridad.valor}" itemValue="#{oListaEscolaridad.valor}"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.religion}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecNoPatologicos.religion}" size="40" styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.ocupacion}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText  size="40" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecNoPatologicos.ocupacion}" styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tabaquismo}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:selectOneRadio value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecNoPatologicos.tabaquismo}">
+                                                <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.alcoholismo}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:selectOneRadio value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecNoPatologicos.alcoholismo}" >
+                                                <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.drogas}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:selectOneRadio value="#{triage.drogas}">
+                                                <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange" listener="#{triage.convierteTipoDrogas()}"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.otros}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:selectOneRadio value="#{triage.otroHabilitado}">
+                                                <f:selectItem itemLabel="SÍ" itemValue="true" />
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange" listener="#{triage.habilitaOtros()}" update=":hTriage :hTriage:contenedor:notaGineco otro" process="@this"/>
+                                            </p:selectOneRadio>
+                                            <p:inputText id="otro" size="40" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecNoPatologicos.otro}" style="text-transform: uppercase;" rendered="#{triage.otroHabilitado}" >
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>                                        
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="6"></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="6"><p:outputLabel value="#{etiq.antPerPato}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.alergias001}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText  size="40" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecPatologicos.alergias}" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.grupo} y #{etiq.rh}:"/></p:column>
+                                        <p:column colspan="2" rendered="#{triage.obtieneGrupoRh()}">
+                                            <p:outputLabel value="#{triage.episodioMedico.paciente.tipoSangre.valor} #{triage.episodioMedico.paciente.factorRH.valor}"/>
+                                        </p:column>
+                                        <p:column colspan="2" rendered="#{triage.grupoRh}">
+                                            <p:selectOneMenu id="grupo" value="#{triage.tipoSangre}" effect="fold"
+                                                             required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"></f:selectItem>
+                                                <f:selectItems value="#{triage.listGrupo}" var="oListaGrupo" itemLabel="#{oListaGrupo.valor}" 
+                                                               itemValue="#{oListaGrupo.claveParametro}#{oListaGrupo.tipoParametro}"/>
+                                                <p:ajax event="valueChange" listener="#{triage.habilitaLista()}" update=":hTriage :hTriage:contenedor:notaGineco rh"/>
+                                            </p:selectOneMenu>                                            
+                                            <p:selectOneMenu id="rh" value="#{triage.tipoFactor}" effect="fold" rendered="#{triage.showRh}"
+                                                             required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"></f:selectItem>
+                                                <f:selectItems value="#{triage.listRh}" var="oListaRh" itemLabel="#{oListaRh.valor}"
+                                                               itemValue="#{oListaRh.claveParametro}#{oListaRh.tipoParametro}"/>
+                                                <p:ajax event="valueChange" listener="#{triage.asignaSangre}"/>
+                                            </p:selectOneMenu>                                            
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.quirurgicos}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText size="40" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecPatologicos.quirurgico}" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.transfusionales}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText  size="40" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecPatologicos.transfusion}" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.cardiovasculares}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText  size="40" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecPatologicos.cardioVasculares}" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.diabetico}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:selectOneRadio value="#{triage.diabetico}" >
+                                                <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange" listener="#{triage.convierteDato}"/>
+                                            </p:selectOneRadio>
+                                        </p:column>                                
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.hip}:"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:selectOneRadio value="#{triage.hipertenso}">
+                                                <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange" listener="#{triage.convierteDatoHipertenso}"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.onc}"/></p:column>
+                                        <p:column colspan="2">
+                                            <p:selectOneRadio value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecPatologicos.oncologico}">
+                                                <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.otros}:"/></p:column>
+                                        <p:column>
+                                            <p:selectOneRadio value="#{triage.otroHabilitado1}">
+                                                <f:selectItem itemLabel="SÍ" itemValue="true" />
+                                                <f:selectItem itemLabel="NO" itemValue="false" />
+                                                <p:ajax id="invocador" event="valueChange" listener="#{triage.habilitaOtros1()}" update=":hTriage :hTriage:contenedor:notaGineco descripcion"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                        <p:column colspan="4">
+                                            <p:inputText id="descripcion" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecPatologicos.otro}"  size="50" styleClass="bordes" style="text-transform: uppercase;" rendered="#{triage.otroHabilitado1}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.antecedentesGineco}"/></p:column>
+                                    </p:row>
+                                    <!--[06]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.menarca}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.ciclos}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.ivsa}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.g}:"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:inputText id="validaMsj" styleClass="bordes" size="5" 
+                                                        value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.menarca}"                                                         
+                                                        converterMessage="#{etiq.notificacion13}" placeholder="10 - 20"
+                                                        required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <f:validateLongRange minimum="10" maximum="20"/>                                                
+                                                <p:ajax event="valueChange" process="@this" update=":busqueda:msgs validaMsj"/>
+                                            </p:inputText>
+                                            <p:outputLabel value="#{etiq.años}"/>
+                                            
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="texto" styleClass="bordes" 
+                                                          value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.ciclo}"
+                                                          style="text-transform: uppercase;" required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="valueChange" update=":busqueda:msgs texto"/>
+                                            </p:inputText>                                            
+                                        </p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText id="validaMsj1" size="5" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.IVSA}"
+                                                         required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}"
+                                                         converterMessage="#{etiq.notificacion13}" placeholder="10 - 25">                                                
+                                                <f:validateLongRange minimum="10" maximum="25"/>
+                                                <p:ajax event="valueChange" process="@this" update=":busqueda:msgs validaMsj1"/>
+                                            </p:inputText>
+                                            <p:outputLabel value="#{etiq.años}"/>
+                                        </p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText id="validaMsj2" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.gestaciones}"
+                                                          required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}"
+                                                          converterMessage="#{etiq.notificacion13}" placeholder="0 - 5" >
+                                                <f:validateLongRange minimum="0" maximum="5"/>
+                                                <p:ajax event="valueChange" process="@this" update=":busqueda:msgs validaMsj2"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.p}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.c}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.a}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.pf}:"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:inputText id="validaMsj3" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.partos}"
+                                                          required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}"
+                                                          converterMessage="#{etiq.notificacion13}" placeholder="0 - 5">
+                                                <f:validateLongRange minimum="0" maximum="5"/>
+                                                <p:ajax event="valueChange" process="@this" update=":busqueda:msgs validaMsj3"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="validaMsj4" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.cesareas}"
+                                                         required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}"
+                                                         converterMessage="#{etiq.notificacion13}" placeholder="0 - 3">
+                                                <f:validateLongRange minimum="0" maximum="3"/>
+                                                <p:ajax event="valueChange" process="@this" update=":busqueda:msgs validaMsj4"/>
+                                            </p:inputText>                                            
+                                        </p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText id="validaMsj5" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.abortos}"
+                                                         required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}"
+                                                         converterMessage="#{etiq.notificacion13}">
+                                                <f:validateLongRange minimum="0" maximum="5"/>
+                                                <p:ajax event="valueChange" process="@this" update=":busqueda:msgs validaMsj5"/>
+                                            </p:inputText>                                            
+                                        </p:column>
+                                        <p:column colspan="2">                               
+                                            <p:selectOneMenu value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.metodoAnticonceptivo.descripcion}"
+                                                             required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"></f:selectItem>
+                                                <f:selectItems value="#{triage.listMetodoAnticonceptivo}" var="oMetodo" 
+                                                               itemLabel="#{oMetodo.descripcion}" itemValue="#{oMetodo.descripcion}"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fum}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.parejasSexuales}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fpp}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.doc}:"/></p:column>                                
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:calendar id="fum" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.ultimaMenstruacion}"
+                                                        maxdate="#{triage.fechaActual}" readonlyInput="true" locale="es"
+                                                        required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="dateSelect"/>
+                                            </p:calendar>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="validaMsj6" styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.parejasSexuales}"
+                                                         required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}"
+                                                         converterMessage="#{etiq.notificacion13}" placeholder="1 - 10">
+                                                <f:validateLongRange minimum="0" maximum="10"/>                                                
+                                                <p:ajax event="valueChange" process="@this" update=":busqueda:msgs validaMsj6"/>
+                                            </p:inputText>                                            
+                                        </p:column>
+                                        <p:column colspan="2">                                            
+                                            <p:calendar id="fpp" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.fechaPosibleParto}" 
+                                                        mindate="#{triage.fechaActual}" locale="es" readonlyInput="true"
+                                                        required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="dateSelect"/>
+                                            </p:calendar>
+                                        </p:column>
+                                        <p:column colspan="2">
+                                            <p:inputText styleClass="bordes" value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.doc}" 
+                                                         style="text-transform: uppercase;" required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.ets}:"/></p:column>
+                                        <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.cpn}:"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="3">
+                                            <p:inputText value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.ETS}" 
+                                                         size="50" styleClass="bordes" style="text-transform: uppercase;"
+                                                         required="#{triage.tab1}" requiredMessage="#{etiq.notificacion3}">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column colspan="3">
+                                            <p:selectOneRadio value="#{triage.notaEmbarazo.epiMed.paciente.expediente.antecGinecoObstetricos.controlPrenatal}">
+                                                <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                    </p:row>                                   
+                                </p:panelGrid>
+                                 <!--BOTONES GURADAR E IMPRIMIR-->
+                                 <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; border-color: white; background-color: white;">                                            
+                                            <p:commandButton id="guardar" value="#{etiq.guard}" icon="ui-icon-disk" process="@form" validateClient="true"
+                                                             actionListener="#{triage.guardaInformacion}" update="notaGineco :busqueda:msgs"/>                                       
+                                        </p:column>
+                                    </p:row>
+                                 </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="#{etiq.notaT01}" id="tab2">
+                                <p:panelGrid styleClass="frm_centrado" id="notaGineco02">
+                                    <!--******************************************--> 
+                                    <!--*************REVERSO DEL FORMATO*****************************-->
+                                    <p:row>  
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;"><p:outputLabel value="#{etiq.exploracion}"/></p:column>
+                                    </p:row>
+                                    <!--[07]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column><img src="#{facesContext.externalContext.requestContextPath}/imgs/fondoUterino.jpg" alt="fondo1" align="middle"/></p:column>
+                                                    <p:column>
+                                                        <p:selectOneRadio styleClass="textover" id="fondoUte1" layout="grid" columns="1" value="#{triage.fondoUterino}"
+                                                                          required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="2cm" itemValue="2"/>
+                                                            <f:selectItem itemLabel="4cm" itemValue="4"/>
+                                                            <f:selectItem itemLabel="6cm" itemValue="6"/>
+                                                            <f:selectItem itemLabel="8cm" itemValue="8"/>
+                                                            <f:selectItem itemLabel="10cm" itemValue="10"/>
+                                                            <p:ajax event="valueChange" listener="#{triage.fondoUter()}"/> 
+                                                        </p:selectOneRadio>
+                                                    </p:column>
+                                                </p:row>                                                
+                                            </p:panelGrid>
+                                        </p:column>                                        
+                                    </p:row>                                    
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.situacion}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.presentacion}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.abocado}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.encajado}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fcf}:"/></p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>
+                                                        <p:selectOneMenu id="situacion" value="#{triage.situacionTemporal}" effect="fold" 
+                                                                         required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{triage.listSituacion}" var="oListaSituacion" itemLabel="#{oListaSituacion.valor}"
+                                                                            itemValue="#{oListaSituacion.claveParametro}#{oListaSituacion.tipoParametro}"/>
+                                                            <p:ajax event="valueChange" listener="#{triage.almacenaSituacion()}"/>
+                                                        </p:selectOneMenu>                                            
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:selectOneMenu id="presentacion" value="#{triage.presentacionTemporal}" effect="fold"
+                                                                         required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{triage.listPresentacion}" var="oListaPresentacion" itemLabel="#{oListaPresentacion.valor}"
+                                                                           itemValue="#{oListaPresentacion.claveParametro}#{oListaPresentacion.tipoParametro}"/>
+                                                            <p:ajax event="valueChange" listener="#{triage.almacenaPresentacion()}"/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:selectOneRadio value="#{triage.notaEmbarazo.abocado}">
+                                                            <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                            <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:selectOneRadio>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:selectOneRadio value="#{triage.notaEmbarazo.encajado}" >
+                                                            <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                            <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:selectOneRadio>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:inputText value="#{triage.notaEmbarazo.FCF}" styleClass="bordes" style="text-transform: uppercase;">
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:inputText>                                                        
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>                                            
+                                        </p:column>                                        
+                                    </p:row>
+                                    <!--******************************************-->                          
+                                    <!--[08]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;"><p:outputLabel value="#{etiq.ultrasonido}"/></p:column>
+                                                </p:row>   
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.somatometria}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.la}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.placenta}:"/></p:column>
+                                                    <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.observaciones}:"/></p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>
+                                                        <p:inputText styleClass="bordes" value="#{triage.notaEmbarazo.sometria}" style="text-transform: uppercase;">
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:inputText styleClass="bordes" value="#{triage.notaEmbarazo.LA}" style="text-transform: uppercase;">
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:inputText styleClass="bordes" value="#{triage.notaEmbarazo.placenta}" style="text-transform: uppercase;">
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:inputTextarea styleClass="bordes" value="#{triage.notaEmbarazo.observacionesUltrasonido}" cols="50" rows="3" autoResize="false" style="text-transform: uppercase;">
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:inputTextarea>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>                                    
+                                    <!--******************************************-->
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center"><p:outputLabel value="#{etiq.tactoVag}"/></p:column>
+                                    </p:row>
+                                     <!--[09]INFORMACION QUE CAPTURA EL USUARIO-->
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column><img src="#{facesContext.externalContext.requestContextPath}/imgs/fondoUterino2.jpg" alt="fondo2" align="middle" width="300" height="300"/></p:column>
+                                                    <p:column>
+                                                        <p:selectOneRadio styleClass="textover" value="#{triage.notaEmbarazo.dilatacion}" id="fondoUte2" layout="grid" columns="1"
+                                                                          required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="1cm" itemValue="1"/>
+                                                            <f:selectItem itemLabel="2cm" itemValue="2"/>
+                                                            <f:selectItem itemLabel="3cm" itemValue="3"/>
+                                                            <f:selectItem itemLabel="4cm" itemValue="4"/>
+                                                            <f:selectItem itemLabel="5cm" itemValue="5"/>
+                                                            <f:selectItem itemLabel="6cm" itemValue="6"/>
+                                                            <f:selectItem itemLabel="7cm" itemValue="7"/>
+                                                            <f:selectItem itemLabel="8cm" itemValue="8"/>
+                                                            <f:selectItem itemLabel="9cm" itemValue="9"/>
+                                                            <f:selectItem itemLabel="10cm" itemValue="10"/>
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:selectOneRadio>
+                                                    </p:column>
+                                                </p:row>                                               
+                                            </p:panelGrid>
+                                        </p:column>                                     
+                                    </p:row>
+                                     <p:row>
+                                         <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                             <p:panelGrid>
+                                                 <p:row>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.borramiento}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.plano}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.amnios}:"/></p:column>                                                    
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.la}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.pelvis}:"/></p:column>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.trazoCardio}:"/></p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>
+                                                        <p:inputText id="borramiento" styleClass="bordes" value="#{triage.notaEmbarazo.borramiento}" size="3" 
+                                                                     required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}"
+                                                                     converterMessage="#{etiq.notificacion13}">
+                                                            <f:validateLongRange minimum="1" maximum="100"/>
+                                                            <p:ajax process="@this" event="valueChange" update=":busqueda:msgs borramiento"/>
+                                                        </p:inputText>                                                        
+                                                        <p:outputLabel value="%"/>                                                        
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:inputText styleClass="bordes" value="#{triage.notaEmbarazo.plano}" style="text-transform: uppercase;">
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:selectOneRadio value="#{triage.amniosTemporal}" required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="INTEGRO" itemValue="T941"/>
+                                                            <f:selectItem itemLabel="ROTA" itemValue="T942"/>
+                                                            <p:ajax event="valueChange" listener="#{triage.almacenaAmnios()}"/>
+                                                        </p:selectOneRadio>    
+                                                    </p:column>                                                    
+                                                    <p:column>
+                                                        <p:selectOneRadio value="#{triage.liquidoTemporal}" required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="NORMAL" itemValue="T951"/>
+                                                            <f:selectItem itemLabel="MECONIO" itemValue="T952"/>
+                                                            <p:ajax event="valueChange" listener="#{triage.almacenaLiquido()}"/>
+                                                        </p:selectOneRadio>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:selectOneMenu id="pelvis" value="#{triage.pelvisTemporal}" required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{triage.listPelvis}" var="oListaPelvis" itemLabel="#{oListaPelvis.valor}"
+                                                                           itemValue="#{oListaPelvis.claveParametro}#{oListaPelvis.tipoParametro}"/>
+                                                            <p:ajax event="valueChange" listener="#{triage.almacenaPelvis()}"/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:selectOneMenu id="trazo" value="#{triage.trazoTemporal}" required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                            <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{triage.listTrazo}" var="oListaTrazo" itemLabel="#{oListaTrazo.valor}"
+                                                                           itemValue="#{oListaTrazo.claveParametro}#{oListaTrazo.tipoParametro}" />
+                                                            <p:ajax event="valueChange" listener="#{triage.almacenaTrazo()}"/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                </p:row>
+                                                 <p:row>
+                                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.observaciones}"/></p:column>
+                                                    <p:column colspan="5">
+                                                        <p:inputTextarea styleClass="bordes" value="#{triage.notaEmbarazo.obsCardio}" cols="80" rows="2" autoResize="false" style="text-transform: uppercase;">
+                                                            <p:ajax event="valueChange"/>
+                                                        </p:inputTextarea>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <!--******************************************-->                                     
+                                    <!--[09]INFORMACION QUE CAPTURA EL USUARIO-->                                                      
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;" ><p:outputLabel value="#{etiq.padecimientoAct}"/></p:column>
+                                   </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center;">
+                                            <p:inputTextarea value="#{triage.notaEmbarazo.resumenInter}" rows="7" cols="100" autoResize="false" styleClass="bordes" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputTextarea>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.diagnosticoClinico}"/></p:column>
+                                        <p:column colspan="3">
+                                        <p:autoComplete id="completeDx" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                                        size="80" minQueryLength="3"
+                                                        styleClass="bordes" value="#{triage.cie10.descripcionDiag}" effect="fade"
+                                                        completeMethod="#{triage.cie10.completar}"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300">
+                                            <p:ajax update="CIE10-1" event="itemSelect"/>
+                                        </p:autoComplete>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{etiq.cie10}: "/>
+                                            <p:inputText id="CIE10-1" size="5" readonly="true" value="#{triage.cie10.claveCIE10}" styleClass="bordes"/>                                            
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton id="prueba" value="Agregar" icon="ui-icon-plus" type="button">
+                                                <p:ajax listener="#{triage.registroDiagnostico()}" process="@this" update="notaGineco02 :busqueda:msgs"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                    <!--********************************-->
+                                    <p:row>
+                                        <p:column colspan="4">
+                                            <p:dataTable id="tablaDiagFrontal" var="dxFrontal" value="#{triage.diagCie10}" emptyMessage="#{etiq.notificacion9}">
+                                                <p:column headerText="#{etiq.diagnostico}:" style="width: 70%; text-align: left;">
+                                                    <p:outputLabel value="#{dxFrontal.descripcionDiag}"/>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.cie10}:" styleClass="columnachica centrado_texto" style="width: 10%;">
+                                                    <p:outputLabel value="#{dxFrontal.clave}"/>
+                                                </p:column>
+                                                <p:column headerText="Ctrl" styleClass="columnachica centrado_texto" style="width: 10%;">
+                                                    <p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash">
+                                                        <p:ajax listener="#{triage.borrarElementoCie10(dxFrontal)}" update="tablaDiagFrontal"/>
+                                                    </p:commandButton>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                        <p:column rowspan="1" styleClass="ui-widget-header" style="text-align: center">
+                                            <p:outputLabel value="#{etiq.pronostico}:"/>
+                                        </p:column>
+                                        <p:column rowspan="1">
+                                            <p:selectOneMenu id="pronostico" value="#{triage.notaEmbarazo.pronostico}" required="#{triage.tab2}" requiredMessage="#{etiq.notificacion3}">
+                                                <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems value="#{triage.listPronostico}" var="oListaPronostico" itemLabel="#{oListaPronostico.valor}"
+                                                               itemValue="#{oListaPronostico.valor}"/>
+                                                <p:ajax event="valueChange"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row> 
+                                    <p:row>
+                                        <p:column colspan="6">
+                                            <p:dataTable id="diagnosticos" var="dx1" value="#{triage.listaDiagnosticos()}" emptyMessage="#{etiq.notificacion9}">
+                                                <p:column headerText="#{etiq.diagnostico}:" style="width: 200px; text-align: left;">
+                                                    <p:outputLabel value="#{dx1.descripcionDiag}"/>                                                    
+                                                </p:column>
+                                                <p:column headerText="#{etiq.cie10}:" styleClass="columnachica centrado_texto" style="width: 1px;">
+                                                    <p:outputLabel value="#{dx1.clave}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                                         
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;">
+                                            <h:outputLabel/><h:outputLabel value="#{etiq.indicaciones}"/>
+                                        </p:column>                
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center;">
+                                            <p:inputTextarea value="#{triage.notaEmbarazo.indicacionTer}" styleClass="bordes" rows="7" cols="100" autoResize="false" style="text-transform: uppercase;">
+                                                <p:ajax event="valueChange"/>
+                                            </p:inputTextarea>
+                                        </p:column>               
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="width: 900px;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column colspan="2" styleClass="ui-widget-header">
+                                                        <h:outputLabel value="#{etiq.elaboro1}"/>
+                                                    </p:column>
+                                                    <p:column colspan="2" styleClass="ui-widget-header">
+                                                        <h:outputLabel value="#{etiq.superviso1}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" style="width: 400px;">
+                                                        <h:outputLabel value="#{etiq.nombreCompleto}:"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header">
+                                                        <h:outputLabel value="#{etiq.cedulaProf}:"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header">
+                                                        <h:outputLabel value="#{etiq.nombreCompleto}:" style="width: 400px;"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header">
+                                                        <h:outputLabel value="#{etiq.cedulaProf}:"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>
+                                                        <h:outputLabel value="#{triage.notaEmbarazo.personalHospitalario.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputLabel value="#{triage.notaEmbarazo.personalHospitalario.cedProf}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:selectOneMenu value="#{triage.notaEmbarazo.epiMed.medicoTratante.noTarjeta}"
+                                                                         required="#{triage.tab2}" requiredMessage="#{etiq.notificacion1}">
+                                                            <f:selectItem itemLabel="#{etiq.notificacion11}" itemValue="" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{triage.listMedicoUrgencias}" var="medicoSuper" 
+                                                                           itemLabel="#{medicoSuper.nombreCompleto}" itemValue="#{medicoSuper.noTarjeta}"/>
+                                                            <p:ajax event="valueChange" listener="#{triage.cedulaMedicoSupervisor}" update="CedulaProfx"/>    
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputLabel id="CedulaProfx" value="#{triage.notaEmbarazo.epiMed.medicoTratante.cedProf}"/>
+                                                    </p:column>
+                                                </p:row>   
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>                                           
+                                </p:panelGrid>
+                                <p:panelGrid>
+                                    <!--BOTONES GURADAR E IMPRIMIR-->
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; background-color: white; border-color: white;">
+                                            <p:commandButton id="guardar02" value="#{etiq.guard}" icon="ui-icon-disk" actionListener="#{triage.guardaInformacionReverso()}"
+                                                             update="notaGineco02 :busqueda:msgs" validateClient="true" process="@form"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>                    
+                </div>
+                <div>
+                    <p:dialog widgetVar="NotaP" showEffect="fade" hideEffect="fade" modal="true" resizable="false">
+                        <h:form id="oNotas">
+                            <p:panelGrid style="width: 500px; margin-bottom: 6px;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 70%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 25%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.noExp}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{triage.notaEmbarazo.epiMed.paciente.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{triage.notaEmbarazo.epiMed.paciente.expediente.numero}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:outputPanel style="width: 600px;" styleClass="centrar">
+                                <p:dataTable value="#{triage.datosPacEmbarazo}" var="notas" emptyMessage="#{etiq.notificacion7}" id="tbl"
+                                             paginator="true" rows="3">
+                                    <p:column headerText="#{etiq.numeroNota}" style="width: 80px;">
+                                        <p:outputLabel value="#{notas.consecutivo}"/>                                        
+                                    </p:column>
+                                    <p:column headerText="Ctrl" style="width: 150px;">
+                                        <p:commandButton icon="ui-icon-folder-open" value="#{etiq.modnota}" disabled="#{triage.banderaBoton}">
+                                            <p:ajax listener="#{triage.metodoCargaDatosGenearal(null, 1, notas)}"
+                                                    update=":hTriage" oncomplete="PF('NotaP').hide()"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:outputPanel>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-plus" value="#{etiq.nuevaNota}">
+                                            <p:ajax listener="#{triage.metodoCargaDatosGenearal(null, 2, null)}"
+                                                    update=":hTriage" oncomplete="PF('NotaP').hide()"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+                </div>
+                <div>
+                    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                        <f:facet name="start">
+                            <p:graphicImage value="/imgs/loading.gif"/>
+                        </f:facet>
+                    </p:ajaxStatus>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

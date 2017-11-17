@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.RegistroDeFacturas}"/>
+                </h2>
+                <br/>
+                <div class="centrado_texto">
+                    <p:tabView effect="scale" effectDuration="fast" dynamic="true" id="tabviewFactura"   > 
+                        <p:tab title="GUARDAR FACTURAS " id="factura"  >
+                            <h:form id="formEntradas" enctype="multipart/form-data">  
+                                <br/>
+                                <p:growl id="msgs" showDetail="true" />  
+                                <p:panelGrid  columns="2"  >           
+                                    <f:facet name="header" >
+                                        <p:row>
+                                            <p:column colspan="4">
+                                                <h:outputLabel value="#{etiq.SubirArchivos}"/>
+                                            </p:column>
+                                        </p:row> 
+                                    </f:facet> 
+                                    <p:row>                                       
+                                        <h:outputLabel value="#{etiq.NoFac}:" for="factura"  class="mensaje"/>                                       
+                                    </p:row>                                    
+                                    <p:inputText value="#{oRegFactura.idCabecera}" id="f"    size="10" maxlength="10"                                                    
+                                                 onkeyup="this.value = this.value.toUpperCase();"  >
+                                        <p:ajax event="keyup"  update="msgs    :tabviewFactura:formEntradas:archivo"  listener="#{oRegFactura.nombreChangeListener}"   />
+                                    </p:inputText>
+                                    <p:row>
+                                        <p:outputLabel value="#{etiq.SelecArch}" class="mensaje"/>
+                                    </p:row>
+                                    <p:fileUpload fileUploadListener="#{oRegFactura.handleFileUpload}"
+                                                  allowTypes="/(\.|\/)(pdf|txt)$/"
+                                                  sizeLimit="1024000"  
+                                                  mode="advanced" dragDropSupport="false"                                            
+                                                  fileLimit="1"
+                                                  value="#{oRegFactura.file}"
+                                                  immediate="true"
+                                                  update="msgs :tabviewFactura:formEntradas "
+                                                  cancelLabel="Cancelar"
+                                                  label="Seleccionar"
+                                                  uploadLabel="Subir"
+                                                  invalidFileMessage="Error el archivo tiene otra extensión"
+                                                  fileLimitMessage="Solo un Fichero puede Subir"
+                                                  requiredMessage="El archivo es Demasiado pesado"
+                                                  id="archivo"
+                                                  disabled="#{oRegFactura.oculta}"
+                                                  invalidSizeMessage="El archivo excede el tamaño requerido">
+                                    </p:fileUpload>  
+                                </p:panelGrid>                                  
+                            </h:form> 
+                        </p:tab>
+                        <p:tab title="DESCARGAR FACTURAS" >
+                            <h:form id="visualizar" >
+                                <div class="centrado_texto"> 
+                                    <p:panelGrid class="frm_centrado" columns="5" >
+                                        <h:outputLabel value="Fecha:" id="fechaIni1"  styleClass="mensaje"/>
+                                        <p:calendar id="fechaIni"     required="true" placeholder="dd/mm/aa" showOn="button" effect="fold"   
+                                                    requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)"
+                                                    value="#{oRegFactura.fechaIn}" maxdate="#{oRegFactura.inventario.fechaActual()}" locale="es"  readonlyInput="true">
+                                            <p:ajax event="dateSelect" update="fechaFin"/>
+                                        </p:calendar>
+                                        <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                                        <p:calendar id="fechaFin"   required="true" placeholder="dd/mm/aa"  showOn="button" effect="fold"
+                                                    requiredMessage="Debe seleccionar una fecha final" value="#{oRegFactura.fechaFi}"
+                                                    onkeypress="return validaCaracter(event)" mindate="#{oRegFactura.fechaIn}" maxdate="#{oRegFactura.inventario.fechaActual()}" locale="es" readonlyInput="true">
+                                            <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                                        </p:calendar> 
+                                        <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oRegFactura.rebotes}"
+                                                         update=":tabviewFactura:visualizar:ar:descargas
+                                                         :tabviewFactura:visualizar:fechaIni 
+                                                         :tabviewFactura:visualizar:fechaFin"/>  
+                                    </p:panelGrid>
+                                </div>
+                                <br/><br/>
+                                <h:form  id="ar">
+                                    <p:dataTable var="oFot" value="#{oRegFactura.lista}"   
+                                                 id="descargas" >
+                                        <f:facet name="header" >
+                                            <p:outputLabel value="Facturas"/>
+                                        </f:facet>
+                                        <p:column headerText="#Factura" class="mensaje" width="10">
+                                            <h:outputText value="#{oFot.idEntrada}" />                                           
+                                        </p:column>
+                                        <p:column headerText="Fecha Captura" class=" mensaje" width="25">   
+                                            <h:outputText value="#{oFot.cap}" />                                           
+                                        </p:column>
+                                        <p:column headerText=" Proveedor" class="mensaje" width="35">
+                                            <h:outputText value="#{oFot.nombre}"/>                                                       
+                                        </p:column>
+                                        <p:column headerText="descargas"  width="35">                                          
+                                            <p:commandButton id="downloadLink" value="Descargar" immediate="true" 
+                                                             actionListener="#{oRegFactura.prepDownload(oFot.ruta)}"  ajax="false"  >
+                                                <p:fileDownload value="#{oRegFactura.descargar}" />
+                                            </p:commandButton>                                                  
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:form>
+                            </h:form>
+                        </p:tab>
+                    </p:tabView>
+                </div>
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                    <f:facet name="start">  
+                        <p:graphicImage value="/imgs/loading.gif" />  
+                    </f:facet>    
+                </p:ajaxStatus> 
+
+            </ui:define>         
+        </ui:composition>
+    
+</html>

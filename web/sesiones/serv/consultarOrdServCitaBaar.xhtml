@@ -1,0 +1,303 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.ordenes} #{etiq.baar}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="buscar">
+            <h:form>
+                <p:accordionPanel>
+                <p:ajax event="tabChange" listener="#{oBuscarPac.requerir}" update="@this, nom app exp" />
+                <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                    <p:panelGrid columns="4" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <h:outputLabel />
+                        <p:inputText styleClass="bordes" id="nom" value="#{EstRealLab.nombre}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{EstRealLab.apPaterno}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{EstRealLab.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" actionListener="#{EstRealLab.rebotesBaar}" update=":datosPac:tblLisBaar ">
+                             
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:tab>        
+                <p:tab title="#{etiq.buscarPorExpediente}"  id="tabE">
+                    <p:panelGrid columns="3" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                        <p:inputText styleClass="bordes" id="exp" value="#{EstRealLab.numExpe}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" required="#{oBuscarPac.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                        </p:inputText>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" actionListener="#{EstRealLab.rebotesBaar}" update=":datosPac:tblLisBaar " >
+                            <f:setPropertyActionListener target="#{EstRealLab.nombre}" value=""/>
+                            <f:setPropertyActionListener target="#{EstRealLab.apPaterno}" value=""/>
+                            <f:setPropertyActionListener target="#{EstRealLab.apMaterno}" value=""/>
+                        </p:commandButton>
+                    </p:panelGrid>
+                    <p:message for="exp" id="mentExp"></p:message>
+                </p:tab>
+               </p:accordionPanel>   
+            </h:form>
+            </div>
+            <h:form id="datosPac">
+                <p:growl id="growl3" sticky="true" showDetail="true" />
+                <br/>
+                    <p:dataTable id="tblLisBaar" 
+                            var="oBaar" 
+                            value="#{EstRealLab.ordenesBaar}" 
+                            emptyMessage="No hay registros"
+                            paginator="true"
+                            rows="10" 
+                            style="visibility: #{EstRealLab.visibleTabla}"
+                            rowKey="#{oBaar.estRealizado.identificador}"
+                            selection="#{EstRealLab.seleccionado}">
+                        <p:ajax event="rowSelectRadio"></p:ajax>
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.estudioBaar}"/>
+                        </f:facet>
+                        <p:column selectionMode="single" width="5%">
+                        </p:column>
+                        <p:column width="20%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nompac}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBaar.episodio.paciente.nombres} #{oBaar.episodio.paciente.apPaterno} #{oBaar.episodio.paciente.apMaterno}"/>
+                        </p:column>
+                        <p:column width="10%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.fechaSol}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBaar.estRealizado.fechaSolicitud}"/>
+                        </p:column>
+                        <p:column width="25%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.diagnostico}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBaar.episodio.diagIngreso.descripcionDiag}"/>
+                        </p:column>
+                        <p:column width="10%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.area}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBaar.episodio.area.tipo}"/>
+                        </p:column>
+                        <p:column width="10%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.servicio}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBaar.episodio.area.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.accion}"/>
+                            </f:facet>
+                            <p:commandButton id="btnRealizado" value="Realizado" icon="ui-icon-check" actionListener="#{EstRealLab.modificarEstadoSolBaarReal}" update=":datosPac:growl3 :datosPac:tblLisBaar" />
+                            <p:commandButton id="btnCancelado" value="Cancelar" icon="ui-icon-close" actionListener="#{EstRealLab.modificarEstadoSolBaarCancel}" update=":datosPac:growl3 :datosPac:tblLisBaar" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton process="tblLisBaar" icon="ui-icon-search" id="btnDetBaar" value="Ver Detalles" actionListener="#{EstRealLab.rebBaar}" update=":datosPac:pacBaar" oncomplete="PF('dlgPacBaar').show();" />
+                        </f:facet>
+                    </p:dataTable>
+                
+                <p:dialog header="Datos del Paciente" widgetVar="dlgPacBaar"   
+                   height="30%" resizable="false" position="center">
+                    <p:outputPanel id="pacBaar">
+                        <p:panelGrid styleClass="frm_centrado" rendered="#{not empty EstRealLab.estBaar}">  
+                            <p:row>
+                                <p:column  colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.nompac} " styleClass="mensaje"/>
+                                 </p:column>
+                                 <p:column colspan="2" rowspan="1">
+                                     <h:outputText value="#{EstRealLab.estBaar.episodio.paciente.nombres} #{EstRealLab.estBaar.episodio.paciente.apPaterno} #{EstRealLab.estBaar.episodio.paciente.apMaterno}" />
+                                 </p:column>
+                                 <p:column colspan="2" rowspan="1">
+                                     <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.episodio.paciente.expediente.numero}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.cveSegPop}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="">
+                                    <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.seg.numero}" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                 </p:column>
+                                 <p:column rowspan="1" colspan="1">
+                                     <h:outputText value="#{EstRealLab.estBaar.episodio.paciente.edadNumero}"/>
+                                 </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.episodio.cama.numero}"/>
+                                </p:column>
+
+                            </p:row>
+                           <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.sexo}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.sexoP}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.fechanac}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.fechaNac}"/>
+                                </p:column>
+                               <p:column colspan="1" rowspan="1">
+                                   <h:outputText value="#{etiq.calle}" styleClass="mensaje" />
+                               </p:column>
+                               <p:column colspan="1" rowspan="1">
+                                   <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.calleNum}" />
+                               </p:column>
+                           </p:row>
+                             <p:row>
+                                 <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.unidadOFrac}" styleClass="mensaje" />
+                                 </p:column> 
+                                 <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.colonia}" />
+                                 </p:column>
+                                 <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.cp}" styleClass="mensaje" />
+                                 </p:column> 
+                                 <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.codigoPos}" />
+                                 </p:column>
+                                 <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.localidad}" styleClass="mensaje" />
+                                 </p:column> 
+                                 <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.ciudad.descripcionCiu}" />
+                                 </p:column>
+                             </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.estado}" styleClass="mensaje" />
+                                 </p:column> 
+                                 <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{EstRealLab.estBaar.episodio.paciente.estado.descripcionEdo}" />
+                                 </p:column>
+                                 <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.area}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{EstRealLab.estBaar.episodio.area.tipo}" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                </p:column>
+                               <p:column colspan="1" rowspan="1">
+                                   <h:outputText value="#{EstRealLab.estBaar.episodio.area.descripcion}"/>
+                                </p:column>
+                            </p:row>
+                             <p:row>
+                               <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.medicoSol} " styleClass="mensaje" />
+                                </p:column>
+                               <p:column colspan="3" rowspan="1">
+                                   <h:outputText value="#{EstRealLab.estBaar.episodio.medicoTratante.nombres} #{EstRealLab.estBaar.episodio.medicoTratante.apPaterno} #{EstRealLab.estBaar.episodio.medicoTratante.apMaterno}"/>
+                               </p:column>   
+                               <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.estRealizado.fechaSolicitud}"/>
+                                </p:column>
+                             </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="3" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.episodio.paciente.diagcie.descripcionDiag}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.fechaDx}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.fechaDiagnostico}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+
+                                <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.estRealizado.estudio.concepto}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                     <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.estRealizado.estudio.claveStudio}"/>
+                                </p:column>
+                               <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.tratAnti} " styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{EstRealLab.estBaar.tratAntif}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.obserPac}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="5" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.obs}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputLabel value="#{etiq.observaciones}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="5" rowspan="1">
+                                    <h:outputText value="#{EstRealLab.estBaar.episodio.nota.observacion}"/>
+                                 </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:outputPanel>
+            </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        
+         
+    </ui:define>         
+</ui:composition>
+
+</html>

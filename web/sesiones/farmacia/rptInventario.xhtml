@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        
+        <!--
+        <center>
+        <h3>            
+           #{etiq.serviciosDSDV} 
+        </h3>
+            <h3>            
+            #{etiq.hrrb}
+        </h3>
+        <h3>            
+            #{etiq.consumo} #{etiq.de} #{etiq.medicamentos}
+        </h3>
+        </center> -->
+       
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        
+        </div>
+        -->
+      
+        <div class="centrado_texto">
+            <center>
+                <br></br><br></br>
+                    <h:form id="formR" > 
+                        
+                        <p:growl id="msg" sticky="true" showDetail="true"/> 
+           
+                    <h:form>
+                        
+                            <p:panelGrid style="width: 100%;">
+                                <center>
+                                <p:row>
+                                    <p:column style="width: 50px; text-align:  center; " rowspan="3">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg"
+                                      align="middle"/>  
+                                    </p:column>
+                                    <p:column   style=" text-align:  center; ">
+                                        <h:outputText value="Secretaria de Salud de Veracruz"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 50px;text-align:  center;" rowspan="3">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg"
+                                      align="middle"/>  
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  style=" text-align:  center;">
+                                        <h:outputText value="#{etiq.hrrb}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style=" text-align:  center;">
+                                        <h:outputText value="2504 Medicinas Y Productos Farmaceuticos"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  colspan="3" style=" text-align:  center;">
+                                        <h:outputText value="Reporte de Inventario Fisico"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  colspan="3"  style=" text-align: left;">
+                                        <h:outputText value="#{oInventarioJB.fechaActual}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime>
+                                            
+                                           
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3"></p:column>
+                                </p:row>
+                                </center>
+                            </p:panelGrid>
+                        <p:dataTable   id="dtrptConsumoMed" editable="true" paginatorPosition="bottom" var="oRI" 
+                                     style="width: 100%" value="#{oInventarioJB.listaDetalleMed}"  selection="#{oInventarioJB.selectedDetalleMed}" rowKey="#{oCI.clave}" >
+                          
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column  colspan="9" headerText="Medicamentos" />
+                                </p:row>
+                                <p:row>
+                                    <p:column  rowspan="2" headerText="Clave" />
+                                    <p:column rowspan="2" headerText="Descripcion" />
+                                    <p:column rowspan="2" headerText="Unidad" />
+                                    <p:column rowspan="2" headerText="lote" />
+                                    <p:column rowspan="2" headerText="Precio" />
+                                    <p:column colspan="2" headerText="Existencias" />
+                                    <p:column colspan="2" headerText="Importe" />
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Fisico" />
+                                    <p:column headerText="Cardex" />
+                                    <p:column headerText="Fisico" />
+                                    <p:column headerText="Cardex" />
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column  >
+                                <p:outputLabel value="#{oRI.clave}" style=" width: 10%;" />
+                               
+                            </p:column >
+                            <p:column >
+                                <p:outputLabel value="#{oRI.descripcion}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="#{oRI.unidadMedida}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="#{oRI.lote}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="#{oRI.precio}" style=" width: auto;"/>
+                            </p:column>
+                            <p:column >
+                                     <p:outputLabel value="#{oRI.existencia}" style=" width: 10%;"/>
+                            </p:column>
+                            <p:column >
+                                     <p:outputLabel value="#{oRI.existenciaantsist}" style=" width: 10%;"/>
+                            </p:column>
+                            <p:column >
+                                     <p:outputLabel value="#{oRI.existencia*oRI.precio}" style=" width: 10%;"/>
+                            </p:column>
+                            <p:column>
+                                     <p:outputLabel value="#{oRI.existenciaantsist*oRI.precio}" style=" width: 10%;"/>
+                               
+                            </p:column>
+                            
+                            <f:facet name="footer">
+                                 
+                                
+                                  
+                            </f:facet>
+                           
+                        </p:dataTable> 
+                        
+                    </h:form> </h:form>
+            <h:form>
+                                <p:commandButton value="#{etiq.exportarExcel}" icon="ui-icon-pencil" >
+                                    
+                                    <p:dataExporter type="xls" target=":formR" fileName="ReportedeInventario" pageOnly="true"/>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.imprimir}" icon="ui-icon-pencil" oncomplete="PF('dlgCM').show()">
+                                    <p:printer target=":formR"></p:printer>
+                                
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.descargar} #{etiq.pdf}" icon="ui-icon-pencil" >
+                                    
+                                </p:commandButton>
+            </h:form></center>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

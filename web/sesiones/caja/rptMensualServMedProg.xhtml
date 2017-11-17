@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.generarRptExentosPrograma}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{etiq.servProporcionados}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaIni" value="#{rptExentosProg.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha inicial.">
+                                <p:ajax event="dateSelect" update="fechaFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{etiq.al}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaFin" value="#{rptExentosProg.fechaF}" 
+                                        mindate="#{rptExentosProg.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha final.">                              
+                                <p:ajax></p:ajax>
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" actionListener="#{rptExentosProg.preBusqueda}"
+                                             update="mensajes panel dtRpt print" icon="ui-icon-search"  styleClass="frm_login" >
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:panel id="panel" style="border: none;#{rptExentosProg.activaTabla}">
+                    <p:panelGrid style="width: 800px;">
+                        <p:row>
+                            <p:column style="width: 150px; border-color: #FFFFFF;">
+                                <img src="#{facesContext.externalContext.requestContextPath}/imgs/ss.jpg"
+                                          align="middle"/> 
+                            </p:column>
+                            <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                <h:outputText value="#{etiq.servVeracruz}"></h:outputText><br/>
+                                <h:outputText value="#{etiq.subJefAdmin}"></h:outputText><br/>
+                                <h:outputText value="#{etiq.deprecFinan}"></h:outputText><br/>
+                            </p:column>
+                            <p:column style="width: 150px;border-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-left-color: #FFFFFF;border-right-color: #FFFFFF;" colspan="3" styleClass="centrado_texto_negritas">
+                                <h:outputText value="#{etiq.servAsistExentosSinRec} "></h:outputText>
+                                <h:outputText value="#{rptExentosProg.fechaI}">
+                                    <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                                </h:outputText>
+                                <h:outputText value=" #{etiq.al} "></h:outputText>
+                                <h:outputText value="#{rptExentosProg.fechaF}">
+                                    <f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+                                </h:outputText><br/>
+                                <h:outputText value="#{etiq.jurisdiccionHRRB}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <center>
+                        <p:dataTable id="dtRpt" value="#{rptExentosProg.rpt}" var="oAgrup" style=" width: 800px;"
+                                     emptyMessage="#{etiq.emptydataTable}">
+                            <p:column style=" width: 10%; text-align: center;" headerText="#{etiq.mClave}">
+                                <h:outputText value="#{oAgrup.clave}"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align: left;" headerText="#{etiq.concepto}">
+                                <h:outputText value="#{oAgrup.concepto}"></h:outputText>
+                            </p:column>
+                            <p:column style=" width: 15%; text-align: right;" headerText="#{etiq.noPacientes}">
+                                <h:outputText value="#{oAgrup.pacientes}"></h:outputText>
+                            </p:column>
+                            <p:column style=" width: 20%; text-align: right;" headerText="#{etiq.monto}">
+                                <h:outputText value="#{oAgrup.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </center>
+                    <p:panelGrid style="width: 800px; text-align: right;">
+                        <p:row>
+                            <p:column style="width: 10%;border-right-color: #FFFFFF;"></p:column>
+                            <p:column styleClass="negrita">
+                                <h:outputText value="#{etiq.total}"></h:outputText>
+                            </p:column>
+                            <p:column style=" width: 15%; text-align: right;"></p:column>
+                            <p:column style=" width: 20%; text-align: right;">
+                                <h:outputText value="#{rptExentosProg.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style=" border-right-color: #FFFFFF;"></p:column>
+                            <p:column styleClass="negrita">
+                                <h:outputText value="#{etiq.granTotal}"></h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{rptExentosProg.totalPacientes}"></h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{rptExentosProg.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/><br/><br/><br/>
+                    <p:panelGrid style=" width: 800px;">
+                        <p:row>
+                            <p:column style=" width: 48%; border-color: #FFFFFF;">
+                                <center>
+                                    <h:outputText value="C. Dra. Minerva S. Junco Gonzalez" style="text-decoration: underline;"></h:outputText><br/>
+                                    <h:outputText value="#{etiq.director}"></h:outputText>
+                                </center>
+                            </p:column>
+                            <p:column style="border-color: #FFFFFF;" width="4%"></p:column>
+                            <p:column style="width: 48%; border-color: #FFFFFF;">
+                                <center>
+                                    <h:outputText style="text-decoration: underline;"></h:outputText><br/>
+                                    <h:outputText value="#{etiq.administrador}"></h:outputText>
+                                </center>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton id="print" style="#{rptExentosProg.activaTabla}" value="#{etiq.imprimir}">
+                    <p:printer target="panel"></p:printer>
+                </p:commandButton>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

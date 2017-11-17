@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/> 
+                <div style="text-align: left;">
+                    <h:form>
+                        <p:outputLabel for="date" value="#{etiq.año}: " />
+                        <p:inputMask id="date" value="#{estadistica.anio}" mask="2099" style="width: 35px;" onkeypress="#{estadistica.cargaListasYDatos()}">
+                            <p:ajax update=":temps:tblR :frmfecha"/>
+                        </p:inputMask>
+                        <p:growl id="msgss" showDetail="true" /> 
+                    </h:form>
+                </div>          
+                <div class="centrado_texto">
+                    <h:form style=" margin-top: -27px;">
+
+                        <p:outputLabel value="Mes: " />
+                        <p:selectOneMenu id="meses" value="#{estadistica.mesBusqueda}">
+                            <f:selectItem itemLabel="Enero" itemValue="01" />
+                            <f:selectItem itemLabel="Febreo" itemValue="02" />
+                            <f:selectItem itemLabel="Marzo" itemValue="03" />
+                            <f:selectItem itemLabel="Abril" itemValue="04" />
+                            <f:selectItem itemLabel="Mayo" itemValue="05" />
+                            <f:selectItem itemLabel="Junio" itemValue="06" />
+                            <f:selectItem itemLabel="Julio" itemValue="07" />
+                            <f:selectItem itemLabel="Agosto" itemValue="08" />
+                            <f:selectItem itemLabel="Septiembre" itemValue="09" />
+                            <f:selectItem itemLabel="Octubre" itemValue="10" />
+                            <f:selectItem itemLabel="Noviembre" itemValue="11" />
+                            <f:selectItem itemLabel="Diciembre" itemValue="12" />
+                            <p:ajax update=":temps:tblR :frmfecha" listener="#{estadistica.cargaListasYDatos()}" onsuccess="location.reload();"/>
+                        </p:selectOneMenu>
+                        <p:growl id="msgs" showDetail="true" /> 
+                    </h:form>
+
+                    <H2><h:form id="frmfecha">
+                            <h:outputText value="#{etiq.regTem}, "/>
+                            <h:outputText value="#{estadistica.mes}"/>
+                            <h:outputText value=" #{etiq.del} "/> 
+                            <h:outputText value="#{estadistica.anio}"/> 
+                        </h:form></H2>
+
+                    <h:form id="temps">
+                        <p:dataTable var="oR"                       
+                                     id="tblR"
+                                     value="#{estadistica.tablaCompleta}"                         
+                                     style="text-align: center;"
+                                     rowIndexVar="indice"
+                                     emptyMessage="#{etiq.noRegistros}">
+                            <f:facet name="header">                   
+                                <h:outputText value="#{etiq.regTem} "/>
+                                <h:outputText value="#{estadistica.mes}"/>
+                                <h:outputText value=" #{etiq.del} "/>  
+                                <h:outputText value="#{estadistica.anio}"/> 
+                            </f:facet> 
+
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column colspan="4" headerText="#{etiq.turnoMat}"/> 
+                                    <p:column colspan="3" headerText="#{etiq.turnoVes}" />
+                                    <p:column colspan="3" headerText="#{etiq.turnoNoc}" />
+                                </p:row> 
+
+                                <p:row>
+                                    <p:column headerText="#{etiq.dia}" />
+                                    <p:column headerText="#{etiq.tempAmbiental}" />
+                                    <p:column headerText="#{etiq.humAmbiental}" />
+                                    <p:column headerText="#{etiq.tempRefri}" />
+
+                                    <p:column headerText="#{etiq.tempAmbiental}" />
+                                    <p:column headerText="#{etiq.humAmbiental}" />
+                                    <p:column headerText="#{etiq.tempRefri}" />
+
+                                    <p:column headerText="#{etiq.tempAmbiental}" />
+                                    <p:column headerText="#{etiq.humAmbiental}" />
+                                    <p:column headerText="#{etiq.tempRefri}" />  
+                                </p:row>  
+                            </p:columnGroup>
+
+                            <p:column> 
+                                <h:outputText value="#{indice+1}"/>                   
+                            </p:column>
+                            <p:column>    
+                                <h:outputText value="#{oR.get(0)}"/>                     
+                            </p:column>     
+                            <p:column>  
+                                <h:outputText value="#{oR.get(1)}"/>
+                            </p:column>                  
+                            <p:column>  
+                                <h:outputText value="#{oR.get(2)}"/>                    
+                            </p:column> 
+                            <p:column>    
+                                <h:outputText value="#{oR.get(3)}"/>                     
+                            </p:column>   
+                            <p:column>    
+                                <h:outputText value="#{oR.get(4)}"/>                     
+                            </p:column>
+                            <p:column>    
+                                <h:outputText value="#{oR.get(5)}"/>                     
+                            </p:column>
+                            <p:column>    
+                                <h:outputText value="#{oR.get(6)}"/>                     
+                            </p:column>  
+                            <p:column>    
+                                <h:outputText value="#{oR.get(7)}"/>                     
+                            </p:column>  
+                            <p:column>    
+                                <h:outputText value="#{oR.get(8)}"/>                     
+                            </p:column>                       
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="#{etiq.exportar}" ajax="false">
+                            <p:dataExporter type="xls" target="tblR" fileName="#{etiq.regTem} #{estadistica.mes} #{etiq.del} #{estadistica.anio}"  postProcessor="#{estadistica.postProcessXLS}"/>
+                        </p:commandButton> 
+                    </h:form>
+                </div>      
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

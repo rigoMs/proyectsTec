@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+  <ui:define name="cuerpo">
+   <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+   <h2 class="centrado_texto"><p:outputLabel id="titModPac" value="#{etiq.modificarPac}"/></h2>
+   <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+   <div class="centrado_texto">
+     <h:form>
+      <p:panelGrid styleClass="frm_centrado">
+      <f:facet name="header">
+        <p:row>
+            <p:column colspan="4" styleClass="encabezados" ><p:outputLabel id="titDatPer" value="#{etiq.datosPersonal}"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column><p:outputLabel id="expediente" value="#{etiq.noExp}:"/></p:column>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="nomb" value="#{etiq.nombres}:"/></p:column>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="app" value="#{etiq.appat}:"/></p:column>
+            <p:column><p:outputLabel id="apm" value="#{etiq.apmat}:"/></p:column>
+        </p:row>
+       </f:facet>
+        <p:row>
+            <p:column><p:outputLabel id="tExpediente" value="#{oModPac.pac.expediente.numero}"/></p:column>
+            <p:column>
+                <p:inputText id="tNomb"  value="#{oModPac.pac.nombres}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el nombre">
+                    <f:ajax render="mentNombre" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:inputText id="tApp" value="#{oModPac.pac.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Apellido Paterno">
+                    <f:ajax render="mentPaterno" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:inputText id="tApm" value="#{oModPac.pac.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" required="false">
+                    <f:ajax render="mentMaterno" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="4"></p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="sexo" value="#{etiq.sexo}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="fechaNac" value="#{etiq.fechanac}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="edad" value="#{etiq.edad}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="telefono" value="#{etiq.tel}:"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column>
+                <p:selectOneRadio id="tSexo" value="#{oModPac.pac.sexoP}" required="true" requiredMessage="Falta el Sexo">
+                    <f:selectItem itemLabel="Masculino" itemValue="M" />
+                    <f:selectItem itemLabel="Femenino" itemValue="F" />
+                </p:selectOneRadio>
+            </p:column>
+            <p:column>
+                <p:inputMask id="tFechaNac" mask="99/99/9999"  value="#{oModPac.pac.fechaNacTexto}" required="true" requiredMessage="Se necesita la fecha de nacimiento">
+                    <p:ajax update="Tedad mentFechaNac" event="valueChange"/>
+                    <f:validator validatorId="mx.gob.hrrb.validadores.FechasNacValidator"/>
+                </p:inputMask>          
+            </p:column>
+            <p:column>
+                <p:outputLabel id="Tedad" value="#{oModPac.pac.calculaEdad()}"></p:outputLabel>
+            </p:column>
+            <p:column>
+                <p:inputText id="tTelefono" value="#{oModPac.pac.telefono}" validatorMessage="El teléfono debe contener solo caracteres numéricos" maxlength="13">
+                    <f:validateLongRange minimum="0"/>
+                    <f:ajax render="mentTel" execute="@this" event="valueChange" />
+                </p:inputText>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="4"></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="domicilio" value="#{etiq.domicilio}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="colonia" value="#{etiq.colonia}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="cp" value="#{etiq.cp}:"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="2" ><p:inputText id="tDomicilio" value="#{oModPac.pac.calleNum}" size="70" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Domicilio" onkeypress="return validaCaracter(event);"/></p:column>
+            <p:column><p:inputText id="tColonia" value="#{oModPac.pac.colonia}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/></p:column>
+            <p:column>
+                <p:inputMask id="tCp" mask="99999"  value="#{oModPac.pac.codigoPos}" disabled="#{oModPac.habilitaListas()}">
+                    <p:ajax update="tEntidad tMunicipio tLocalidad" event="valueChange"/>
+                </p:inputMask>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="4" ></p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="pais" value="#{etiq.pais}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="entidad" value="#{etiq.entidad}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="municipio" value="#{etiq.municipio}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="localidad" value="#{etiq.localidad}:"/></p:column> 
+        </p:row>
+        <p:row>            
+            <p:column>
+                <p:inputText id="tPais" value="#{oModPac.pac.otroPais}" required="true" style="text-transform: uppercase" onkeypress="return validaCaracter(event);">
+                    <p:ajax update="tEntidad tMunicipio tLocalidad tCp" event="valueChange"/>
+                </p:inputText>
+            </p:column>
+                        
+            <p:column>
+                <p:selectOneMenu id="tEntidad" value="#{oModPac.pac.estado.claveEdo}" disabled="#{oModPac.habilitaListas()}" required="true">
+                    <p:ajax update="tMunicipio"/>  
+                    <f:selectItems value="#{oModPac.listaEstados}" var="oEdo" 
+                                   itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column>
+                <p:selectOneMenu id="tMunicipio" value="#{oModPac.pac.municipio.claveMun}"  disabled="#{oModPac.habilitaListas()}" required="true">
+                    <p:ajax update="tLocalidad"/>
+                    <f:selectItems value="#{oModPac.listaMunicipios}" var="oMun" 
+                                   itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column >
+                <p:selectOneMenu id="tLocalidad" value="#{oModPac.pac.ciudad.claveCiu}"  disabled="#{oModPac.habilitaListas()}" required="true">
+                    <f:selectItems value="#{oModPac.listaCiudades}" var="oCiu" 
+                                   itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+        </p:row>    
+        <p:row>
+            <p:column colspan="4" ></p:column>
+        </p:row>           
+        <p:row>
+            <p:column styleClass="ui-widget-header" ></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="segPop" value="#{etiq.segpop}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="vigSegPop" value="#{etiq.vigenciaSegPop}:"/></p:column>
+            <p:column styleClass="ui-widget-header" ></p:column>
+        </p:row>
+        <p:row>
+            <p:column></p:column>
+            <p:column>
+                <p:inputMask id="tSegpop" mask="9999999999-99"  value="#{oModPac.pac.seg.numero}"/>
+            </p:column>
+            <p:column >
+                <p:inputMask id="tVigSegPop" mask="99/99/9999" value="#{oModPac.pac.vigenciaTexto}">
+                    <p:ajax update="mentVig" event="valueChange"/>
+                    <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopValidator"/>
+                </p:inputMask>
+            </p:column>
+            <p:column></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="4">
+                <p:commandButton id="btnmodpac" value="#{etiq.guardar}" icon="ui-icon-disk" action="#{oModPac.modificaPac()}" validateClient="true" ajax="false"/>
+            </p:column>
+        </p:row>
+     </p:panelGrid>
+         <p:message for="tFechaNac" id="mentFechaNac"></p:message>
+         <p:message for="tVigSegPop" id="mentVig"></p:message>
+         <p:message for="tTelefono" id="mentTel"></p:message>
+         <p:message for="tNomb" id="mentNombre"></p:message> 
+         <p:message for="tApp" id="mentPaterno"></p:message> 
+         <p:message for="tApm" id="mentMaterno"></p:message> 
+     </h:form>
+     <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+     </p:ajaxStatus> 
+   </div>
+  </ui:define>         
+</ui:composition>
+</html>

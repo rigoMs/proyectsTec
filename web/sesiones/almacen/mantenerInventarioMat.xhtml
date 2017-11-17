@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.MantenerInvFis}"/>
+                </h2>
+                <br/>
+
+                <div class="centrado_texto">
+
+                    <h:form id="dialogo">
+                        <p:dialog style="text-align: left;" modal="true" header="#{etiq.permAjus}" widgetVar="dlgPermiso" closable="false" width="350"  height="180" resizable="false">
+                            <h:outputLabel value="#{etiq.insertUsuyContrasAdmin}"  style="text-align: center;"/>
+                            <br/> 
+                            <br/>
+                            <h:outputLabel value="#{etiq.usuario}: "  styleClass="mensaje"/>
+                            <p:inputText value="#{oMantenimiento.usuario}" onkeyup="this.value = this.value.toUpperCase();" required="true" requiredMessage="#{etiq.ingreUsu}" placeholder="USUARIO"/>
+                            <br/>
+                            <br/>
+                            <h:outputLabel value="#{etiq.contraseña}: "  styleClass="mensaje"/>
+                            <p:password value="#{oMantenimiento.contrasena}" required="true" requiredMessage="#{etiq.ingreContras}" placeholder="CONTRASEÑA"/>
+                            <br/>
+                            <br/>
+                            <div align="center" >
+                                 <p:commandButton  value="#{etiq.aceptar}"  action="#{oMantenimiento.validaPermiso()}" update=":dialogo" /> 
+                                 <p:commandButton  value="#{etiq.cancelar}" action="#{oMantenimiento.cancelar()}" immediate="true"/>
+                            </div>
+                        </p:dialog>
+                        <p:growl id="messages" showDetail="true" />
+                    </h:form>
+                </div> 
+                <h:form id="formR" >     
+                    <p:dataTable  var="mantInv" 
+                                  id="tblMantenimiento"
+                                  editable="true" 
+                                  value="#{oMantenimiento.lista}"                                       
+                                  emptyMessage="Materiales No Registrados" 
+                                  paginator="true"  rows="10"
+                                  filteredValue="#{oMantenimiento.matFiltrado}"
+                                  paginatorPosition="bottom"
+                                   
+                                  
+                                  style="text-align: center;">
+
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.MaterialCuracion}"/>
+                        </f:facet>     
+
+                        <p:ajax event="rowEdit" listener="#{oMantenimiento.onEdit}" update=":formR:messages" />
+                        <p:ajax event="rowEditCancel" listener="#{oMantenimiento.onCancel}" update=":formR:messages" /> 
+
+                        <p:column headerText="#{etiq.clave}"   width="15" filterBy="#{mantInv.claveMaterial}" filterMatchMode="startsWith">                  
+                            <h:outputText value="#{mantInv.claveMaterial}"/>                      
+                        </p:column> 
+                        <p:column headerText="#{etiq.nombre}" width="50"  filterBy="#{mantInv.nombre}" filterMatchMode="startsWith" >
+                            <h:outputLabel value="#{mantInv.nombre}" />                                             
+                        </p:column>
+                        <p:column headerText="#{etiq.Presentacion}"  width="20">
+                            <h:outputLabel value="#{mantInv.presentacion}"/>                    
+                        </p:column>
+                        <p:column headerText="#{etiq.lote}"  width="20"  >
+                            <h:outputLabel value="#{mantInv.lote}"/>                    
+                        </p:column>
+                        <p:column headerText="#{etiq.caducidad}" width="10">
+                            <h:outputLabel value="#{mantInv.caducidad}"/>                    
+                        </p:column>
+                        <p:column headerText="#{etiq.InventarioFisico}" width="10">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputLabel value="#{mantInv.existencia}"/>   
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{mantInv.existencia}"  size="4" required="true" requiredMessage="Ingrese Número de Inv-Físico" converterMessage="Inv-Físico,Solo ingresar números">
+                                        <poue:keyFilter  regEx="/[0-9]/i"/>
+                                    </p:inputText>
+                                </f:facet>   
+                            </p:cellEditor>                                         
+                        </p:column>
+                        <p:column width="10" headerText="#{etiq.edicion}">
+                            <p:rowEditor>
+                            </p:rowEditor>
+                        </p:column>
+                    </p:dataTable> 
+                    <p:growl id="messages" showDetail="true" /> 
+                </h:form> 
+             
+
+                                 
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                    <f:facet name="start">  
+                        <p:graphicImage value="/imgs/loading.gif" />  
+                    </f:facet>    
+                </p:ajaxStatus> 
+                
+            </ui:define>         
+        </ui:composition>
+</html>

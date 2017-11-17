@@ -1,0 +1,1247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org./TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq."/>
+            <ui:define name="cuerpo">
+                <div class="buscar">
+                    <h:form id="busqueda">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.generaAtencioNeonatal}"/></h3>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel />
+                                    <p:inputText styleClass="bordes" id="nom" value="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="app" value="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{atencionneonatal.cargaDatosPaciente(0)}" 
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{atencionneonatal.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>                                
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmLogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                                    </p:inputText>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{atencionneonatal.cargaDatosPaciente(1)}"
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{atencionneonatal.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <div class="centrar">
+                            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                                <f:setPropertyActionListener target="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.nombres}" value=""/>
+                                <f:setPropertyActionListener target="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.apPaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.apMaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{atencionneonatal.atencionNeonatal.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.numero}" value="#{0}"/>
+                                <f:setPropertyActionListener target="#{atencionneonatal.muestraPantalla}" value="#{false}"/> 
+                            </p:commandButton>
+                        </div>
+                        <br/>                                               
+                        <p:panelGrid id="datosGenerales" rendered="#{not empty atencionneonatal.arrAtencion}">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appaterno}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmaterno}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{atencionneonatal.datosGenerales.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.fechaNac}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column><p:outputLabel value="#{atencionneonatal.datosGenerales.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.nombres}"/></p:column>
+                                <p:column><p:outputLabel value="#{atencionneonatal.datosGenerales.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.apPaterno}"/></p:column>
+                                <p:column><p:outputLabel value="#{atencionneonatal.datosGenerales.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.apMaterno}"/></p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br/>
+                        <p:outputPanel id="destino" styleClass="centrar">
+                            <div class="centrar">
+                                <p:dataTable id="tblResultado" var="oPacEnc"
+                                             value="#{atencionneonatal.arrAtencion}"
+                                                emptyMessage="#{etiq.noRegistro}" 
+                                                paginator="true" 
+                                                rows="4"                                                
+                                                rendered="#{not empty atencionneonatal.arrAtencion}">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                    </f:facet>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.numeroingresohos1}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.producto.numeroIngresoHospitalario}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.numeroproducto1}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.producto.consecutivoProducto}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.sex2}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.producto.sexoProductoP}"/>
+                                    </p:column>                                                                      
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Ctrl"/>
+                                        </f:facet>
+                                       <p:commandButton id="btnDetalles" icon="ui-icon-plusthick" value="Detalles">
+                                           <p:ajax listener="#{atencionneonatal.cargaDatosGenerales(oPacEnc.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.folioPaciente, 
+                                                               oPacEnc.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.claveEpisodio, 
+                                                               oPacEnc.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.numero,
+                                                               oPacEnc.producto.terminacionEmbarazo.partoGrama.consecutivo,
+                                                               oPacEnc.producto.terminacionEmbarazo.partoGrama.npartograma,
+                                                               oPacEnc.producto.numeroIngresoHospitalario,
+                                                               oPacEnc.producto.consecutivoProducto)}"
+                                                   update=":fcontenedor :fcontenedor:tabcontenedor :busqueda:msgs"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>                                
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <div class="frm_centrado" style="border-color: #FFFFFF; background-color: #FFFFFF;">
+                    <h:form id="fcontenedor" styleClass="centrar">
+                        <p:tabView id="tabcontenedor" rendered="#{atencionneonatal.muestraPantalla}" dynamic="true">
+                            <p:tab title="#{etiq.atencionNeonatal00}">
+                                <p:panelGrid styleClass="frm_centrado" id="antc00" style="border-color: #ffffff; background-color: #ffffff;">
+                                    <!--ENCABEZADO-->
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <h:graphicImage value="/imgs/003.jpg" style="width: 898px; height: 98px;"/>
+                                                    </p:column>                                                    
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>                                    
+                                     <p:row>
+                                         <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff; "><p:outputLabel value="#{etiq.atencionNeonatal}"/></p:column>
+                                    </p:row>
+                                    <!--TERMINA ENCABEZADO-->
+                                    <!--CUERPO-->
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.datosMadre}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.nExp}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.numero}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.lugarNacimiento}:"/></p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.lugarNacimiento}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.fechaNacimiento}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.fechaNac}">
+                                                <f:convertDateTime type="Date" dateStyle="short" pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                                        <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.calleNum}"/>&nbsp;
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.colonia}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.edoCivil}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.edoCivilStr}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.escolaridad}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecNoPatologicos.escolaridad}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.ocupacion}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecNoPatologicos.ocupacion}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{etiq.informacionEmbarazop}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.nGestas}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.gestaciones}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.nPartos}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.partos}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.nAbortos}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.abortos}"/>
+                                        </p:column>                                        
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.nCesareas}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.cesareas}"/>
+                                        </p:column>
+                                        <p:column colspan="4" style="border-color: #ffffff; background-color: #ffffff;"></p:column>
+                                    </p:row>                                    
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:outputLabel value="#{etiq.datosRecienNacido}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:inputText id="NOMBRES" value="#{atencionneonatal.datosAtencion.pacienteNeonato.nombres}" style="text-transform: uppercase;" required="true" placeholder="NOMBRES">                                                
+                                                <p:ajax/>
+                                            </p:inputText>
+                                            <p:inputText id="APELLIDOPATERNO" value="#{atencionneonatal.datosAtencion.pacienteNeonato.apPaterno}" style="text-transform: uppercase;" required="true" placeholder="APELLIDO PATERNO">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                            <p:inputText id="APELLIDOMATERNO" value="#{atencionneonatal.datosAtencion.pacienteNeonato.apMaterno}" style="text-transform: uppercase;" required="true" placeholder="APELLIDO MATERNO">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.pacienteNeonato.producto.sexoProductoP}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.fechaNacimiento}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.pacienteNeonato.producto.fechaNacimiento}">
+                                                <f:convertDateTime type="Date" dateStyle="short" pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.horaNacimiento}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.pacienteNeonato.producto.fechaNacimiento}">
+                                                <f:convertDateTime type="Time" dateStyle="short" pattern="HH:mm"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.expediente}:"/></p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.pacienteNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.numero}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:outputLabel value="#{etiq.medidasrn}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.peso}:"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.talla}:"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.perimetrocefalico}:"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.perimetrotoracico}:"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.perimetroabdominal}:"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.pie}:"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputText value="#{atencionneonatal.datosAtencion.pacienteNeonato.peso}" placeholder="2-5 kg">
+                                                <f:validateDoubleRange minimum="1.9" maximum="5.1"/>
+                                                <f:ajax execute="@this" event="valueChange" render=":busqueda:msgs"/>
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>                                            
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputText value="#{atencionneonatal.datosAtencion.pacienteNeonato.talla}" placeholder="35 - 55">
+                                                <f:validateLongRange minimum="35" maximum="55"/>
+                                                <f:ajax execute="@this" event="valueChange" render=":busqueda:msgs"/>
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputText value="#{atencionneonatal.datosAtencion.signosVitalesNeoNatos.pc}" placeholder="25 - 40">
+                                                <f:validateLongRange minimum="25" maximum="40"/>
+                                                <f:ajax execute="@this" event="valueChange" render=":busqueda:msgs"/>
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputText value="#{atencionneonatal.datosAtencion.signosVitalesNeoNatos.pt}" placeholder="25 - 40">
+                                                <f:validateLongRange minimum="25" maximum="40"/>
+                                                <f:ajax execute="@this" event="valueChange" render=":busqueda:msgs"/>
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputText value="#{atencionneonatal.datosAtencion.signosVitalesNeoNatos.pa}" placeholder="25 - 40">
+                                                <f:validateLongRange minimum="25" maximum="40"/>
+                                                <f:ajax execute="@this" event="valueChange" render=":busqueda:msgs"/>
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputText value="#{atencionneonatal.datosAtencion.signosVitalesNeoNatos.pie}" placeholder="3 - 9">
+                                                <f:validateLongRange minimum="3" maximum="9"/>
+                                                <f:ajax execute="@this" event="valueChange" render=":busqueda:msgs"/>
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.datosEdadGest}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="2" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.fechaUltimaRegla}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.EGFUR}:"/></p:column>
+                                        <p:column colspan="2" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.EGC}:"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.ultimaMenstruacion}">
+                                                <f:convertDateTime type="Date" dateStyle="short" pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:outputLabel value="#{atencionneonatal.calculaEdadGestacional()}"/>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputText value="#{atencionneonatal.datosAtencion.edadGestacionalCapu}">
+                                                <f:validateLongRange minimum="0" maximum="20"/>                                                    
+                                                <f:ajax execute="@this" event="valueChange" render=":busqueda:msgs"/> 
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.reanimacionNeonatal}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputTextarea value="#{atencionneonatal.datosAtencion.reanimacionNeonatalExpFisica}" styleClass="bordes" style="text-transform: uppercase;" cols="140" rows="8" autoResize="false">
+                                                <p:ajax/>
+                                            </p:inputTextarea>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.diagnosticos}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #000000; background-color: #ffffff;">
+                                            <p:autoComplete id="completeDx" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                                            size="80" minQueryLength="3"
+                                                            styleClass="bordes" value="#{atencionneonatal.diagnostico.descripcionDiag}"
+                                                            completeMethod="#{atencionneonatal.diagnostico.completar}"
+                                                            onkeyup ="this.value = this.value.toUpperCase()" scrollHeight="300">
+                                                <p:ajax update="CIE10-1" event="itemSelect"/>                                                
+                                            </p:autoComplete>&nbsp;
+                                            <p:outputLabel value="#{etiq.cie10}:"/>
+                                            <p:inputText id="CIE10-1" size="5" value="#{atencionneonatal.diagnostico.claveCIE10}" readonly="true" styleClass="bordes"/>&nbsp;
+                                            <p:commandButton value="Agregar" icon="ui-icon-plus">
+                                                <p:ajax listener="#{atencionneonatal.registroDiagnostico()}" update="antc00 :busqueda:msgs"/>
+                                            </p:commandButton>                
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="padding: 0px; border-color: #000000; background-color: #FFFFFF; width: 898px;">
+                                            <p:dataTable id="tablaDiagFrontal" var="dxFrontal" value="#{atencionneonatal.diagnosticocie10}" emptyMessage="AUN NO AGREGA NINGÚN DIANOSTICO">
+                                                <p:column headerText="#{etiq.diagnostico}:" styleClass="columnachica centrado_texto" style="width: 700px; background-color: #ffffff">
+                                                    <p:outputLabel value="#{dxFrontal.descripcionDiag}"/>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.cie10}" styleClass="columnachica centrado_texto" style="width: 100px; background-color: #ffffff;">
+                                                    <p:outputLabel value="#{dxFrontal.clave}"/>
+                                                </p:column>
+                                                <p:column headerText="Ctrl" styleClass="columnachica centrado_texto" style="width: 98px; background-color: #ffffff;">
+                                                    <p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash">
+                                                        <p:ajax listener="#{atencionneonatal.borrarElementoCie10(dxFrontal)}" update="tablaDiagFrontal"/>
+                                                    </p:commandButton>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="padding: 0px; border-color: #000000; background-color: #ffffff; width: 898px;">
+                                            <p:dataTable id="dia01" value="#{atencionneonatal.arregloDiagnosticos}" var="odx" emptyMessage="UN NO HAY DIAGNOSTICOS AGREGADOS">
+                                                <p:column headerText="#{etiq.diagnostico}" styleClass="columnachica sentrado_texto" style="width: 800px;">
+                                                    <p:outputLabel value="#{odx.descripcionDiag}"/>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.cie10}:" styleClass="columnachica centrado_texto" style="width: 98px;">
+                                                    <p:outputLabel value="#{odx.clave}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.pPronostico}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:inputTextarea value="#{atencionneonatal.datosAtencion.planPronostico}" styleClass="bordes" style="text-transform:uppercase;" cols="140" rows="8" autoResize="false">
+                                                <p:ajax/>
+                                            </p:inputTextarea>
+                                        </p:column>
+                                    </p:row>
+                                    <!--TERMINA CUERPO-->
+                                    <!--PIE DE PAGINA-->                                                                     
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; width: 1000px;">
+                                            <p:panelGrid>
+                                                 <p:row>
+                                                    <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.elaboro}:"/></p:column>
+                                                    <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.superviso}:"/></p:column>
+                                                </p:row>  
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.firma}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.cedulaProf}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.nombreCompleto}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.firma}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.cedulaProf}"/></p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{atencionneonatal.personalHospitalario.nombreCompleto}"/>                                                        
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;"></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                        <p:outputLabel value="#{atencionneonatal.personalHospitalario.cedProf}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:selectOneMenu value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.nombres}" required="true" requiredMessage="#{etiq.notificacion1}">
+                                                            <f:selectItem itemLabel="#{etiq.notificacion11}" itemValue="" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{atencionneonatal.arrMedico}" var="oListaMedico"
+                                                                           itemLabel="#{oListaMedico.nombreCompleto}"
+                                                                           itemValue="#{oListaMedico.nombreCompleto}"/>
+                                                            <p:ajax event="valueChange" listener="#{atencionneonatal.asignaCedula()}" update="antc00"/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;"></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                        <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.cedProf}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="4" style="border-color: #ffffff; background: #ffffff;"></p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.fecha}:"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                                        <p:calendar value="#{atencionneonatal.datosAtencion.fechaElaboracion}"
+                                                                    mindate="#{atencionneonatal.fechaActual}" maxdate="#{atencionneonatal.fechaActual}"
+                                                                    locale="es" required="true" requiredMessage="#{etiq.notificacion2}">
+                                                            <p:ajax event="dateSelect"/>
+                                                        </p:calendar>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>                                    
+                                    <!--TERMINA PIE DE PAGINA-->
+                                </p:panelGrid>
+                                 <!--Botones guargar e imprimir-->
+                                 <br/>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:commandButton value="#{etiq.guard}" icon="ui-icon-disk" validateClient="true" process="@form" update="antc00 :busqueda:msgs"
+                                                             actionListener="#{atencionneonatal.guardaAnverso}"/>                                            
+                                        </p:column>
+                                    </p:row>
+                                
+                                
+                            </p:tab>
+                            <!--*****************************************-->
+                            <p:tab title="#{etiq.atencionNeonatal01}">
+                                <p:panelGrid styleClass="frm_centrado" id="antc01">
+                                <!--ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                        <p:panelGrid style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:row>
+                                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <h:graphicImage value="/imgs/003.jpg" style="width: 898px; height: 98px;"/>
+                                                </p:column>                                                    
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>                                    
+                                 <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.atencionNeonatal}"/></p:column>                                    
+                                </p:row>
+                                <!--TERMINA ENCABEZADO-->
+                                <!--CUERPO-->
+                                <p:row>
+                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.calificacion00}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="0"/></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="1"/></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="2"/></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="1'"/></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="5'"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.fc}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="0"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor16}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor17}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.fcMin}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total1"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.fc5Min}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total5"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.esfuerzoResp}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.ausente}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.debilIrregular}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.energico}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.esfuerzoRespiratorioMin}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total1"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.esfuerzoRespiratorio5Min}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total5"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.tMuscular}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.flacido}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.semiFlexion}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.flexionActivo}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.tonoMuscularMin}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total1"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.tonoMuscular5Min}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total5"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.irritabilidadRefleja}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff;"><p:outputLabel value="#{etiq.ausente}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff;"><p:outputLabel value="#{etiq.gestos}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff;"><p:outputLabel value="#{etiq.lloraRetira}"/></p:column>
+                                                 <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                     <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.irritabilidadMin}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                         <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total1"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                 <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                     <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.irritabilidad5Min}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                         <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total5"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff"><p:outputLabel value="#{etiq.color1}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.cianosisPalido}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.acrocianosis}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.rosado}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.colorMin}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total1"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionApgar.color5Min}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="total5"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="4" style="text-align: right; background-color: #ffffff; border-color: #ffffff;"><p:outputLabel value="#{etiq.total}"/></p:column>
+                                                <p:column style="border-color: #000000; background-color: #ffffff;">
+                                                    <p:outputLabel id="total1" value="#{atencionneonatal.sumaApgar1Minuto()}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #000000; background-color: #ffffff;">
+                                                    <p:outputLabel id="total5" value="#{atencionneonatal.sumaApgar5Minutos()}"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column colspan="5" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.calificacion01}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="0"/></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="1"/></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="2"/></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.aleteoNasal}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.ausente}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.minimo}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.marcado}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionSilvermann.aleteoNasal}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="tsilvermann"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.quejidoResp}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.ausente}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.audibleEstetoscopio}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.audible}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionSilvermann.QResp}" required="true" requiredMessage="#{etiq.notficacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="tsilvermann"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.tirajeIntercostal}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.ausente}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.minimo}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.marcado}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionSilvermann.TInter}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="tsilvermann"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                             <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.retraccionX}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.ausente}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.minimo}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.marcado}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionSilvermann.retraccion}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="tsilvermann"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.disociacionTA}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.sincronizado}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.retrasoRespiracion}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.subeBaja}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.calificacionSilvermann.disociacion}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1" itemValue="1"/>
+                                                        <f:selectItem itemLabel="2" itemValue="2"/>
+                                                        <p:ajax update="tsilvermann"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="4" style="text-align: right; border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:outputLabel value="#{etiq.total}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #000000; background-color: #ffffff;">
+                                                    <p:outputLabel id="tsilvermann" value="#{atencionneonatal.sumaSilvermann()}"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.VERMN}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                        <p:panelGrid style="padding: 0px;">
+                                            <p:row>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.pesoNacer}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; ">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor18}"/></p:column>                                                            
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor19}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor20}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor21}"/></p:column>
+                                                        </p:row>    
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor22}"/></p:column>
+                                                        </p:row>    
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                                    <p:panelGrid style="padding: 0px;">
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="65"/></p:column>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="61.5"/></p:column>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="15.8"/></p:column>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="4.3"/></p:column>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="5"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column rowspan="5" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.valoracion.valoracionPesoNacer}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="65" itemValue="65"/>
+                                                        <f:selectItem itemLabel="61.5" itemValue="61.5"/>
+                                                        <f:selectItem itemLabel="15.8" itemValue="15.8"/>                                                        
+                                                        <f:selectItem itemLabel="4.3" itemValue="4.3"/>
+                                                        <f:selectItem itemLabel="5" itemValue="5"/>
+                                                        <p:ajax update="puntajetotal mensaje"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                        <p:panelGrid style="padding: 0px;">
+                                            <p:row>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.edadMaterna}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor23}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor24}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor25}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor26}"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; vertical-align: text-top; text-align: left;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="7.4"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="1.9"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="0"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="3.9"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column rowspan="4" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.valoracion.valoracionEdadMaterna}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true" />
+                                                        <f:selectItem itemLabel="7.4" itemValue="7.4"/>
+                                                        <f:selectItem itemLabel="1.9" itemValue="1.9"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="3.9" itemValue="3.9"/>
+                                                        <p:ajax update="puntajetotal mensaje"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                        <p:panelGrid style="padding: 0px;">
+                                            <p:row>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.edadGestacional}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.valor27}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="28-31"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="32-33"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="34-35"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="36-37"/></p:column>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.valor28}"/></p:column>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.valor29}"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                                    <p:panelGrid style="padding: 0px;">
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="21.6"/></p:column>
+                                                        </p:row>                                                        
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="18.4"/></p:column>
+                                                        </p:row>                                                        
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="15"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="9"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="3.8"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="0"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="2.7"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column rowspan="7" style="border-color: #ffffff; background-color: #ffffff; vertical-align: text-top; text-align: left;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.valoracion.valoracionEdadGestacional}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="21.6" itemValue="21.6"/>
+                                                        <f:selectItem itemLabel="18.4" itemValue="18.4"/>
+                                                        <f:selectItem itemLabel="15" itemValue="15"/>
+                                                        <f:selectItem itemLabel="9" itemValue="9"/>
+                                                        <f:selectItem itemLabel="3.8" itemValue="3.8"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="2.7" itemValue="2.7"/>
+                                                        <p:ajax update="puntajetotal mensaje"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>                                                                                     
+                                        </p:panelGrid>                                        
+                                    </p:column>                                                                                                            
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; padding: 0px;">
+                                        <p:panelGrid style="padding: 0px;">
+                                            <p:row>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.embarazoParto}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; vertical-align: text-top; text-align: left;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.toxemia}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.diabetes}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.rpm}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.sufriemtoFetal}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.anesteciaA}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.complicacionTParto}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.partoDistocico}"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                                    <p:panelGrid style="padding: 0px;">                                                        
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="5.5"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="34.7"/></p:column>
+                                                        </p:row>                                                        
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="6.3"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="4.2"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="2.4"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="4.1"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="5.3"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.valoracion.valoracionEmParto}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="5.5" itemValue="5.5"/>
+                                                        <f:selectItem itemLabel="34.7" itemValue="34.7"/>
+                                                        <f:selectItem itemLabel="6.3" itemValue="6.3"/>
+                                                        <f:selectItem itemLabel="4.2" itemValue="4.2"/>
+                                                        <f:selectItem itemLabel="2.4" itemValue="2.4"/>
+                                                        <f:selectItem itemLabel="4.1" itemValue="4.1"/>
+                                                        <f:selectItem itemLabel="5.3" itemValue="5.3"/>
+                                                        <p:ajax update="puntajetotal mensaje"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                        <p:panelGrid style="border-color: #ffffff; background-color: #ffffff; padding: 0px;">
+                                            <p:row>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.APGAR}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="0-3"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="04-06"/></p:column>
+                                                        </p:row>
+                                                         <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="07-10"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; padding: 0px;">
+                                                    <p:panelGrid style="padding: 0px;">
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="11"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="3.1"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="0"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.valoracion.valoracionApgar}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="11" itemValue="11"/>
+                                                        <f:selectItem itemLabel="3.1" itemValue="3.1"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <p:ajax update="puntajetotal mensaje"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                        <p:panelGrid style="border-color: #ffffff; background-color: #ffffff; padding: 0px;">
+                                            <p:row>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.reanimacion}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.sexoM}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.presionP}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="#{etiq.intubadoB}"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; vertical-align: text-top; text-align: left;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="1.4"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="6.4"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;" ><p:outputLabel value="11.8"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:selectOneMenu value="#{atencionneonatal.valoracion.valoracionReanimacion}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                                        <f:selectItem itemLabel="0" itemValue="0"/>
+                                                        <f:selectItem itemLabel="1.4" itemValue="1.4"/>
+                                                        <f:selectItem itemLabel="6.4" itemValue="6.4"/>
+                                                        <f:selectItem itemLabel="11.8" itemValue="11.8"/>
+                                                        <p:ajax update="puntajetotal mensaje"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>
+                                            </p:row>         
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                        <p:panelGrid style="padding: 0px;">
+                                            <p:row>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="2" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.pTotal}"/></p:column>
+                                                <p:column colspan="2" style="border-color: #000000; background-color: #ffffff;">
+                                                    <p:outputLabel id="puntajetotal" value="#{atencionneonatal.puntajeTotal()}">
+                                                        <f:convertNumber pattern="00.00"/>
+                                                    </p:outputLabel>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column rowspan="3" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.canalizar}"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value=">30"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="15-30"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.valor30}"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; padding: 0px; vertical-align: text-top; text-align: left;">
+                                                    <p:panelGrid style="padding: 0px;">
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.ucin}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.CINT}"/></p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.alojamientoConj}"/></p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                                <p:column rowspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <b><p:outputLabel id="mensaje" value="#{atencionneonatal.mensaje()}" style="font-size: large;"/></b>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.induccionUtero}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.evolucionIndicaciones}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                        <p:inputTextarea styleClass="bordes" value="#{atencionneonatal.valoracion.atencionNeonatalTococirugia.evoIndicaciones}" style="text-transform: uppercase;" cols="140" rows="7" autoResize="false">
+                                            <p:ajax/>
+                                        </p:inputTextarea>
+                                    </p:column>
+                                </p:row>
+                                <!--TERMINA CUERPO-->
+                                <!--PIE DE PAGINA-->                                                                     
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; width: 100px; padding: 0px;">
+                                            <p:panelGrid style="border-color: #ffffff; background-color: #ffffff; padding: 0px;">
+                                                 <p:row>
+                                                    <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.elaboro}:"/></p:column>
+                                                    <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.superviso}:"/></p:column>
+                                                </p:row>  
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.nombreCompleto}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.firma}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.cedulaProf}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.nombreCompleto}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.firma}"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.cedulaProf}"/></p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{atencionneonatal.personalHospitalario.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                        <p:outputLabel value="#{atencionneonatal.personalHospitalario.cedProf}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                        <p:outputLabel value="#{atencionneonatal.datosAtencion.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.cedProf}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="4" style="border-color: #ffffff; background: #ffffff;"></p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.fecha}:"/></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                                        <p:outputLabel value="#{atencionneonatal.datosAtencion.fechaElaboracion}">
+                                                            <f:convertDateTime dateStyle="short" pattern="dd/MM/yyyy"/>
+                                                        </p:outputLabel>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <!--TERMINA PIE DE PAGINA-->
+                                </p:panelGrid>
+                                <!--Botones guargar e imprimir-->
+                                    <br/>
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #FFFFFF; background-color: #FFFFFF">
+                                            <p:commandButton value="Guardar" icon="ui-icon-disk" validateClient="true" process="@form" update="antc01 :busqueda:msgs"
+                                                             actionListener="#{atencionneonatal.guardaReverso}"/>
+                                            <!--<p:commandButton value="Imprimir" type="button" onclick="" icon="ui-icon-print" disabled="false">                                    
+                                                <p:printer target="antc01" />
+                                            </p:commandButton>-->
+                                        </p:column>
+                                    </p:row>
+                                                                                            
+                            </p:tab>
+                            <!--*****************************************--> 
+                        </p:tabView>
+                    </h:form>
+                </div>
+                <div>
+                    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                        <f:facet name="start">
+                            <p:graphicImage value="/imgs/loading.gif"/>
+                        </f:facet>
+                    </p:ajaxStatus>
+                </div>
+            </ui:define>
+        </ui:composition>
+</html>

@@ -1,0 +1,498 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+ <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+ 
+<ui:define name="cuerpo">
+    <div>
+        <p:growl id="messages" showDetail="true"/>
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+        
+         
+        <h:form class="centrar">
+        <c:choose>
+        <c:when test="${oNotaAdulto.ope=='a' || oNotaAdulto.folioPac gt 0 }">  
+       
+         <h2><p:outputLabel value="#{etiq.urgs}"/></h2>
+         <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+         <p:panelGrid styleClass="frm_centrado" style="#{oNotaAdulto.notaAdulto.habilitaDatosCama()}">
+         <f:facet name="header">
+             <p:row>
+                 <p:column colspan="6">
+                <h:outputText value="NOTA MEDICA"/>
+                </p:column>
+            </p:row>
+        </f:facet>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.fechaHoraIngreso}:"/> </p:column>
+                  <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.folioIngreso}:"/></p:column>
+                  <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                  <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                  <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column colspan="2"><h:outputLabel value="#{oNotaAdulto.notaAdulto.fechaIngresoStr}" /> </p:column>
+                 <p:column><h:outputLabel value="#{oNotaAdulto.notaAdulto.folioAdmision}"/></p:column>                  
+                 <p:column><h:outputLabel value="#{oNotaAdulto.notaAdulto.paciente.nombres}"/></p:column>
+                 <p:column><h:outputLabel value="#{oNotaAdulto.notaAdulto.paciente.apPaterno}"/></p:column>
+                 <p:column><h:outputLabel value="#{oNotaAdulto.notaAdulto.paciente.apMaterno}"/></p:column>
+             </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.referencia}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.derechohabiente}:" /></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.numero}:"/></p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column><h:outputLabel  value="#{oNotaAdulto.notaAdulto.paciente.fechaNacTexto}" /></p:column>
+                
+                 <p:column><h:outputLabel  value="#{oNotaAdulto.notaAdulto.paciente.calculaEdad()}"/></p:column>
+                
+                <p:column>
+                    <p:selectOneRadio id="sexo" value="#{oNotaAdulto.notaAdulto.paciente.sexoP}" disabled="true">
+                      <f:selectItem itemLabel="Masculino" itemValue="M" />
+                      <f:selectItem itemLabel="Femenino" itemValue="F" />
+                  </p:selectOneRadio>
+                  </p:column>
+                
+                 <p:column>
+                     <h:outputLabel value="#{oNotaAdulto.notaAdulto.paciente.referencia.tipo} #{oNotaAdulto.notaAdulto.paciente.referencia.descripcion}"></h:outputLabel>
+                 </p:column>
+                
+                 <p:column><h:outputLabel  value="#{oNotaAdulto.notaAdulto.paciente.seg.derechohabienteP}" /></p:column>
+                
+                 <p:column><h:outputLabel  value="#{oNotaAdulto.notaAdulto.paciente.seg.numero}" /></p:column>
+             </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.tipoDeCama}:"/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.folioCertificadoDef}:"/></p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column><h:outputLabel  value="#{oNotaAdulto.notaAdulto.paciente.curp}"/></p:column>
+                 <p:column><h:outputLabel   value="#{oNotaAdulto.notaAdulto.paciente.expediente.numero}"/></p:column>
+             
+                 <p:column colspan="2">
+                     <p:selectOneRadio id="tipCa" value="#{oNotaAdulto.notaAdulto.tipoCamaUrgs}" requiredMessage="Debe elegir el tipo de cama" required="true">
+                         <f:selectItems value="#{oNotaAdulto.listaTipoCama}" var="cam"
+                                         itemLabel="#{cam.valor}" itemValue="#{cam.claveParametro}#{cam.tipoParametro}"/>
+                      </p:selectOneRadio>
+                  </p:column>
+                
+                 <p:column colspan="2"><p:inputMask mask="999999999"  value="#{oNotaAdulto.notaAdulto.paciente.folioDefuncion}" maxlength="9"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}, #{etiq.horaAtencion}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.triage}:" />
+                     <br/><h:outputLabel value="#{etiq.seleccioneColor}:" /></p:column>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.tipoDeUrgs}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.peso}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.talla}:"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel  value="#{oNotaAdulto.notaAdulto.fechaSistema} #{oNotaAdulto.notaAdulto.horaSistema}"/><br/>
+                 </p:column>
+                 <p:column>
+                     <p:selectOneRadio id="triage" value="#{oNotaAdulto.notaAdulto.triageColor}" requiredMessage="Debe elegir un color" required="true" >
+                         <f:selectItems value="#{oNotaAdulto.listaTriage}" var="tri"
+                                         itemLabel="#{tri.valor}" itemValue="#{tri.claveParametro}#{tri.tipoParametro}"/>
+                      </p:selectOneRadio>
+                  </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:selectOneRadio id="tipoUrg" value="#{oNotaAdulto.notaAdulto.tipoUrgs}" requiredMessage="Debe elegir un color" required="true" layout="pageDirection" >
+                         <f:selectItems value="#{oNotaAdulto.listaTipoUrgencia}" var="tipU"
+                                         itemLabel="#{tipU.valor}" itemValue="#{tipU.claveParametro}#{tipU.tipoParametro}"/>
+                      </p:selectOneRadio>
+                 </p:column>
+                 
+                 <p:column><p:inputText value="#{oNotaAdulto.notaAdulto.paciente.peso}" required="true" size="5">
+                     <f:validateDoubleRange minimum="00.501" maximum="500"/></p:inputText>
+                     <p:outputLabel value="#{etiq.kg}:"/></p:column>
+                
+                 <p:column><p:inputText value="#{oNotaAdulto.notaAdulto.paciente.talla}" required="true" size="5">
+                     <f:validateDoubleRange minimum="15" maximum="300"/></p:inputText><p:outputLabel value="#{etiq.cm}:"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.signosVitales}:" class="mensaje"/></p:column>
+                 
+                 <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.motivoAtencion}:" class="mensaje"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column><h:outputLabel value="#{etiq.ta}:"/><br/>
+                     <p:inputText value="#{oNotaAdulto.notaAdulto.signosVitales.TA}" onkeypress="return validaCaracter(event);"  size="5" id="ta"/>
+                 </p:column>
+                 
+                 <p:column><h:outputLabel value="#{etiq.fc}:"/><br/>
+                     <p:inputText value="#{oNotaAdulto.notaAdulto.signosVitales.FC}" onkeypress="return validaCaracter(event);" size="5" id="fc"/>
+                 </p:column>
+                 <p:column><h:outputLabel value="#{etiq.fr}:"/><br/>
+                     <p:inputText value="#{oNotaAdulto.notaAdulto.signosVitales.FR}" onkeypress="return validaCaracter(event);"  size="5" id="fr"/>
+                 </p:column>
+                 
+                 <p:column><h:outputLabel value="#{etiq.temp}:"/><br/>
+                     <p:inputText value="#{oNotaAdulto.notaAdulto.signosVitales.temp}" onkeypress="return validaCaracter(event);"  size="5" id="temp"/>
+                 </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:selectOneRadio id="motAtn" value="#{oNotaAdulto.notaAdulto.motivoAtencion}" requiredMessage="Debe elegir un motivo de atención" required="true" layout="pageDirection" >
+                         <f:selectItems value="#{oNotaAdulto.listaMotivoAtencion}" var="mot"
+                                         itemLabel="#{mot.valor}" itemValue="#{mot.claveParametro}#{mot.tipoParametro}"/>
+                      </p:selectOneRadio>
+                 </p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.glasgow}" class="mensaje"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.aspecto}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.ocular}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.verbal}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.motora}:" class="mensaje"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.total}:" class="mensaje"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column colspan="2">
+                     <p:selectOneRadio id="aspec" value="#{oNotaAdulto.notaAdulto.signosVitales.aspecto}" requiredMessage="Debe elegir un aspecto" required="true" >
+                         <f:selectItems value="#{oNotaAdulto.listaAspecto}" var="asp"
+                                         itemLabel="#{asp.valor}" itemValue="#{asp.claveParametro}#{asp.tipoParametro}"/>
+                      </p:selectOneRadio>
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel value="1 a 4  "/>
+                     <p:inputMask mask="9" value="#{oNotaAdulto.notaAdulto.signosVitales.ngOcular}" id="ocular" size="3">
+                         <f:validateLongRange minimum="1" maximum="4"/>
+                         <p:ajax update="total" event="change"/>
+                     </p:inputMask>
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel value="1 a 5  "/>
+                     <p:inputMask mask="9" value="#{oNotaAdulto.notaAdulto.signosVitales.ngVerbal}" id="verbal" size="3">
+                         <f:validateLongRange minimum="1" maximum="5"/>
+                         <p:ajax update="total" event="change"/>
+                     </p:inputMask>
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel value="1 a 6  "/>
+                     <p:inputMask mask="9" value="#{oNotaAdulto.notaAdulto.signosVitales.ngMotora}" id="motora" size="3">
+                         <f:validateLongRange minimum="1" maximum="6"/>
+                         <p:ajax update="total" event="change"/>
+                     </p:inputMask> 
+                 </p:column>
+                 <p:column><p:inputText  id="total" value="#{oNotaAdulto.notaAdulto.signosVitales.ngTotal}" readonly="true" size="3"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.considerar}:" class="mensaje"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column><p:outputLabel value="#{etiq.motivoConsulta}:"/></p:column>
+                 <p:column colspan="5"><p:inputTextarea cols="100" rows="5" onkeypress="return validaCaracter(event);"  value="#{oNotaAdulto.notaAdulto.motivoConsulta}" maxlength="500" onkeyup="this.value=this.value.toUpperCase();" scrollHeight="6" autoResize="false" /></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column><p:outputLabel value="#{etiq.observaciones}:"/></p:column>
+                 <p:column colspan="5"><p:inputTextarea cols="100" onkeypress="return validaCaracter(event);"  rows="5" value="#{oNotaAdulto.notaAdulto.observaciones}" maxlength="500" onkeyup="this.value=this.value.toUpperCase();" scrollHeight="6" autoResize="false"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.afeccionTratada}"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 
+                 <p:column>
+                     <p:outputLabel value="1.-"/><h:outputLabel class="requerido" value="*"/>
+                 </p:column>
+                 
+                 <p:column colspan="4"><p:autoComplete id="diag1"  onkeypress="return validaCaracter(event);" queryDelay="1000" size="100" minQueryLength="3" required="true" requiredMessage="Debe ingresar al menos una afección" styleClass="bordes"
+                                                       value="#{oNotaAdulto.notaAdulto.afePrincipal.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oNotaAdulto.notaAdulto.afePrincipal.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" 
+                                                       disabled="#{oNotaAdulto.habilita(0)}" validatorMessage="Debe ingresar al una afeccion">
+                                            <p:ajax update="CIE10-1 diag2 diag3 CIE10-3" event="itemSelect"/>
+                                       </p:autoComplete>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel value="#{etiq.cie10}: " />
+                     <p:inputText id="CIE10-1" value="#{oNotaAdulto.notaAdulto.afePrincipal.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="2.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4"><p:autoComplete id="diag2" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                       value="#{oNotaAdulto.notaAdulto.afeSegunda.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oNotaAdulto.notaAdulto.afeSegunda.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oNotaAdulto.habilita(1)}" >
+                                            <p:ajax update="CIE10-2 diag3" event="itemSelect"/>
+                                            <p:ajax update="CIE10-2 diag3" event="blur"/>
+                                       </p:autoComplete>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel value="#{etiq.cie10}: " />
+                    <p:inputText id="CIE10-2" value="#{oNotaAdulto.notaAdulto.afeSegunda.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="Reselección AF. P."/>
+                 </p:column>
+                 
+                 <p:column colspan="4"><p:autoComplete id="diag3" onkeypress="return validaCaracter(event);" queryDelay="1000" size="100" required="true" minQueryLength="3" styleClass="bordes"
+                                                       value="#{oNotaAdulto.notaAdulto.afeResAP.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oNotaAdulto.notaAdulto.afeResAP.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oNotaAdulto.habilita(2)}">
+                                            <p:ajax update="CIE10-3" event="itemSelect"/>
+                                       </p:autoComplete>
+                </p:column>
+                 
+                 <p:column>
+                         <p:outputLabel value="#{etiq.cie10}: " />
+                        <p:inputText id="CIE10-3" value="#{oNotaAdulto.notaAdulto.afeResAP.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                </p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.procedimientos}"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 
+                 <p:column>
+                     <p:outputLabel value="1.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4">
+                         <p:autoComplete id="auPDTQ1" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                         value="#{oNotaAdulto.notaAdulto.proceRe1.CIE9.descripcion}" 
+                                         completeMethod="#{oNotaAdulto.notaAdulto.proceRe1.CIE9.completar}" effect="fade"
+                                         onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oNotaAdulto.habilita(3)}">
+                                         <p:ajax update="CIE9-1 auPDTQ2"  event="itemSelect"/>  
+                                         <p:ajax update="CIE9-1 auPDTQ2"  event="blur"/> 
+                         </p:autoComplete>                                          
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel value=" #{etiq.codigoCie9MC} " />
+                     <p:inputText id="CIE9-1" value="#{oNotaAdulto.notaAdulto.proceRe1.CIE9.claveCIE9Urg()}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="2.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4">
+                         <p:autoComplete id="auPDTQ2" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                         value="#{oNotaAdulto.notaAdulto.proceRe2.CIE9.descripcion}" 
+                                         completeMethod="#{oNotaAdulto.notaAdulto.proceRe2.CIE9.completar}" effect="fade"
+                                         onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oNotaAdulto.habilita(4)}">
+                                         <p:ajax update="CIE9-2 auPDTQ3" event="itemSelect"/>
+                                         <p:ajax update="CIE9-2 auPDTQ3" event="blur"/>
+                         </p:autoComplete>                                          
+                                    </p:column>
+                 <p:column>
+                     <p:outputLabel value=" #{etiq.codigoCie9MC} " />
+                     <p:inputText id="CIE9-2" value="#{oNotaAdulto.notaAdulto.proceRe2.CIE9.claveCIE9Urg()}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="3.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4">
+                         <p:autoComplete id="auPDTQ3" onkeypress="return validaCaracter(event);" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                         value="#{oNotaAdulto.notaAdulto.proceRe3.CIE9.descripcion}" 
+                                         completeMethod="#{oNotaAdulto.notaAdulto.proceRe3.CIE9.completar}" effect="fade"
+                                         onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300"  disabled="#{oNotaAdulto.habilita(5)}">
+                                         <p:ajax update="CIE9-3" event="itemSelect"/> 
+                                         <p:ajax update="CIE9-3" event="blur"/> 
+                         </p:autoComplete>                                          
+                                    </p:column>
+                 <p:column>
+                     <p:outputLabel value=" #{etiq.codigoCie9MC} " />
+                     <p:inputText id="CIE9-3" value="#{oNotaAdulto.notaAdulto.proceRe3.CIE9.claveCIE9Urg()}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             
+             
+             <p:row>
+                 <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.medicamentos}"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="1.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4">
+                         <p:autoComplete id="med1" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                         value="#{oNotaAdulto.notaAdulto.medicamento1.medicamento.nombreCve}" 
+                                         completeMethod="#{oNotaAdulto.notaAdulto.medicamento1.medicamento.completar}" effect="fade"
+                                         onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oNotaAdulto.habilita(6)}">
+                                         <p:ajax update="M1 med2" event="itemSelect"/>     
+                                         <p:ajax update="M1 med2" event="blur"/> 
+                         </p:autoComplete>                                          
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel value=" #{etiq.codigo} " />
+                     <p:inputText id="M1" value="#{oNotaAdulto.notaAdulto.medicamento1.medicamento.claveMED()}" size="7"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="2.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4">
+                         <p:autoComplete id="med2" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                         value="#{oNotaAdulto.notaAdulto.medicamento2.medicamento.nombreCve}" 
+                                         completeMethod="#{oNotaAdulto.notaAdulto.medicamento2.medicamento.completar}" effect="fade"
+                                         onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oNotaAdulto.habilita(7)}">
+                                         <p:ajax update="M2 med3" event="itemSelect"/> 
+                                         <p:ajax update="M2 med3" event="blur"/>                                            
+                         </p:autoComplete>                                          
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel value=" #{etiq.codigo} " />
+                     <p:inputText id="M2" value="#{oNotaAdulto.notaAdulto.medicamento2.medicamento.claveMED()}" size="7"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="3.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4">
+                         <p:autoComplete id="med3"  onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                         value="#{oNotaAdulto.notaAdulto.medicamento3.medicamento.nombreCve}" 
+                                         completeMethod="#{oNotaAdulto.notaAdulto.medicamento3.medicamento.completar}" effect="fade"
+                                         onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oNotaAdulto.habilita(8)}">
+                                         <p:ajax update="M3" event="itemSelect"/>  
+                                         <p:ajax update="M3" event="blur"/>                                            
+                         </p:autoComplete>                                          
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel value=" #{etiq.codigo} " />
+                     <p:inputText id="M3" value="#{oNotaAdulto.notaAdulto.medicamento3.medicamento.claveMED()}" size="7"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column colspan="6"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.destino}" styleClass="mensaje"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column colspan="6">
+                     <p:selectOneRadio id="destUrg" value="#{oNotaAdulto.notaAdulto.destinoUrg}" requiredMessage="Debe elegir un destino" required="true">
+                         <f:selectItems value="#{oNotaAdulto.listaDestino}" var="des"
+                                         itemLabel="#{des.valor}" itemValue="#{des.claveParametro}#{des.tipoParametro}"/>
+                      </p:selectOneRadio>
+                  </p:column>
+             </p:row>
+             
+        
+        </p:panelGrid>
+         <p:panelGrid style="#{oNotaAdulto.notaAdulto.estadoHosp}">
+             <p:row>
+                 <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.paraMenores5}"/></p:column>
+              </p:row>
+             <p:row>
+                 <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.iras}"/></p:column>
+                 <p:column colspan="4" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edas}"/></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column colspan="2">
+                    <p:selectOneRadio value="#{oNotaAdulto.notaAdulto.IRAS}">
+                        <f:selectItem itemLabel="SINTOMÁTICO" itemValue="S"/>
+                        <f:selectItem itemLabel="CON ANTIBIÓTICO" itemValue="A"/>
+                    </p:selectOneRadio>
+                 </p:column>
+                 
+                 
+                 <p:column colspan="2">
+                      <p:selectOneRadio id="plan" value="#{oNotaAdulto.notaAdulto.EDAStr}">
+                          <f:selectItems value="#{oNotaAdulto.listaPlanes}" var="des"
+                                         itemLabel="#{des.valor}" itemValue="#{des.claveParametro}#{des.tipoParametro}"/>
+                      </p:selectOneRadio>
+                  </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:outputLabel value="#{etiq.numSobres}" />
+                     <p:inputMask mask="9" value="#{oNotaAdulto.notaAdulto.sobres}" size="5"/>
+                 </p:column>
+             </p:row>
+         </p:panelGrid>
+         
+         <p:panelGrid style="#{oNotaAdulto.notaAdulto.habilitaDatosCama()}">
+             <f:facet name="footer">
+            <p:row>
+                <p:column colspan="6">
+                <div class="centrar">
+                <p:commandButton value="#{etiq.guardarCambios}" action="#{oNotaAdulto.insertaNotaMedicaAdultos()}" validateClient="true" ajax="false" icon="ui-icon-disk"/>
+                </div>
+                </p:column>
+            </p:row>
+        </f:facet>
+         </p:panelGrid>
+         </c:when> 
+          <c:otherwise>
+              <h1>El Paciente ya se encuentra Admitido u Hospitalizado</h1>
+          </c:otherwise>
+        </c:choose> 
+    </h:form>
+       
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+     </div>
+        </ui:define>
+</ui:composition>
+ 
+
+</html>

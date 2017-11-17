@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">     
+           <br/><br/>
+            <h:form id="resultados">
+                <div class="tabla_pacEnc">
+                <p:dataTable id="tablaPac" var="oPacEnc" value="#{oBuscarPac.paciente.buscarPac()}" emptyMessage="#{etiq.noRegistro}">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.pacEncontrados}"/>
+                </f:facet>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.apPaterno}"/>
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.apMaterno}"/>
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.nombres}"/>
+                </p:column>
+                
+                <p:column style="width: 9%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.fechaNac}"/>
+                </p:column>                 
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.curp}"/>
+                </p:column>
+                        
+                <p:column style="width: 7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.edadNumero}"/>
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                </p:column>                
+                
+                <p:column style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                </p:column>     
+
+                   <p:column>
+                       <!-- Editado por: JMHG -->
+                       <c:choose>
+                           <c:when test="#{oBuscarPac.servicio == true}"><!-- Agregado por: JMHG -->
+                               <p:commandButton value="#{etiq.seleccionar}" action="EstudiosServSolicitados" ajax="false">
+                                   <f:setPropertyActionListener target="#{oBuscarPac.paciente.folioPaciente}" value="#{oPacEnc.folioPaciente}"/>
+                                   <f:setPropertyActionListener target="#{oBuscarPac.paciente.expediente.numero}" value="#{oPacEnc.expediente.numero}" />
+                                   <f:setPropertyActionListener target="#{oBuscarPac.estudioReal.episodio.paciente}" value="#{oPacEnc}" />
+                               </p:commandButton>
+                           </c:when>
+                           <c:otherwise>
+                                <p:commandButton value="#{etiq.seleccionar}" action="#{oBuscarPac.paciente.buscarPacCE(2)}" ajax="false">
+                                    <f:setPropertyActionListener target="#{oBuscarPac.paciente.folioPaciente}" value="#{oPacEnc.folioPaciente}"/>
+                                    <f:setPropertyActionListener target="#{oBuscarPac.paciente.expediente.numero}" value="#{oPacEnc.expediente.numero}" />
+                                    <f:setPropertyActionListener target="#{oRegCita.cita.paciente}" value="#{oBuscarPac.paciente}"/>
+                                    <f:setPropertyActionListener target="#{oRegCita.cita.opcion}" value="#{false}"/>
+                                    <f:setPropertyActionListener target="#{oRegCita.estado}" value="mostrarbtn"/>
+                                    <f:setPropertyActionListener target="#{oRegCita.EP.primeraVezHRRB}" value="#{true}" />
+                                    <f:setPropertyActionListener target="#{oRegCita.EP.primeraVezEsp}" value="#{true}" />
+                                    <f:setPropertyActionListener target="#{oRegCita.diagcie10.descripcionDiag}" value="" />
+                                    <f:setPropertyActionListener target="#{oRegCita.diagcie10.listaDiagcve}" value="#{null}" />
+                                    <f:setPropertyActionListener target="#{oRegCita.pestana}" value="#{0}" />
+                                </p:commandButton>
+                           </c:otherwise>
+                       </c:choose>
+                       <!-- END -->
+                   </p:column>
+                </p:dataTable>      
+            </div>
+            
+               <br/><br/>  
+               <center>
+                   <!-- Editado por: JMHG -->
+                   <c:choose>
+                       <c:when test="#{oBuscarPac.servicio == true}"><!-- Agregado por: JMHG -->
+                           <p:commandButton value="#{etiq.volver}" styleClass="centrar" action="BuscarCitasXServicio" icon="ui-icon-arrowreturnthick-1-w" ajax="false">
+                               <f:setPropertyActionListener target="#{oBuscarPac.servicio}" value="#{false}"/>
+                               <f:setPropertyActionListener target="#{oBuscarPac.estudioReal.area.clave}" value="#{null}" />
+                           </p:commandButton>
+                       </c:when>
+                       <c:otherwise>
+                           <p:commandButton value="#{etiq.volver}" styleClass="centrar" action="BuscarCitas" icon="ui-icon-arrowreturnthick-1-w" ajax="false" />
+                       </c:otherwise>
+                   </c:choose>
+                   <!-- END -->
+               <p:commandButton value="#{etiq.nuevo}" action="#{oBuscarPac.paciente.reseteaBusqueda()}" ajax="false">
+                   <f:setPropertyActionListener target="#{oBuscarPac.paciente.nombres}" value="#{oBuscarPac.paciente.nombres}"/>
+                   <f:setPropertyActionListener target="#{oBuscarPac.paciente.expediente.numero}" value="#{oPacEnc.expediente.numero}" />
+                   <f:setPropertyActionListener target="#{oRegCita.cita.paciente}" value="#{oBuscarPac.paciente}"/>
+                   <f:setPropertyActionListener target="#{oRegCita.cita.opcion}" value="#{false}"/>
+                   <f:setPropertyActionListener target="#{oRegCita.estado}" value="mostrarbtn"/>
+                   <f:setPropertyActionListener target="#{oRegCita.EP.primeraVezHRRB}" value="#{true}" />
+                   <f:setPropertyActionListener target="#{oRegCita.EP.primeraVezEsp}" value="#{true}" />
+                   <f:setPropertyActionListener target="#{oRegCita.diagcie10.descripcionDiag}" value="" />
+                   <f:setPropertyActionListener target="#{oRegCita.diagcie10.listaDiagcve}" value="#{null}" />
+                   <f:setPropertyActionListener target="#{oRegCita.pestana}" value="#{0}" />
+                   <f:setPropertyActionListener target="#{oRegCita.cita.paciente.tipoSol.tipoParametro}" value="" />
+               </p:commandButton>              
+               </center>
+               </h:form>
+          </ui:define> 
+        </ui:composition>
+</html>

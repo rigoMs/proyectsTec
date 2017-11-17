@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.ExistenciaMaterial}"/>
+                </h2>
+                <br/>
+                <div>
+                    <h:form id="formEx" >     
+                        <p:panelGrid style="margin-top:20px; width: 1000px">
+                            <p:row>
+                                <p:column colspan="30" >
+                                    <p:dataTable 
+                                        var="oExi"
+                                        id="tblExistencia"
+                                        editable="true" 
+                                        value="#{oExistencia.lista}"
+                                        emptyMessage="#{etiq.NReg}"
+                                        paginator="true"
+                                        paginatorPosition="bottom"
+                                        rows="10" 
+                                        filteredValue="#{oExistencia.matFiltrado}"
+                                        style="margin-bottom:20px;text-align: center;"  >
+                                        <f:facet name="header">
+                                            <h:outputLabel value="#{etiq.ExistenciaDMateriales}"/>
+                                        </f:facet>                                        
+                                        <p:column headerText="#{etiq.clave}" 
+                                                  filterBy="#{oExi.material.claveMaterial}" filterMatchMode="contains"      width="15%">                  
+                                            <h:outputText value="#{oExi.material.claveMaterial}"/>                      
+                                        </p:column> 
+                                        <p:column headerText="#{etiq.nombre}" filterBy="#{oExi.material.nombre}" filterMatchMode="contains"  width="20%"   >
+                                            <h:outputLabel value="#{oExi.material.nombre}"/>                                             
+                                        </p:column> 
+                                                                             
+                                        <p:column headerText="#{etiq.Presentacion}"  width="20%">
+                                            <h:outputLabel value="#{oExi.material.presentacion.valor}"/>                    
+                                        </p:column>
+                                        <p:column headerText="#{etiq.InventarioFisico}"   width="10%">                                             
+                                            <h:outputLabel value="#{oExi.existencia}"/>
+                                        </p:column>
+                                    </p:dataTable> 
+                                    <div style="text-align: center"> 
+                                        <p:row>
+                                            <p:column colspan="30" style=" alignment-adjust: central" >  
+                                                <p:outputLabel  title="Exportar PDF" value="Exportar" styleClass="mensaje" />
+                                                <h:commandLink id="pdfs" > 
+                                                    <p:graphicImage value="/imgs/pdf.jpg" width="30" />                                                    
+                                                    <poue:exporter type="pdf" target="tblExistencia" fileName="Existencias"
+                                                    orientation="left"  cellFontColor="#090908" cellFontStyle="oblique" facetBackground="#8CF09B" 
+                                                      cellFontSize="8" fontName="Verdana" 
+                                                    facetFontSize="10"  facetFontStyle="italic" 
+                                                     />  
+                                                </h:commandLink> 
+                                            </p:column>
+                                        </p:row> 
+                                    </div>                                     
+                                </p:column>
+                            </p:row> 
+                        </p:panelGrid>
+                    </h:form> 
+
+
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

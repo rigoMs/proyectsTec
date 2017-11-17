@@ -1,0 +1,794 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.tabuladorde} #{etiq.servicios}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form>
+                         <p:growl id="growl" showDetail="true" /> 
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.area}:"/></p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="agrupadoresservicio" value="#{TabuladorPrecios.tabuladorPrecios.claveagrupserv}">
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listagrupadoresservicios}" var="oVar"
+                                                       itemLabel="#{oVar.descripcion}" itemValue="#{oVar.claveagrupserv}"/> 
+                                         <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.descripcion}:"/> 
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="txtdescrip" value="#{TabuladorPrecios.decripcion}" size="30"
+                                                 onkeyup="this.value=this.value.toUpperCase();" 
+                                             onkeypress="return validaCaracter(event);"
+                                             > <p:ajax/> </p:inputText> 
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.clave}:"/> 
+                                </p:column>
+                                <p:column> 
+                                    <p:inputText id="taxId" value="#{TabuladorPrecios.claveTabulador}"
+                                          onkeyup="this.value=this.value.toUpperCase();" 
+                                         onkeypress="return validaCaracter(event);">
+                                        <p:ajax/>
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search">
+                                        <p:ajax listener="#{TabuladorPrecios.buscaTabuladorDePrecios(oVar.claveagrupserv)}" update="tabulPrecios"></p:ajax>
+                                    </p:commandButton>
+                                </p:column> 
+                            </p:row>
+                        </p:panelGrid><br/>
+                        <p:dataTable id="tabulPrecios" var="oTabSer" paginator="true" value="#{TabuladorPrecios.listaServ}"
+                                     paginatorPosition="both" rows="15"
+                                     emptyMessage="NO HAY REGISTROS" >
+                              <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.clave}"/>
+                                </f:facet>
+                                  <h:outputText value="#{oTabSer.claveTabulador}"/>
+                              </p:column>
+                              <p:column style="width:250px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.descripcion}"/>
+                                </f:facet>
+                                  <h:outputText value="#{oTabSer.descrip}"/>
+                              </p:column>
+                               <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel} 0"/>
+                                </f:facet>
+                                   <h:outputText value="#{oTabSer.montCobra0}"/>
+                              </p:column>
+                               <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel} 1"/>
+                                </f:facet>
+                                   <h:outputText value="#{oTabSer.montCobra1}"/>
+                              </p:column>
+                               <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel} 2"/>
+                                </f:facet>
+                                <h:outputText value="#{oTabSer.montCobra2}"/>
+                              </p:column>
+                               <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel} 3"/>
+                                </f:facet>
+                                <h:outputText value="#{oTabSer.montCobra3}"/>
+                              </p:column>
+                               <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel} 4"/>
+                                </f:facet>
+                                <h:outputText value="#{oTabSer.montCobra4}"/>
+                              </p:column>
+                               <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel} 5"/>
+                                </f:facet>
+                                <h:outputText value="#{oTabSer.montCobra5}"/>
+                              </p:column>
+                               <p:column style="width:80px;">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel} 6"/>
+                                </f:facet>
+                                <h:outputText value="#{oTabSer.montCobra6}"/>
+                              </p:column> 
+                            <p:column style="width:80px;" rendered="#{TabuladorPrecios.columnModCost}"> 
+                                 <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="Modificar Costos"/>
+                                </f:facet>  
+                                <p:commandButton  oncomplete="PF('DialogModif').show()" icon="ui-icon-pencil" value="Modificar">
+                                    <p:ajax listener="#{TabuladorPrecios.tomaObjeto(oTabSer)}" update=":DialogModif"/>
+                                </p:commandButton> 
+                            </p:column> 
+                          </p:dataTable> 
+                        <br/>  
+                           <p:panelGrid rendered="#{TabuladorPrecios.columnModCost}">
+                                 <p:row>
+                                     <p:column>
+                                         <p:commandButton  icon="ui-icon-pencil" value="Estudios Nuevos"  oncomplete="PF('DialogNueEstu').show()"/>
+                                     </p:column>
+                                     <p:column>
+                                         <p:commandButton  icon="ui-icon-pencil" value="Protocolo Quimioterapia Nuevos" oncomplete="PF('DialogNueProtoquimio').show()"/>
+                                     </p:column>
+                                      <p:column>
+                                         <p:commandButton  icon="ui-icon-pencil" value="Productos Hemoderivados Nuevos" oncomplete="PF('DialogProductHemo').show()"/>
+                                     </p:column>                                                     
+                                      <p:column>
+                                         <p:commandButton  icon="ui-icon-pencil" value="Otros Servicios Nuevos" oncomplete="PF('DialogOtroSer').show()"/>
+                                     </p:column>
+                                 </p:row>
+                             </p:panelGrid> 
+                    </h:form>
+                    
+                    <p:dialog header="Nuevo Estudio" widgetVar="DialogNueEstu" id="DialogNueEstu" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <h:form>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Clave:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputMask value="#{TabuladorPrecios.calveNueSer}" mask="999-99"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Descripcion:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputText value="#{TabuladorPrecios.descripNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="abreviatura:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputText value="#{TabuladorPrecios.abrebiaNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Agrupador De sevicio:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:selectOneMenu value="#{TabuladorPrecios.agrupadorSer}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listagrupadoresservicios}" var="oAgrup"
+                                                       itemLabel="#{oAgrup.descripcion}" itemValue="#{oAgrup.claveagrupserv}"/>  
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Es de capasits:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:selectOneMenu value="#{TabuladorPrecios.capci}">
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                 <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItem itemValue="S" itemLabel="Si"/>
+                                                <f:selectItem itemValue="N" itemLabel="No"/> 
+                                            </p:selectOneMenu>
+                                     </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Área:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:selectOneMenu id="AreaSerNue" value="#{TabuladorPrecios.areaserviNuevoSer}">
+                                             <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listatodasLasAreas}" var="oAreaC"
+                                                       itemLabel="#{oAreaC.descripcion}" itemValue="#{oAreaC.clave}"/>  
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Tipo De Solicitud:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:selectOneMenu id="SolicitudSerNue" value="#{TabuladorPrecios.tipoSoliNuevoSer}">
+                                             <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listSolicitudes}" var="oVar"
+                                                       itemLabel="#{oVar.valor}" itemValue="#{oVar.tipoParametro}"/>  
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Cuenta Contable:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:selectOneMenu id="CuentaContable" value="#{TabuladorPrecios.cuentaConta}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listaTodaslasAreaConta}" var="oCuCon"
+                                                       itemLabel="#{oCuCon.descripcion}" itemValue="#{oCuCon.numCta}"/> 
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 0:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra0}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 1:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra1}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 2:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra2}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 3:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra3}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 4:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra4}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 5:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra5}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 6:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra6}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid> 
+                            <p:commandButton value="#{etiq.guardar}" action="#{TabuladorPrecios.registrarNuevoServicio(1)}"  update="growl" validateClient="true" ajax="false" icon="ui-icon-disk" oncomplete="PF('DialogNueEstu').hide()"> 
+                                </p:commandButton>
+                        </h:form>     
+                    </p:dialog>
+                    
+                    
+                    <p:dialog header="Nuevo Protocolo Quimioterapia" widgetVar="DialogNueProtoquimio" id="DialogNueProtoquimio" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                      <h:form>
+                          <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Clave:"/>   
+                                    </p:column>
+                                     <p:column colspan="2">
+                                         <p:inputMask value="#{TabuladorPrecios.calveNueSer}" mask="999-99"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Descripcion:"/>   
+                                    </p:column>
+                                     <p:column colspan="2">
+                                         <p:inputText value="#{TabuladorPrecios.descripNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="abreviatura:"/>   
+                                    </p:column>
+                                     <p:column colspan="2">
+                                         <p:inputText value="#{TabuladorPrecios.abrebiaNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Agrupador De sevicio:"/>   
+                                    </p:column>
+                                     <p:column colspan="2">
+                                         <p:selectOneMenu value="#{TabuladorPrecios.agrupadorSer}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listagrupadoresservicios}" var="oAgrup"
+                                                       itemLabel="#{oAgrup.descripcion}" itemValue="#{oAgrup.claveagrupserv}"/>  
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                              <p:row>
+                                  <p:column styleClass="ui-widget-header">
+                                       <p:outputLabel value="Duracion:"/>
+                                  </p:column>
+                                  <p:column>
+                                      <p:inputText value="#{TabuladorPrecios.duracion}" />
+                                  </p:column>
+                                  <p:column styleClass="ui-widget-header">
+                                       <p:outputLabel value="tiempo:"/>
+                                  </p:column>
+                                  <p:column>
+                                      <p:selectOneMenu id="AgrupSerNuevoPQ" value="#{TabuladorPrecios.tiemDura}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listTiempDura}" var="ovarT"
+                                                       itemLabel="#{ovarT.valor}" itemValue="#{ovarT.tipoParametro}"/>  
+                                        </p:selectOneMenu> 
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Cuenta Contable:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:selectOneMenu id="CuentaContablePQ" value="#{TabuladorPrecios.cuentaConta}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listaTodaslasAreaConta}" var="oCuCon"
+                                                       itemLabel="#{oCuCon.descripcion}" itemValue="#{oCuCon.numCta}"/> 
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                  <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Nivel 0:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra0}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Nivel 1:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra1}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Nivel 2:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra2}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Nivel 3:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra3}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Nivel 4:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra4}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Nivel 5:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra5}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                        <p:outputLabel value="Nivel 6:"/>   
+                                    </p:column>
+                                     <p:column colspan="2"> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra6}"/>
+                                    </p:column>
+                                </p:row>
+                          </p:panelGrid>
+                          <p:commandButton value="#{etiq.guardar}" action="#{TabuladorPrecios.registrarNuevoServicio(2)}"  update="growl" validateClient="true" ajax="false" icon="ui-icon-disk" oncomplete="PF('DialogNueProtoquimio').hide()">
+                          </p:commandButton>
+                      </h:form>
+                    </p:dialog>
+                    
+                    
+                    
+                     <p:dialog header="Nuevo Producto Hemoderivado" widgetVar="DialogProductHemo" id="DialogProductHemo" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                         <h:form>
+                             <p:panelGrid>
+                                  <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Clave:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputMask value="#{TabuladorPrecios.calveNueSer}" mask="999-99"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Descripcion:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputText value="#{TabuladorPrecios.descripNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="abreviatura:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputText value="#{TabuladorPrecios.abrebiaNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Agrupador De sevicio:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:selectOneMenu value="#{TabuladorPrecios.agrupadorSer}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listagrupadoresservicios}" var="oAgrup"
+                                                       itemLabel="#{oAgrup.descripcion}" itemValue="#{oAgrup.claveagrupserv}"/>  
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                     <p:column styleClass="ui-widget-header"> 
+                                        <p:outputLabel value="Maxima Cantidad De Solicitudes:"/>  
+                                     </p:column>
+                                     <p:column>
+                                         <p:inputText value="#{TabuladorPrecios.maximaCantiporSoli}" /> 
+                                     </p:column>
+                                 </p:row>
+                                 <p:row>
+                                  <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Cuenta Contable:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:selectOneMenu value="#{TabuladorPrecios.cuentaConta}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listaTodaslasAreaConta}" var="oCuCon"
+                                                       itemLabel="#{oCuCon.descripcion}" itemValue="#{oCuCon.numCta}"/> 
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                  <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 0:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra0}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 1:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra1}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 2:"/>   
+                                    </p:column>
+                                     <p:column > 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra2}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 3:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra3}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 4:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra4}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 5:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra5}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 6:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra6}"/>
+                                    </p:column>
+                                </p:row>
+                             </p:panelGrid>   
+                             <p:commandButton value="#{etiq.guardar}" action="#{TabuladorPrecios.registrarNuevoServicio(3)}"  update="growl" validateClient="true" ajax="false" icon="ui-icon-disk" oncomplete="PF('DialogProductHemo').hide()">
+                            </p:commandButton>
+                         </h:form>   
+                     </p:dialog>
+                    
+                    <p:dialog header="Otro Servicio nuevo" widgetVar="DialogOtroSer" id="DialogOtroSer" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                        <h:form> 
+                        <p:panelGrid>
+                           <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Clave:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputMask value="#{TabuladorPrecios.calveNueSer}" mask="999-99"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Descripcion:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputText value="#{TabuladorPrecios.descripNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="abreviatura:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:inputText value="#{TabuladorPrecios.abrebiaNueSer}" />
+                                    </p:column>
+                                </p:row>
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Agrupador De sevicio:"/>   
+                                    </p:column>
+                                     <p:column>
+                                         <p:selectOneMenu value="#{TabuladorPrecios.agrupadorSer}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listagrupadoresservicios}" var="oAgrup"
+                                                       itemLabel="#{oAgrup.descripcion}" itemValue="#{oAgrup.claveagrupserv}"/>  
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>  
+                                <p:row>
+                                  <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Cuenta Contable:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:selectOneMenu value="#{TabuladorPrecios.cuentaConta}">
+                                          <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                        <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{TabuladorPrecios.listaTodaslasAreaConta}" var="oCuCon"
+                                                       itemLabel="#{oCuCon.descripcion}" itemValue="#{oCuCon.numCta}"/> 
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                  <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 0:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra0}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 1:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra1}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 2:"/>   
+                                    </p:column>
+                                     <p:column > 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra2}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 3:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra3}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 4:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra4}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 5:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra5}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Nivel 6:"/>   
+                                    </p:column>
+                                     <p:column> 
+                                         <p:inputText value="#{TabuladorPrecios.tabuladorNuevoSer.montCobra6}"/>
+                                    </p:column>
+                                </p:row>
+                        </p:panelGrid> 
+                            <p:commandButton value="#{etiq.guardar}" action="#{TabuladorPrecios.registrarNuevoServicio(4)}"  update="growl" validateClient="true" ajax="false" icon="ui-icon-disk" oncomplete="PF('DialogOtroSer').hide()">
+                            </p:commandButton>
+                            </h:form>
+                    </p:dialog>
+                    
+                    
+                     
+                     <p:dialog header="Modificar Costos" widgetVar="DialogModif" id="DialogModif" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                         <h:form> 
+                            <p:outputPanel style="text-align:center;">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.clave}"/>  
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.claveTabulador}"> 
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                      <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.descripcion}"/>  
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.descrip}">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                     <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.nivel} 0"/>  
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.montCobra0}">  
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row> 
+                                      <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.nivel} 1"/>  
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.montCobra1}">  
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row> 
+                                     <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.nivel} 2"/>  
+                                        </p:column>
+                                        <p:column> 
+                                            <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.montCobra2}"> 
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                     <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.nivel} 3"/>  
+                                        </p:column>
+                                        <p:column> 
+                                            <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.montCobra3}"> 
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                     <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.nivel} 4"/>  
+                                        </p:column>
+                                        <p:column> 
+                                             <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.montCobra4}"> 
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                     <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.nivel} 5"/>  
+                                        </p:column>
+                                        <p:column> 
+                                             <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.montCobra5}">  
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                     <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.nivel} 6"/>  
+                                        </p:column>
+                                        <p:column> 
+                                            <p:inputText value="#{TabuladorPrecios.tabuladorPrecSelecc.montCobra6}"> 
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:commandButton value="#{etiq.guardar}" action="#{TabuladorPrecios.registraModificacionDeCostos()}" update="growl" validateClient="true" ajax="false" icon="ui-icon-disk" oncomplete="PF('DialogModif').hide()"> 
+                                </p:commandButton>
+                            </p:outputPanel> 
+                           </h:form>
+                        </p:dialog>
+                    
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

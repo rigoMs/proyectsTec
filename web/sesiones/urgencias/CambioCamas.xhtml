@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <div class="centrar">
+        <h:form id="datos">
+          
+            <br/>
+            <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+                 <p:panelGrid styleClass="frm_centrado"> 
+                                       
+                     <p:row>
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>  
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.camasOcupadas}:"/></p:column> 
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>   
+                     </p:row>
+                     
+                     <p:row>
+                         
+                         <p:column>
+                             <p:outputLabel value="#{etiq.seleccioneCamaCons}:"/>
+                         </p:column>
+                         
+                         <p:column><h:outputLabel class="requerido" value="*"/>
+                             <p:selectOneMenu id="camasOc" value="#{oCamas.cambioCama.cama.numeroOcupada}" required="true">
+                               <f:selectItem itemLabel="CAMAS OCUPADAS" itemValue="" noSelectionOption="true" />
+                               <f:selectItems value="#{oCamas.cambioCama.cama.listaCamasOcupadas}" var="camO"
+                                              itemLabel="#{camO.numero} / #{camO.areaServicioHRRB}" itemValue="#{camO.numero}"/>
+                           </p:selectOneMenu>
+                        </p:column>
+                         
+                         <p:column>
+                             <p:commandButton value="#{etiq.consultar}" action="#{oCamas.cambioCama.buscarPacienteEnCama()}" validateClient="true" ajax="false" icon="ui-icon-disk"/>
+                        </p:column>
+                     </p:row>
+                     
+                 </p:panelGrid>
+            <br></br>
+        </h:form>
+        
+            <h:form id="consCama" >
+            <p:panelGrid id="cama1" style="#{oCamas.cambioCama.habilitaDatosCama()}">
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.cambioCamas}"/></p:column>
+                </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+                     </p:row>
+                      <p:row>
+                          <p:column>
+                              <h:outputLabel value="#{oCamas.cambioCama.paciente.nombres}"/>
+                          </p:column>
+                          <p:column>
+                              <h:outputLabel value=" #{oCamas.cambioCama.paciente.apPaterno}"/>
+                          </p:column>
+                          <p:column>
+                              <h:outputLabel value="#{oCamas.cambioCama.paciente.apMaterno}"/>
+                          </p:column>
+                          
+                          <p:column>
+                              <p:selectOneRadio id="sexo" value="#{oCamas.cambioCama.paciente.sexoP}" disabled="true" validatorMessage="Debe ingresar el sexo del paciente">
+                                <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                </p:selectOneRadio>
+                        </p:column>
+                          
+                          <p:column>
+                              <h:outputLabel value="#{oCamas.cambioCama.paciente.curp}"/>
+                          </p:column>
+                          
+                      </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.seguro}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numero}:"/></p:column>
+                        <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                     </p:row>
+                     <p:row>
+                         <p:column>
+                             <h:outputLabel id="fechaNac" value="#{oCamas.cambioCama.paciente.fechaNacTexto}" >
+                             </h:outputLabel>
+                          </p:column>
+                         <p:column>
+                             <h:outputLabel value="#{oCamas.cambioCama.paciente.seg.derechohabienteP}"/>
+                         </p:column>
+                         <p:column>
+                             <h:outputLabel value="#{oCamas.cambioCama.paciente.seg.numero}"/>
+                         </p:column>
+                         
+                  <p:column colspan="2">
+                      <h:outputLabel id="dom" value="#{oCamas.cambioCama.paciente.calleNum}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                     </p:row>
+                     
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.colonia}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.pais}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.municipio}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.localidad}:"/><br/></p:column>
+             </p:row>
+             
+             <p:row>
+                 
+                 <p:column>
+                     <h:outputLabel id="colonia" value="#{oCamas.cambioCama.paciente.colonia}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel value="#{oCamas.cambioCama.paciente.pais}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                     </h:outputLabel>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="enti" disabled="true" value="#{oCamas.cambioCama.paciente.estado.claveEdo}" >
+                         <p:ajax update="muni" event="valueChange"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oCamas.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="muni" disabled="true" value="#{oCamas.cambioCama.paciente.municipio.claveMun}">
+                         <p:ajax update="loc" event="valueChange"/>
+                         <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oCamas.listaMunicipios}" var="oMun" 
+                                        itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="loc" disabled="true" value="#{oCamas.cambioCama.paciente.ciudad.claveCiu}">
+                         <p:ajax update="codp" event="valueChange"/>
+                         <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oCamas.listaCiudades}" var="oCiu"
+                                        itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+               </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cp}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicioHosp}:"/><br/></p:column> 
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.subservicio}:"/><br/></p:column> 
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.medicoTratante}:"/><br/></p:column>
+                
+             </p:row>
+                 
+             <p:row>
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="codp" disabled="true" value="#{oCamas.cambioCama.paciente.ciudadCP.cp}">
+                         <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oCamas.listaCP}" var="oCP" 
+                                        itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel  value="#{oCamas.cambioCama.paciente.expediente.numero}" />
+                 </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel id="ser" value="#{oCamas.cambioCama.areaServicioSTR}"/>
+                  </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel id="subser" value="#{oCamas.cambioCama.subServicioHRRBSTR}"/>
+                  </p:column>
+                 
+                 <p:column colspan="2">
+                     <h:outputLabel id="medUrg" value="#{oCamas.cambioCama.medicoTratante.nombres}"/>
+                 </p:column>
+                 
+            </p:row> 
+                     
+             <p:row>
+                 <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.datosCama}:"/><br/></p:column>
+             </p:row> 
+                     
+             <p:row>
+                 <p:column colspan="5">
+                     <h:outputLabel id="medUrgn" value="#{oCamas.cambioCama.cama.numero}"/>
+                 </p:column>
+             </p:row> 
+                
+            </p:panelGrid>
+            <br/>
+            <p:panelGrid id="cama2" style="#{oCamas.cambioCama.habilitaDatosCama()}">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.camasDisponibles}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>
+                    </p:row>
+            
+                     <p:row>
+                         
+                  <p:column><p:outputLabel value="#{etiq.seleccioneCama}:"/></p:column>
+                  <p:column><h:outputLabel class="requerido" value="*"/>
+                      <p:selectOneMenu id="CamasD" value="#{oCamas.cambioCama.cama.numeroDesocupada}" required="true">
+                         <f:selectItem itemLabel="CAMAS DISPONIBLES" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oCamas.cambioCama.cama.listaCamas}" var="cam"
+                                        itemLabel="#{cam.numero} / #{cam.areaServicioHRRB}" itemValue="#{cam.numero}"/>
+                     </p:selectOneMenu>
+                  </p:column>
+                  
+                  <p:column>
+                      <p:commandButton value="#{etiq.guardarCambios}" action="#{oCamas.cambioCama.cambioCamas()}" validateClient="true" ajax="false" icon="ui-icon-disk"/>
+                  </p:column>
+                  
+                </p:row>
+           </p:panelGrid>
+            <br/>
+                </h:form>
+            
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+   </div> 
+    
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

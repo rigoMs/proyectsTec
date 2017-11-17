@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+<div class="centrar">
+    <h:form styleClass="centrar" id="frmInicio">
+        <p:growl id="msgs" showDetail="true" />
+        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+        <h3><h:outputLabel value="#{etiq.censoMensualEST}"/></h3>
+        <p:panelGrid  styleClass="centrar">
+            <p:row>
+                <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.rangoFechas}"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.del}"/></p:column>
+                <p:column>
+                    <p:calendar id="txtFechIni" value="#{oRGerencialEstJB.reporte.fechaIni}" required="true" showOn="button" pattern="dd/MM/yyyy" locale="es">
+                        <p:ajax event="dateSelect"/>
+                    </p:calendar>
+                </p:column>
+                <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.al}"/></p:column>
+                <p:column>
+                    <p:calendar id="txtFechFin" value="#{oRGerencialEstJB.reporte.fechaFin}" required="true" showOn="button" pattern="dd/MM/yyyy" locale="es">
+                        <p:ajax event="dateSelect" listener="#{oRGerencialEstJB.validaFecha()}" update=":frmInicio:msgs"/>
+                    </p:calendar>
+                </p:column>
+            </p:row>
+            <f:facet name="footer">
+                <p:row>
+                    <p:column colspan="4" styleClass="centrar" >
+                        <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                            <p:ajax listener="#{oRGerencialEstJB.buscaDatos()}" 
+                                    update=":frmInicio :frmInicio:pgUno :frmInicio:pgDos :frmInicio:pgTres :frmInicio:pgCuatro :frmInicio:pgCinco :frmInicio:dtRptCensoMensu :frmInicio:pgSeis :frmInicio:pgSiete :frmInicio:msgs  :frmImpresion"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </f:facet>
+        </p:panelGrid>
+        <br/>
+        <!-- .................. -->
+        <p:panel id="paInicio" rendered="#{oRGerencialEstJB.render}" styleClass="centrar" style=" border-style: none;width: 1100px">
+            <p:panelGrid styleClass="centrar" id="pgUno">
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;" value="#{etiq.partOCesa}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.nacAten}"/></p:column>                              
+                    <p:column colspan="2"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.enAdole}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.eutocicos}"/></p:column>                              
+                    <!-- <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.disVag}"/></p:column> -->
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.cesarea}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-transform: uppercase; text-align: center; font-size: 12px" value="#{etiq.total}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.men15}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="15 A 19"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.eutocicos}"/></p:column>                              
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.distocicosVaginal}"/></p:column> -->
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.cesarea}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; " value="#{oRGerencialEstJB.reporte.totalPartoOcesarea}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMenor15}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AEntre15_19}"/></p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+            <p:panelGrid styleClass="centrar" id="pgDos">
+                <p:row>
+                    <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase; " value="#{etiq.nacVivo}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.de} 22 A 36 #{etiq.semanas}"/></p:column>                              
+                    <p:column colspan="2"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="37 Y MAS #{etiq.semanas}"/></p:column>
+                    <!-- <p:column colspan="3"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.semNoesp}"/></p:column> -->
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.menorA} 2500G"/></p:column>                              
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="2500G Y MAS"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.peso} N.E"/></p:column> -->
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.menorA} 2500G"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="2500G Y MAS"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.peso} N.E"/></p:column> -->
+                    <!--<p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.menorA} 2500G"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="2500G Y MAS"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.peso} N.E"/></p:column> -->
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.NV22_36semMe2500Gr}"/></p:column>                              
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.NV22_36semMa2500Gr}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.NV37semMe2500Gr}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.NV37semMa2500Gr}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <p:panelGrid styleClass="centrar" id="pgTres" >
+                <p:row>
+                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;  " value="#{etiq.defunciones}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.defunciones} #{etiq.fetales}"/></p:column>
+                    <p:column colspan="4"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.aborAten}"/></p:column>
+                    <!-- <p:column colspan="5"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.aborAten2}"/></p:column> -->
+                </p:row>
+                <p:row>
+                    <p:column rowspan="2"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="22 A 27 #{etiq.semanas}"/></p:column>
+                    <p:column rowspan="2"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="28 #{etiq.semanas} Y MAS"/></p:column>
+                    <!-- <p:column rowspan="2"><h:outputLabel style=" text-align: center; text-transform: uppercase;" value="#{etiq.semanas} NO ESPECIFICADAS"/></p:column> -->
+                    <p:column rowspan="1" colspan="4"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.años}"/></p:column>
+                    <!-- <p:column rowspan="1" colspan="5"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.años}"/></p:column> -->
+                </p:row>
+                <p:row>
+                    <p:column rowspan="1" colspan="1"><h:outputLabel style=" text-align: center; text-transform: uppercase;" value="#{etiq.men15}"/></p:column>
+                    <p:column rowspan="1" colspan="1"><h:outputLabel style=" text-align: center;" value="15 A 19"/></p:column>
+                    <p:column rowspan="1" colspan="1"><h:outputLabel style="text-align: center;" value="20 Y MAS"/></p:column>
+                    <!-- <p:column rowspan="1" colspan="1"><h:outputLabel style="text-align: center;" value="N.E."/></p:column> -->
+                    <p:column rowspan="1" colspan="1"><h:outputLabel style="font-weight: bold; text-transform: uppercase; text-align: center;" value="#{etiq.total}"/></p:column>
+                    <!-- <p:column rowspan="1"><h:outputLabel style=" text-align: center; text-transform: uppercase;" value="#{etiq.men15}"/></p:column>
+                    <p:column rowspan="1"><h:outputLabel style=" text-align: center;" value="15 A 19"/></p:column>
+                    <p:column rowspan="1"><h:outputLabel style="text-align: center;" value="20 Y MAS"/></p:column>
+                    <p:column rowspan="1"><h:outputLabel style="text-align: center;" value="N.E."/></p:column>
+                    <p:column rowspan="1"><h:outputLabel style="font-weight: bold; text-transform: uppercase; text-align: center;" value="#{etiq.total}"/></p:column> -->
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.DF22_27sem}"/></p:column>                              
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.DF28sem}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMe22semMe15a}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMe22sem15_19a}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMe22semMa20a}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; font-weight: bold; " value="#{oRGerencialEstJB.reporte.totalAbortosMen22sem}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="46"/></p:column> -->
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; font-weight: bold; " value="58"/></p:column> -->
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <p:panelGrid styleClass="centrar" id="pgCuatro">
+                 <p:row>
+                     <p:column colspan="2" rowspan="2" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase; " value="#{etiq.planificacionFamiliar}"/></p:column>
+                    <p:column colspan="4" style="text-align: center"><h:outputLabel style="text-transform: uppercase; font-weight: bold; font-size: 12px " value="#{etiq.años}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.men20}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; font-size: 12px " value="DE 20 A 39"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; font-size: 12px " value="40 Y MAS"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="EDAD N.E."/></p:column> -->
+                    <p:column ><h:outputLabel style="text-align: center; font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.total}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column rowspan="4"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.intervQuirur}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: left" ><h:outputLabel style="text-align: left; text-transform: uppercase;font-size: 12px " value="#{etiq.vasectomiaTra}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VTmen20a}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VT20_39a}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VTma40a}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center;" value="0"/></p:column> -->
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center;" value="#{oRGerencialEstJB.reporte.totalVT}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: left"><h:outputLabel style="text-align: left; text-transform: uppercase;font-size: 12px " value="#{etiq.vasectomiaSin}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VSBmen20}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VSB20_39a}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VSBma40a}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center;" value="0"/></p:column> -->
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center;" value="#{oRGerencialEstJB.reporte.totalVSB}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: left"><h:outputLabel style="text-align: left; text-transform: uppercase;font-size: 12px " value="#{etiq.ocluTuba}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.OTmen20}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.OT20_39a}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.OTma40a}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center;" value="0"/></p:column> -->
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center;" value="#{oRGerencialEstJB.reporte.totalOT}"/></p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <p:panelGrid styleClass="centrar" id="pgCinco" style="width: 950px">
+                <p:row>
+                    <p:column colspan="12" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold;  " value="#{etiq.aceptantesPosEven}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.inserDIU}"/></p:column>
+                    <p:column colspan="4" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.ocluTuba}"/></p:column>
+                    <p:column rowspan="2" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.solHor}"/></p:column>
+                    <p:column rowspan="2" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.implSub}"/></p:column>
+                    <p:column rowspan="2" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.otros}"/></p:column>
+                    <p:column rowspan="2" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.adolescAcep}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.postparto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.transcesarea}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.postaborto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase; font-weight: bold;font-size: 12px " value="#{etiq.total}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.postparto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.transcesarea}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.postaborto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.total}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.DIUpostparto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.DIUtranscesarea}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.DIUpostAborto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; font-weight: bold; " value="#{oRGerencialEstJB.reporte.DIUtotal}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.OTpostparto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.OTtranscesarea}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.OTpostAborto}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; font-weight: bold; " value="#{oRGerencialEstJB.reporte.OTtotal}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.soloHormonal}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.implanteSubdermico}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.otroMetodo}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.adolescenteAcepta}"/></p:column>
+                </p:row>
+            </p:panelGrid>                  
+            <br/>
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <p:dataTable id="dtRptCensoMensu" var="oRpt"
+                        value="#{oRGerencialEstJB.lista}"
+                        paginator="false" 
+                        paginatorPosition="bottom" 
+                        emptyMessage="#{etiq.noRegistros}" 
+                        styleClass="centrar" style="width: 1000px" >
+               <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;" value="ESTADISTICA POR SERVICIO"/> </f:facet>
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.servicio}"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="2">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.egresos}"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="2">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.diasEst}"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="2">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.promedio} #{etiq.diasEst}"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="1" colspan="2">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.defunHosp}"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="1" colspan="2">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.cirugias}"/> </f:facet>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column rowspan="1">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.total}"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="1">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 12px " value="DESPUES DE 48 H"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="1">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.quirofano}"/> </f:facet>
+                        </p:column>
+                        <p:column rowspan="1">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.quirofanoFuera}"/> </f:facet>
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+               <p:column style="text-align: left">
+                    <p:outputLabel style="text-align: left; text" value="#{oRpt.area.descripcion}"/>
+                </p:column>   
+                <p:column>
+                    <p:outputLabel value="#{oRpt.egresos}"/>
+                </p:column> 
+                <p:column>
+                    <p:outputLabel value="#{oRpt.diasEstancia}"/>
+                </p:column> 
+                <p:column>
+                    <p:outputLabel value="#{oRpt.promDiasEstancia}"/>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{oRpt.defunHospDentro48hrs}"/>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{oRpt.defunHospDespues48hrs}"/>
+                </p:column>
+                <p:column >
+                    <p:outputLabel value="#{oRpt.cirugiaQuirofano}"/>
+                </p:column>
+                <p:column>
+                    <p:outputLabel value="#{oRpt.ciruFueraQuirofano}"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <p:panelGrid styleClass="centrar" id="pgSeis">
+                <p:row>
+                    <p:column colspan="8" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;" value="#{etiq.egreSMotiv}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.curacion}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.mejoria}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.voluntario}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.pase} a #{etiq.otro} #{etiq.hospital}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.defuncion}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.otro} #{etiq.motivo}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="N. E"/></p:column> -->
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.total}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.curacion}"/></p:column>                              
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.mejoria}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.voluntario}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.otroHosp}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.defuncion}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.otro}"/></p:column>
+                    <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                    <p:column ><h:outputLabel style="text-align: center; font-weight: bold " value="#{oRGerencialEstJB.reporte.totalEgresos}"/></p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <p:panelGrid styleClass="centrar" id="pgSiete" style="width: 1000px">
+                <p:row>
+                    <p:column colspan="2" rowspan="2" styleClass="ui-widget-header" ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.defunHosp}"/></p:column>
+                    <p:column colspan="5" styleClass="ui-widget-header" style="text-align: center; text-transform: uppercase;"><h:outputLabel style="font-weight: bold; " value="#{etiq.cortEstan}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column rowspan="2" ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.persAten}"/></p:column>
+                    <p:column colspan="3" ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.cirugias}"/></p:column>
+                    <p:column rowspan="2" ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.partosAten}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.maternas}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.rnHosp}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.planFam}"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.otro}S"/></p:column>
+                    <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.total}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.defunHospMaternasCE}"/></p:column>                             
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.defunHospRNacCE}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.personasAtendidasCE}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.planFamCE}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.otrasCiruCE}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.totalCirugiasCE}"/></p:column>
+                    <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.partosCE}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: left;" colspan="7">
+                            <p:outputLabel style="font-size: 11px" value="NOTA 1: En las defunciones maternas se utiliza la causa básica con las siguientes claves: Todas las Os, A34X, B20 a B24 solo en embarazo, C58, D392, F531, M830"/>
+                            <br/>
+                            <p:outputLabel style="font-size: 11px" value="NOTA 2: En las defunciones de recien nacidos se utilizan los siguientes criterios:Haber nacido vivo, Edad menor a 28 dias y Haber nacido en el hospital"/>
+                            <br/>
+                            <p:outputLabel style="font-size: 11px" value="NOTA 3: En las Intervenciones de planificación familiar se utilizan las siguientes claves de procedimientos: VASECTOMIA (637, 6373, 6374), OCLUSION TUBARIA (662, 6629, 663, 6639, 6692), DIU (697, 697X, 9771)"/>
+                        </p:column>
+                </p:row>
+            </p:panelGrid>
+        </p:panel>
+        <br/>
+        <p:commandButton rendered="#{oRGerencialEstJB.render}" value="#{etiq.vistaImpr}" onclick="PF('dlgImpresion').show()" type="button" icon="ui-icon-print"/>
+    </h:form>
+    
+    
+    <p:dialog header="Reporte Gerencial Estadistico" widgetVar="dlgImpresion" closable="true"
+                      resizable="false" modal="true" height="600px" width="1200px" style="text-align: center">
+        <h:form id="frmImpresion">
+            <p:panel id="panelImpresion"  styleClass="centrar" style=" border-style: none;width: 1100px; height: 1520px; background-color: #ffffff;">
+                <p:panelGrid styleClass="centrar" style="background-color: #ffffff; width: 1000px; border-style: none">
+                    <p:row>
+                        <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                            <h:graphicImage  value="/imgs/logo-salud.jpg" style="width: 100%;"/>
+                        </p:column>
+                        <p:column colspan="1" style="background-color: #ffffff; text-align: center;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                            <h1><h:outputText value="#{etiq.hrrb}"/></h1>
+                            <h2><h:outputText value="#{etiq.siece}"/></h2>
+                        </p:column>
+                        <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                            <h:graphicImage  value="/imgs/logo-hrrb.jpg" style="width: 100%"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3" styleClass="ui-widget-header" style="text-align: center;">
+                            <h:outputText style="font-weight: bold; " value="REPORTE GERENCIAL ESTADISTICO #{etiq.del} "/>
+                            <p:outputLabel style="text-align: right" value="#{oRGerencialEstJB.reporte.fechaIni}">
+                                <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                            </p:outputLabel>
+                            <h:outputText style="font-weight: bold; " value=" #{etiq.al} "/>
+                            <p:outputLabel style="text-align: right" value="#{oRGerencialEstJB.reporte.fechaFin}">
+                                <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:panelGrid styleClass="centrar" style="background-color: #ffffff;">
+                    <p:row>
+                        <p:column colspan="5" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;" value="#{etiq.partOCesa}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.nacAten}"/></p:column>                              
+                        <p:column colspan="2" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.enAdole}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.eutocicos}"/></p:column>                              
+                        <!-- <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.disVag}"/></p:column> -->
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.cesarea}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase; text-align: center; font-size: 12px" value="#{etiq.total}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.men15}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="15 A 19"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.eutocicos}"/></p:column>                              
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.distocicosVaginal}"/></p:column> -->
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.cesarea}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; " value="#{oRGerencialEstJB.reporte.totalPartoOcesarea}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMenor15}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AEntre15_19}"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+                <p:panelGrid styleClass="centrar" style="background-color: #ffffff;">
+                    <p:row>
+                        <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center;"><h:outputLabel style="font-weight: bold; text-transform: uppercase; " value="#{etiq.nacVivo}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.de} 22 A 36 #{etiq.semanas}"/></p:column>                              
+                        <p:column colspan="2" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="37 Y MAS #{etiq.semanas}"/></p:column>
+                        <!-- <p:column colspan="3"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.semNoesp}"/></p:column> -->
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.menorA} 2500G"/></p:column>                              
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="2500G Y MAS"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.peso} N.E"/></p:column> -->
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.menorA} 2500G"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="2500G Y MAS"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.peso} N.E"/></p:column> -->
+                        <!--<p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.menorA} 2500G"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="2500G Y MAS"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; text-transform: uppercase;" value="#{etiq.peso} N.E"/></p:column> -->
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;background-color: #ffffff;" value="#{oRGerencialEstJB.reporte.NV22_36semMe2500Gr}"/></p:column>                              
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;background-color: #ffffff; " value="#{oRGerencialEstJB.reporte.NV22_36semMa2500Gr}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;background-color: #ffffff; " value="#{oRGerencialEstJB.reporte.NV37semMe2500Gr}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;background-color: #ffffff; " value="#{oRGerencialEstJB.reporte.NV37semMa2500Gr}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+                <p:panelGrid styleClass="centrar" style="background-color: #ffffff;" >
+                    <p:row>
+                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;  " value="#{etiq.defunciones}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.defunciones} #{etiq.fetales}"/></p:column>
+                        <p:column colspan="4" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.aborAten}"/></p:column>
+                        <!-- <p:column colspan="5"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.aborAten2}"/></p:column> -->
+                    </p:row>
+                    <p:row>
+                        <p:column rowspan="2" style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="22 A 27 #{etiq.semanas}"/></p:column>
+                        <p:column rowspan="2" style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px" value="28 #{etiq.semanas} Y MAS"/></p:column>
+                        <!-- <p:column rowspan="2"><h:outputLabel style=" text-align: center; text-transform: uppercase;" value="#{etiq.semanas} NO ESPECIFICADAS"/></p:column> -->
+                        <p:column rowspan="1" colspan="4" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.años}"/></p:column>
+                        <!-- <p:column rowspan="1" colspan="5"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.años}"/></p:column> -->
+                    </p:row>
+                    <p:row>
+                        <p:column rowspan="1" colspan="1" style="background-color: #ffffff;"><h:outputLabel style=" text-align: center; text-transform: uppercase;" value="#{etiq.men15}"/></p:column>
+                        <p:column rowspan="1" colspan="1" style="background-color: #ffffff;"><h:outputLabel style=" text-align: center;" value="15 A 19"/></p:column>
+                        <p:column rowspan="1" colspan="1" style="background-color: #ffffff;"><h:outputLabel style="text-align: center;" value="20 Y MAS"/></p:column>
+                        <!-- <p:column rowspan="1" colspan="1"><h:outputLabel style="text-align: center;" value="N.E."/></p:column> -->
+                        <p:column rowspan="1" colspan="1" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase; text-align: center;" value="#{etiq.total}"/></p:column>
+                        <!-- <p:column rowspan="1"><h:outputLabel style=" text-align: center; text-transform: uppercase;" value="#{etiq.men15}"/></p:column>
+                        <p:column rowspan="1"><h:outputLabel style=" text-align: center;" value="15 A 19"/></p:column>
+                        <p:column rowspan="1"><h:outputLabel style="text-align: center;" value="20 Y MAS"/></p:column>
+                        <p:column rowspan="1"><h:outputLabel style="text-align: center;" value="N.E."/></p:column>
+                        <p:column rowspan="1"><h:outputLabel style="font-weight: bold; text-transform: uppercase; text-align: center;" value="#{etiq.total}"/></p:column> -->
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.DF22_27sem}"/></p:column>                              
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.DF28sem}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMe22semMe15a}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMe22sem15_19a}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.AMe22semMa20a}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; font-weight: bold; " value="#{oRGerencialEstJB.reporte.totalAbortosMen22sem}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="46"/></p:column> -->
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column>
+                        <p:column ><h:outputLabel style="text-align: center; font-weight: bold; " value="58"/></p:column> -->
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+                <p:panelGrid styleClass="centrar" style="background-color: #ffffff;" >
+                     <p:row>
+                         <p:column colspan="2" rowspan="2" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase; " value="#{etiq.planificacionFamiliar}"/></p:column>
+                        <p:column colspan="4" style="text-align: center;background-color: #ffffff;"><h:outputLabel style="text-transform: uppercase; font-weight: bold; font-size: 12px " value="#{etiq.años}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.men20}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; font-size: 12px " value="DE 20 A 39"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; font-size: 12px " value="40 Y MAS"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="EDAD N.E."/></p:column> -->
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.total}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;" rowspan="4"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px " value="#{etiq.intervQuirur}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: left;background-color: #ffffff;" ><h:outputLabel style="text-align: left; text-transform: uppercase;font-size: 12px " value="#{etiq.vasectomiaTra}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VTmen20a}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VT20_39a}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VTma40a}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center;" value="0"/></p:column> -->
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="font-weight: bold; text-align: center;" value="#{oRGerencialEstJB.reporte.totalVT}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: left;background-color: #ffffff;"><h:outputLabel style="text-align: left; text-transform: uppercase;font-size: 12px " value="#{etiq.vasectomiaSin}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VSBmen20}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VSB20_39a}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.VSBma40a}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center;" value="0"/></p:column> -->
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="font-weight: bold; text-align: center;" value="#{oRGerencialEstJB.reporte.totalVSB}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: left;background-color: #ffffff;"><h:outputLabel style="text-align: left; text-transform: uppercase;font-size: 12px " value="#{etiq.ocluTuba}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.OTmen20}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.OT20_39a}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.OTma40a}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center;" value="0"/></p:column> -->
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="font-weight: bold; text-align: center;" value="#{oRGerencialEstJB.reporte.totalOT}"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+                <p:panelGrid styleClass="centrar" style="width: 930px;background-color: #ffffff;">
+                    <p:row>
+                        <p:column colspan="12" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold;  " value="#{etiq.aceptantesPosEven}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4" style="text-align: center;background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 11px " value="#{etiq.inserDIU}"/></p:column>
+                        <p:column colspan="4" style="text-align: center;background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 11px " value="#{etiq.ocluTuba}"/></p:column>
+                        <p:column rowspan="2" style="text-align: center;background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 11px " value="#{etiq.solHor}"/></p:column>
+                        <p:column rowspan="2" style="text-align: center;background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 11px " value="#{etiq.implSub}"/></p:column>
+                        <p:column rowspan="2" style="text-align: center;background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 11px " value="#{etiq.otros}"/></p:column>
+                        <p:column rowspan="2" style="text-align: center;background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-transform: uppercase;font-size: 11px " value="#{etiq.adolescAcep}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 11px" value="#{etiq.postparto}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 11px" value="#{etiq.transcesarea}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 11px" value="#{etiq.postaborto}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase; font-weight: bold;font-size: 11px " value="#{etiq.total}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 11px" value="#{etiq.postparto}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 11px" value="#{etiq.transcesarea}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; text-transform: uppercase;font-size: 11px" value="#{etiq.postaborto}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; font-weight: bold; text-transform: uppercase;font-size: 11px" value="#{etiq.total}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;font-size: 11px" value="#{oRGerencialEstJB.reporte.DIUpostparto}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.DIUtranscesarea}"/></p:column>
+                        <p:column style="background-color: #ffffff;" ><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.DIUpostAborto}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; font-weight: bold;font-size: 11px " value="#{oRGerencialEstJB.reporte.DIUtotal}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px" value="#{oRGerencialEstJB.reporte.OTpostparto}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.OTtranscesarea}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.OTpostAborto}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px; font-weight: bold; " value="#{oRGerencialEstJB.reporte.OTtotal}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.soloHormonal}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.implanteSubdermico}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.otroMetodo}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;font-size: 11px " value="#{oRGerencialEstJB.reporte.adolescenteAcepta}"/></p:column>
+                    </p:row>
+                </p:panelGrid>                  
+                <br/>
+                <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+                <p:dataTable var="oRpt"
+                            value="#{oRGerencialEstJB.lista}"
+                            paginator="false" 
+                            paginatorPosition="bottom" 
+                            emptyMessage="#{etiq.noRegistros}" 
+                            styleClass="centrar" style="width: 1000px;background-color: #ffffff;" >
+                   <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;" value="ESTADISTICA POR SERVICIO"/> </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column rowspan="2" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.servicio}"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="2" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.egresos}"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="2" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.diasEst}"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="2" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.promedio} #{etiq.diasEst}"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="1" colspan="2" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.defunHosp}"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="1" colspan="2" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.cirugias}"/> </f:facet>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column rowspan="1" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px " value="#{etiq.total}"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="1" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 12px " value="DESPUES DE 48 H"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="1" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.quirofano}"/> </f:facet>
+                            </p:column>
+                            <p:column rowspan="1" style="background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold; text-transform: uppercase;font-size: 12px" value="#{etiq.quirofanoFuera}"/> </f:facet>
+                            </p:column>
+                        </p:row>
+                    </p:columnGroup>
+                   <p:column style="text-align: left; background-color: #ffffff;">
+                        <p:outputLabel style="text-align: left;font-size: 11px" value="#{oRpt.area.descripcion}"/>
+                    </p:column>   
+                    <p:column style="background-color: #ffffff;">
+                        <p:outputLabel value="#{oRpt.egresos}"/>
+                    </p:column> 
+                    <p:column style="background-color: #ffffff;">
+                        <p:outputLabel value="#{oRpt.diasEstancia}"/>
+                    </p:column> 
+                    <p:column style="background-color: #ffffff;">
+                        <p:outputLabel value="#{oRpt.promDiasEstancia}"/>
+                    </p:column>
+                    <p:column style="background-color: #ffffff;">
+                        <p:outputLabel value="#{oRpt.defunHospDentro48hrs}"/>
+                    </p:column>
+                    <p:column style="background-color: #ffffff;">
+                        <p:outputLabel value="#{oRpt.defunHospDespues48hrs}"/>
+                    </p:column>
+                    <p:column style="background-color: #ffffff;">
+                        <p:outputLabel value="#{oRpt.cirugiaQuirofano}"/>
+                    </p:column>
+                    <p:column style="background-color: #ffffff;">
+                        <p:outputLabel value="#{oRpt.ciruFueraQuirofano}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+                <p:panelGrid styleClass="centrar" style="background-color: #ffffff;">
+                    <p:row>
+                        <p:column colspan="8" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; text-transform: uppercase;" value="#{etiq.egreSMotiv}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.curacion}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.mejoria}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.voluntario}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.pase} a #{etiq.otro} #{etiq.hospital}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.defuncion}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.otro} #{etiq.motivo}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="N. E"/></p:column> -->
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.total}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.curacion}"/></p:column>                              
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.mejoria}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.voluntario}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.otroHosp}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.defuncion}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.otro}"/></p:column>
+                        <!-- <p:column ><h:outputLabel style="text-align: center; " value="0"/></p:column> -->
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; font-weight: bold " value="#{oRGerencialEstJB.reporte.totalEgresos}"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <!-- ::::::::::::::::::::::::::::::::::::::::::::::::: -->
+                <p:panelGrid styleClass="centrar" style="width: 1000px; background-color: #ffffff;">
+                    <p:row>
+                        <p:column colspan="2" rowspan="2" styleClass="ui-widget-header" ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;" value="#{etiq.defunHosp}"/></p:column>
+                        <p:column colspan="5" styleClass="ui-widget-header" style="text-align: center; text-transform: uppercase;"><h:outputLabel style="font-weight: bold; " value="#{etiq.cortEstan}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column rowspan="2" style="background-color: #ffffff;" ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.persAten}"/></p:column>
+                        <p:column colspan="3" style="background-color: #ffffff;" ><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.cirugias}"/></p:column>
+                        <p:column rowspan="2" style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.partosAten}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.maternas}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.rnHosp}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.planFam}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.otro}S"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="font-weight: bold; text-align: center; text-transform: uppercase;font-size: 12px" value="#{etiq.total}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center;" value="#{oRGerencialEstJB.reporte.defunHospMaternasCE}"/></p:column>                             
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.defunHospRNacCE}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.personasAtendidasCE}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.planFamCE}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.otrasCiruCE}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.totalCirugiasCE}"/></p:column>
+                        <p:column style="background-color: #ffffff;"><h:outputLabel style="text-align: center; " value="#{oRGerencialEstJB.reporte.partosCE}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: left;background-color: #ffffff;border-right-color:#ffffff ;border-left-color: #ffffff;border-bottom-color:#ffffff;" colspan="7">
+                            <p:outputLabel style="font-size: 11px" value="NOTA 1: En las defunciones maternas se utiliza la causa básica con las siguientes claves: Todas las Os, A34X, B20 a B24 solo en embarazo, C58, D392, F531, M830"/>
+                            <br/>
+                            <p:outputLabel style="font-size: 11px" value="NOTA 2: En las defunciones de recien nacidos se utilizan los siguientes criterios:Haber nacido vivo, Edad menor a 28 dias y Haber nacido en el hospital"/>
+                            <br/>
+                            <p:outputLabel style="font-size: 11px" value="NOTA 3: En las Intervenciones de planificación familiar se utilizan las siguientes claves de procedimientos: VASECTOMIA (637, 6373, 6374), OCLUSION TUBARIA (662, 6629, 663, 6639, 6692), DIU (697, 697X, 9771)"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+            <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                <p:printer target="panelImpresion"/>
+            </p:commandButton>
+        </h:form>
+    </p:dialog>
+    
+    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+        <f:facet name="start">  
+            <p:graphicImage value="/imgs/loading.gif" />  
+        </f:facet>    
+    </p:ajaxStatus> 
+</div>
+</ui:define>
+</ui:composition>
+</html>

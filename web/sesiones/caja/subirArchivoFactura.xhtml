@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        #{oSubirFactura.limpiar()}
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.subirArcFactura}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:dialog height="450" width="1100" 
+                  modal="true" id="dlgCompBusq" header="#{etiq.buscarPac}"  
+                  widgetVar="dlgCompBusqWidVar" closable="false" resizable="false"
+                  showEffect="clip" hideEffect="fold" >  
+                <h:form id="busqueda">
+                    <center>
+                        <ui:include src="../compbusq/compBusqPac.xhtml"></ui:include> 
+                        <p:separator/>
+                        <p:commandButton value="Seleccionar"
+                                     onclick="PF('dlgCompBusqWidVar').hide()" 
+                                     action="#{oSubirFactura.llenar()}"
+                                     icon="ui-icon-search" update=":frmPral:pgPacienteRec">
+                        </p:commandButton>
+                        <p:commandButton value="Cancelar"
+                                     onclick="PF('dlgCompBusqWidVar').hide()" 
+                                     action="#{oBusqPacComunJB.inicializar}"
+                                     icon="ui-icon-circle-close" />
+                    </center>
+                </h:form> 
+            </p:dialog>
+            <p:dialog id="dlgArch" widgetVar="dlgArch" width="50%" height="35%"
+                      position="center" closable="false" header="#{etiq.archivosFact}"
+                      dynamic="true" resizable="false"
+                      appendTo="@(body)" modal="true" styleClass="centrado_texto_negritas">
+                <h:form>
+                    <p:panelGrid style="width: 100%;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputText value="#{etiq.nombreCompleto}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="#{oSubirFactura.paciente.nombreCompleto}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:dataTable id="dtRecibosFac" value="#{oSubirFactura.recibosFactura}" var="oRecibo">
+                        <p:column headerText="#{etiq.folio}">
+                            <h:outputText value="#{oRecibo.folio}"></h:outputText>
+                        </p:column>
+                        <p:column headerText="#{etiq.fechaEmision}">
+                            <h:outputText value="#{oRecibo.fechaEmision}"></h:outputText>
+                        </p:column>
+                        <p:column headerText="#{etiq.total}">
+                            <h:outputText value="#{oRecibo.monto}"></h:outputText>
+                        </p:column>
+                        <f:facet name="footer">
+                            <h:outputText value="#{etiq.total}: #{oSubirFactura.total}"></h:outputText>
+                        </f:facet>
+                    </p:dataTable>
+                    <p:separator></p:separator>
+                    <p:panelGrid style="width: 100%;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.archXML}"></h:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:fileUpload id="fuXML" fileUploadListener="#{oSubirFactura.handleFileUploadXML}"
+                                              disabled="#{oSubirFactura.disDatosXml}" messageTemplate="name"
+                                              update=":frmPral:mensajes fuPDF fuXML"
+                                              fileLimit="1"                                           
+                                              fileLimitMessage="#{etiq.seleccioneSoloArch}"
+                                              label="#{etiq.selecionarArc}"
+                                              cancelLabel="#{etiq.cancelar}"
+                                              uploadLabel="#{etiq.cargarArch}"
+                                              allowTypes="/(\.|\/)xml$/">
+                                </p:fileUpload>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.archPDF}"></h:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:fileUpload id="fuPDF" fileUploadListener="#{oSubirFactura.handleFileUploadPDF}"
+                                              disabled="#{oSubirFactura.disDatosPdf}"
+                                              update=":frmPral"
+                                              fileLimit="1" 
+                                              fileLimitMessage="#{etiq.seleccioneSoloArch}"
+                                              label="#{etiq.selecionarArc}"
+                                              cancelLabel="#{etiq.cancelar}"
+                                              uploadLabel="#{etiq.cargarArch}"
+                                              allowTypes="/(\.|\/)pdf$/">
+                                </p:fileUpload>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+                <p:panelGrid style="width: 100%;">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <h:form>
+                                <p:commandButton value="#{etiq.cancelar}"  oncomplete="PF('dlgArch').hide();">
+                                </p:commandButton>
+                            </h:form> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <h:form>
+                <center>
+                    <p:commandButton value="Seleccionar paciente"
+                                     action="#{oBusqPacComunJB.inicializar}"
+                                     oncomplete="PF('dlgCompBusqWidVar').show();"
+                                     update=":dlgCompBusq"
+                                     icon="ui-icon-search" />
+                </center>
+            </h:form>
+            <h:form id="frmPral">
+                <p:growl id="mensajes"  showDetail="true" />
+                <br/>
+                <p:panelGrid id="pgPacienteRec" style="visibility: #{oSubirFactura.visible} width: 50%;">
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="#{etiq.datosPaciente}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputText value="#{etiq.nombreCompleto}"></h:outputText>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputText value="#{etiq.expediente}"></h:outputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{oSubirFactura.paciente.nombreCompleto}"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oSubirFactura.paciente.expediente.numero}"></h:outputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2"> 
+                            <p:dataTable id="dtRecibosPac" value="#{oSubirFactura.recibos}" var="oRecibo" 
+                                         emptyMessage="#{etiq.emptydataTable}" selection="#{oSubirFactura.recibosFactura}"
+                                         style="width: 100%;" rowKey="#{oRecibo.folio}">
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.recibosPac}"></h:outputText>
+                                </f:facet>
+                                <p:column selectionMode="multiple" width="25"/>
+                                <p:column headerText="#{etiq.folio}">
+                                    <h:outputText value="#{oRecibo.folio}"></h:outputText>
+                                </p:column>
+                                <p:column headerText="#{etiq.fechaEmision}">
+                                    <h:outputText value="#{oRecibo.fechaEmision}"></h:outputText>
+                                </p:column>
+                                <p:column headerText="#{etiq.total}">
+                                    <h:outputText value="#{oRecibo.monto}"></h:outputText>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="2">
+                                <center>
+                                    <p:commandButton value="Subir Archivo" actionListener="#{oSubirFactura.preDialog}" 
+                                                     update=":dlgArch mensajes">
+                                    </p:commandButton>
+                                </center>
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+            <br/>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

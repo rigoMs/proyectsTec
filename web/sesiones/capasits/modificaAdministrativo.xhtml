@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <h:form id="frmpac">
+                <p:growl id="mensajes"  showDetail="true" /> <br/><br/>
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/> 
+                <p:accordionPanel>
+                    <p:tab title="#{etiq.buscarAdminist}">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <p:panelGrid style="margin-top:30px" id="buscap"> 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column><center><h:outputLabel value="#{etiq.buscarAdminist}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column> <h:outputLabel value="#{etiq.noTarjeta} "/>
+                                        <p:inputText id="id1" value="#{regAdminis.perHosp.noTarjeta}"  required="true" requiredMessage="INGRESAR NUMERO DE TARJETA" converterMessage="No. Tarjeta,  Solo ingresar números"/> 
+                                        <p:commandButton value="#{etiq.buscar}" action="#{regAdminis.buscarAdministrativo()}" update=":frmpac:mensajes :frmpa"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid> 
+                        </h:panelGrid>
+                    </p:tab>    
+                </p:accordionPanel>   
+            </h:form>
+            <h:form id="frmpa">
+                <p:accordionPanel>
+                    <p:tab title="#{etiq.modificar} #{etiq.administrativo}">
+                        <p:panelGrid style="margin-top:30px">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header"><center> 
+                                            <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+                                </p:row>
+                            </f:facet> 
+                            <p:row>
+                                <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+                                <p:column>  <p:inputText id="nombre" value="#{regAdminis.perHosp.nombres}"  required="true" requiredMessage="INGRESAR NOMBRE(S)" onkeyup="this.value = this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/>
+                                </p:column> 
+                                <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+                                <p:column> <p:inputText id="ppaterno" value="#{regAdminis.perHosp.apPaterno}"   required="true" requiredMessage="INGRESAR APELLIDO PATERNO" onkeyup="this.value = this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+                                <p:column><p:inputText id="pmaterno" value="#{regAdminis.perHosp.apMaterno}" onkeyup="this.value = this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+                            </p:row>     
+                            <p:row>
+                                <p:column ><h:outputLabel value="#{etiq.sexo}"/> </p:column>
+                                <p:column>
+                                    <p:selectOneRadio id="sexo" value="#{regAdminis.perHosp.sexos}" required="true" requiredMessage="INGRESAR SEXO, FALTA SELECIONAR SEXO">
+                                        <f:selectItem itemLabel="Femenino " itemValue="F"/>
+                                        <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                                    </p:selectOneRadio>
+                                </p:column> 
+                                <p:column><h:outputLabel  value="#{etiq.fechanac}"/> </p:column>
+                                <p:column> <p:calendar value="#{regAdminis.perHosp.fechaNac}" id="nacimientom" pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="INGRESAR FECHA DE NACIMIENTO">
+                                    </p:calendar>
+                                </p:column>   
+                                <p:column><h:outputLabel value="#{etiq.curp}"/></p:column>
+                                <p:column><p:inputMask id="tCurp" mask="aaaa999999aaaaaa99" required="false" value="#{regAdminis.perHosp.curp}" style="text-transform: uppercase;"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header">
+                                    <center>  <h:outputLabel value="#{etiq.otrosDatos}"/> </center>
+                                </p:column>    
+                            </p:row>
+                            <p:row>       
+                                <p:column><h:outputLabel value="#{etiq.puesto}"/></p:column>
+                                <p:column>
+                                    <p:selectOneRadio id="puesto" value="#{regAdminis.perHosp.actividad}">                                 
+                                        <f:selectItem itemLabel="SECRETARIA" itemValue="SECRETARIA"/>
+                                        <f:selectItem itemLabel="FARMACIA" itemValue="FARMACIA"/>
+                                        <f:selectItem itemLabel="DIRECTIVO" itemValue="DIRECTIVO"/>
+                                    </p:selectOneRadio>   
+                                </p:column> 
+                                <p:column><h:outputLabel value="#{etiq.cedulaProf}"/></p:column>
+                                <p:column colspan="3"><p:inputText id="cprof" value="#{regAdminis.perHosp.cedProf}" maxlength="7"/></p:column> 
+                            </p:row> 
+                            <p:row>
+                                <p:column><h:outputLabel value="#{etiq.turno} "/></p:column>
+                                <p:column colspan="5">
+                                    <p:selectOneMenu id="tTurno" value="#{regAdminis.turno.clave}" required="true"> 
+                                        <f:selectItems value="#{regAdminis.listaTurno}" var="oTur" 
+                                                       itemLabel="#{oTur.descripcion}" itemValue="#{oTur.clave}"></f:selectItems>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header">
+                                    <center>  <h:outputLabel value="#{etiq.datosUsuario}"/> </center>
+                                </p:column>    
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputLabel value="#{etiq.nombUsuario}"/></p:column>
+                                <p:column><p:inputText id="nomusu" value="#{regAdminis.usua.idUsuario2}" maxlength="10" required="true" requiredMessage="INGRESAR USUARIO" onkeyup="this.value = this.value.toUpperCase();"/></p:column>
+                                <p:column> <h:outputLabel value="#{etiq.contraseña}"/></p:column>
+                                <p:column colspan="3">
+                                    <p:password id="constrasena" value="#{regAdminis.usua.password}" feedback="true" maxlength="20" required="true" requiredMessage="INGRESAR CONTRASEÑA"/>
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="centrado_texto" colspan="6">
+                                    <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" ajax="false" action="#{regAdminis.modificar()}" update="mensajes"/>
+                                </p:column>   
+                            </p:row>      
+                        </p:panelGrid> 
+                    </p:tab>
+                </p:accordionPanel>
+
+            </h:form>     
+        </ui:define>
+    </ui:composition>
+</html>
+

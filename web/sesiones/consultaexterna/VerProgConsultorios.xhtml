@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+     
+   <ui:define name="cuerpo">
+    <div>
+       <br/><br/>
+     <h:form id="frmconsultorios">
+         <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+         <p:dataTable id="tablaConsul" styleClass="frm_centrado" var="oVerCons" value="#{oVerProgConsul.asigcon.buscarProgramacion('MAT')}" emptyMessage="#{etiq.noProg}" liveResize="true">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.programacionConsultorios}"/>
+                </f:facet>
+                
+                <p:column styleClass="columnamed centrado_texto bordes" headerText="#{etiq.consultorio}">
+                    <h:outputText value="#{oVerCons.cons.noConsultorio}"/>
+                </p:column>
+                
+                <p:column styleClass="columnamed7 centrado_texto bordes" headerText="#{etiq.noTarjeta}">
+                    <h:outputText value="#{oVerCons.PH.noTarjeta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}">
+                    <h:outputText value="#{oVerCons.PH.apPaterno} #{oVerCons.PH.apMaterno} #{oVerCons.PH.nombres}"/>
+                </p:column>
+                
+               <p:column headerText="#{etiq.servicio}" >
+                    <h:outputText value="#{oVerCons.areaServicio.descripcion}"/>
+                    <h:outputText value="#{oVerCons.areaServicio.clave}" class="mostrarbtn"/>
+                </p:column>                 
+                
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaLunes}">
+                    <h:outputText value="#{oVerCons.horaLun}"/><br/>
+                    <h:outputText value="#{oVerCons.totLun}"/>
+                </p:column>
+                
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaMartes}">
+                    <h:outputText value="#{oVerCons.horaMar}"/><br/>
+                    <h:outputText value="#{oVerCons.totMar}"/>
+                </p:column>                
+                
+             <p:column styleClass="espacio-celda columnamed3 centrado_texto" headerText="#{etiq.horaMiercoles}">
+                    <h:outputText value="#{oVerCons.horaMie}"/><br/>
+                    <h:outputText value="#{oVerCons.totMie}"/>
+                </p:column>                 
+                
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaJueves}">
+                    <h:outputText value="#{oVerCons.horaJue}"/><br/>
+                    <h:outputText value="#{oVerCons.totJue}"/>
+                </p:column> 
+             
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaViernes}">
+                    <h:outputText value="#{oVerCons.horaVie}"/><br/>
+                    <h:outputText value="#{oVerCons.totVie}"/>
+                </p:column>
+             
+             <p:column  styleClass="#{oPer.mostrarColumna()} centrado_texto" headerText="#{etiq.accion}" style="width: 11%;">
+                 <p:commandButton value="&nbsp;" action="#{oVerProgConsul.borraProgramacion()}" icon="ui-icon-close"  ajax="false">
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.PH.noTarjeta}" value="#{oVerCons.PH.noTarjeta}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.cons.noConsultorio}" value="#{oVerCons.cons.noConsultorio}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.areaServicio.descripcion}" value="#{oVerCons.areaServicio.descripcion}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.areaServicio.clave}" value="#{oVerCons.areaServicio.clave}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.turno.clave}" value="MAT" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.citas1eraVez}" value="#{oVerCons.citas1eraVez}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.citasSubs}" value="#{oVerCons.citasSubs}" />
+                    </p:commandButton>
+                    
+                 <p:commandButton value="&nbsp;" action="#{oProgConsul.redirecModifica()}" icon="ui-icon-pencil"  ajax="false">
+                     <f:setPropertyActionListener target="#{oProgConsul.consul.noConsultorio}" value="#{oVerCons.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.cons.noConsultorio}" value="#{oVerCons.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.medico.noTarjeta}" value="#{oVerCons.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.PH.noTarjeta}" value="#{oVerCons.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.areaServicio.clave}" value="#{oVerCons.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.turno.clave}" value="MAT       " />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.turno.clave}" value="MAT       " />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.areaServicio.clave}" value="#{oVerCons.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.citas1eraVez}" value="#{oVerCons.citas1eraVez}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.primVezAux}" value="#{oVerCons.citas1eraVez}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.citasSubs}" value="#{oVerCons.citasSubs}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.subAux}" value="#{oVerCons.citasSubs}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaLun.horas}" value="#{oProgConsul.devuelveCadena(oVerCons.horaLun)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaMar.horas}" value="#{oProgConsul.devuelveCadena(oVerCons.horaMar)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaMie.horas}" value="#{oProgConsul.devuelveCadena(oVerCons.horaMie)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaJue.horas}" value="#{oProgConsul.devuelveCadena(oVerCons.horaJue)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaVie.horas}" value="#{oProgConsul.devuelveCadena(oVerCons.horaVie)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.op}" value="#{1}" />
+                    </p:commandButton>
+             </p:column> 
+
+        </p:dataTable>
+         <br/><br/>
+        <p:dataTable id="tablaConsul2" styleClass="frm_centrado" var="oVerCons2" value="#{oVerProgConsul.asigcon.buscarProgramacion('VES')}" emptyMessage="#{etiq.noProg}" liveResize="true">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.programacionConsultorios}"/>
+                </f:facet>
+                
+                <p:column styleClass="columnamed centrado_texto bordes" headerText="#{etiq.consultorio}:">
+                    <h:outputText value="#{oVerCons2.cons.noConsultorio}"/>
+                </p:column>
+                
+               <p:column styleClass="columnamed7 centrado_texto bordes" headerText="#{etiq.noTarjeta}:">
+                    <h:outputText value="#{oVerCons2.PH.noTarjeta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}:">
+                    <h:outputText value="#{oVerCons2.PH.apPaterno} #{oVerCons2.PH.apMaterno} #{oVerCons2.PH.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}:">
+                    <h:outputText value="#{oVerCons2.areaServicio.descripcion}"/>
+                    <h:outputText value="#{oVerCons2.areaServicio.clave}" class="mostrarbtn"/>
+                </p:column>                 
+                
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaLunes}:">
+                    <h:outputText value="#{oVerCons2.horaLun}"/><br/>
+                    <h:outputText value="#{oVerCons2.totLun}"/>
+                </p:column>
+                
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaMartes}:">
+                    <h:outputText value="#{oVerCons2.horaMar}"/><br/>
+                    <h:outputText value="#{oVerCons2.totMar}"/>
+                </p:column>                
+                
+             <p:column styleClass="espacio-celda columnamed3 centrado_texto" headerText="#{etiq.horaMiercoles}:">
+                    <h:outputText value="#{oVerCons2.horaMie}"/><br/>
+                    <h:outputText value="#{oVerCons2.totMie}"/>
+                </p:column>                 
+                
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaJueves}:">
+                    <h:outputText value="#{oVerCons2.horaJue}"/><br/>
+                    <h:outputText value="#{oVerCons2.totJue}"/>
+                </p:column> 
+             
+             <p:column styleClass="espacio-celda columnamed centrado_texto" headerText="#{etiq.horaViernes}:">
+                    <h:outputText value="#{oVerCons2.horaVie}"/><br/>
+                    <h:outputText value="#{oVerCons2.totVie}"/>
+                </p:column>
+             
+            <p:column  styleClass="#{oPer.mostrarColumna()} centrado_texto" headerText="#{etiq.accion}:" style="width: 11%;">
+                <p:commandButton value="&nbsp;" action="#{oVerProgConsul.borraProgramacion()}" icon="ui-icon-close"  ajax="false">
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.PH.noTarjeta}" value="#{oVerCons2.PH.noTarjeta}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.cons.noConsultorio}" value="#{oVerCons2.cons.noConsultorio}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.areaServicio.descripcion}" value="#{oVerCons2.areaServicio.descripcion}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.areaServicio.clave}" value="#{oVerCons2.areaServicio.clave}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.turno.clave}" value="VES" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.citas1eraVez}" value="#{oVerCons2.citas1eraVez}" />
+                     <f:setPropertyActionListener target="#{oVerProgConsul.asigcon.citasSubs}" value="#{oVerCons2.citasSubs}" />
+                    </p:commandButton>
+                 
+                <p:commandButton value="&nbsp;" action="#{oProgConsul.redirecModifica()}" icon="ui-icon-pencil"  ajax="false">
+                        <f:setPropertyActionListener target="#{oProgConsul.consul.noConsultorio}" value="#{oVerCons2.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.cons.noConsultorio}" value="#{oVerCons2.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.medico.noTarjeta}" value="#{oVerCons2.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.PH.noTarjeta}" value="#{oVerCons2.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.areaServicio.clave}" value="#{oVerCons2.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.turno.clave}" value="VES       " />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.turno.clave}" value="VES       " />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.areaServicio.clave}" value="#{oVerCons2.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.citas1eraVez}" value="#{oVerCons2.citas1eraVez}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.primVezAux}" value="#{oVerCons2.citas1eraVez}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.asigcon.citasSubs}" value="#{oVerCons2.citasSubs}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.subAux}" value="#{oVerCons2.citasSubs}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaLun.horas}" value="#{oProgConsul.devuelveCadena(oVerCons2.horaLun)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaMar.horas}" value="#{oProgConsul.devuelveCadena(oVerCons2.horaMar)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaMie.horas}" value="#{oProgConsul.devuelveCadena(oVerCons2.horaMie)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaJue.horas}" value="#{oProgConsul.devuelveCadena(oVerCons2.horaJue)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.horaVie.horas}" value="#{oProgConsul.devuelveCadena(oVerCons2.horaVie)}" />
+                        <f:setPropertyActionListener target="#{oProgConsul.op}" value="#{1}" />
+                    </p:commandButton>
+             </p:column> 
+
+        </p:dataTable>    
+      </h:form>
+     </div>
+     <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>   
+    </ui:define> 
+        
+</ui:composition>
+</html>

@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.programacionQx}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <h:panelGrid class="frm_centradocolumns" columns="3">
+                    <p:outputLabel value="#{etiq.fecha}:"  styleClass="mensaje"/>
+                    <p:calendar id="fechaPro" 
+                                value="#{oProgramacionQx.procedimientos.fechaProgramada}" 
+                                required="true" locale="es" effect="explode" >
+                    </p:calendar>
+                    <p:commandButton id="btnBusFecha" icon="ui-icon-search" value="#{etiq.buscar}" 
+                                     actionListener="#{oProgramacionQx.buscaProgramacion()}"
+                                     update="tabla_Proc btnImprimir" />
+                </h:panelGrid>
+                <br/>
+                <!--Presenta la información de la programación-->
+                <p:dataTable  id="tabla_Proc" 
+                              value="#{oProgramacionQx.listaProgramacion}"
+                              var="oProgra"
+                              style="visibility: #{oProgramacionQx.visibilidad}; width: 1800px;" 
+                              emptyMessage="#{etiq.noProgramacion}"
+                              styleClass="frm_centrado">
+                    <p:column style="width: 220px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.medAnes}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.anestesio.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 220px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.medCir}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProgra.cirujano.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 200px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.resid}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.residente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 220px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.proceQx}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.CIE9.descripcion}"/>
+                    </p:column>
+                    <p:column style="width: 90px">
+                        <f:facet name="header" >
+                            <h:outputLabel value="#{etiq.qxP}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.quirofanos.nombre}"/>  
+                    </p:column>
+                    <p:column style="width: 100px">
+                        <f:facet name="header" >
+                            <h:outputLabel value="#{etiq.anestesia}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.anestEspecifica.descripcion}"/>  
+                    </p:column>
+                    <p:column style="width: 50px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.hora}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProgra.valorHorarioQx.valor}">
+                        </h:outputText>
+                    </p:column>
+                    <p:column style="width: 220px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.paciente}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProgra.episodioMedico.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 62px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.expediente}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProgra.episodioMedico.paciente.expediente.numero}"/>
+                    </p:column>
+                    <p:column style="width: 180px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.observaciones}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProgra.episodioMedico.paciente.sexoP} - #{oProgra.episodioMedico.paciente.edadNumero} SP.#{oProgra.episodioMedico.paciente.seg.numero}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="btnImprimir" icon="ui-icon-print" value="#{etiq.imprimir}"
+                                 style="visibility: #{oProgramacionQx.visibilidad}">
+                </p:commandButton>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                <f:facet name="start">  
+                    <p:graphicImage value="/imgs/loading.gif" />  
+                </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.MantenimientoProveedor}"/>
+                </h2>               
+                <div>
+                    <h:form id="inicio">
+                        <p:growl id="m"  />
+                        <p:dataTable var="oPro" id="tblPro" 
+                                     editable="true" value="#{oConPro.arrPro}" 
+                                     paginator="true" rows="8">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.proveedor}"/>
+                            </f:facet>
+                            <p:ajax event="rowEdit" listener="#{oConPro.onEdit}" update=":inicio:m" />
+                            <p:ajax event="rowEditCancel" listener="#{oConPro.onCancel}" update=":inicio:m" /> 
+
+                            <p:column headerText="ID"    width="20"  >                                             
+                                <h:outputLabel value="#{oPro.id}"/> 
+                            </p:column>
+                            <p:column headerText="#{etiq.nombre}" width="20" >
+                                <p:cellEditor >
+                                    <f:facet name="output">
+                                        <h:outputLabel value="#{oPro.nombre}"/>
+                                    </f:facet>
+                                    <f:facet name="input" >
+                                        <p:inputText value="#{oPro.nombre}"  onkeyup="this.value = this.value.toUpperCase();" required="true" requiredMessage="Ingrese Nombre" /> 
+                                    </f:facet>   
+                                </p:cellEditor> 
+                            </p:column> 
+                            <p:column headerText="#{etiq.RFC}"    width="30" >
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputLabel value="#{oPro.RFC}"/>  
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oPro.RFC}" onkeyup="this.value = this.value.toUpperCase();" required="true" requiredMessage="Ingrese RFC"  /> 
+                                    </f:facet>   
+                                </p:cellEditor> 
+                            </p:column> 
+                            <p:column headerText="#{etiq.CFISCAL}"    width="30" >
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputLabel value="#{oPro.CFISCAL}"/> 
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oPro.CFISCAL}" onkeyup="this.value = this.value.toUpperCase();"  required="true" requiredMessage="Ingrese folio fiscal" /> 
+                                    </f:facet>   
+                                </p:cellEditor>                                                                            
+                            </p:column> 
+                            <p:column width="10" headerText="#{etiq.edicion}">
+                                <p:rowEditor>
+                                </p:rowEditor>
+                            </p:column>  
+                            <f:facet name="footer">
+                                <div align="left">
+                                    <p:commandButton value="Nuevo" onclick="PF('dlg').show();"  icon="ui-icon-plus"  />
+                                </div>
+                            </f:facet>
+                        </p:dataTable>  
+                    </h:form>
+
+                    <h:form id="da" >            
+                       
+                        
+
+                        <p:dialog header="Nuevo Proveedor" widgetVar="dlg" resizable="false" draggable="false" 
+                                   height="240" width="400" modal="true"   closable="false"  >
+                            <br/>
+                            <p:growl id="mensaje" showDetail="true"   />     
+                            
+                            <h:panelGrid columns="2" cellpadding="5"> 
+
+                                <h:outputLabel value="ID:"   for="idPro"/>  
+                                <p:inputText id="idPro" value="#{oConPro.prov.id}"    size="20" required="true" onkeyup="this.value = this.value.toUpperCase();" requiredMessage="Ingrese ID de Proveedor" />
+                                                               
+                                <h:outputLabel value="Nombre:"   for="name"/>
+                                <p:inputText id="name" value="#{oConPro.prov.nombre}"   size="20" onkeyup="this.value = this.value.toUpperCase();"  required="true"  requiredMessage="Ingrese Nombre"/>   
+                                
+                                <h:outputLabel value="RFC" for="rfc"  /> 
+                                <p:inputText id="rfc" value="#{oConPro.prov.RFC}"   size="20" onkeyup="this.value = this.value.toUpperCase();"  required="true" requiredMessage="Ingrese RFC"   />  
+                                                                  
+                                <h:outputLabel value="Comprobate Fiscal"  for="fiscal"/>  
+                                <p:inputText  id="fiscal" value="#{oConPro.prov.CFISCAL}"  size="20" onkeyup="this.value = this.value.toUpperCase();"   required="true" requiredMessage="Ingrese Comprobante Fiscal" />
+                                 
+                                    <p:commandButton value="Guardar" update=" mensaje :da  :inicio:tblPro  "   actionListener="#{oConPro.eventoGuardar()}"
+                                                    onclick="PF('dlg').show();"  icon="ui-icon-disk" >
+                                                           
+                                    </p:commandButton>
+                                    
+                                
+                            </h:panelGrid>
+                        </p:dialog>
+                    </h:form>
+
+                     
+
+
+
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+</html>

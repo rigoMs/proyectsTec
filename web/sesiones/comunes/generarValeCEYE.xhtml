@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.valeCeye}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="ValeCeye">
+                <p:growl id="msg" showDetail="true"/>
+   
+            <p:panelGrid styleClass="frm_centrado">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="4"><h:outputLabel value="Solicitud de material a CEYE"/></p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.solicitante}:"/></p:column>                 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaYhora}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="" /></p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:selectOneMenu id="selectAreas" value="#{oGenValeCEYE.areaServ.clave}">
+                            <f:selectItem itemLabel="SELECCIONA" itemValue="0"/>
+                            <f:selectItems value="#{oGenValeCEYE.listaAreas}" var="Areas"
+                                           itemLabel="#{Areas.descripcion}" itemValue="#{Areas.clave}" />
+                            <p:ajax update="tablaMatSolSur regValeCeye"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column><h:outputLabel value="#{oGenValeCEYE.perHosp.nombreCompleto}"/></p:column>
+                    <p:column><h:outputLabel  value="#{oGenValeCEYE.fechaActual}"><f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="America/Mexico_City"/></h:outputLabel></p:column>
+                    <p:column>
+                        <p:commandButton value="Solicitar material" icon="ui-icon-plus" onclick="PF('dlgMatCeye').show();" type="button"/>
+                        <p:commandButton value="Consultar material solicitado" icon="ui-icon-search" onclick="PF('dlgConsMatCeye').show();" type="button"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+
+
+                    
+                    
+                <p:dialog header="Solicitar material a CEYE" widgetVar="dlgMatCeye" height="400" width="900" resizable="false" modal="true">
+                    <p:panelGrid id="regValeCeye" styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="5"><h:outputLabel value="Solicitar material a CEYE"/></p:column>
+                            </p:row>
+                        <p:row>                         
+                            <p:column><h:outputLabel value="#{etiq.clave}"/></p:column>
+                            <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column>
+                            <p:column><h:outputLabel value="#{etiq.presentacion}"/></p:column>
+                            <p:column><h:outputLabel value="#{etiq.cantidadSol}"/></p:column>
+                            <p:column></p:column>
+                        </p:row>
+                        </f:facet>
+
+                        <p:row>
+                            <p:column><p:inputText id="claveMat" value="#{oGenValeCEYE.material.claveMaterial}" size="10" readonly="true"><p:ajax/></p:inputText></p:column>
+                            <p:column>
+                                <p:autoComplete id="nombreMed"  onkeypress="return validaCaracter(event);"  queryDelay="1000" size="40" minQueryLength="3" required="true" styleClass="bordes"
+                                                value="#{oGenValeCEYE.material.nombre}" completeMethod="#{oGenValeCEYE.detValColect.material.completarMatCeye}" effect="fade"
+                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" requiredMessage="Debe ingresar un nombre de medicamento">
+                                    <p:ajax listener="#{oGenValeCEYE.buscaClave()}" update="claveMat clavePre" event="itemSelect"/>
+                                </p:autoComplete>
+                            </p:column>
+                            <p:column><p:inputText id="clavePre" value="#{oGenValeCEYE.material.presentacion.valor}" size="5" readonly="true"><p:ajax/></p:inputText></p:column>
+                            <p:column><p:inputText value="#{oGenValeCEYE.detValColect.cantSolArea}" size="5"><poue:keyFilter regEx="/[0-9]/i"/><p:ajax/></p:inputText></p:column>
+                            <p:column>
+                                <p:commandButton value="Agregar" icon="ui-icon-plus">
+                                    <p:ajax listener="#{oGenValeCEYE.registroMaterial()}" update="tablaValeCeye regValeCeye msg"></p:ajax>
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="5">
+                                <p:dataTable id="tablaValeCeye" var="Vale" value="#{oGenValeCEYE.materialLista}" style="visibility:#{oGenValeCEYE.visibilidadRegistroMat}">
+                                        <f:facet name="header">
+                                            <p:outputLabel id="titVac" value="Receta del paciente"/>
+                                        </f:facet>
+                                        <p:column headerText="#{etiq.clave}:" styleClass="columnachica centrado_texto">
+                                            <h:outputText value="#{Vale.material.claveMaterial}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nombre}:" styleClass="columnachica centrado_texto">
+                                            <h:outputText value="#{Vale.material.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.presentacion}:" styleClass="columnachica centrado_texto">
+                                            <h:outputText value="#{Vale.material.presentacion.valor}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.cantidad}:" styleClass="columnachica centrado_texto">
+                                            <h:outputText value="#{Vale.cantSolArea}"/>
+                                        </p:column>
+                                        <p:column headerText="" styleClass="columnachica centrado_texto">
+                                            <p:commandButton value="#{etiq.borrar}" id="btnBorrar" icon="ui-icon-trash">
+                                                <p:ajax listener="#{oGenValeCEYE.borrarElemento(Vale)}" update="tablaValeCeye"></p:ajax>
+                                            </p:commandButton>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton value="Guardar" icon="ui-icon-disk" id="btnGuardar">
+                                                <p:ajax listener="#{oGenValeCEYE.guardarMatCeye()}" update="tablaValeCeye :ValeCeye:msg"></p:ajax>
+                                            </p:commandButton>
+                                        </f:facet>
+                                    </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>                                             
+                </p:dialog>
+
+
+
+
+
+                <p:dialog header="Material solicitado a CEYE" widgetVar="dlgConsMatCeye" height="400" width="600" resizable="false" modal="true">
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2"><h:outputLabel value="Medicina interna"/></p:column>
+                        </p:row>
+                        </f:facet>
+                         <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fecha}: " styleClass="mensaje"/>
+                                <p:calendar id="FecSolPrevias" value="#{oGenValeCEYE.fechaAux}" effect="fold" locale="es" showOn="button" 
+                                    pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaAux"></p:ajax>
+                                </p:calendar>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search">
+                                    <p:ajax update="tablaMatSolSur areaImp" listener="#{oGenValeCEYE.buscaMaterialSolSur()}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+<br/><br/>
+
+                    <p:panelGrid id="ConsVale">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column>
+                            <p:column>
+                                <h:outputLabel id="fechaAux" value="#{oGenValeCEYE.fechaAux}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                </h:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2"><h:outputLabel id="areaImp" value="#{oGenValeCEYE.areaServ.descripcion}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="Material de curación"/></p:column>
+                        </p:row>
+                        <p:row>                         
+                            <p:column colspan="2">
+                                <p:dataTable id="tablaMatSolSur" var="MatSolSur" value="#{oGenValeCEYE.valeMatSol}">
+                                    <p:column headerText="#{etiq.nombre}">
+                                        <h:outputText value="#{MatSolSur.material.nombre}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.cantidadSol}">
+                                        <h:outputText value="#{MatSolSur.cantSolArea}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.cantidadSur}">
+                                        <h:outputText value="#{MatSolSur.cantSurArea}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+<br/>
+                    <p:commandButton value="Imprimir" onclick="" icon="ui-icon-print">
+                        <p:printer target="ConsVale"/>
+                    </p:commandButton>
+                </p:dialog>
+
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</html>

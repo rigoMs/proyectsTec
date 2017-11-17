@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+<div class="centrar">
+    <h:form styleClass="centrar" id="frmInicio">
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+    <h3>
+        <h:outputLabel style="text-transform: uppercase" value="#{etiq.egresos} #{etiq.hosprios}"/>
+        <br/>
+        <h:outputLabel value="#{etiq.codesPen} Por Firmar"/>
+    </h3>
+    <p:tabView id="tvEgresos" dynamic="true" cache="false">
+        <p:tab id="tabPorFecha" title="#{etiq.por} #{etiq.fecha}">
+            <p:panelGrid>
+                <p:row>
+                    <p:column style="text-align: center" styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.fecha}"/></p:column>
+                    <p:column>
+                        <p:calendar value="#{oRptHosp.fechaIni}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect"/>
+                        </p:calendar>
+                    </p:column>
+                    <p:column colspan="2" styleClass="centrar">
+                        <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                            <p:ajax listener="#{oRptHosp.buscaEgresosPorFecha()}" update=":frmInicio :frmInicio:tvEgresos:tabPorFecha :frmInicio:msgs"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="dt1" var="oRpt"
+                    paginator="true" 
+                    paginatorPosition="bottom" 
+                    rows="20" 
+                    rendered="#{not empty oRptHosp.listaHospitalizacionesXfecha}"
+                    value="#{oRptHosp.listaHospitalizacionesXfecha}"
+                    emptyMessage="#{etiq.noRegistros}" 
+                    styleClass="centrar" style="width: 1200px" >
+                <f:facet name="header"> 
+                    <h:outputText style="font-weight: bold; " value="#{etiq.egresos} #{etiq.hosprios} "/>
+                    <p:outputLabel style="text-align: right" value="#{oRptHosp.fechaIni}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </f:facet>
+                <p:column style="width: 10%" >
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.expediente.numero}"/>
+                </p:column>  
+                <p:column style="width: 17%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 9%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.edadNumero}"/>
+                </p:column> 
+                <p:column style="width: 6%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.sexo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.sexoP}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaIngreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaIngresoHos}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaEgreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column> 
+                <p:column style="width: 12%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.servicio}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.areaServicioHRRB}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.motivo} #{etiq.egreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.motivoEgresoP}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.folio} CODE"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.folioCode}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.cama}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="¿CODE Firmada?"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.codeFirmada}"/>
+                </p:column>
+                <p:column style="width: 13%">
+                    <p:commandButton value="Registrar" disabled="#{oRpt.codeFirmada=='SI'}" 
+                                     actionListener="#{oRptHosp.registrarEntregaCODE(oRpt.paciente.folioPaciente, oRpt.episodioMedico.claveEpisodio, oRpt.numIngresoHos, oRpt.paciente.expediente.numero, true)}"
+                                     update=":frmInicio :frmInicio:tvEgresos:tabPorFecha :frmInicio:msgs :frmImpresion"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:commandButton value="Vista impresión" rendered="#{not empty oRptHosp.listaHospitalizacionesXfecha}" update=":frmImpresion" oncomplete="PF('dlgImpresion').show()" icon="ui-icon-print"/>
+            <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        </p:tab>
+        <p:tab id="tabPorRango" title="#{etiq.por} #{etiq.rangoFechas}">
+            <p:panelGrid  styleClass="centrar">
+                <p:row>
+                    <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.rangoFechas}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.del}"/></p:column>
+                    <p:column>
+                        <p:calendar id="txtFechIni" value="#{oRptHosp.fechaIni}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect"/>
+                        </p:calendar>
+                    </p:column>
+                    <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.al}"/></p:column>
+                    <p:column>
+                        <p:calendar id="txtFechFin" value="#{oRptHosp.fechaFin}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect" listener="#{oRptHosp.validaFecha()}" update=":frmInicio:msgs"/>
+                        </p:calendar>
+                    </p:column>
+                </p:row>
+                <f:facet name="footer">
+                    <p:row>
+                        <p:column colspan="4" styleClass="centrar" >
+                            <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                                <p:ajax listener="#{oRptHosp.buscaEgresosPorRango()}" 
+                                        update=":frmInicio :frmInicio:tvEgresos:tabPorRango :frmInicio:msgs"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="dt2" var="oRpt"
+                    paginator="true" 
+                    paginatorPosition="bottom" 
+                    rows="20" 
+                    rendered="#{not empty oRptHosp.listaHospitalizacionesXRango}"
+                    value="#{oRptHosp.listaHospitalizacionesXRango}"
+                    emptyMessage="#{etiq.noRegistros}" 
+                    styleClass="centrar" style="width: 1200px" >
+                <f:facet name="header"> 
+                    <h:outputText style="font-weight: bold; " value="#{etiq.egresos} #{etiq.hosprios} #{etiq.del} "/>
+                    <p:outputLabel style="text-align: right" value="#{oRptHosp.fechaIni}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                    <h:outputText style="font-weight: bold; " value=" #{etiq.al} "/>
+                    <p:outputLabel style="text-align: right" value="#{oRptHosp.fechaFin}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </f:facet>
+                <p:column style="width: 10%" >
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.expediente.numero}"/>
+                </p:column>  
+                <p:column style="width: 17%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 9%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.edadNumero}"/>
+                </p:column> 
+                <p:column style="width: 6%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.sexo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.sexoP}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaIngreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaIngresoHos}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaEgreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column> 
+                <p:column style="width: 12%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.servicio}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.areaServicioHRRB}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.motivo} #{etiq.egreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.motivoEgresoP}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.folio} CODE"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.folioCode}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.cama}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+                </p:column>
+                <p:column style="width: 10%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="¿CODE Firmada?"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.codeFirmada}"/>
+                </p:column>
+                <p:column style="width: 13%">
+                    <p:commandButton value="Registrar" disabled="#{oRpt.codeFirmada=='SI'}" 
+                                     actionListener="#{oRptHosp.registrarEntregaCODE(oRpt.paciente.folioPaciente, oRpt.episodioMedico.claveEpisodio, oRpt.numIngresoHos, oRpt.paciente.expediente.numero, false)}"
+                                     update=":frmInicio :frmInicio:tvEgresos:tabPorRango :frmInicio:msgs :frmImpresion1"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:commandButton value="Vista impresión"  rendered="#{not empty oRptHosp.listaHospitalizacionesXRango}" update=":frmImpresion1" oncomplete="PF('dlgImpresion1').show()" icon="ui-icon-print"/>
+        </p:tab>
+    </p:tabView>
+    </h:form>
+    <p:dialog header="CODES por fecha" widgetVar="dlgImpresion" showEffect="bounce" hideEffect="bounce"
+                      resizable="false" modal="true" height="600px" width="1200px" style="text-align: center">
+        <h:form id="frmImpresion">
+            <p:panelGrid styleClass="frm_centrado" id="pgPrint" style="width:1000px;background-color: #ffffff;" >
+                <p:row>
+                    <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                        <h:graphicImage  value="/imgs/logo-salud.jpg" style="width: 100%;"/>
+                    </p:column>
+                    <p:column colspan="7" style="background-color: #ffffff; text-align: center;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                        <h1><h:outputText value="#{etiq.hrrb}"/></h1>
+                        <h2><h:outputText value="#{etiq.siece}"/></h2>
+                    </p:column>
+                    <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                        <h:graphicImage  value="/imgs/logo-hrrb.jpg" style="width: 100%"/>
+                    </p:column>
+                </p:row>          
+                <p:row>
+                    <p:column colspan="9" styleClass="ui-widget-header" style="text-align: center;">
+                        <h:outputText style="font-weight: bold; " value="#{etiq.egresos} #{etiq.hosprios} "/>
+                        <p:outputLabel style="text-align: right" value="#{oRptHosp.fechaIni}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>                           
+                <p:row>
+                    <p:column colspan="9" style="background-color: #ffffff; border-right-color:#ffffff ;border-left-color: #ffffff; border-bottom-color:#ffffff;">
+                        <p:dataTable id="dt11" var="oRpt"
+                                style="background-color: #ffffff;width: 1100px"
+                                paginator="false" 
+                                paginatorPosition="bottom"
+                                rendered="#{not empty oRptHosp.listaHospitalizacionesXfecha}"
+                                value="#{oRptHosp.listaHospitalizacionesXfecha}"
+                                emptyMessage="#{etiq.noRegistros}" 
+                                styleClass="centrar" >
+                            <p:column style="width: 10%;background-color: #ffffff;" >
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.expediente.numero}"/>
+                            </p:column>  
+                            <p:column style="width: 17%;background-color: #ffffff;" >
+                                <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column style="width: 9%;background-color: #ffffff;" >
+                                <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.edadNumero}"/>
+                            </p:column> 
+                            <p:column style="width: 6%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.sexo}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.sexoP}"/>
+                            </p:column>
+                            <p:column style="width: 15%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaIngreso}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaIngresoHos}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column style="width: 15%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaEgreso}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                                </p:outputLabel>
+                            </p:column> 
+                            <p:column style="width: 12%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.servicio}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.areaServicioHRRB}"/>
+                            </p:column>
+                            <p:column style="width: 10%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.motivo} #{etiq.egreso}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.motivoEgresoP}"/>
+                            </p:column>
+                            <p:column style="width: 10%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.folio} CODE"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.folioCode}"/>
+                            </p:column>
+                            <p:column style="width: 10%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.cama}"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+                            </p:column>
+                            <p:column style="width: 10%;background-color: #ffffff;">
+                                <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="¿CODE Firmada?"/> </f:facet>
+                                <p:outputLabel style="font-size: 12px" value="#{oRpt.codeFirmada}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <div  class="centrado_texto">
+            <p:panel style="border: none;background-color: #ffffff;">
+                <p:row >
+                    <p:column style="background-color: #ffffff;" >
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                            <p:printer target="pgPrint"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column style="background-color: #ffffff;" >
+                        <p:commandButton rendered="#{not empty oRptHosp.listaHospitalizacionesXfecha}" value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                            <p:dataExporter type="xls" target="dt11" fileName="Rpt_CodesFirmadas #{oRptHosp.fechaArch1}" postProcessor="#{oRptHosp.postProcessXLS}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panel>
+            </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog header="CODES por rango de fechas" widgetVar="dlgImpresion1" showEffect="bounce" hideEffect="bounce"
+                      resizable="false" modal="true" height="600px" width="1200px" style="text-align: center">
+        <h:form id="frmImpresion1">
+            <p:panelGrid styleClass="frm_centrado" id="pgPrint1" style="width:1000px;background-color: #ffffff;" >
+                    <p:row>
+                        <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                            <h:graphicImage  value="/imgs/logo-salud.jpg" style="width: 100%;"/>
+                        </p:column>
+                        <p:column colspan="7" style="background-color: #ffffff; text-align: center;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                            <h1><h:outputText value="#{etiq.hrrb}"/></h1>
+                            <h2><h:outputText value="#{etiq.siece}"/></h2>
+                        </p:column>
+                        <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                            <h:graphicImage  value="/imgs/logo-hrrb.jpg" style="width: 100%"/>
+                        </p:column>
+                    </p:row>        
+                <p:row>
+                    <p:column colspan="9" styleClass="ui-widget-header" style="text-align: center;">
+                        <h:outputText style="font-weight: bold; " value="#{etiq.egresos} #{etiq.hosprios} #{etiq.del} "/>
+                        <p:outputLabel style="text-align: right" value="#{oRptHosp.fechaIni}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                        <h:outputText style="font-weight: bold; " value=" #{etiq.al} "/>
+                        <p:outputLabel style="text-align: right" value="#{oRptHosp.fechaFin}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>                           
+                <p:row>
+                    <p:column colspan="9" style="background-color: #ffffff; border-right-color:#ffffff ;border-left-color: #ffffff; border-bottom-color:#ffffff;">
+                    <p:dataTable id="dt2" var="oRpt"
+                            paginator="false"
+                            paginatorPosition="bottom" 
+                            rendered="#{not empty oRptHosp.listaHospitalizacionesXRango}"
+                            value="#{oRptHosp.listaHospitalizacionesXRango}"
+                            emptyMessage="#{etiq.noRegistros}" 
+                            styleClass="centrar" style="width: 1100px;background-color: #ffffff;" >
+                        <p:column style="width: 10%;background-color: #ffffff;" >
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.expediente.numero}"/>
+                        </p:column>  
+                        <p:column style="width: 17%;background-color: #ffffff;" >
+                            <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.nombreCompleto}"/>
+                        </p:column>
+                        <p:column style="width: 9%;background-color: #ffffff;" >
+                            <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.edadNumero}"/>
+                        </p:column> 
+                        <p:column style="width: 6%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.sexo}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.paciente.sexoP}"/>
+                        </p:column>
+                        <p:column style="width: 15%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaIngreso}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaIngresoHos}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column style="width: 15%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaEgreso}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.altaHospitalaria}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                            </p:outputLabel>
+                        </p:column> 
+                        <p:column style="width: 12%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.servicio}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.areaServicioHRRB}"/>
+                        </p:column>
+                        <p:column style="width: 10%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.motivo} #{etiq.egreso}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.motivoEgresoP}"/>
+                        </p:column>
+                        <p:column style="width: 10%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.folio} CODE"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.folioCode}"/>
+                        </p:column>
+                        <p:column style="width: 10%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.cama}"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.cama.numero} - #{oRpt.episodioMedico.cama.areaServicioHRRB}"/>
+                        </p:column>
+                        <p:column style="width: 10%;background-color: #ffffff;">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="¿CODE Firmada?"/> </f:facet>
+                            <p:outputLabel style="font-size: 12px" value="#{oRpt.codeFirmada}"/>
+                        </p:column>
+                    </p:dataTable>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <div  class="centrado_texto">
+            <p:panel style="border: none;background-color: #ffffff;">
+                <p:row >
+                    <p:column style="background-color: #ffffff;">
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                            <p:printer target="pgPrint1"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column style="background-color: #ffffff;">
+                        <p:commandButton rendered="#{not empty oRptHosp.listaHospitalizacionesXRango}" value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                            <p:dataExporter type="xls" target="dt2" fileName="Rpt_CodesFirmadas_#{oRptHosp.fechaArch1} #{oRptHosp.fechaArch2} " postProcessor="#{oRptHosp.postProcessXLS2}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panel>
+            </div>
+        </h:form>
+    </p:dialog>
+    
+    
+<p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+    <f:facet name="start">  
+        <p:graphicImage value="/imgs/loading.gif" />  
+    </f:facet>    
+</p:ajaxStatus>
+</div>
+</ui:define>
+</ui:composition>
+</html>

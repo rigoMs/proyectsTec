@@ -1,0 +1,554 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+    
+  <ui:define name="cuerpo">
+   <div>
+    <h:form>
+             
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+    <h3 class="centrado_texto"><p:outputLabel id="titConDatos" value="#{etiq.consultarDatos}"/></h3>
+    
+    <p:tabView>
+        <p:tab title="#{etiq.pacientesPorMedico}">
+    
+        <h4 class="centrado_texto"><p:outputLabel id="titPacXMed" value="#{etiq.PacYaconfirmaronSuCita}"/></h4>
+            
+                <h:panelGrid class="frm_centrado" columns="7">
+                    <p:outputLabel id="fecPacXMed" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar id="tFecCita" value="#{oConDat.cita.fechaAux}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                    <br/>
+                    <p:outputLabel id="medico" styleClass="mensaje" value="#{etiq.medico}:" />
+                    <p:selectOneMenu id="tMedico" value="#{oConDat.med.nombres}" required="true">
+                            <f:selectItems value="#{oConDat.listaMedicos}" var="oMed" 
+                                           itemLabel="#{oMed.asigCon.turno.clave}- #{oMed.cons.noConsultorio} - #{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}-#{oMed.area.clave}-#{oMed.cons.noConsultorio}-#{oMed.asigCon.maximo}-#{oMed.asigCon.turno.clave}-#{oMed.apPaterno}-#{oMed.apMaterno}-#{oMed.asigCon.areaServicio.descripcion}"></f:selectItems>
+                    </p:selectOneMenu>
+                    <br/>
+                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" update="tablaConsul1" action="#{oConDat.cita.iniciaConsulta1()}">
+                        
+                    </p:commandButton>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable id="tablaConsul1" var="oRepor" value="#{oConDat.cita.buscarConsulta1(oConDat.med, 1)}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.citas}"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7 centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="textoIzq" style="width: 30%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.apPaterno} #{oRepor.paciente.apMaterno} #{oRepor.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tipoSol}:" styleClass=" centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tipoSol}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.tipoSol.valor}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass=" centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tipoPacienteEsp}:" styleClass=" centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tipoPacienteEsp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.primEsp}"/>
+                    </p:column>                   
+         </p:dataTable>
+        </p:tab>      
+        <br/>
+        <p:tab title="#{etiq.pacientesPorFecha}">
+            <h4  class="centrado_texto"><p:outputLabel id="titPacXFec" value="#{etiq.pacQueTienenCita}"/></h4>
+            
+                <h:panelGrid class="frm_centrado" columns="7">
+                    <p:outputLabel id="fecPacXFec" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar id="tFecCita2" value="#{oConDat.cita2.fechaAux}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                    <br/>
+                    <p:outputLabel id="medico2" styleClass="mensaje" value="#{etiq.medico}:" />
+                    <p:selectOneMenu id="tMedico2" value="#{oConDat.med2.nombres}" required="true">
+                            <f:selectItems value="#{oConDat.listaMedicos}" var="oMed" 
+                                           itemLabel="#{oMed.asigCon.turno.clave}- #{oMed.cons.noConsultorio} - #{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}-#{oMed.area.clave}-#{oMed.cons.noConsultorio}-#{oMed.asigCon.maximo}-#{oMed.asigCon.turno.clave}-#{oMed.nombres}-#{oMed.apPaterno}-#{oMed.apMaterno}-#{oMed.asigCon.areaServicio.descripcion}"></f:selectItems>
+                    </p:selectOneMenu>
+                    <br/>
+                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" update="tablaConsul2"  action="#{oConDat.cita2.iniciaConsulta2()}"/>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable id="tablaConsul2" var="oRepor2" value="#{oConDat.cita2.buscarConsulta1(oConDat.med2, 2)}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.citas}"/>
+                    </f:facet>
+                    
+                    <p:column headerText="#{etiq.noConsulta}:" styleClass="columnamed7 centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noConsulta}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.noConsulta}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noFicha}:" styleClass="columnachica centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noFicha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.noFicha}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.folioCita}:" styleClass="columnamed7 centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioCita}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.folioCita}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.noExp}:" styleClass="columnamed7 centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noExp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.paciente.expediente.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="textoIzq" style="width: 30%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.paciente.apPaterno} #{oRepor2.paciente.apMaterno} #{oRepor2.paciente.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.segpop}:" styleClass=" centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.paciente.seg.numero}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.tipoPacienteEsp}:" styleClass=" centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.tipoPacienteEsp}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.primEsp}"/>
+                    </p:column>            
+         </p:dataTable>
+            <br/>
+            <div  class="centrado_texto">
+            <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                <p:dataExporter type="xls" target="tablaConsul2" fileName="Citas_por_Médico #{oConDat.cita2.obtenFechaAux()}" postProcessor="#{oConDat.postProcessXLS2}"/>
+            </p:commandButton>
+            </div>
+        </p:tab>
+        <br/>
+        <p:tab title="#{etiq.pacientePorCons}">
+          <h4  class="centrado_texto"><p:outputLabel id="titPacXCons" value="#{etiq.pacQueTuvieronCita}"/></h4>
+            
+                <h:panelGrid class="frm_centrado" columns="7">
+                    <p:outputLabel id="fecPacCons" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar id="tFecCita3" value="#{oConDat.cita3.fechaAux}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                    <br/>
+                    <p:outputLabel id="medico3" styleClass="mensaje" value="#{etiq.medico}:" />
+                    <p:selectOneMenu id="tMedico3" value="#{oConDat.med3.nombres}" required="true">
+                            <f:selectItems value="#{oConDat.listaMedicos}" var="oMed" 
+                                           itemLabel="#{oMed.asigCon.turno.clave}- #{oMed.cons.noConsultorio} - #{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}-#{oMed.area.clave}-#{oMed.cons.noConsultorio}-#{oMed.asigCon.maximo}-#{oMed.asigCon.turno.clave}"></f:selectItems>
+                    </p:selectOneMenu>
+                    <br/>
+                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" update="tablaConsul3" action="#{oConDat.cita3.iniciaConsulta3()}"/>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable id="tablaConsul3" var="oRepor2" value="#{oConDat.cita3.buscarPacPorCons(oConDat.med3.nombres)}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.citas}"/>
+                    </f:facet>
+                    
+                    <p:column headerText="#{etiq.noConsulta}:" styleClass="columnamed7 centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.noConsulta}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.noConsulta}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.folioCita}:" styleClass="columnamed7  centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.folioCita}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.folioCita}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:"  style="width: 20%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.medico}:" styleClass="textoIzq" style="width: 28%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.medico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.PH.apPaterno} #{oRepor2.PH.apMaterno} #{oRepor2.PH.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.nombreCompleto}:" styleClass="textoIzq" style="width: 28%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor2.paciente.apPaterno} #{oRepor2.paciente.apMaterno} #{oRepor2.paciente.nombres}"/>
+                    </p:column>
+
+                    <p:column headerText="#{etiq.accion}:" styleClass=" centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.accion}"/>
+                        </f:facet>
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" ajax="false" action="#{oConDat.cita3.detalleCitasCons()}">
+                            <f:setPropertyActionListener target="#{oConDat.cita3.paciente.folioPaciente}" value="#{oRepor2.paciente.folioPaciente}"/>
+                            <f:setPropertyActionListener target="#{oConDat.cita3.areaServicio.clave}" value="#{oRepor2.areaServicio.clave}"/>
+                            <f:setPropertyActionListener target="#{oConDat.cita3.PH.noTarjeta}" value="#{oRepor2.PH.noTarjeta}"/>
+                            <f:setPropertyActionListener target="#{oConDat.cita3.areaServicio.descripcion}" value="#{oRepor2.areaServicio.descripcion}"/>
+                            <f:setPropertyActionListener target="#{oConDat.cita3.paciente.expediente.numero}" value="#{oRepor2.paciente.expediente.numero}"/>
+                        </p:commandButton>
+                    </p:column>     
+         </p:dataTable>
+        </p:tab>
+        <br/>
+         <p:tab title="#{etiq.citasDeUnPaciente}">
+            <p:accordionPanel styleClass="#{oConDat.cita4.muestraTablas(0)} frm_centrado" id="acordionprin" style="width:80%;">
+                <p:tab title="#{etiq.buscarDatosBasicos}">
+                    <p:panelGrid columns="4" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <h:outputLabel />
+                        <p:inputText styleClass="bordes" id="nom" value="#{oConDat.cita4.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{oConDat.cita4.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{oConDat.cita4.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" update="tablaPac acordionprin" ajax="false">
+                            <f:setPropertyActionListener target="#{oConDat.cita4.paciente.opcionUrg}" value="#{0}" />
+                            <f:setPropertyActionListener target="#{oConDat.cita4.mostrar}" value="#{1}" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:tab>        
+                <p:tab title="#{etiq.buscarPorExpediente}">
+                    <p:panelGrid columns="3" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                        <p:inputText styleClass="bordes" id="exp" value="#{oConDat.cita4.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                        </p:inputText>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" update="tablaPac acordionprin divbtn1" ajax="false">
+                            <f:setPropertyActionListener target="#{oConDat.cita4.paciente.opcionUrg}" value="#{1}" />
+                            <f:setPropertyActionListener target="#{oConDat.cita4.mostrar}" value="#{1}" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                    <p:message for="exp" id="mentExp"></p:message>
+                </p:tab>
+               </p:accordionPanel>
+            
+            <p:dataTable id="tablaPac" var="oPacEnc" value="#{oConDat.cita4.paciente.buscarTodoPac()}" emptyMessage="#{etiq.noRegistro}" styleClass="#{oConDat.cita4.muestraTablas(1)}">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.pacEncontrados}"/>
+                </f:facet>
+                
+                <p:column styleClass="centrado_texto">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.apPaterno}"/>
+                </p:column>
+                
+                <p:column styleClass="centrado_texto">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.apMaterno}"/>
+                </p:column>
+                
+                <p:column styleClass="centrado_texto">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.nombres}"/>
+                </p:column>
+                
+                <p:column style="width: 9%"  styleClass="centrado_texto">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.fechaNac}"/>
+                </p:column>                 
+                        
+                <p:column style="width: 7%"  styleClass="centrado_texto">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.calculaEdad()}"/>
+                </p:column>
+                
+                <p:column  styleClass="centrado_texto">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                </p:column>                
+                
+                <p:column style="width: 10%"  styleClass="centrado_texto">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                </p:column>     
+
+                   <p:column>
+                       <p:commandButton value="#{etiq.seleccionar}" update="panelPac tablaConsul4 tablaPac" ajax="false" action="#{oConDat.cita4.iniciaConsulta4()}">
+                           <f:setPropertyActionListener target="#{oConDat.cita4.paciente}" value="#{oPacEnc}" />
+                           <f:setPropertyActionListener target="#{oConDat.cita4.mostrar}" value="#{2}" />
+                       </p:commandButton>
+                   </p:column>
+                </p:dataTable>
+                
+             <div class="#{oConDat.cita4.muestraTablas(1)} centrado_texto">
+                <p:commandButton id="divbtn1" value="#{etiq.buscarOtro}" icon="ui-icon-search" update="tablaPac acordionprin divbtn1" styleClass="#{oConDat.cita4.muestraTablas(1)}">
+                    <f:setPropertyActionListener target="#{oConDat.cita4.mostrar}" value="#{0}" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.apPaterno}" value="" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.apMaterno}" value="" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.nombres}" value="" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.expediente.numero}" value="#{0}" />
+                </p:commandButton>
+            </div>
+             
+            <p:panelGrid id="panelPac"  styleClass="#{oConDat.cita4.muestraTablas(2)}" style="width: 100%;">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column><p:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                        <p:column styleClass="centrado_texto"><p:outputLabel value="#{etiq.edad}:"/></p:column>
+                        <p:column styleClass="centrado_texto"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column><p:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                        <p:column styleClass="centrado_texto"><p:outputLabel value="#{etiq.pais}:"/></p:column>
+                        <p:column styleClass="centrado_texto"><p:outputLabel value="#{etiq.entidad}:"/></p:column>
+                        <p:column styleClass="centrado_texto"><p:outputLabel value="#{etiq.municipio}:"/></p:column>
+                        <p:column styleClass="centrado_texto"><p:outputLabel value="#{etiq.localidad}:"/></p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column><p:outputLabel value="#{oConDat.cita4.paciente.apPaterno} #{oConDat.cita4.paciente.apMaterno} #{oConDat.cita4.paciente.nombres}"/></p:column>
+                    <p:column styleClass="centrado_texto"><p:outputLabel value="#{oConDat.cita4.paciente.calculaEdad()}"/></p:column>
+                    <p:column styleClass="centrado_texto"><p:outputLabel value="#{oConDat.cita4.paciente.sexoP}"/></p:column>
+                    <p:column><p:outputLabel value="#{oConDat.cita4.paciente.calleNum}"/></p:column>
+                    <p:column styleClass="centrado_texto"><p:outputLabel value="#{oConDat.cita4.paciente.otroPais}"/></p:column>
+                    <p:column styleClass="centrado_texto"><p:outputLabel value="#{oConDat.cita4.paciente.estado.descripcionEdo}"/></p:column>
+                    <p:column styleClass="centrado_texto"><p:outputLabel value="#{oConDat.cita4.paciente.municipio.descripcionMun}"/></p:column>
+                    <p:column styleClass="centrado_texto"><p:outputLabel value="#{oConDat.cita4.paciente.ciudad.descripcionCiu}"/></p:column>
+                    </p:row>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="tablaConsul4" var="oRepor" value="#{oConDat.cita4.buscarhistCitas()}" emptyMessage="#{etiq.noDatos}"  styleClass="#{oConDat.cita4.muestraTablas(2)}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.citas}"/>
+                    </f:facet>
+             
+                    <p:column headerText="#{etiq.fecha}:" styleClass="columnamed7 centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.fecha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.fechaCita}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.hora}:" styleClass="columnachica centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.hora}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.fechaCita}">
+                            <f:convertDateTime pattern="HH:mm"/>
+                        </h:outputText>
+                    </p:column>
+                
+                    <p:column headerText="#{etiq.medico}:" styleClass="textoIzq" style="width: 24%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.medico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.PH.apPaterno} #{oRepor.PH.apMaterno} #{oRepor.PH.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.servicio}:" styleClass="columnamed10 textoIzq">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.areaServicio.descripcion}"/>
+                    </p:column>
+                
+                    <p:column headerText="#{etiq.consultorio}:" styleClass="columnamed7 centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.consultorio}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.noConsultorio}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.diagnostico}:" >
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.diagnostico}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.diag.descripcionDiag}"/>
+                    </p:column>
+
+                    <p:column headerText="#{etiq.usuario}:" styleClass="columnamed centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.usuario}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.idUsuario}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{etiq.asistencia}:" styleClass="columnamed centrado_texto">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.asistencia}"/>
+                        </f:facet>
+                        <h:outputText value="#{oRepor.asistencia}"/>
+                    </p:column>
+         </p:dataTable>
+            <br/>
+            <div class="#{oConDat.cita4.muestraTablas(2)} centrado_texto">
+                <p:commandButton id="divbtn" value="#{etiq.buscarOtro}" icon="ui-icon-search" update="tablaConsul4 panelPac acordionprin divbtn" styleClass="#{oConDat.cita4.muestraTablas(2)}">
+                    <f:setPropertyActionListener target="#{oConDat.cita4.mostrar}" value="#{0}" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.apPaterno}" value="" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.apMaterno}" value="" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.nombres}" value="" />
+                    <f:setPropertyActionListener target="#{oConDat.cita4.paciente.expediente.numero}" value="#{0}" />
+                </p:commandButton>
+            </div>
+            <br/><br/><br/>
+        </p:tab>  
+        <br/>
+       <!--**********************************************************************************-->
+       <p:tab title="#{etiq.pacAtendidos}">
+            <h4 class="centrado_texto"><p:outputLabel id="titPacAtn" value="#{etiq.pacAtendidosCadaMedico}"/></h4>
+            
+                <h:panelGrid class="frm_centrado" columns="4">
+                    <p:outputLabel id="fecPacAtn" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar id="tFecCita5" value="#{oConDat.asigCon.cita.fechaAux}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                    <br/>
+                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" update="tablaConsul5 atendidos" action="#{oConDat.asigCon.iniciaConsulta5()}"/>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable id="tablaConsul5" var="oRepor" value="#{oConDat.asigCon.buscarPacAtendidos()}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.citas}"/>
+                    </f:facet>
+                    
+                    <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.noTarjeta}" styleClass="columnamed2 centrado_texto"/>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="columnamed2 centrado_texto"/>
+                        <p:column rowspan="2" headerText="#{etiq.nombreCompleto}" styleClass="textoIzq" style="width: 25%;"/>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="columnamed7 centrado_texto"/>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="textoIzq"  style="width: 15%;"/>
+                        <p:column colspan="3" headerText="#{etiq.maximoDePacientes}" styleClass=" centrado_texto"/>
+                        <p:column rowspan="2" headerText="#{etiq.totalCitados}" styleClass=" centrado_texto"/>
+                        <p:column colspan="2" headerText="#{etiq.atendidos}" styleClass=" centrado_texto"/>
+                        <p:column colspan="2" headerText="#{etiq.faltantes}" styleClass=" centrado_texto"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass=" centrado_texto"/>
+                        <p:column headerText="#{etiq.subs}" styleClass=" centrado_texto"/>
+                        <p:column headerText="#{etiq.total}" styleClass=" centrado_texto"/>
+                        <p:column headerText="#{etiq.primVez}" styleClass=" centrado_texto"/>
+                        <p:column headerText="#{etiq.subs}" styleClass=" centrado_texto"/>
+                        <p:column headerText="#{etiq.primVez}" styleClass=" centrado_texto"/>
+                        <p:column headerText="#{etiq.subs}" styleClass=" centrado_texto"/>
+                    </p:row>
+                </p:columnGroup>
+                    
+                    <p:column styleClass="columnamed2 centrado_texto">
+                        <h:outputText value="#{oRepor.cita.PH.noTarjeta}"/>
+                    </p:column>
+                    
+                    <p:column styleClass="columnamed2 centrado_texto">
+                        <h:outputText value="#{oRepor.turno.clave}"/>
+                    </p:column>
+                    
+                    <p:column styleClass="textoIzq" style="width: 25%;">
+                        <h:outputText value="#{oRepor.cita.PH.apPaterno} #{oRepor.cita.PH.apMaterno} #{oRepor.cita.PH.nombres}"/>
+                    </p:column>
+                    
+                    <p:column styleClass="columnamed7 centrado_texto">
+                        <h:outputText value="#{oRepor.cita.noConsultorio}"/>
+                    </p:column>
+                    
+                    <p:column styleClass="textoIzq" style="width: 15%;">
+                        <h:outputText value="#{oRepor.cita.areaServicio.descripcion}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.citas1eraVez}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.citasSubs}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.maximo}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.total}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.atendidosPrim}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.atendidosSub}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.faltantesPrim}"/>
+                    </p:column>
+                    
+                    <p:column styleClass=" centrado_texto">
+                        <h:outputText value="#{oRepor.faltantesSub}"/>
+                    </p:column>
+         </p:dataTable>
+           <p:panelGrid id="atendidos" style="width: 100%;">
+            <p:row>
+                <p:column colspan="7" styleClass="mensaje centrado_texto" style="width: 78.3%;"><p:outputLabel id="totPacAtn" value="#{etiq.totalPacAtendidos}"/></p:column>
+                <p:column styleClass="mensaje centrado_texto" style="width: 10.85%;"><p:outputLabel value="#{oConDat.asigCon.atendidos}"/></p:column>
+                <p:column styleClass="mensaje centrado_texto" style="width: 10.85%;"><p:outputLabel value="#{oConDat.asigCon.faltantes}"/></p:column>
+             </p:row>
+        </p:panelGrid>
+        </p:tab>
+       </p:tabView>
+    </h:form>
+       <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus> 
+   </div>
+      
+  </ui:define>      
+</ui:composition>
+</html>

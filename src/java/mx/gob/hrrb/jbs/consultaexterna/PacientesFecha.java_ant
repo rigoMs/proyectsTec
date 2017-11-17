@@ -1,0 +1,194 @@
+package mx.gob.hrrb.jbs.consultaexterna;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import mx.gob.hrrb.modelo.core.Cita;
+import mx.gob.hrrb.modelo.core.Medico;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.Region;
+
+/**
+ *
+ * @author Javi
+ */
+@ManagedBean(name = "oPacFec")
+@SessionScoped
+public class PacientesFecha {
+private Cita oCita2;
+private Medico oMed2;
+private Cita[] oArrCitas;
+    /**
+     * Creates a new instance of PacientesFecha
+     */
+    public PacientesFecha() {
+        oCita2=new Cita();
+        oMed2=new Medico();
+        oArrCitas=null;
+    }
+    
+    public void buscaCitas(){
+        try{
+            oCita2.iniciaConsulta2();
+            oArrCitas=oCita2.buscarConsulta1(oMed2, 2);
+            
+            if(oArrCitas==null)
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,"INFO","NO SE CARGARON LOS DATOS"));
+            }catch(Exception ex){Logger.getLogger(PacientesFecha.class.getName()).log(Level.SEVERE,null,ex);}
+    }
+    
+    public Cita getCita2() {
+        return oCita2;
+    }
+    
+     public void setCita2(Cita oCita2) {
+        this.oCita2 = oCita2;
+    }
+
+    public Medico getMed2() {
+        return oMed2;
+    }
+
+    public void setMed2(Medico oMed2) {
+        this.oMed2 = oMed2;
+    }
+    
+    public List<Medico> getListaMedicos(){
+       List<Medico> lLista = null;
+       try {
+           lLista = new ArrayList<Medico>(Arrays.asList(
+                   (new Medico()).buscarMedicosParaCambios()));
+       } catch (Exception ex) {
+           Logger.getLogger(ProgConsultorios.class.getName()).log(Level.SEVERE, null, ex);
+       }
+        return lLista;
+    }
+    
+    public String getDato(int tipo){
+        String sDato[]=getMed2().getNombres().split("-");
+        String sDato2="";
+        for(int i=0; i<sDato.length;i++){
+            System.out.println(sDato[i]);
+        }
+        if(tipo==1)//nombre del médico
+            sDato2=sDato[5];
+        if(tipo==2)//consultorio
+            sDato2=sDato[2];
+        if(tipo==3)//servicio
+            sDato2=sDato[8];           
+        return sDato2;
+    }
+    
+    //*************************************************************************
+        public void postProcessXLS2(Object document) {
+        HSSFWorkbook wb = (HSSFWorkbook) document;
+        HSSFSheet sheet = wb.getSheetAt(0);
+        wb.setSheetName(0,"Citas"); //nombre de la hoja de excel
+        sheet.shiftRows (0, 100, +5);
+        
+        HSSFRow row = sheet.createRow((short)0);
+        HSSFCell cell = row.createCell((short)0);
+        cell.setCellValue("HOSPITAL REGIONAL RÍO BLANCO");
+        sheet.addMergedRegion(new Region(0,(short)0, 0, (short)6));
+        
+        row = sheet.createRow((short)1);
+        cell = row.createCell((short)0);
+        cell.setCellValue("PACIENTES CITADOS POR MÉDICO");
+        sheet.addMergedRegion(new Region(1,(short)0, 1, (short)6));
+        
+        row = sheet.createRow((short)2);
+        cell = row.createCell((short)0);
+        cell.setCellValue("FECHA: "+oCita2.obtenFechaAux()+"   -   CONSULTORIO: "+oCita2.getNoConsultorio()+"  -  SERVICIO: "+oCita2.getAreaServicio().getDescripcion());
+        sheet.addMergedRegion(new Region(2,(short)0, 2, (short)6));
+        
+        HSSFFont font = wb.createFont();
+        font.setFontName(HSSFFont.FONT_ARIAL);
+        font.setFontHeightInPoints((short) 11);
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        font.setColor(HSSFColor.BLACK.index);
+        
+        HSSFFont fontTit = wb.createFont();
+        fontTit.setFontName(HSSFFont.FONT_ARIAL);
+        fontTit.setFontHeightInPoints((short) 16);
+        fontTit.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        fontTit.setColor(HSSFColor.BLACK.index);
+        HSSFCellStyle cellStyleTit = wb.createCellStyle();         
+        cellStyleTit.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        cellStyleTit.setFont(fontTit);
+        
+        HSSFCellStyle cellStyleSubTit = wb.createCellStyle();         
+        cellStyleSubTit.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        cellStyleSubTit.setFont(font);
+        
+        row =sheet.createRow((short)3);
+        cell=row.createCell((short)0);
+        cell.setCellValue("MÉDICO: "+oCita2.getPH().getNoTarjeta()+" - "+oCita2.getPH().getApPaterno()+" "+oCita2.getPH().getApMaterno()+" "+oCita2.getPH().getNombres());
+        sheet.addMergedRegion(new Region(3,(short)0, 3, (short)6));
+        
+        
+        HSSFRow header;
+        HSSFCellStyle cellStyle = wb.createCellStyle(); 
+        //cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);        
+        cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        //cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        cellStyle.setBorderBottom((short)1);
+        cellStyle.setBorderTop((short)1);
+        cellStyle.setBorderLeft((short)1);
+        cellStyle.setBorderRight((short)1);
+        font.setFontHeightInPoints((short) 11);
+        cellStyle.setFont(font);
+            
+        header = sheet.getRow(0);
+        sheet.setColumnWidth(0, 3500);
+        sheet.setColumnWidth(1, 3500);
+        sheet.setColumnWidth(2, 3500);
+        sheet.setColumnWidth(3, 4200);
+        sheet.autoSizeColumn(4);
+        sheet.setColumnWidth(5, 4300);
+        sheet.setColumnWidth(6, 7600);
+        for(int i=0; i < header.getPhysicalNumberOfCells();i++) {
+            header.getCell(i).setCellStyle(cellStyleTit);
+        }
+        header = sheet.getRow(1);
+        for(int i=0; i < header.getPhysicalNumberOfCells();i++) {
+            header.getCell(i).setCellStyle(cellStyleSubTit);
+        }
+        header = sheet.getRow(2);
+        for(int i=0; i < header.getPhysicalNumberOfCells();i++) {
+            header.getCell(i).setCellStyle(cellStyleSubTit);
+        }
+        header = sheet.getRow(3);
+        for(int i=0; i < header.getPhysicalNumberOfCells();i++) {
+            header.getCell(i).setCellStyle(cellStyleSubTit);
+        }
+        header = sheet.getRow(5);
+        for(int i=0; i < header.getPhysicalNumberOfCells();i++) {
+            header.getCell(i).setCellStyle(cellStyle);
+        }
+    }
+    
+    public Cita[] getArrCitas(){
+        return oArrCitas;
+}
+    
+    public void setArrCitass(Cita[] oArrCitas){
+        this.oArrCitas=oArrCitas;
+    }
+    
+    public Date getFechaActual(){
+        return (new Date());
+    }
+}

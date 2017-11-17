@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"      
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <h:form id="buscaUCI">
+                    <h3 class="centrado_texto"><h:outputLabel value="#{etiq.informeMensualUCI}"/></h3>
+                    <p:accordionPanel styleClass="centrar" style=" width: 500px; font-weight: bold;">
+                        <p:tab title="#{etiq.buscarXfecha}" >
+                            <p:outputPanel styleClass="centrar">
+                            <p:panelGrid columns="4">                                    
+                                <p:outputLabel for="fecPorServ" value="#{etiq.fecha} De:"/>
+                                <p:outputLabel/>  
+                                <p:outputLabel value="#{etiq.fecha} A:" for="fechaA"/>
+                                <p:outputLabel/>
+                                <p:calendar size="8" id="fecPorServ" effect="puff" value="#{oRUCI.reporte.fechaInicio}" 
+                                            pattern="dd/MM/yyyy" locale="es" required="true" navigator="true"
+                                            readonlyInput="true" showOn="button" requiredMessage="ERROR, Seleccione La Fecha de Inicio">
+                                    <p:ajax event="dateSelect"/>
+                                </p:calendar>
+                                <p:outputLabel value="A"/>
+                                <p:calendar size="8" id="fechaA" effect="puff" value="#{oRUCI.reporte.fechaFin}"
+                                            pattern="dd/MM/yyyy" locale="es" required="true" navigator="true"
+                                            readonlyInput="true" showOn="button" requiredMessage="ERROR, Seleccione La Fecha de Fin">
+                                    <p:ajax event="dateSelect" listener="#{oRUCI.validaFechaFinal}" update=":ReporteUCI :ReporteUCI:msgs"/>
+                                </p:calendar>
+                                <p:commandButton value="Buscar" icon="ui-icon-search"  >  
+                                    <p:ajax listener="#{oRUCI.buscaReporte}" update=":ReporteUCI :ReporteUCI:p1 :ReporteUCI:tblUCIAct" />
+                                </p:commandButton>
+                            </p:panelGrid>
+                            </p:outputPanel>
+                        </p:tab>
+                    </p:accordionPanel>                    
+                </h:form>
+                <div  id="infUci">
+                    <h:form id="ReporteUCI">
+                        <br/>
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>                        
+                        <p:panelGrid id="p1" style=" width: 100%;" rendered="#{oRUCI.render}">
+                            <p:row>
+                                <p:column colspan="3" style="border-color: transparent; text-align: center;">
+                                    <b><h:outputLabel value="#{etiq.informeMensualUCI}"/></b> 
+                                   &nbsp;&nbsp; <p:outputLabel value="DE"/>
+                                   &nbsp;&nbsp; <b><p:outputLabel value="#{oRUCI.reporte.fechaInicioStr2}" id="f1"/></b>
+                                   &nbsp;&nbsp; <p:outputLabel value="A"/>
+                                   &nbsp;&nbsp; <b><p:outputLabel value="#{oRUCI.reporte.fechaFinStr2}" id="f2"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3" style="border-color: transparent; padding: 0px;">
+                                    <p:dataTable id="tblUCIAct" value="#{oRUCI.arrActividades}" var="oU" emptyMessage="#{etiq.sinMs}">
+                                        <p:column style="width: 5%;border-color: black;color:black; font-size: 12px;font-weight: bold;" headerText="#{etiq.ser}">
+                                            <p:outputLabel value="#{oU.episodio.paciente.expediente.servicioIngreso.descripcion}" style="font-weight: normal; font-size: 11px;"/>  
+                                        </p:column>
+                                        <p:column style="width: 5%; font-size: 12px;border-color: black; color: black;font-weight: bold;" headerText="#{etiq.fechMay}">
+                                            <p:outputLabel value="#{oU.episodio.fechaIngreso}" style="font-weight: normal; font-size: 11px;">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column style="width: 19%;border-color: black;color:black; font-size: 12px;font-weight: bold;" headerText="#{etiq.nombrePaMay}">
+                                            <p:outputLabel value="#{oU.episodio.paciente.nombreCompleto}" style="font-weight: normal; font-size: 11px;"/>
+                                        </p:column>
+                                        <p:column style="width: 5%;border-color: black;color:black; font-size: 12px;font-weight: bold;" headerText="#{etiq.exp2}">
+                                            <p:outputLabel value="#{oU.episodio.paciente.expediente.numero}" style="font-weight: normal; font-size: 11px;"/>
+                                        </p:column>
+                                        <p:column style="width: 3.3%;border-color: black;color:black; font-size: 12px;font-weight: bold;" headerText="#{etiq.eda2}">
+                                            <p:outputLabel value="#{oU.episodio.paciente.edadNumero}" style="font-weight: normal; font-size: 11px;"/>
+                                        </p:column>                                         
+                                        <p:column style="width: 4%;border-color: black;color:black; font-size: 12px;font-weight: bold;" headerText="#{etiq.sex2}">
+                                            <p:outputLabel value="#{oU.episodio.paciente.sexoP}" style="font-weight: normal; font-size: 11px;"/>
+                                        </p:column>
+                                        <p:column style="width: 19%;border-color: black;color:black; font-size: 12px;font-weight: bold;text-transform: uppercase" 
+                                                  headerText="#{etiq.diagnosticoIngreso}">
+                                            <p:outputLabel value="#{oU.episodio.diagIngreso.descripcionDiag}" style="font-weight: normal; font-size: 11px;"/>
+                                        </p:column>
+                                        <p:column style="width: 4%; font-size: 12px;border-color: black;color:black; font-size: 12px;font-weight: bold;" headerText="#{etiq.diaEst}">
+                                            <p:outputLabel value="#{oU.episodio.diasEstancia}" style="font-weight: normal; font-size: 11px;"/>
+                                        </p:column>
+                                        <p:column style="width: 7.5%;border-color: black;color:black; font-size: 12px;font-weight: bold; text-transform: uppercase" headerText="#{etiq.motivoEgreso}">
+                                            <p:outputLabel value="#{oU.episodio.motivoEgresoP}" style="font-weight: normal; font-size: 11px;"/>
+                                        </p:column>
+                                        <p:column style="width: 4.5%;border-color: black;color:black; font-size: 12px; font-weight: bold;" headerText="#{etiq.fechaa1}">
+                                            <p:outputLabel value="#{oU.episodio.altaHospitalaria}" style="font-weight: normal; font-size: 11px;">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:dataTable>                                    
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style=" width: 35%; border-color: transparent;"/>
+                                <p:column colspan="" style="border-color: transparent; border-bottom-color: black;">
+                                    <div class="centrar">
+                                       <p:outputLabel value=""/> 
+                                    </div>                                    
+                                </p:column>
+                                <p:column style=" width: 35%; border-color: transparent;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column style=" width: 35%; border-color: transparent;"/>
+                                <p:column style=" border-color:  transparent;">
+                                    <div class="centrar">
+                                       <p:outputLabel value="#{etiq.responsableServi}"/> 
+                                    </div>                                    
+                                </p:column>
+                                <p:column style="width: 35%; border-color: transparent;"/>                                   
+                                
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-color: transparent;"/>
+                                <p:column style="border-color: transparent; text-align: center;" styleClass="ui-widget-header">
+                                    <p:commandButton icon="ui-icon-folder-open" 
+                                            value=" Abrir Para #{etiq.imprimir}" 
+                                            oncomplete="PF('imprimirReporte').show()" update=":ImpUCI"/>
+                                </p:column>
+                                <p:column style="border-color: transparent;"/>
+                            </p:row>                            
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+                
+                <p:dialog widgetVar="imprimirReporte" modal="true" resizable="false" header="#{etiq.reporteUci}" showEffect="puff" hideEffect="puff" height="600" style="width: 100%;">
+                     <h:form id="ImpUCI">
+                         <p:panelGrid style="width:100%;">
+                            <p:row>
+                                <p:column  style=" height: 50px; border-color:  transparent; width: 12%; border-color: black;background-color: white; border-right-color: transparent;">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="45" align="right"/>
+                                </p:column>
+                                <p:column style=" width: 76%; text-align: center; border-color: transparent;border-color: black;background-color: white; border-right-color: transparent;">
+                                    <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                    <b><p:outputLabel value="#{etiq.hrrbM}"/></b>                                    
+                                </p:column>
+                                <p:column style="width : 12%; height: 50px;border-color: transparent;border-color: black;background-color: white;">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120" height="45"  align="left"/>
+                                </p:column>
+                            </p:row> 
+                             <p:row>
+                                 <p:column  colspan="3" style="text-align: center; border-color: transparent; background-color: white; height: 30px;">
+                                    <h:outputLabel value="#{etiq.informeMensualUCI}" style=" font-size: 15px;"/>
+                                    &nbsp;
+                                    &nbsp;
+                                    <p:outputLabel value="DE"/>
+                                    &nbsp;
+                                    &nbsp;
+                                    <p:outputLabel value="#{oRUCI.reporte.fechaInicioStr2}"/>
+                                    &nbsp;
+                                    &nbsp;
+                                    <p:outputLabel value="A"/>
+                                    &nbsp;
+                                    &nbsp;
+                                    <p:outputLabel value="#{oRUCI.reporte.fechaFinStr2}"/>
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>                                          
+                        <p:outputPanel style="width: 1300px; background-color: white; ">
+                            <p:dataTable id="tblUCIAct" widgetVar="tblInfAc" value="#{oRUCI.arrActividades}" var="oA" emptyMessage="#{etiq.sinMs}">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column style="width: 9%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.ser}"/>
+                                        <p:column style="width: 4.2%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.fechMay}"/>
+                                        <p:column style="width: 18%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.nombrePaMay}"/>
+                                        <p:column style="width: 5%;font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.exp2}"/>
+                                        <p:column style="width: 3.5%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.eda2}"/>
+                                        <p:column style="width: 4.5%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.sex2}"/>
+                                        <p:column style="width: 18%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;text-transform: uppercase" headerText="#{etiq.diagnosticoIngreso}"/>
+                                        <p:column style="width: 4%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.diaEst}"/>
+                                        <p:column style="width: 8%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white; text-transform: uppercase" headerText="#{etiq.motivoEgreso}"/>
+                                        <p:column style="width: 4%; font-size: 12px; font-family: monospace; color: black; font-weight: bold; background: white;" headerText="#{etiq.fechaa1}"/>
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.paciente.expediente.servicioIngreso.descripcion}"/>  
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.fechaIngreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.paciente.nombreCompleto}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;" >
+                                    <p:outputLabel value="#{oA.episodio.paciente.edadNumero}"/>
+                                </p:column>                                         
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.paciente.sexoP}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.diagIngreso.descripcionDiag}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.diasEstancia}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.motivoEgresoP}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;">
+                                    <p:outputLabel value="#{oA.episodio.altaHospitalaria}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:dataTable>            
+                        </p:outputPanel>
+                         <p:outputPanel style="text-align: center;">
+                             <p:outputLabel value="_________________________________________"/><br/>
+                             <p:outputLabel value="#{etiq.responsableServi}"/>
+                         </p:outputPanel>
+                     </h:form>
+                     <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":ImpUCI"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('imprimirReporte').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                 </p:dialog>
+                
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+</html>
+

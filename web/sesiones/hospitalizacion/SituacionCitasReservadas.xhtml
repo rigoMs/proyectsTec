@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div>
+             <h:form class="centrar">
+                 <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                 <br/>
+                 
+                 <p:growl id="messages" showDetail="true"/>
+                 
+                 <h2><h:outputLabel value="#{etiq.situacionCitasReser}"/></h2>
+                 <p:panelGrid styleClass="frm_centrado" id="RegPaciente"> 
+                 <f:facet name="header">
+                     <p:row>
+                         <p:column>
+                         <h:outputLabel value="#{etiq.rangoFechas}"/>
+                        </p:column>
+                    </p:row>
+                </f:facet>                                        
+                     <p:row>
+                         <p:column>
+                             <p:outputLabel value="#{etiq.fechaEmisionDel}: "/>
+
+                             <p:calendar id="fechaIni"  effect="fold" required="true" value="#{oEstCitasRes.fechaIni}" maxdate="#{oEstCitasRes.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                 <p:ajax event="dateSelect" update="fechaFin"/>
+                             </p:calendar>
+                            <p:outputLabel value=" #{etiq.al}: "/>
+                            <p:calendar id="fechaFin"  effect="fold" required="true" value="#{oEstCitasRes.fechaFin}" mindate="#{oEstCitasRes.fechaIni}" maxdate="#{oEstCitasRes.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                             </p:calendar>                                                   
+                          </p:column>                                     
+                      </p:row> 
+                    <p:row>
+                        <p:column>            
+                            <p:commandButton id="bGenerar" styleClass="frm_login" value="#{etiq.consultar}" icon="ui-icon-search" action="#{oEstCitasRes.generar()}" update=":resultados:reporte"/>                  
+                            <br/> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>                           
+              </h:form>
+             </div>
+                 <br/><br/>
+                 <h:form id="resultados">
+                    <div class="tabla_pacEnc">
+                        <p:dataTable id="reporte" var="oCitas" value="#{oEstCitasRes.estatusCita}" emptyMessage="No Existen Pacientes Con Este Criterio">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.reporteEgre}"/>                            
+                            </f:facet>                                                                                    
+                            
+                            <p:column headerText="#{etiq.nombres}">
+                                <h:outputText value="#{oCitas.paciente.nombres}" />
+                            </p:column>
+                                
+                            <p:column headerText="#{etiq.appat}">
+                                <h:outputText value="#{oCitas.paciente.apPaterno}" />
+                            </p:column>                           
+
+                            <p:column headerText="#{etiq.apmat}">
+                                <h:outputText value="#{oCitas.paciente.apMaterno}" />
+                            </p:column>                                                          
+                            
+                            <p:column headerText="#{etiq.estatusCita}">
+                                <h:outputText value="#{oCitas.statusCitaP}" />
+                            </p:column>
+
+                            <p:column headerText="#{etiq.tiempoAproxCita}">
+                                <h:outputText value="#{oCitas.numAprox} "/>
+                                <h:outputText value="#{oCitas.tiempoAproxP}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.fechaCita}">
+                                <h:outputText value="#{oCitas.fechaCita}"/>
+                            </p:column>                                                                               
+                            
+                           </p:dataTable>
+                    </div>
+                     <br/><br/>
+
+                </h:form>   
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>                 
+       </ui:define>
+       </ui:composition>
+      
+</html>

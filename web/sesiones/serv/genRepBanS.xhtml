@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporte} de Entrega de Producto Hemoderivado"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:tabView id="repbancos">
+                <p:tab title="#{etiq.rptDiarioBS}">
+                    <h:form id="frmprodh">
+                        <p:panelGrid columns="5" styleClass="frm_centrado">
+                            <p:outputLabel value="Seleccione la fecha de: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni2"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{oBancoSan.fecIni}" locale="es" readonlyInput="true">
+                                <p:ajax event="dateSelect" update="fechaFin2"/>
+                            </p:calendar>
+                            <h:outputLabel class="negrita" value="#{etiq.afecha}" styleClass="mensaje"/>
+                            <p:calendar id="fechaFin2"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha"  value="#{oBancoSan.fecFin}" onkeypress="return validaCaracter(event)" mindate="#{oBancoSan.fecIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBancoSan.reporteProductoSolicitado}" update=":repbancos:frmprodh:tblrptprod">
+                            </p:commandButton>
+                        </p:panelGrid>
+                        <br/>
+                        <div class="buscar">
+                        <p:dataTable id="tblrptprod"
+                                     value="#{oBancoSan.reporteSol}"
+                                     var="oRep"
+                                     emptyMessage="No se encontraron registros">
+                            <f:facet name="header">
+                                <p:outputLabel value="Reporte diario de Pacientes" styleClass="mensaje"/>
+                            </f:facet>
+                            <p:column width="20%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRep.episodio.paciente.nombres} #{oRep.episodio.paciente.apPaterno} #{oRep.episodio.paciente.apMaterno}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.servicio}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRep.episodio.area.descripcion}" />
+                            </p:column>
+                            <p:column width="20%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.productoSol}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRep.detalle.productoH.descripcion}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.unidades}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRep.detalle.cantSurtida}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.fecSurtido}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oRep.detalle.fechaSurtidoRealizacion}" />
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid styleClass="frm_centrado">
+                            <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                <p:printer target="tblrptprod" />
+                            </p:commandButton>
+                        </h:panelGrid>
+                       </div>
+                    </h:form>
+                </p:tab>
+                <p:tab title="#{etiq.rptTransAmb}">
+                    <h:form id="frmamb">
+                        <p:panelGrid columns="5" styleClass="frm_centrado">
+                            <p:outputLabel value="Seleccione la fecha de: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni3"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{oBancoSan.fecIni}" locale="es" readonlyInput="true">
+                                <p:ajax event="dateSelect" update="fechaFin3"/>
+                            </p:calendar>
+                            <h:outputLabel class="negrita" value="#{etiq.afecha}" styleClass="mensaje"/>
+                            <p:calendar id="fechaFin3"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha"  value="#{oBancoSan.fecFin}" onkeypress="return validaCaracter(event)" mindate="#{oBancoSan.fecIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBancoSan.reporteTranAmbulatoria}" update=":repbancos:frmamb:tbltransamb">
+                            </p:commandButton>
+                        </p:panelGrid>
+                        <br/>
+                        <p:dataTable id="tbltransamb"
+                                     value="#{oBancoSan.reporteAmb}" 
+                                     var="oAmb" 
+                                     emptyMessage="No se encontraron registros">
+                            <f:facet name="header">
+                                <p:outputLabel value="Reporte de Transfusiones Ambulatorias" styleClass="mensaje"/>
+                            </f:facet>
+                            <p:column width="20%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oAmb.episodio.paciente.nombres} #{oAmb.episodio.paciente.apPaterno} #{oAmb.episodio.paciente.apMaterno}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.numexpe}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oAmb.episodio.expediente}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.cveSegPop}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oAmb.episodio.paciente.seguro.numero}" />
+                            </p:column>
+                            <p:column width="20%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.grupo} y #{etiq.rh}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oAmb.solicitud.tipoSangre.valor}, #{oAmb.solicitud.RH.valor}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.productoSol}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oAmb.detalle.productoH.descripcion}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.folioPago}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oAmb.folio}" />
+                            </p:column>
+                            <p:column width="10%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje"/>
+                                </f:facet>
+                                <h:outputText value="#{oAmb.detalle.fechaSolicitud}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

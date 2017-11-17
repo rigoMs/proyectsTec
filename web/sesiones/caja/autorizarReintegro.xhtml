@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        #{oAutReintegroJB.limpiar()}
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.mantener} #{etiq.catalogo}"/>
+        </h2>
+        <p:dialog height="450" width="900" 
+                  modal="true" id="dlgCompBusq" header="#{etiq.buscarPac}"  
+                  widgetVar="dlgCompBusqWidVar"  
+                  showEffect="clip" hideEffect="fold" >  
+            <h:form id="busqueda">
+                <center>
+                    <ui:include src="../compbusq/compBusqPac.xhtml"></ui:include> 
+                    <p:separator/>
+                    <p:commandButton value="Seleccionar"
+                                 onclick="PF('dlgCompBusqWidVar').hide()" 
+                                 action="#{oAutReintegroJB.llenar}"
+                                 icon="ui-icon-search" update=":frmPral:panelPral">
+                    </p:commandButton>
+                    <p:commandButton value="Cancelar"
+                                 onclick="PF('dlgCompBusqWidVar').hide()" 
+                                 action="#{oBusqPacComunJB.inicializar}"
+                                 icon="ui-icon-circle-close" />
+                </center>
+            </h:form> 
+        </p:dialog>
+        <h:form>
+            <center>
+                <p:commandButton value="Seleccionar paciente"
+                                 action="#{oBusqPacComunJB.inicializar}"
+                                 oncomplete="PF('dlgCompBusqWidVar').show();" 
+                                 icon="ui-icon-search" />
+            </center>
+        </h:form>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="frmPral">
+                <p:panel id="panelPral" styleClass="frm_centrado centrado_texto"
+                         style="visibility: #{oAutReintegroJB.visible}">
+                    <h:outputText 
+                        value="#{oAutReintegroJB.paciente.nombreCompleto}"/>
+                </p:panel>
+                 
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</html>

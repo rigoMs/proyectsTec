@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.valeMatCur}"/>
+                </h2>
+                <br/>
+                <div class="centrado_texto">
+                    <h:form id="SolValeMatPac">
+                        <p:growl id="msg" showDetail="true"/>
+
+                        <p:accordionPanel id="apBusqPacValeMat">
+                            <p:tab title="#{etiq.buscarpacs}">
+
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="4"><h:outputText value="#{etiq.buscarDatosBasicos}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.nombres}:"/></p:column>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.appat}:"/></p:column>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.apmat}:"/></p:column>
+                                        <p:column></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="nom" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oGenSolValeMatPac.episodioMedico.paciente.nombres}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="app" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oGenSolValeMatPac.episodioMedico.paciente.apPaterno}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="apm" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oGenSolValeMatPac.episodioMedico.paciente.apMaterno}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update=":SolValeMatPac:tablaPac" listener="#{oGenSolValeMatPac.buscaPacienteAtenMed()}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="3"><h:outputText value="#{etiq.buscarPorExpediente}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.noExp}:"/></p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="exp"
+                                                         value="#{oGenSolValeMatPac.episodioMedico.expediente}"
+                                                         converterMessage="#{etiq.errCapturaCaractEsp}">
+                                                <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                                <f:ajax render="mentExp" execute="@this" 
+                                                        event="valueChange" />
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update=":SolValeMatPac:tablaPac" listener="#{oGenSolValeMatPac.buscaPacienteAtenMed()}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:accordionPanel>
+
+
+
+                        <div class="tabla_pacEnc">
+                            <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                         paginatorPosition="both" rows="5" 
+                                         value="#{oGenSolValeMatPac.listaEpiMed}" 
+                                         emptyMessage="#{etiq.noRegistro}" 
+                                         style="visibility:#{oGenSolValeMatPac.visibilidadTabla};"
+                                         rowKey="#{oPacEnc.paciente.folioPaciente}"
+                                         selection="#{oGenSolValeMatPac.seleccionado}">
+                                <p:ajax event="rowSelectRadio" update=":SolValeMatPac:tablaMatSolSur :SolValeMatPac:regValePac"></p:ajax>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.pacEncontrados}"/>
+                                </f:facet>
+                                <p:column selectionMode="single">
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.apPaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.apMaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.nombres}"/>
+                                </p:column>
+                                <p:column style="width: 7%">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.edadNumero}"/>
+                                </p:column>
+                                <p:column style="width: 25%">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.sexo}"/>
+                                    </f:facet>
+                                    <p:column><h:outputText  value="#{oPacEnc.paciente.sexoP}" /></p:column>
+                                </p:column>
+                                <p:column style="width: 10%">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.servicio}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.area.descripcion}"/>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton value="#{etiq.agregarDetalles}" onclick="PF('dlgActVale').show();" type="button" icon="ui-icon-plus">
+                                        <p:ajax listener="#{oGenSolValeMatPac.llenadoDatosPersonales}" update=":SolValeMatPac:ActVale"></p:ajax>
+                                    </p:commandButton>
+                                    <p:commandButton value="#{etiq.verDetalles}" onclick="PF('dlgConsVale').show();" type="button" icon="ui-icon-search">
+                                        <p:ajax listener="#{oGenSolValeMatPac.llenadoDatosPersonales}" update=":SolValeMatPac:ConsVale"></p:ajax>
+                                    </p:commandButton>
+                                </f:facet>
+                            </p:dataTable>
+                        </div>
+                        
+                        
+                        <!--**************************************************************************************************************************************************************************-->
+
+
+                        <p:dialog header="Vale de material de curación" widgetVar="dlgActVale" height="500" width="900" resizable="false" modal="true">
+                            <p:panelGrid id="ActVale">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="5"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="3"></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaYhora}:"/></p:column>
+                                    <p:column>
+                                        <h:outputText  value="#{oGenSolValeMatPac.fechaActual}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="America/Mexico_City"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputText value="#{oGenSolValeMatPac.episodioMedico.paciente.nombreCompleto}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.paciente.edadNumero}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.paciente.sexoP}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.paciente.expediente.numero}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.area.descripcion}" /></p:column>                            
+                                </p:row>                        
+                            </p:panelGrid>
+                            <br/>
+                            <p:panelGrid id="regValePac" styleClass="frm_centrado">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="5"><p:outputLabel value="Material de curación"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="#{etiq.clave}"/></p:column>
+                                        <p:column><h:outputLabel value="#{etiq.material}"/></p:column>
+                                        <p:column><h:outputLabel value="#{etiq.presentacion}"/></p:column>
+                                        <p:column><h:outputLabel value="#{etiq.cantidad}"/></p:column>
+                                        <p:column><h:outputLabel value=""/></p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column><p:inputText id="claveMat" value="#{oGenSolValeMatPac.detalleValMat.material.claveMaterial}" readonly="true" size="10"><p:ajax/></p:inputText></p:column>
+                                    <p:column>
+                                        <p:autoComplete id="nombreMed"  onkeypress="return validaCaracter(event);"  queryDelay="1000" size="40" minQueryLength="3" required="true" styleClass="bordes"
+                                                        value="#{oGenSolValeMatPac.material.nombre}" completeMethod="#{oGenSolValeMatPac.detalleValMat.material.completarMatAlm}" effect="fade"
+                                                        onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300" requiredMessage="Debe ingresar un nombre de medicamento">
+                                            <p:ajax listener="#{oGenSolValeMatPac.buscaClave()}" update="claveMat clavePre" event="itemSelect"/>
+                                        </p:autoComplete>
+                                    </p:column>
+                                    <p:column><p:inputText id="clavePre" value="#{oGenSolValeMatPac.material.presentacion.valor}" size="5" readonly="true"><p:ajax/></p:inputText></p:column>
+                                    <p:column><p:inputText value="#{oGenSolValeMatPac.detalleValMat.cantSolicitada}" size="5"><poue:keyFilter regEx="/[0-9]/i"/><p:ajax/></p:inputText></p:column>
+                                    <p:column>
+                                        <p:commandButton value="Agregar" icon="ui-icon-plus">
+                                            <p:ajax listener="#{oGenSolValeMatPac.registroMaterial()}" update="tablaValePac regValePac msg"></p:ajax>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column colspan="5">
+                                        <p:dataTable id="tablaValePac" var="Vale" value="#{oGenSolValeMatPac.vale}" style="visibility:#{oGenSolValeMatPac.visibilidadRegistroMat}">
+                                            <f:facet name="header">
+                                                <p:outputLabel id="titVac" value="Material"/>
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.clave}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{Vale.material.claveMaterial}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.nombre}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{Vale.material.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{Vale.material.presentacion.valor}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidad}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{Vale.cantSolicitada}"/>
+                                            </p:column>
+                                            <p:column headerText="" styleClass="columnachica centrado_texto">
+                                                <p:commandButton value="#{etiq.borrar}" id="btnBorrar" icon="ui-icon-trash">
+                                                    <p:ajax listener="#{oGenSolValeMatPac.borrarElemento(Vale)}" update="tablaValePac"></p:ajax>
+                                                </p:commandButton>
+                                            </p:column>
+                                            <f:facet name="footer">
+                                                <p:commandButton value="Guardar" icon="ui-icon-disk" id="btnGuardar">
+                                                    <p:ajax listener="#{oGenSolValeMatPac.guardarMatInd()}" update="tablaValePac :SolValeMatPac:msg"/>
+                                                </p:commandButton>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:dialog>
+
+
+                        <!--**************************************************************************************************************************************************************************-->                
+
+
+                        <p:dialog header="Material de curación utilizado" widgetVar="dlgConsVale" height="500" width="1100" resizable="false" modal="true">                       
+                            <p:panelGrid styleClass="frm_centrado">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fecha}: " styleClass="mensaje"/> 
+                                        <p:calendar id="FecSolPrevias" value="#{oGenSolValeMatPac.fechaAux}" effect="fold" locale="es" showOn="button" 
+                                                    pattern="dd/MM/yy" required="true" readonlyInput="true">
+                                            <p:ajax event="dateSelect" update="fechaAux" />
+                                        </p:calendar>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search">
+                                            <p:ajax update="tablaMatSolSur" listener="#{oGenSolValeMatPac.buscaMaterialSolSur()}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>                    
+                            <p:panelGrid id="ConsVale">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="5"></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column>
+                                    <p:column>
+                                        <h:outputLabel id="fechaAux" value="#{oGenSolValeMatPac.fechaAux}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column> 
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.opeRealizada}:"/></p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputText value="#{oGenSolValeMatPac.episodioMedico.paciente.nombreCompleto}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.paciente.edadNumero}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.paciente.sexoP}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.paciente.expediente.numero}" /></p:column>
+                                    <p:column><h:outputText  value="#{oGenSolValeMatPac.episodioMedico.area.descripcion}" /></p:column>
+                                    <p:column><h:outputLabel value="#{oGenSolValeMatPac.episodioMedico.diagIngreso.descripcionDiag}"/></p:column>
+                                    <p:column><h:outputLabel value="#{oGenSolValeMatPac.episodioMedico.proceRe1.CIE9.descripcion}"/></p:column>
+                                </p:row> 
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="Material de curación"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="7">
+                                        <p:dataTable id="tablaMatSolSur" var="MatSolSur" value="#{oGenSolValeMatPac.valeMatSol}">
+                                            <p:column headerText="#{etiq.nombre}">
+                                                <h:outputText value="#{MatSolSur.material.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidadSol}">
+                                                <h:outputText value="#{MatSolSur.cantSolicitada}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidadSur}">
+                                                <h:outputText value="#{MatSolSur.cantSurtida}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/><br/>
+                            <p:commandButton value="Imprimir" onclick="" icon="ui-icon-print">
+                                <p:printer target="ConsVale"/>
+                            </p:commandButton>
+                        </p:dialog>
+
+                    </h:form>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+</html>

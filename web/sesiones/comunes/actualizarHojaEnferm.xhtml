@@ -1,0 +1,403 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.hojaEnf}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form id="hojaEnfermeria">
+                        <p:growl id="msg" showDetail="true"/>
+
+                        <p:accordionPanel rendered="#{oActHojaEnf.ocultarBusqueda1}">
+                            <p:tab title="#{etiq.buscarServicioHosp}">
+                                <p:panelGrid columns="3">
+                                    <p:outputLabel value="#{etiq.servicio}:"/>
+                                    <p:outputLabel value="#{etiq.fecha}:"/>
+                                    <p:outputLabel/>
+                                    <p:selectOneMenu id="selectAreas" value="#{oActHojaEnf.areaServ.clave}">
+                                        <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                        <f:selectItems value="#{oActHojaEnf.listaAreasHosp}" var="Areas"
+                                                       itemLabel="#{Areas.descripcion}" itemValue="#{Areas.clave}" />
+                                        <p:ajax/>
+                                    </p:selectOneMenu>
+                                    <h:outputText value="#{oActHojaEnf.fechaActual}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                    </h:outputText>
+                                    <p:commandButton styleClass="bordes" 
+                                                     value="#{etiq.buscar}" 
+                                                     icon="ui-icon-search">
+                                        <p:ajax update=":hojaEnfermeria:tablaPac" listener="#{oActHojaEnf.buscaPacienteHosp()}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:accordionPanel>
+
+                        <p:accordionPanel rendered="#{oActHojaEnf.ocultarBusqueda2}">
+                            <p:tab title="#{etiq.buscarServicioUrg}">
+                                <p:panelGrid columns="3">
+                                    <p:outputLabel value="#{etiq.servicio}:"/>
+                                    <p:outputLabel value="#{etiq.fecha}:"/>
+                                    <p:outputLabel/>
+                                    <p:selectOneMenu id="selectAreas" value="#{oActHojaEnf.areaServ.clave}">
+                                        <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                        <f:selectItems value="#{oActHojaEnf.listaAreasUrg}" var="Areas"
+                                                       itemLabel="#{Areas.descripcion}" itemValue="#{Areas.clave}" />
+                                        <p:ajax/>
+                                    </p:selectOneMenu>
+                                    <h:outputText value="#{oActHojaEnf.fechaActual}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                    </h:outputText>
+                                    <p:commandButton styleClass="bordes" 
+                                                     value="#{etiq.buscar}" 
+                                                     icon="ui-icon-search">
+                                        <p:ajax update=":hojaEnfermeria:tablaPac" listener="#{oActHojaEnf.buscaPacienteUrg()}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:accordionPanel>
+
+                        <br/><br/>
+
+                        <div class="tabla_pacEnc">
+                            <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                         paginatorPosition="both" rows="5" 
+                                         value="#{oActHojaEnf.listaEpiMed}" 
+                                         emptyMessage="#{etiq.noRegistro}" 
+                                         style="visibility:#{oActHojaEnf.visibilidadTabla};"
+                                         rowKey="#{oPacEnc.paciente.folioPaciente}"
+                                         selection="#{oActHojaEnf.seleccionado}">
+                                <p:ajax event="rowSelectRadio" update=":hojaEnfermeria:tablaMedApli :hojaEnfermeria:regAdmMed"></p:ajax>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.pacEncontrados}"/>
+                                </f:facet>
+                                <p:column selectionMode="single" style="width: 7%">
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.apPaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.apMaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.nombres}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.edadNumero}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.sPop}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.seg.numero}"/>
+                                </p:column>
+                                <p:column style="width: 10%">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.cama}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.cama.numero}"/>
+                                    <h:outputText value="#{oPacEnc.admUrgs.tipCamUrgs.valor}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.servicio}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacEnc.area.descripcion}"/>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton value="#{etiq.agregarDetalles}" onclick="PF('dlgHojaEnf').show();" type="button" icon="ui-icon-plus">
+                                        <p:ajax listener="#{oActHojaEnf.llenadoDatosPersonales}" update=":hojaEnfermeria:AdminMed :hojaEnfermeria:nombreMed" ></p:ajax>
+                                    </p:commandButton>
+                                    <p:commandButton value="#{etiq.verDetalles}" onclick="PF('dlgConHoja').show();" icon="ui-icon-search" type="button">
+                                        <p:ajax listener="#{oActHojaEnf.llenadoDatosPersonales}" update=":hojaEnfermeria:MedYaAplic" ></p:ajax>
+                                    </p:commandButton>
+                                </f:facet>
+                            </p:dataTable>
+                        </div>
+
+
+                        <!--**************************************************************************************************************************************************************************-->               
+
+
+                        <p:dialog header="Hoja de enfermería - Administración de medicamentos" widgetVar="dlgHojaEnf" height="600" width="1300" resizable="false" modal="true">                        
+                            <p:panelGrid id="AdminMed">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="#{etiq.datosPersonal}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sPop}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:" /></p:column>                                  
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputText value="#{oActHojaEnf.episodioMedico.paciente.nombreCompleto}" /></p:column>
+                                    <p:column><h:outputText value="#{oActHojaEnf.episodioMedico.paciente.edadNumero}" /></p:column>
+                                    <p:column><h:outputLabel value="#{oActHojaEnf.episodioMedico.paciente.sexoP}" /></p:column>
+                                    <p:column><h:outputText value="#{oActHojaEnf.episodioMedico.paciente.seg.numero}" /></p:column>
+                                    <p:column><h:outputText value="#{oActHojaEnf.episodioMedico.paciente.expediente.numero}" /></p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oActHojaEnf.episodioMedico.cama.numero}"/>
+                                        <h:outputText value="#{oActHojaEnf.episodioMedico.admUrgs.tipCamUrgs.valor}"/>
+                                    </p:column>
+                                    <p:column><h:outputText value="#{oActHojaEnf.episodioMedico.area.descripcion}" /></p:column> 
+                                </p:row>
+                            </p:panelGrid>
+
+                            <br/><br/>              
+
+                            <p:panelGrid id="regAdmMed">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="#{etiq.terapeuticaEmp}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.medicamentos}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cantidad}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.dosis}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.via}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.turno}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaYhora}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:selectOneMenu style="width:250px;" styleClass="bordes textover" id="nombreMed" value="#{oActHojaEnf.medicamento.nombre}" requiredMessage="Debe Seleccionar Un Medicamento">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="0"/>
+                                            <f:selectItems value="#{oActHojaEnf.medicamentoRecetado}" var="MedAplicar"
+                                                           itemLabel="#{MedAplicar.nombre}" itemValue="#{MedAplicar.nombre}"/>
+                                            <p:ajax/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column><p:inputText value="#{oActHojaEnf.medAplic.cantAplicada}" size="5" ><p:ajax/></p:inputText></p:column>
+                                    <p:column><p:inputText value="#{oActHojaEnf.medAplic.dosis}" size="5" ><p:ajax/></p:inputText></p:column>
+                                    <p:column>
+                                        <p:selectOneMenu styleClass="bordes textover" id="viaMed" value="#{oActHojaEnf.medAplic.via.valor}" requiredMessage="Debe Seleccionar Una Vía de Administración">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="0"/>
+                                            <f:selectItems value="#{oActHojaEnf.listaVia}" var="Via"
+                                                           itemLabel="#{Via.valor}" itemValue="#{Via.valor}"/>
+                                            <p:ajax/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu styleClass="bordes textover" id="turnoApli" value="#{oActHojaEnf.medAplic.turno.descripcion}" requiredMessage="Debe Seleccionar Un Turno">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="0"/>
+                                            <f:selectItems value="#{oActHojaEnf.listaTurno}" var="Turno"
+                                                           itemLabel="#{Turno.descripcion}" itemValue="#{Turno.descripcion}"/>
+                                            <p:ajax/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar id="datetime" value="#{oActHojaEnf.medAplic.fechaAplicacion}" effect="fold" 
+                                                    pattern="dd/MM/yyyy HH:mm" locale="es">
+                                            <p:ajax event="dateSelect"/>
+                                        </p:calendar>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="Agregar" icon="ui-icon-plus">
+                                            <p:ajax listener="#{oActHojaEnf.registroMedicamentoAplicado()}" update="tablaAdmMed regAdmMed"></p:ajax>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="7">
+                                        <p:dataTable id="tablaAdmMed" var="AdminMedApli" value="#{oActHojaEnf.medicamentoAplicado}" style="visibility:#{oActHojaEnf.visibilidadRegistroMedAplic}">
+                                            <p:column headerText="#{etiq.medicamentos}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{AdminMedApli.medicamento.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidad}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{AdminMedApli.cantAplicada}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.dosis}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{AdminMedApli.dosis}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.via}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{AdminMedApli.via.valor}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.turno}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{AdminMedApli.turno.descripcion}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.fechaYhora}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{AdminMedApli.fechaAplicacion}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="America/Mexico_City"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="" styleClass="columnachica centrado_texto">
+                                                <p:commandButton value="#{etiq.borrar}" id="btnBorrar" icon="ui-icon-trash">
+                                                    <p:ajax listener="#{oActHojaEnf.borrarElemento(AdminMedApli)}" update="tablaAdmMed"></p:ajax>
+                                                </p:commandButton>
+                                            </p:column>
+                                            <f:facet name="footer">
+                                                <p:commandButton value="Guardar" icon="ui-icon-disk" id="btnGuardar">
+                                                    <p:ajax listener="#{oActHojaEnf.guardarHojaEnf()}" update="tablaAdmMed :hojaEnfermeria:msg"></p:ajax>
+                                                </p:commandButton>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:dialog>
+
+
+                        <!--**************************************************************************************************************************************************************************-->
+
+
+                        <p:dialog header="Administración de medicamento" widgetVar="dlgConHoja" height="600" width="1300" resizable="false" modal="true"> 
+                            <p:panelGrid styleClass="frm_centrado">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <h:outputLabel/><h:outputText  value="Consultar terapéutica empleada por fecha" />
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fecha}: " styleClass="mensaje"/> 
+                                        <p:calendar id="fecSolArea" value="#{oActHojaEnf.fechaAux}" effect="fold" locale="es" showOn="button" 
+                                                    pattern="dd/MM/yy" required="true" readonlyInput="true">
+                                            <p:ajax  event="dateSelect" update="fechaAux"></p:ajax>
+                                        </p:calendar>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search">
+                                            <p:ajax update="tablaMedApli" listener="#{oActHojaEnf.buscaMedicamentoAplicadoEnFecha()}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <p:panelGrid id="MedYaAplic">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="4"></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column>
+                                    <p:column>
+                                        <h:outputLabel id="fechaAux" value="#{oActHojaEnf.fechaAux}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.datosPersonal}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                    <p:column><h:outputLabel value="#{oActHojaEnf.episodioMedico.paciente.nombreCompleto}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                    <p:column>
+                                        <h:outputLabel value="#{oActHojaEnf.episodioMedico.cama.numero}"/>
+                                        <h:outputText value="#{oActHojaEnf.episodioMedico.admUrgs.tipCamUrgs.valor}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                    <p:column><h:outputLabel value="#{oActHojaEnf.episodioMedico.paciente.expediente.numero}"/></p:column>
+                                    
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                    <p:column><h:outputLabel value="#{oActHojaEnf.episodioMedico.paciente.edadNumero}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:" /></p:column>
+                                    <p:column><h:outputLabel  value="#{oActHojaEnf.episodioMedico.area.descripcion}"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaDeIngreso}:"/></p:column>
+                                    <p:column><h:outputLabel value="#{oActHojaEnf.episodioMedico.fechaIngreso}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                    <p:column><h:outputLabel value="#{oActHojaEnf.episodioMedico.paciente.sexoP}" /></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.peso}:"/></p:column>
+                                    <p:column><h:outputLabel  value="#{oActHojaEnf.episodioMedico.paciente.peso}" /></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.talla}:"/></p:column>
+                                    <p:column><h:outputLabel  value="#{oActHojaEnf.episodioMedico.paciente.talla}" /></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:" /></p:column>
+                                    <p:column><h:outputLabel  value="#{oActHojaEnf.episodioMedico.fechaIngreso}" /></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.diagnostico}:" /></p:column>
+                                    <p:column colspan="3"><h:outputLabel  value="#{oActHojaEnf.episodioMedico.diagIngreso.descripcionDiag}" /></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.terapeuticaEmp}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6">
+                                        <p:dataTable id="tablaMedApli" var="MedAplicado" value="#{oActHojaEnf.mediAplicado}">
+                                            <p:column headerText="#{etiq.medicamentos}:" styleClass="columnachica centrado_texto" style="width:25%; font-size:10px;">
+                                                <h:outputText value="#{MedAplicado.medicamento.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}:" styleClass="columnachica centrado_texto" style="width:10%; font-size:11px;">
+                                                <h:outputText value="#{MedAplicado.medicamento.presentacion}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.dosis}:" styleClass="columnachica centrado_texto" style="width:5%; font-size:11px;">
+                                                <h:outputText value="#{MedAplicado.dosis}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.via}:" styleClass="columnachica centrado_texto" style="width:15%; font-size:11px;">
+                                                <h:outputText value="#{MedAplicado.via.valor}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.turno}:" styleClass="columnachica centrado_texto" style="width:10%; font-size:11px;">
+                                                <h:outputText value="#{MedAplicado.turno.descripcion}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.fechaHoraAplicacion}:" styleClass="columnachica centrado_texto" style="width:15%; font-size:11px;">
+                                                <h:outputText value="#{MedAplicado.fechaAplicacion}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="America/Mexico_City"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.aplico}:" styleClass="columnachica centrado_texto" style="width:20%; font-size:11px;">
+                                                <h:outputText value="#{MedAplicado.aplico.nombreCompleto}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/><br/>
+                            <p:commandButton value="Imprimir" onclick="" icon="ui-icon-print">
+                                <p:printer target="MedYaAplic"/>
+                            </p:commandButton>
+                        </p:dialog>
+
+                    </h:form>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+</html>

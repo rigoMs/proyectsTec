@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+    
+    <ui:define name="cuerpo">
+     <h:form>
+        <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+        <h3 class="centrado_texto"><p:outputLabel id="titDetPac" value="#{etiq.detallePacientes}"/></h3>
+        
+        <p:panelGrid styleClass="frm_centrado">
+               <p:row>
+                   <p:column rowspan="3"><img src="#{facesContext.externalContext.requestContextPath}/imgs/#{oCamCons.asigCon.PH.noTarjeta}.jpg" align="middle"  height="101" width="100"/></p:column>
+                   <p:column styleClass="ui-widget-header"><p:outputLabel id="medico" value="#{etiq.medico}:"/></p:column>
+                   <p:column><p:outputLabel value="#{oCamCons.asigCon.PH.apPaterno} #{oCamCons.asigCon.PH.apMaterno} #{oCamCons.asigCon.PH.nombres}"/></p:column>
+                   <p:column></p:column>
+                   <p:column  styleClass="centrado_texto"><h:outputLabel class="requerido" value="*"/><h:outputLabel id="addPac" value="#{etiq.agregarPacientes}" class="mensaje"/></p:column>
+               </p:row>
+               <p:row>
+                   <p:column styleClass="ui-widget-header"><p:outputLabel id="consultorio" value="#{etiq.consultorio}:"/></p:column>
+                   <p:column><p:outputLabel value="#{oCamCons.asigCon.cons.noConsultorio}"/></p:column>
+                   <p:column></p:column>
+                   <p:column>
+                       <p:selectOneMenu id="tMedico" value="#{oCamCons.medico2.nombres}">
+                            <f:selectItems value="#{oCamCons.listaMedicos}" var="oMed" 
+                                           itemLabel="#{oMed.asigCon.turno.clave}- #{oMed.cons.noConsultorio} - #{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}-#{oMed.area.clave}-#{oMed.cons.noConsultorio}-#{oMed.asigCon.maximo}-#{oMed.asigCon.turno.clave}"></f:selectItems>
+                        </p:selectOneMenu>
+                    </p:column>
+               </p:row>
+               <p:row>
+                   <p:column styleClass="ui-widget-header"><p:outputLabel id="fecha" value="#{etiq.fecha}:"/></p:column>
+                   <p:column><p:outputLabel value="#{oCamCons.asigCon.fechaConsultaFormat()}"/></p:column>
+                   <p:column></p:column>
+                   <p:column styleClass="centrado_texto">
+                   <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" ajax="false" action="#{oCamCons.actualizaCambio()}">
+                   </p:commandButton>
+                   <p:commandButton value="#{etiq.volver}" icon="ui-icon-arrowreturnthick-1-w" action="CambiarPacientes" ajax="false"></p:commandButton>
+                   </p:column>
+               </p:row>
+        </p:panelGrid>
+        
+        <br/><hr/><br/>
+        
+        <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscarPacPorMedico()}" styleClass="cambiocon">
+              <f:facet name="header">
+                  <p:outputLabel id="titVac" value="#{etiq.cambiarConsultorio}"/>
+              </f:facet>
+                           
+            <p:column headerText="#{etiq.noConsulta}" styleClass="centrado_texto columnamed7">
+                <h:outputText value="#{oCamVar.cita.noConsulta}" class="msjnormal"/>
+            </p:column>
+            <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed7">
+                <h:outputText value="#{oCamVar.cita.folioCita}" class="msjnormal"/>
+            </p:column>
+            <p:column headerText="#{etiq.nombreCompleto}" styleClass="">
+                <h:outputText value="#{oCamVar.cita.paciente.apPaterno} #{oCamVar.cita.paciente.apMaterno} #{oCamVar.cita.paciente.nombres}" class="msjnormal"/>
+            </p:column>
+            <p:column headerText="#{etiq.noExp}" styleClass="centrado_texto columnamed10">
+                <h:outputText value="#{oCamVar.cita.paciente.expediente.numero}" class="msjnormal"/>
+            </p:column>
+            <p:column headerText="#{etiq.segpop}" styleClass="centrado_texto columnamed10">
+                <h:outputText value="#{oCamVar.cita.paciente.seg.numero}" class="msjnormal"/>
+            </p:column>
+            <p:column headerText="#{etiq.tipoSol}" styleClass="centrado_texto">
+                <h:outputText value="#{oCamVar.cita.paciente.tipoSol.valor}" class="msjnormal"/>
+            </p:column>
+            <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed10">
+                <h:outputText value="#{oCamVar.cita.primEsp}" class="msjnormal"/>
+            </p:column>    
+         </p:dataTable>
+
+       </h:form>
+        <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus> 
+    </ui:define>
+    </ui:composition>
+</html>

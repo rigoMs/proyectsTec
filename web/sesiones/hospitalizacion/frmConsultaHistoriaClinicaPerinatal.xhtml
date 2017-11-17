@@ -1,0 +1,1510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org./TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq"/>
+            <ui:define name="cuerpo">
+                <div class="buscar">
+                    <h:form id="busqueda">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"/>
+                        <h3 class="centrado_texto">
+                            <h:outputLabel value="#{etiq.consultaHistoriaClinicaPerinatal}"/>
+                        </h3>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel />
+                                    <p:inputText styleClass="bordes" id="nom" value="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="app" value="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{hperinatal.cargaDetallePaciente(0)}" 
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{hperinatal.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>  
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmLogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                                    </p:inputText>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{hperinatal.cargaDetallePaciente(1)}"
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{hperinatal.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <div class="centrar">
+                            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                                <f:setPropertyActionListener target="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.nombres}" value=""/>
+                                <f:setPropertyActionListener target="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.apPaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.apMaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{hperinatal.historiaClinicaPerinatal.episodioMedico.paciente.expediente.numero}" value="#{0}"/>
+                                <f:setPropertyActionListener target="#{hperinatal.muestraPantalla}" value="#{false}"/> 
+                            </p:commandButton>
+                        </div>
+                        <br/>                        
+                        <p:outputPanel id="destino" styleClass="centrar">
+                            <div class="centrar">
+                                <p:dataTable id="tblResultado" var="oPacEnc"
+                                             value="#{hperinatal.historiaClinicaPacienteNeonato}"
+                                                emptyMessage="#{etiq.noRegistro}" 
+                                                paginator="true" 
+                                                rows="4"                                                
+                                                rendered="#{not empty hperinatal.historiaClinicaPacienteNeonato}">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                    </f:facet>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.fechanac}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.fechaNac}">
+                                            <f:convertDateTime timeStyle="short" pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.nombres}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.nombres}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.appat}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.apPaterno}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.apmat}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.apMaterno}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Ctrl"/>
+                                        </f:facet>
+                                       <p:commandButton id="btnDetalles" icon="ui-icon-plusthick" value="Detalles">
+                                           <p:ajax listener="#{hperinatal.cargaDetalleHistoriaClinica(oPacEnc.episodioMedico.paciente.folioPaciente,
+                                                               oPacEnc.episodioMedico.paciente.claveEpisodio,
+                                                               oPacEnc.episodioMedico.paciente.expediente.numero,
+                                                               oPacEnc.atencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.folioPaciente,
+                                                               oPacEnc.atencion.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.claveEpisodio,
+                                                               oPacEnc.atencion.producto.terminacionEmbarazo.partoGrama.consecutivo,
+                                                               oPacEnc.atencion.producto.terminacionEmbarazo.partoGrama.npartograma,
+                                                               oPacEnc.numeroHistoriaClinica)}"
+                                                   update=":fcontenedor :fcontenedor:tabcontenedor :busqueda:msgs
+                                                   :fcontenedor:tabcontenedor:PANEL1"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>                                
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <br/>
+                <div class="frm_centrado">
+                    <h:form class="centrar" id="fcontenedor">
+                        <p:tabView id="tabcontenedor" rendered="#{hperinatal.muestraPantalla}" dynamic="true">
+                            <p:ajax event="tabChange" listener="#{hperinatal.requerir}" update="@this"/>
+                            <p:tab title="#{etiq.histCliPerinatal00}" id="hcp00">
+                                <p:panelGrid styleClass="frm_centrado" id="historia0" style="border-color: #ffffff; background-color: #ffffff;">
+                                    <!--ENCABEZADO-->
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; ">                                            
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <h:graphicImage value="/imgs/003.jpg" style="width: 898px; height: 98px;"/>
+                                                    </p:column>                                                    
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>                                    
+                                     <p:row>
+                                         <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff; ">
+                                             <b><p:outputLabel value="#{etiq.histCliPerinatal}"/></b>
+                                         </p:column>
+                                    </p:row>
+                                    <!--TERMINA ENCABEZADO-->
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: #ffffff; border-bottom-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.datosRecienNacido}:"/></b>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.nombreCompleto}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.sexo}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.sexoP}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.fechaNacimiento}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.fechaNac}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>                                            
+                                        </p:column>                                        
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.expediente}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.expediente.numero}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.edadGestacional}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.total}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.pesoNacer}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.peso} Kg"/>                                            
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff">
+                                            <b><p:outputLabel value="#{etiq.lugarNacimiento}"/></b>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.lugarNacimiento}"/>                                            
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;"></p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;"></p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;"></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                            <b><p:outputLabel value="#{etiq.datosMadre}:"/></b>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.nombres}:"/></b>
+                                        </p:column>
+                                        <p:column colspan="5" style="border-color: black; background-color: #ffffff; text-align: left;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.nombreCompleto}"/>                                            
+                                        </p:column>                                        
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.fechaNacimiento}:"/></b>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff; text-align: left;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.fechaNac}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.edad}:"/></b>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff; text-align: left;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.fechaNacTexto}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.edoCivil}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.edoCivilStr}"/>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.escolaridad}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;"> 
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecNoPatologicos.escolaridad}"/>                                            
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.ocupacion}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecNoPatologicos.ocupacion}"/>                                            
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.padActual}:"/></b>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;
+                                                   vertical-align: text-top; text-align: left; width: 898px; height: 170px;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.padecimientoAct}"/>
+                                        </p:column>                            
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                            <b><p:outputLabel value="#{etiq.AME}:"/></b>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.nGestas}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.gestaciones}"/>                                            
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.nPartos}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.partos}"/>                                            
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.nAbortos}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.abortos}"/>                                             
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.nCesareas}:"/></b>
+                                        </p:column>
+                                        <p:column style="border-color: black; background-color: #ffffff">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.cesareas}"/>                                            
+                                        </p:column>
+                                        <p:column colspan="4" style="border-color: black; background-color: #ffffff;"></p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.fup}:"/></b>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.fur}:"/></b>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.egfur}:"/></b>
+                                        </p:column>                                    
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.fechaUltimoParto}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>                                            
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.epiMed.paciente.expediente.antecGinecoObstetricos.ultimaMenstruacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.atencion.edadgestacionalEGFUR}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;
+                                                   vertical-align: text-top; text-align: left; width: 898px; height: 170px;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.observaciones}"/>
+                                        </p:column>
+                                    </p:row>                                    
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff">
+                                            <b><p:outputLabel value="#{etiq.evoTrabapartNac}:"/></b>
+                                        </p:column>
+                                    </p:row>                                    
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;
+                                                  vertical-align: text-top; text-align: left; width: 898px; height: 170px;">
+                                            <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.hosptilatazacion.resumenEvolucion}"/>                                            
+                                        </p:column>
+                                    </p:row>
+                                    <!--PIE DE PAGINA-->                                                                     
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                 <p:row>
+                                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                        <b><p:outputLabel value="#{etiq.elaboro}:"/></b>
+                                                    </p:column>
+                                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                        <b><p:outputLabel value="#{etiq.superviso}:"/></b>
+                                                    </p:column>
+                                                </p:row>  
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.firma}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.firma}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.nombreCompleto}"/>                                                        
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.cedProf}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.nombres}"/>                                                        
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.cedProf}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="4" style="border-color: #ffffff; background: #ffffff;"></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <b><p:outputLabel value="#{etiq.fecha}:"/></b>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.atencion.fechaElaboracion}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                        </p:outputLabel>                                                        
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <!--TERMINA PIE DE PAGINA-->
+                                </p:panelGrid>
+                                <!--Botones guargar e imprimir-->
+                                <br/>
+                                <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: white; background-color: white;">
+                                        <p:commandButton value="#{etiq.impr}" icon="ui-icon-print">                                    
+                                            <p:printer target="historia0" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>                                
+                            </p:tab>
+                            <!--*****************************************-->
+                            <p:tab title="#{etiq.histCliPerinatal01}" id="hcp01">
+                                <p:panelGrid styleClass="frm_centrado" id="historia1" style="border-color: #ffffff; background-color: #ffffff" >
+                                <!--ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                        <p:panelGrid style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:row>
+                                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <h:graphicImage value="/imgs/003.jpg" style="width: 898px; height: 98px;"/>
+                                                </p:column>                                                    
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>                                    
+                                 <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: #ffffff; border-bottom-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.histCliPerinatal}"/></b>
+                                    </p:column>                                    
+                                </p:row>
+                                <!--TERMINA ENCABEZADO-->
+                                 <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.nombreCompleto}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.sexo}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.sexoP}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.expediente}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.expediente.numero}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.peso}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.talla}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.pc}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.fr}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.fc}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.temp}:"/></b>
+                                    </p:column>                                
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.signosVitalesNeoNatos.peso}"/>                                        
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.talla}"/>                                         
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.signosVitalesNeoNatos.pc}"/>                                        
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.signosVitalesNeoNatos.FR}"/>                                        
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.signosVitalesNeoNatos.FC}"/>                                        
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.signosVitalesNeoNatos.temp}"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;
+                                              vertical-align: text-top; text-align: left; width: 898px; height: 240px;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.inspeccionGeneral}"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: left;">
+                                        <b><p:outputLabel value="#{etiq.diagnosticoe}:"/></b>&nbsp;&nbsp;&nbsp;
+                                        <p:outputLabel value="#{hperinatal.diagnosticos.diagnostico.descripcionDiag}"/>&nbsp;&nbsp;&nbsp;
+                                        <b><p:outputLabel value="#{etiq.cie10}"/></b>&nbsp;&nbsp;&nbsp;
+                                        <p:outputLabel value="#{hperinatal.diagnosticos.diagnostico.claveCIE10}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                        <b><p:outputLabel value="#{etiq.plan}:"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;
+                                              vertical-align: text-top; text-align: left; width: 898px; height: 240px;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.signosVitalesNeoNatos.plan}"/>                                         
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                        <b><p:outputLabel value="#{etiq.pronosticos}:"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;
+                                              vertical-align: text-top; text-align: left; width: 898px; height: 240px;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.atencion.planPronostico}"/>
+                                    </p:column>
+                                </p:row>
+                                <!--PIE DE PAGINA-->                                                                     
+                                    <p:row>
+                                        <p:column colspan="6" style="border-color: black; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                 <p:row>
+                                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                        <b><p:outputLabel value="#{etiq.elaboro}:"/></b>
+                                                    </p:column>
+                                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                        <b><p:outputLabel value="#{etiq.superviso}:"/></b>
+                                                    </p:column>
+                                                </p:row>  
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.firma}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.firma}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                        <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                       <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.nombreCompleto}"/>
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.cedProf}"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.nombres}"/>
+                                                    </p:column>
+                                                    <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                    <p:column style="border-color: #ffffff; background: #ffffff">
+                                                       <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.cedProf}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="4" style="border-color: #ffffff; background: #ffffff;"></p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <b><p:outputLabel value="#{etiq.fecha}:"/></b>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.atencion.fechaElaboracion}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                        </p:outputLabel>
+                                                    </p:column>
+                                                </p:row>                                                
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <!--TERMINA PIE DE PAGINA-->
+                                </p:panelGrid>
+                                <br/>
+                                <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                        <p:commandButton value="#{etiq.impr}" icon="ui-icon-print">                                    
+                                            <p:printer target="historia1"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:tab>
+                            <!--*****************************************-->                             
+                            <p:tab title="#{etiq.histCliPerinatal02}" id="hcp02">
+                                <p:panelGrid styleClass="frm_centrado" id="historia2" style="border-color: #ffffff; background-color: #ffffff;">
+                                <!--ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <h:graphicImage value="/imgs/003.jpg" style="width: 898px; height: 98px;"/>
+                                                </p:column>                                                    
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>                                    
+                                 <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: #ffffff; border-bottom-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.histCliPerinatal}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <!--TERMINA ENCABEZADO-->
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.nombreCompleto}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.sexo}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.sexoP}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.expediente}:"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.expediente.numero}"/>
+                                    </p:column>
+                                </p:row>                                
+                                <p:row>
+                                    <p:column colspan="5" style="border-color: white; background-color: #ffffff; text-align: center; width: 500px;">
+                                        <h:graphicImage value="/imgs/cuerpo0.jpg"/>
+                                    </p:column>
+                                    <p:column style="border-color: white; background-color: #ffffff; padding: 0px;">
+                                        <p:panelGrid style="border-color: white; background-color: #ffffff;">
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; visibility: hidden; height: 50px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 50px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.postura}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 50px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.anguloMuneca}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 50px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.anguloCodo}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 50px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.anguloPopliteo}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 70px; vertical-align:  middle;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.signoBufanda}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.talonOreja}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5" style="border-color: white; border-bottom-color: black; background-color: #ffffff; text-align: center; width: 500px;">
+                                        <h:graphicImage value="/imgs/cuerpo1.jpg"/>
+                                    </p:column>
+                                    <p:column style="border-color: white; border-bottom-color: black; background-color: #ffffff;">
+                                        <p:panelGrid style="border-color: white; background-color: #ffffff;">
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 40px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.piel}"/></b>
+                                                </p:column>
+                                            </p:row> 
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 40px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.lamugo}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 40px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.plieguesPlantares}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 40px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.mamas}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 40px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.oido}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 40px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.genitalesHombre}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: white; background-color: #ffffff; padding: 0px; height: 40px;">
+                                                    <b><p:outputLabel value="#{hperinatal.neurologica.genitalesMujer}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>                                     
+                                </p:row>                                
+                                <p:row>
+                                    <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.calificacion}:"/></b>
+                                    </p:column>
+                                    <p:column  style="border-color: black; background-color: #ffffff;">
+                                        <p:outputLabel value="#{hperinatal.neurologica.calificacion}"/>                                         
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.semanas}:"/></b>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color: black; background-color: #ffffff;">
+                                        <h:outputText value="#{hperinatal.neurologica.semanas}"/>
+                                    </p:column>
+                                </p:row>
+                                <!--PIE DE PAGINA-->                                                                     
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff;">
+                                        <p:panelGrid>
+                                             <p:row>
+                                                <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <b><p:outputLabel value="#{etiq.elaboro}:"/></b>
+                                                </p:column>
+                                                <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <b><p:outputLabel value="#{etiq.superviso}:"/></b>
+                                                </p:column>
+                                            </p:row>  
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.firma}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.firma}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                   <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.cedProf}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.nombres}"/>
+                                                </p:column>
+                                                <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                   <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.cedProf}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="4" style="border-color: #ffffff; background: #ffffff;"></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <b><p:outputLabel value="#{etiq.fecha}:"/></b>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.atencion.fechaElaboracion}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </p:outputLabel>
+                                                </p:column>
+                                            </p:row>                                                
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <!--TERMINA PIE DE PAGINA-->
+                                </p:panelGrid>
+                                <br/>
+                                <!--Botones guargar e imprimir-->                                
+                                <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: white; background-color: white;">
+                                        <p:commandButton value="#{etiq.impr}" icon="ui-icon-print">                                    
+                                            <p:printer target="historia2" />
+                                        </p:commandButton>                                        
+                                    </p:column>
+                                </p:row>                            
+                            </p:tab>
+                            <!--*****************************************-->
+                            <p:tab title="#{etiq.histCliPerinatal03}" id="hcp03">
+                                <p:panelGrid styleClass="frm_centrado" id="historia3" style="border-color: #ffffff; background-color: #ffffff;">
+                                <!--ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <h:graphicImage value="/imgs/003.jpg" style="width: 898px; height: 98px;"/>
+                                                </p:column>                                                    
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>                                    
+                                 <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: white; background-color: #ffffff;">
+                                        <p:outputLabel value="#{etiq.histCliPerinatal}"/>
+                                    </p:column>
+                                </p:row>
+                                <!--TERMINA ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:chart type="line" model="#{hperinatal.pinta}" style="height: 300px; width: 500px;" widgetVar="grafica"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.evaGestaCapu}:"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.texturaPiel}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.tp}"/>
+                                    </p:column>
+                                    <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.plieguesPlantares}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.pp}"/>
+                                    </p:column>
+                                    
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color: #ffffff; border-color: #ffffff; padding: 0px;">
+                                        <p:panelGrid style="padding: 0px;">
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff;">
+                                                    <p:outputLabel value="#{etiq.tpOpcion00}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.tpOpcion01}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.tpOpcion02}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.tpOpcion03}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.tpOpcion04}"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; border-color: #ffffff; padding: 0px;">
+                                        <p:panelGrid id="PANEL1">
+                                            <p:row>
+                                                <p:column rowspan="5" style="border-color: #ffffff;">
+                                                    <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.texturaPiel.tipoParametro}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color: #ffffff; border-color: #ffffff">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.ppOpcion00}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.ppOpcion01}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.ppOpcion02}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.ppOpcion03}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.ppOpcion04}"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; border-color: #ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column rowspan="5" style="border-color: #ffffff;">
+                                                    <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.plieguesPlantares.tipoParametro}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.formaOreja}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.fo}"/>
+                                    </p:column>
+                                    <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.tamañoGlaMamaria}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.tgm}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color: #ffffff; border-color: #ffffff">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.foOPcion00}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.foOPcion01}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.foOPcion02}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.foOPcion03}"/></p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; border-color: #ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column rowspan="5" style="border-color: #ffffff;">
+                                                    <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.formaOreja.tipoParametro}"/></b>                                                    
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color: #ffffff; border-color: #ffffff; padding: 0px;">
+                                        <p:panelGrid style="padding: 0px;">
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff;">
+                                                    <p:outputLabel value="#{etiq.tgmOpcion00}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff;">
+                                                    <p:outputLabel value="#{etiq.tgmOpcion01}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff;">
+                                                    <p:outputLabel value="#{etiq.tgmOpcion02}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff;">
+                                                    <p:outputLabel value="#{etiq.tgmOpcion03}"/>
+                                                </p:column>
+                                            </p:row>                                            
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; border-color: #ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column rowspan="5" style="border-color: #ffffff;">
+                                                    <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.tglandulaMama.tipoParametro}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.formacionPezon}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.fp}"/>
+                                    </p:column>
+                                    <p:column colspan="3" style="text-align: center; border-color: #ffffff; background-color: #ffffff"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color: #ffffff; border-color: #ffffff">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.fpOpcion00}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.fpOpcion01}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.fpOpcion02}"/></p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="text-align: left; border-color: #ffffff; border-color: #ffffff"><p:outputLabel value="#{etiq.fpOpcion03}"/></p:column>
+                                            </p:row>                                            
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; border-color: #ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column rowspan="5" style="border-color: #ffffff;">
+                                                    <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.formaPezon.tipoParametro}"/></b>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column colspan="3" style="border-color: #ffffff;background-color: #ffffff;">
+                                        <p:panelGrid style="border-color: #ffffff;background-color: #ffffff;">
+                                            <p:row>
+                                                <p:column colspan="2" style="border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff"><p:outputLabel value="#{etiq.formula}"/></p:column>                                                
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <p:outputLabel value="7"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row></p:row>
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #000000; background-color: #ffffff">
+                                                    <p:outputLabel value="#{etiq.total}="/>
+                                                </p:column>
+                                                <p:column style="border-color: #000000;">
+                                                    <p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.total}"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <!--PIE DE PAGINA-->                                                                     
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                        <p:panelGrid>
+                                             <p:row>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <p:outputLabel value="#{etiq.elaboro}:"/>
+                                                </p:column>
+                                                <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <p:outputLabel value="#{etiq.superviso}:"/>
+                                                </p:column>
+                                            </p:row>  
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.firma}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.firma}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                   <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.cedProf}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.nombres}"/>
+                                                </p:column>
+                                                <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                   <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.cedProf}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="4" style="border-color: #ffffff; background: #ffffff;"></p:column>
+                                                <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;"><p:outputLabel value="#{etiq.fecha}:"/></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.atencion.fechaElaboracion}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </p:outputLabel>
+                                                </p:column>
+                                            </p:row>                                                
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <!--TERMINA PIE DE PAGINA-->                            
+                                </p:panelGrid>
+                                <!--Botones guargar e imprimir-->
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;">
+                                        <p:commandButton value="Imprimir" icon="ui-icon-extlink" 
+                                                         oncomplete="exportChart()" update=":dialogo"/>                                            
+                                    </p:column>
+                                </p:row>                                
+                            </p:tab>
+                            <!--*****************************************-->
+                        </p:tabView>
+                    </h:form>
+                </div>
+                
+                    <p:dialog widgetVar="dlg" showEffect="fade" modal="true" header="Grafica" resizable="false" width="1000" height="500">
+                        <h:form id="dialogo">                        
+                         <p:panelGrid styleClass="frm_centrado" id="imprime" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:row>
+                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/003.jpg" style="width: 898px; height: 98px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                                </p:row>                                    
+                                 <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: white; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.histCliPerinatal}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <!--TERMINA ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; border-bottom-color: black; background-color: #ffffff; text-align: center;">
+                                        <p:outputPanel id="output" layout="inline" style="width: 300px; height: 300px; text-align: center;"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: black; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.evaGestaCapu}:"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.texturaPiel}"/></b>
+                                    </p:column>
+                                    <p:column style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.tp}"/></b>
+                                    </p:column>
+                                    <p:column colspan="2" style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.plieguesPlantares}"/></b>
+                                    </p:column>
+                                    <p:column style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.pp}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tpOpcion00}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="0"/>
+                                    </p:column>
+                                    <p:column rowspan="5" style="text-align: center; border-color: black; background-color: white;">
+                                        <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.texturaPiel.tipoParametro}"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.ppOpcion00}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="0"/>
+                                    </p:column>
+                                    <p:column rowspan="5" style="text-align: center; border-color: black; background-color: white;">
+                                        <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.plieguesPlantares.tipoParametro}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tpOpcion01}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="5"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.ppOpcion01}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="5"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tpOpcion02}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="10"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.ppOpcion02}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="10"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tpOpcion03}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="15"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.ppOpcion03}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="15"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tpOpcion04}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="20"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.ppOpcion04}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="20"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.formaOreja}"/></b>
+                                    </p:column>
+                                    <p:column style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.fo}"/></b>
+                                    </p:column>
+                                    <p:column colspan="2" style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.tamañoGlaMamaria}"/></b>
+                                    </p:column>
+                                    <p:column style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.tgm}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: left; border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.foOPcion00}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="0"/>
+                                    </p:column>
+                                    <p:column rowspan="4" style="text-align: center; border-color: black; background-color: white;">
+                                        <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.formaOreja.tipoParametro}"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tgmOpcion00}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="0"/>
+                                    </p:column>
+                                    <p:column rowspan="4" style="text-align: center; border-color: black; background-color: white;">
+                                        <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.tglandulaMama.tipoParametro}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.foOPcion01}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="8"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tgmOpcion01}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="5"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.foOPcion02}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="16"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tgmOpcion02}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="10"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.foOPcion03}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="24"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="#{etiq.tgmOpcion03}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="15"/>
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column colspan="2" style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.formacionPezon}"/></b>
+                                    </p:column>
+                                    <p:column style="text-align: center; border-color: black; background-color: #ffffff">
+                                        <b><p:outputLabel value="#{etiq.fp}"/></b>
+                                    </p:column>
+                                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: #ffffff"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.fpOpcion00}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="0"/>
+                                    </p:column>
+                                    <p:column rowspan="4" style="border-color: black; background-color: white;">
+                                        <b><p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.formaPezon.tipoParametro}"/></b>
+                                    </p:column>
+                                    <p:column colspan="3" rowspan="4" style="border-bottom-color: black; border-right-color: black; background-color: white;">
+                                        <p:panelGrid style="border-color: black; background-color: #ffffff;">
+                                            <p:row>
+                                                <p:column colspan="2" style="border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff; background-color: white;">
+                                                    <p:outputLabel value="#{etiq.formula}"/>
+                                                </p:column>                                                
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="2" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                                    <p:outputLabel value="7"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row></p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #000000; background-color: #ffffff">
+                                                    <b><p:outputLabel value="#{etiq.total}="/></b>
+                                                </p:column>
+                                                <p:column style="border-color: #000000; background-color: #ffffff">
+                                                    <p:outputLabel value="#{hperinatal.evaluacionEdadGestacionalCapurro.total}"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.fpOpcion01}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="5"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.fpOpcion02}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="10"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black; background-color: #ffffff">
+                                        <p:outputLabel value="#{etiq.fpOpcion03}"/>
+                                    </p:column>
+                                    <p:column style="border-color: black; background-color: white;">
+                                        <p:outputLabel value="15"/>
+                                    </p:column>
+                                </p:row>                                
+                                <!--PIE DE PAGINA-->                                                                     
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: black; background-color: #ffffff;">
+                                        <p:panelGrid>
+                                             <p:row>
+                                                <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <b><p:outputLabel value="#{etiq.elaboro}:"/></b>
+                                                </p:column>
+                                                <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <b><p:outputLabel value="#{etiq.superviso}:"/></b>
+                                                </p:column>
+                                            </p:row>  
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.firma}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.firma}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff; width: 200px;">
+                                                    <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                   <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.personalHospitalario.cedProf}"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.nombres}"/>
+                                                </p:column>
+                                                <p:column style="width: 25%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;" ></p:column>
+                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                   <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.pacientenNeonato.producto.terminacionEmbarazo.partoGrama.medicoSupervisor.cedProf}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="4" style="border-color: #ffffff; background: #ffffff;"></p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:outputLabel value="#{etiq.fecha}:"/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff">
+                                                    <p:outputLabel value="#{hperinatal.historiaClinicaPerinatal.atencion.fechaElaboracion}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </p:outputLabel>
+                                                </p:column>
+                                            </p:row>                                            
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <!--TERMINA PIE DE PAGINA-->                            
+                                </p:panelGrid>
+                                <!--Botones guargar e imprimir-->
+                                <p:row>
+                                    <p:column colspan="6" style="text-align: center; border-color: white; background-color: white;">                                        
+                                        <p:commandButton value="#{etiq.impr}" icon="ui-icon-print">                                    
+                                            <p:printer target="imprime" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>             
+                       </h:form>
+                    </p:dialog>
+                
+                <script type="text/javascript">
+                        function exportChart() {
+                                //export image
+                                $('#dialogo\\:output').empty().append(PF('grafica').exportAsImage());                               
+                                //show the dialog
+                                PF('dlg').show();
+                                
+                        }
+                </script>
+                <div>
+                    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                        <f:facet name="start">
+                            <p:graphicImage value="/imgs/loading.gif"/>
+                        </f:facet>
+                    </p:ajaxStatus>
+                </div>
+            </ui:define>
+        </ui:composition>
+</html>
+

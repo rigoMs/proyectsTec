@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    
+        
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+
+                <h:form class="centrar">
+                    <br/><br/>
+                    <p:growl id="msgs" showDetail="true" />
+                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+
+                    <p:tabView style="width: 1665px">
+                        <p:tab title="Seleccionar Productos Basicos">
+                            <h:form>
+
+                                    <p:dataTable value="" id="tblRequis" var="" style="width: 580px; margin-left: 180px">
+                                        <p:column headerText="#{etiq.nodereq}">
+                                            <h:outputText value="1200" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:commandButton value="#{etiq.agreg} a Básicos" oncomplete="PF('dlgBasico').show()" icon="ui-icon-plus"/>
+                                        </p:column>
+                                    </p:dataTable>
+
+
+
+                                <center>
+                                    <p:dialog id="dlgCotizacionBasica" widgetVar="dlgBasico"  position="center" closable="true" dynamic="true" resizable="false"
+                                              appendTo="@(body)" modal="true" showEffect="explode" hideEffect="slide" height="350px" width="550px">
+
+                                        <h:form id="requisicion" class="centrar">
+                                            <br/>
+                                            <p:growl id="msgs" showDetail="true" />
+                                            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                                            <p:growl id="message" showDetail="true" />
+
+                                            <center style="font-family: fantasy; font-size: x-large; font-style: italic;">Agregar Productos a Básicos</center><br/>
+
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: transparent;">
+                                                        <p:pickList style="text-align: left;" id="pickList" value="#{cotizac.productos}" var="prod" effect="bounce"
+                                                        itemLabel="#{prod}" itemValue="#{prod}" 
+                                                        showCheckbox="true" filterMatchMode="contains">
+
+                                                            <f:facet name="sourceCaption">Requisicion Normal</f:facet>
+                                                            <f:facet name="targetCaption">Requisición Básica</f:facet>
+
+
+                                                            <p:column style="width: 100%">
+                                                                #{prod}
+                                                            </p:column>
+
+                                                        </p:pickList>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="text-align: left;margin-top: 0; border-color: transparent">
+                                                        <p:commandButton id="citySubmit" value="#{etiq.actualizar}"  style="margin-top:5px; text-align: center;" icon="ui-icon-refresh"/>
+                                                    </p:column>
+                                                </p:row>
+
+                                            </p:panelGrid>
+
+                                        </h:form>
+                                    </p:dialog>
+                                </center>
+                            </h:form>
+                        </p:tab>
+                        <!--<p:pickList id="pickList" value="#{cotizac.cities}" var="cities" itemLabel="#{cities}" itemValue="#{cities}" />-->
+
+                        <!--<p:commandButton id="citySubmit" value="Submit" update="displayCities" oncomplete="PF('cityDialog').show()" style="margin-top:5px" />-->
+
+
+                        <p:tab title="Cotizaciones">
+                            <h:form>
+
+                                <p:panelGrid>
+                                    <!--<p:row>
+                                        <p:column style="border-color: transparent;">
+                                            <p:selectOneMenu>
+                                                <f:selectItem itemLabel="Requisicion Interna" itemValue="" />
+                                                <f:selectItem itemLabel="Requisicion Basica" itemValue="" />
+                                            </p:selectOneMenu><br/><br/>
+                                        </p:column>
+                                    </p:row>--> 
+
+                                    <p:row>
+                                        <p:column style="border-color: transparent;">
+                                            <center>
+                                                <p:dataTable value="" id="tblBRequi" var="" style="width: 580px; margin-left: 180px">
+                                                    <p:column headerText="#{etiq.nodereq}">
+                                                        <h:outputText value="1200" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header">
+                                                        <p:commandButton value="#{etiq.buscar}"  icon="ui-icon-search"/>
+                                                    </p:column>
+                                                </p:dataTable><br/><br/>
+                                            </center>
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column style="border-color: transparent;">
+                                            <p:dataTable id="dtCotAlim" value="" editable="true" var="oCotAl"
+                                                         style="width: 1620px" selection="" rowKey="" rendered="true">
+
+                                                <p:column headerText="#{etiq.nodereq}" style="width: 6%">
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column headerText="#{etiq.depsol}" style="width: 10%">
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column headerText="#{etiq.fecsol}" style="width: 5%">
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column headerText="#{etiq.partidapr}">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:spinner value="" size="8" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.tipoprod}">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="" id="tipoproduct"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.desdet}">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="" id="descprod"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.caractprod}">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="" id="caractprod" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.und}" style="width: 6%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="" id="undprod" size="8"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.solicitado}" style="width: 6%">
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column headerText="#{etiq.aprobado}" style="width: 6%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.pu}" style="width: 5%"> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.iva}" style="width: 5%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                        <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column style="width: 3%">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                            </h:form>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+    
+</html>

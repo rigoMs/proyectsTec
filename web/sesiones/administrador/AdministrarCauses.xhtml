@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <p:accordionPanel id="accPan" widgetVar="accPan" dynamic="true">
+        <p:tab id="tabEdic" title="#{etiq.nueva} #{etiq.intervencion} #{etiq.causes}">
+            <p:panel id="panelModif" widgetVar="panelModif">
+                <h:form id="formModInter">
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:commandButton value="#{etiq.editar} #{etiq.nuevo}" action="#{gesCauses.editarNuevo()}" update=":tab:accPan:formModInter" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.numeroDeIntervencion}"/>
+                                <p:inputText id="numIntervencion" value="#{gesCauses.causes.clave}" 
+                                             maxlength="5" size="5" disabled="#{!gesCauses.mostrarNuevo}" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.nombre}" />
+                                <p:inputText id="nombreIntervencion" value="#{gesCauses.causes.descripcion}" size="50" maxlength="300"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.anio}" />
+                                <p:inputMask mask="9999" id="anioPerfil" value="#{gesCauses.causes.anio}" size="4" maxlength="4" disabled="#{!gesCauses.mostrarNuevo}"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="Completo" />
+                                <p:selectBooleanCheckbox id="causeCompleto" value="#{gesCauses.causes.completo}" />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton id="botModi" rendered="#{!gesCauses.mostrarNuevo}" 
+                                                 action="#{gesCauses.modificaCauses()}" value="#{etiq.modificar}" update=":messages" validateClient="true" />
+                                <p:commandButton id="botGuar" rendered="#{gesCauses.mostrarNuevo}" 
+                                                 action="#{gesCauses.nuevoCauses()}" value="#{etiq.guardar}" update=":messages" validateClient="true" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:dataTable id="listacie9" widgetVar="listacie9" var="cie9" value="#{gesCauses.causes.procedimientoCIE9.listaProcecve}" >
+                                            <f:facet name="header" >
+                                                <p:outputLabel styleClass="negrita" value="#{etiq.cie9}"/>
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.clave}" >
+                                                <p:outputLabel value="#{cie9.claveCie}" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.descripcion}" style="width: 50%" >
+                                                <p:outputLabel value="#{cie9.descripcion}" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.areasCobertura}" style="width: 25%">
+                                                <p:selectOneMenu id="tArea" value="#{cie9.causes.tipo}">
+                                                    <f:selectItems value="#{gesCauses.listaAreas}" var="oAre" itemLabel="#{oAre.valor}" 
+                                                                   itemValue="#{oAre.claveParametro}#{oAre.tipoParametro.trim()}"/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.servicioCob}">
+                                                <p:selectOneMenu value="#{cie9.clave}" filter="true">
+                                                    <f:selectItems value="#{gesCauses.serviciosCobrablesCie9}" var="serv" 
+                                                                   itemValue="#{serv.clave}" itemLabel="#{serv.descripcion}" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.remover}">
+                                                <p:commandButton value="X" action="#{gesCauses.removerCie9(cie9)}" update="listacie9"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{etiq.clave}" />
+                                        <p:inputText id="inputcie9" value="#{gesCauses.causes.procedimientoCIE9.claveCie}" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.agregar}" action="#{gesCauses.agregaCie9()}" update=":messages listacie9 inputcie9" />
+                                    </p:column>
+                                </p:row>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:dataTable id="listacie10" widgetVar="listacie10" var="cie10" scrollRows="5"
+                                                     value="#{gesCauses.causes.diagnosticoCIE10.listaDiagcve}" >
+                                            <f:facet name="header" >
+                                                <p:outputLabel styleClass="negrita" value="#{etiq.cie10}"/>
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.clave}" >
+                                                <p:outputLabel value="#{cie10.clave}" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.descripcion}" style="width: 50%" >
+                                                <p:outputLabel value="#{cie10.descripcionDiag}" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.areasCobertura}">
+                                                <p:selectOneMenu id="tArea" value="#{cie10.causes.tipo}">
+                                                    <f:selectItems value="#{gesCauses.listaAreas}" var="oAre"
+                                                                   itemLabel="#{oAre.valor}" itemValue="#{oAre.claveParametro}#{oAre.tipoParametro.trim()}"/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.servicioCob}">
+                                                <p:selectOneMenu id="tServ" value="#{cie10.servCob.clave}" filter="true">
+                                                    <f:selectItem itemValue="" itemLabel="No aplica" />
+                                                    <f:selectItems value="#{gesCauses.serviciosCobrablesCie10}" var="serv" 
+                                                                   itemValue="#{serv.clave}" itemLabel="#{serv.descripcion}" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.remover}" >
+                                                <p:commandButton value="X" action="#{gesCauses.removerCie10(cie10)}" update="listacie10" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{etiq.clave}" />
+                                        <p:inputText id="inputcie10" value="#{gesCauses.causes.diagnosticoCIE10.clave}" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.agregar}" action="#{gesCauses.agregaCie10()}" update=":messages listacie10 inputcie10" />
+                                    </p:column>
+                                </p:row>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:dataTable id="tablaMedicamentos" widgetVar="tablaMedicamentos" var="med" 
+                                                     value="#{gesCauses.causes.medicamentos}" >
+                                            <f:facet name="header" >
+                                                <p:outputLabel styleClass="negrita" value="#{etiq.medicamentos}" />
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.clave}" >
+                                                <p:outputLabel value="#{med.claveMedicamento}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.nombre}" >
+                                                <p:outputLabel value="#{med.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}" >
+                                                <p:outputLabel value="#{med.presentacion}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.remover}" >
+                                                <p:commandButton value="X" action="#{gesCauses.removerMedicamento(med)}" update="tablaMedicamentos" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{etiq.clave}" />
+                                        <p:inputText id="inputMedic" value="#{gesCauses.nuevoMedicamento.claveMedicamento}" maxlength="20" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.agregar}" action="#{gesCauses.agregaMedicamento()}" 
+                                                         update=":messages  inputMedic tablaMedicamentos" />
+                                    </p:column>
+                                </p:row>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:dataTable id="tablaMateriales" widgetVar="tablaMateriales" var="mat" 
+                                                     value="#{gesCauses.causes.materiales}" >
+                                            <f:facet name="header" >
+                                                <p:outputLabel styleClass="negrita" value="#{etiq.materiales}" />
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.clave}" >
+                                                <p:outputLabel value="#{mat.claveMaterial}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.nombre}" >
+                                                <p:outputLabel value="#{mat.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}" >
+                                                <p:outputLabel value="#{mat.presentacion.valor}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.remover}" >
+                                                <p:commandButton value="X" action="#{gesCauses.removerMaterial(mat)}" update="tablaMateriales" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{etiq.clave}" />
+                                        <p:inputText id="inputMat" value="#{gesCauses.nuevoMaterial.claveMaterial}" maxlength="20" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.agregar}" action="#{gesCauses.agregaMaterial()}" 
+                                                         update=":messages  inputMat tablaMateriales" />
+                                    </p:column>
+                                </p:row>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+            </p:panel>
+        </p:tab>
+        <p:tab title="#{etiq.listaCauses}">
+            <p:panel>
+                <h:form id="formTablaCauses">
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu id="tArea" value="#{gesCauses.causesB.anio}" >
+                                    <f:selectItems value="#{gesCauses.causesB.aniosRegistrados}" var="oCause"
+                                                   itemLabel="#{oCause.anio}" itemValue="#{oCause.anio}"/>
+                                </p:selectOneMenu>
+                                <p:commandButton action="#{gesCauses.buscarCauses()}" value="#{etiq.buscar}" update="tablaTodosCauses"/>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="#{etiq.config}" oncomplete="PF('ventanaConfigPattern').show()" update=":tab:ventanaConfigPattern" />
+                                <p:commandButton value="#{etiq.cargarArch}" oncomplete="PF('ventanaSubirArchivo').show()" update=":tab:ventanaSubirArchivo" />
+                                <p:commandButton action="#{gesCauses.cargaDatos()}" value="#{etiq.extraer}" update=":messages tablaTodosCauses tArea" />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="Terminar edicion" actionListener="#{gesCauses.guardarCambiosAProduccion()}" update=":messages :tab:accPan" >
+                                    <p:confirm header="#{etiq.confirmar}" message="#{etiq.estaSegurodeGuardar}? #{etiq.advGuardCause}"
+                                               icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:dataTable id="tablaTodosCauses" widgetVar="tablaTodosCauses" value="#{gesCauses.listaCauses}" 
+                                 var="cause" paginator="true" rows="20" filteredValue="#{gesCauses.listaCausesFiltro}" >
+                        <p:column headerText="#{etiq.clave}" filterBy="#{cause.clave}" sortBy="#{cause.clave}" 
+                                  filterMatchMode="contains" style="color: #{cause.color};" >
+                            <p:outputLabel value="#{cause.clave}" />
+                        </p:column>
+                        <p:column headerText="#{etiq.nombre}" filterBy="#{cause.descripcion}" filterMatchMode="contains"
+                                  filterStyle="text-transform: uppercase;" style="color: #{cause.color};" sortBy="#{cause.descripcion}" >
+                            <p:outputLabel value="#{cause.descripcion}" />
+                        </p:column>
+                        <p:column headerText="#{etiq.editar}">
+                            <p:commandButton icon="ui-icon-pencil" action="#{gesCauses.editarCause(cause.clave)}" update=":tab:accPan"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </p:panel>
+        </p:tab>
+    </p:accordionPanel>
+    <p:dialog id="ventanaSubirArchivo" widgetVar="ventanaSubirArchivo" closable="true"
+              visible="false" resizable="false" dynamic="true" modal="true" >
+        <p:panel  closable="#{true}" >
+            <h:form enctype="multipart/form-data">
+                <p:outputLabel value="#{etiq.extraerCauses}" />
+                <p:fileUpload fileUploadListener="#{gesCauses.cargaArchivo}" fileLimit="1"
+                              invalidSizeMessage="#{etiq.tamanoArchExced}"
+                              invalidFileMessage="#{etiq.tipoArchInvalido}"
+                              allowTypes="/(\.|\/)(pdf)$/" sizeLimit="20971520" 
+                              update=":messages"
+                              />
+            </h:form>
+        </p:panel>
+    </p:dialog>
+    <p:dialog id="ventanaConfigPattern" widgetVar="ventanaConfigPattern" closable="true"
+              visible="false" resizable="false" dynamic="true" modal="true" header="#{etiq.config}" >
+        <p:panel closable="true">
+            <h:form>
+                <p:outputLabel />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.titulo}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.tituloIntervencion}" style="text-transform: initial;" size="50" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.anio}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.anio}" style="text-transform: initial;" size="50"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.identPag}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.esPagina}" style="text-transform: initial;" size="50"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.finPag}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.finDePagina}" style="text-transform: initial;" size="50"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.cie9}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.CIE9}" style="text-transform: initial;" size="50"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.cie10}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.CIE10}" style="text-transform: initial;" size="50"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.medicamento}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.medicamento}" style="text-transform: initial;" size="50"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.material}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{gesCauses.extractor.material}" style="text-transform: initial;" size="50"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:commandButton value="#{etiq.restablecer}" action="#{gesCauses.reestableceConfiguracion()}" update=":messages :tab:ventanaConfigPattern" />
+                            <p:commandButton value="#{etiq.guardar}" action="#{gesCauses.guardaConfiguracion()}" update=":messages" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+    </p:dialog>
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+        <p:commandButton value="#{etiq.siM}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        <p:commandButton value="#{etiq.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    </p:confirmDialog>
+</html>

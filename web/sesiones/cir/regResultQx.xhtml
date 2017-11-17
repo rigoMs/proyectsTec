@@ -1,0 +1,372 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="Resultados de Operación"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="frm_busqueda">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.anestesio}"/>
+                            </p:column> 
+                        <p:column>        
+                                <p:selectOneMenu  id="selAnestesio" value="#{oRegistroRes.anestesio.noTarjeta}" required="true">
+                                   <f:selectItem itemLabel="Elegir Anestesiólogo" itemValue="" noSelectionOption="true"/>
+                                   <f:selectItems  value="#{oRegistroRes.listaAnestesiologos}" var="anestesiologo" 
+                                                   itemLabel="#{anestesiologo.nombreCompleto}" itemValue="#{anestesiologo.noTarjeta}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.fecha}"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaAct" 
+                                        value="#{oRegistroRes.procedimientos.fechaProgramada}" 
+                                        required="true"
+                                        locale="es" effect="explode" >
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton id="btnBusFecha" icon="ui-icon-search" 
+                                             value="#{etiq.buscar}" 
+                                             actionListener="#{oRegistroRes.buscaProcedimientosAnestesiologo()}"
+                                             update="tabla_ProceRealizados btnRegResul" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <div class="tablaProcedimientos">
+                    <p:dataTable  id="tabla_ProceRealizados" 
+                                  value="#{oRegistroRes.listaProcedimientos}" 
+                                  var="oDatos"
+                                  emptyMessage="#{etiq.noRegistro}"
+                                  style="width: 1100px; visibility: #{oRegistroRes.visibilidadTabla}" 
+                                  styleClass="frm_centrado"
+                                  rowKey="#{oDatos.episodioMedico.paciente.folioPaciente}"
+                                  selection="#{oRegistroRes.seleccionado}">
+                        <p:ajax event="rowSelectRadio"></p:ajax>
+                        <p:column selectionMode="single" style=" width: 20px"></p:column>
+                        <p:column style=" width: 70px">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.fecha}" />
+                            </f:facet>
+                            <h:outputText value="#{oDatos.fechaProgramada}"/>
+                        </p:column>
+                        <p:column style=" width: 220px">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.nombrePaciente}" />
+                            </f:facet>
+                            <h:outputText value="#{oDatos.episodioMedico.paciente.nombreCompleto}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.proceQx}" />
+                            </f:facet>
+                            <h:outputText value="#{oDatos.CIE9.descripcion}"/>
+                        </p:column>
+                        <p:column style=" width: 70px">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value=" #{etiq.expediente}" />
+                            </f:facet>
+                            <h:outputText value="#{oDatos.episodioMedico.paciente.expediente.numero}"/>
+                        </p:column>
+                        <p:column style=" width: 100px">
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.segpop}" />
+                            </f:facet>
+                            <h:outputText value="#{oDatos.episodioMedico.paciente.seg.numero}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton id="btnRegResul" icon="ui-icon-note" value="#{etiq.registrar}" onclick="PF('regResQx').show();" 
+                                     style=" visibility: #{oRegistroRes.visibilidadTabla}">
+                        <p:ajax listener="#{oRegistroRes.llenaDatosProce()}" update=":frm_resultados:resultados_Proce:"></p:ajax>
+                    </p:commandButton>
+                </div>
+            </h:form>
+            <h:form id="frm_resultados">
+                <!--Dialogo-->
+                <p:dialog  id="dialogResult" header="Resultados de Qx" widgetVar="regResQx"
+                          showEffect="bounce" hideEffect="explode"
+                          resizable="false" style="width: 600px" modal="true">
+                    <p:panelGrid id="resultados_Proce">
+                    <!-- Datos del Paciente -->
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="Paciente:" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header" style=" width: 90px">
+                            <p:outputLabel value="Expediente:" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="Seguro Popular" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                        </p:column>
+                    </p:row> 
+                    <!-- Diagnostico y Procedimientos -->
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="#{etiq.diagnostico}"/>
+                        </p:column>
+                        <p:column colspan="5">
+                            <h:outputText value="#{oRegistroRes.procedimientos.episodioMedico.diagIngreso.descripcionDiag}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.proceQxPro}"/>
+                        </p:column>
+                        <p:column colspan="2">
+                            <h:outputText value="#{oRegistroRes.procedimientos.CIE9.descripcion}"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel  value="#{etiq.cie9}: "/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.CIE9.clave}"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header"/>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.proceQxRea}" />
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:autoComplete id="proRealizado" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                                    size="60" minQueryLength="3" required="true" requiredMessage="Debe ingresar un Procedimiento"
+                                                    styleClass="bordes" value="#{oRegistroRes.procedimientos.episodioMedico.proceRe2.CIE9Realizado.descripcion}"
+                                                    completeMethod="#{oRegistroRes.procedimientos.episodioMedico.proceRe2.CIE9Realizado.completar}" effect="fade"
+                                                    onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300"
+                                                    validatorMessage="Debe ingresar una afeccion">
+                                <p:ajax listener="#{oRegistroRes.buscarCveProce()}" update="clvProRes" event="itemSelect"/>
+                            </p:autoComplete>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel  value="#{etiq.cie9}: "/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText  id="clvProRes" disabled="true" 
+                                          value="#{oRegistroRes.procedimientos.episodioMedico.proceRe2.CIE9Realizado.claveCIE9()}" 
+                                          size="5"  readonly="true" styleClass="bordes"><p:ajax/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header"/>
+                    </p:row>
+                    <!-- Datos de Medicos -->
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.medAnes}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.anestesio.nombreCompleto}"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.medCir}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.cirujano.nombreCompleto}"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.resid}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.residente.nombreCompleto}"/>
+                        </p:column>
+                    </p:row>
+                    <!-- Fechas y Qx -->
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.fecha} Entrada"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar  id="fechaPro" value="#{oRegistroRes.fechaEnt}"
+                                         mindate="#{oRegistroRes.procedimientos.fechaProgramada}"
+                                         locale="es" required="true" >
+                                <p:ajax event="dateSelect" >
+                                </p:ajax>
+                            </p:calendar>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.hoEn}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputMask id="horaEnt" mask="99:99" value="#{oRegistroRes.horaEnt}">
+                                <p:ajax ></p:ajax>
+                            </p:inputMask>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.qx}" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistroRes.procedimientos.quirofanos.nombre}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.fecha} Salida"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar  id="fechaSal" locale="es" 
+                                         value="#{oRegistroRes.fechaSal}"
+                                         mindate="#{oRegistroRes.procedimientos.fechaProgramada}"
+                                         required="true">
+                                <p:ajax event="dateSelect"></p:ajax>
+                            </p:calendar>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.hoSal}" />
+                        </p:column>
+                        <p:column>
+                            <p:inputMask id="horaSal"  mask="99:99" value="#{oRegistroRes.horaSal}">
+                                <p:ajax listener="#{oRegistroRes.registraFechasdeResultado()}" update="duraProce"></p:ajax>
+                            </p:inputMask>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="#{etiq.dura}"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="duraProce" value="#{oRegistroRes.duracionProcedimiento} minutos">
+                                <p:ajax></p:ajax>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <!-- Sangre -->
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="Tipo Sangre" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{oRegistroRes.procedimientos.solicitudSangre.tipoSangre.valor} #{oRegistroRes.procedimientos.solicitudSangre.RH.valor}"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="Sangre Reserva" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{oRegistroRes.procedimientos.cantSangreRes}" />
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="Sangre Ocupada" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText />
+                        </p:column>
+                    </p:row>
+                    <!-- Observaciones -->
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <h:outputLabel value="Observaciones" />
+                        </p:column>
+                        <p:column colspan="5">
+                            <p:inputTextarea id="notaRes" value="#{oRegistroRes.procedimientos.notaResultado}" cols="120" rows="5">
+                            </p:inputTextarea>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6">
+                            <h:outputLabel value="Material Especial"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6">
+                             <p:dataTable id="sListaMat" 
+                                          value="#{oRegistroRes.procedimientos.valeMat.arrDetalle}"
+                                          var="oDetalles"
+                                          emptyMessage="#{etiq.noDatos}"
+                                          style="width: 1100px;"
+                                          rowKey="#{oDetalles.identificador}"
+                                          class="frm_centrado" editable="true" editMode="cell">
+                                 <p:ajax event="cellEdit" update=":frm_resultados:messages" />
+                                 <p:ajax event="rowSelect" update=":frm_resultados:messages" />
+                                 <p:column style=" width: 100px">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.clave}"/>
+                                     </f:facet>
+                                     <p:outputLabel value="#{oDetalles.material.claveMat}"/>
+                                 </p:column>
+                                 <p:column style="width: 180px">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.materialUtilizado}"/>
+                                     </f:facet>
+                                     <h:outputText value="#{oDetalles.material.nombre}"/>
+                                 </p:column>
+                                 <p:column style="width: 70px">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.cantidad}"/>
+                                     </f:facet>
+                                     <h:outputText value="#{oDetalles.cantSur}"/>
+                                 </p:column>
+                                 <p:column style=" width: 80px" headerText="Cantidad Aplicada">
+                                     <p:cellEditor>
+                                         <f:facet name="output">
+                                             <h:outputText value="#{oDetalles.cantAplicada}"/>
+                                         </f:facet>
+                                         <f:facet name="input">
+                                             <p:inputText value="#{oDetalles.cantAplicada}" label="cantAplicada" />
+                                         </f:facet>
+                                     </p:cellEditor>
+                                 </p:column>
+                                 <f:facet name="footer">
+                                     <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}">
+                                         <p:ajax  process="@this" 
+                                                  update=":frm_resultados:messages" />
+                                     </p:commandButton>
+                                 </f:facet>
+                             </p:dataTable>
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer" class="frm_centrado">
+                        <p:row>
+                            <p:column colspan="6" class="centrado_texto" styleClass="ui-widget-header">
+                                <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" 
+                                                 actionListener="#{oRegistroRes.registraResultadoQx()}" 
+                                                 onclick="PF(regResQx.hide());">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton> 
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                    </p:panelGrid>
+                    <p:growl id="messages" showDetail="true" />
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

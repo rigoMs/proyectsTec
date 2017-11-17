@@ -1,0 +1,405 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.recCol}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form id="recetaColectNoCtrl">
+                        <p:growl id="msg" showDetail="true"/>
+
+
+                                <p:accordionPanel rendered="#{oGenRecCol.ocultarBusqueda1}">
+                                    <p:tab title="#{etiq.buscarServicioCE}">
+                                        <p:panelGrid columns="3">
+                                            <p:outputLabel value="#{etiq.servicio}:"/>
+                                            <p:outputLabel value="#{etiq.fecha}:"/>
+                                            <p:outputLabel/>
+                                            <p:selectOneMenu id="selectAreas" value="#{oGenRecCol.areaServ.clave}">
+                                                <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                                <f:selectItems value="#{oGenRecCol.listaAreasCE}" var="Areas"
+                                                               itemLabel="#{Areas.descripcion}" itemValue="#{Areas.clave}" />
+                                                <p:ajax/>
+                                            </p:selectOneMenu>
+                                            <p:calendar id="tFecCita2" value="#{oGenRecCol.fechaAux}" effect="fold" locale="es" showOn="button" 
+                                                        disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                                <p:ajax event="dateSelect"></p:ajax>
+                                            </p:calendar>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update=":recetaColectNoCtrl:tablaPac" listener="#{oGenRecCol.buscaPacienteCE()}"/>
+                                            </p:commandButton>
+                                        </p:panelGrid>
+                                    </p:tab>
+                                </p:accordionPanel>
+                                
+                                <p:accordionPanel rendered="#{oGenRecCol.ocultarBusqueda2}">
+                                    <p:tab title="#{etiq.buscarServicioHosp}">
+                                        <p:panelGrid columns="3">
+                                            <p:outputLabel value="#{etiq.servicio}:"/>
+                                            <p:outputLabel value="#{etiq.fecha}:"/>
+                                            <p:outputLabel/>
+                                            <p:selectOneMenu id="selectAreas" value="#{oGenRecCol.areaServ.clave}">
+                                                <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                                <f:selectItems value="#{oGenRecCol.listaAreasHosp}" var="Areas"
+                                                               itemLabel="#{Areas.descripcion}" itemValue="#{Areas.clave}" />
+                                                <p:ajax/>
+                                            </p:selectOneMenu>
+                                            <h:outputText value="#{oGenRecCol.fechaActual}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                            </h:outputText>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update=":recetaColectNoCtrl:tablaPac" listener="#{oGenRecCol.buscaPacienteHOSP()}"/>
+                                            </p:commandButton>
+                                        </p:panelGrid>
+                                    </p:tab>
+                                </p:accordionPanel>
+
+                                <br/><br/>
+
+                                <div class="tabla_pacEnc">
+                                    <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                                 paginatorPosition="both" rows="5" 
+                                                 value="#{oGenRecCol.listaEpiMed}" 
+                                                 emptyMessage="#{etiq.noRegistro}" 
+                                                 style="visibility:#{oGenRecCol.visibilidadTabla};"
+                                                 rowKey="#{oPacEnc.paciente.folioPaciente}"
+                                                 selection="#{oGenRecCol.seleccionado}">
+                                        <p:ajax event="rowSelectRadio" update=":recetaColectNoCtrl:tablaMedSolSur :recetaColectNoCtrl:regRecColec"></p:ajax>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{etiq.pacEncontrados}"/>
+                                        </f:facet>
+                                        <p:column selectionMode="single" style="width: 7%">
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.apPaterno}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.apMaterno}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.nombres}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.edadNumero}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.sPop}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.seg.numero}"/>
+                                        </p:column>
+                                        <p:column style="width: 10%">
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.expediente.numero}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.cama}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.cama.numero}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.servicio}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.area.descripcion}"/>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton value="#{etiq.llenarReceta}" onclick="PF('dlgSolicitarMedicamento').show();" type="button" icon="ui-icon-plus">
+                                                <p:ajax listener="#{oGenRecCol.llenadoDatosPersonales}" update=":recetaColectNoCtrl:RecetaMedCol"></p:ajax>
+                                            </p:commandButton>
+                                            <p:commandButton value="#{etiq.verDetalles}" onclick="PF('dlgMedicamentoPacienteSolitado').show();" icon="ui-icon-search" type="button">
+                                                <p:ajax listener="#{oGenRecCol.llenadoDatosPersonales}" update=":recetaColectNoCtrl:ConsReceta"></p:ajax>
+                                            </p:commandButton>
+                                            <p:column><p:commandButton value="Consultar totales" onclick="PF('dlgMedicamentoTotal').show();" type="button" icon="ui-icon-search"/></p:column>
+                                        </f:facet>
+                                    </p:dataTable>      
+                                </div>
+
+
+
+
+                        <!--**************************************************************************************************************************************************************************-->
+
+
+
+                        <p:dialog header="Solicitar medicamento" widgetVar="dlgSolicitarMedicamento" height="500" width="1000" resizable="false" modal="true">
+                            <p:panelGrid id="RecetaMedCol">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sPop}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.nombreCompleto}" /></p:column>                        
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.edadNumero}" /></p:column> 
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.seg.numero}" /></p:column>
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.expediente.numero}" /></p:column>
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.cama.numero}" /></p:column>
+                                </p:row>                                            
+                            </p:panelGrid>
+                            <br/>          
+                            <p:panelGrid id="regRecColec" styleClass="frm_centrado">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="5"><h:outputLabel value="Solicitar medicamento"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><p:outputLabel value="#{etiq.clave}"/></p:column>
+                                        <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column>
+                                        <p:column><h:outputLabel value="#{etiq.presentacion}"/></p:column>
+                                        <p:column><h:outputLabel value="#{etiq.cantidad}"/></p:column>
+                                        <p:column><h:outputLabel value=""/></p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column><p:inputText id="claveMed" value="#{oGenRecCol.medicamento.claveMedicamento}" size="12" styleClass="bordes" readonly="true"><p:ajax/></p:inputText></p:column>
+                                    <p:column>
+                                        <p:autoComplete id="nombreMed"  onkeypress="return validaCaracter(event);"  queryDelay="1000" size="40" minQueryLength="3" required="true" styleClass="bordes"
+                                                        value="#{oGenRecCol.medicamento.nombre}" completeMethod="#{oGenRecCol.detalleRecColec.medicamento.completarMedNoCntrl}" effect="fade"
+                                                        onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300" requiredMessage="Debe ingresar un nombre de medicamento">
+                                            <p:ajax listener="#{oGenRecCol.buscaClave()}" update="claveMed presentMed" event="itemSelect"/>
+                                        </p:autoComplete>
+                                    </p:column>
+                                    <p:column><p:inputText id="presentMed" value="#{oGenRecCol.medicamento.presentacion}" readonly="true" ><p:ajax></p:ajax></p:inputText></p:column>
+                                    <p:column><p:inputText value="#{oGenRecCol.detalleRecColec.cantidadSol}" size="5"><poue:keyFilter regEx="/[0-9]/i"/><p:ajax/></p:inputText></p:column>
+                                    <p:column>
+                                        <p:commandButton value="Agregar" icon="ui-icon-plus">
+                                            <p:ajax listener="#{oGenRecCol.registroMedicamento()}" update="tablaRecetaColec regRecColec :recetaColectNoCtrl:msg"></p:ajax>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column colspan="5">
+                                        <p:dataTable id="tablaRecetaColec" var="RecetaCol" value="#{oGenRecCol.receta}" style="visibility:#{oGenRecCol.visibilidadRegistroMed}">
+                                            <f:facet name="header">
+                                                <p:outputLabel id="titVac" value="Material"/>
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.clave}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{RecetaCol.medicamento.claveMedicamento}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.nombre}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{RecetaCol.medicamento.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{RecetaCol.medicamento.presentacion}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidad}:" styleClass="columnachica centrado_texto">
+                                                <h:outputText value="#{RecetaCol.cantidadSol}"/>
+                                            </p:column>
+                                            <p:column headerText="" styleClass="columnachica centrado_texto">
+                                                <p:commandButton value="#{etiq.borrar}" id="btnBorrar" icon="ui-icon-trash">
+                                                    <p:ajax listener="#{oGenRecCol.borrarElemento(RecetaCol)}" update="tablaRecetaColec"></p:ajax>
+                                                </p:commandButton>
+                                            </p:column>
+                                            <f:facet name="footer">
+                                                <p:commandButton value="Guardar" icon="ui-icon-disk" id="btnGuardar">
+                                                    <p:ajax listener="#{oGenRecCol.guardarRecCol()}" update="tablaRecetaColec :recetaColectNoCtrl:msg"></p:ajax>
+                                                </p:commandButton>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:dialog>
+
+
+
+                        <!--**************************************************************************************************************************************************************************-->
+
+
+
+                        <p:dialog header="Medicamento solicitado" widgetVar="dlgMedicamentoPacienteSolitado" height="500" resizable="false" modal="true">   
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="Fecha de solicitud: " styleClass="mensaje"/> 
+                                        <p:calendar id="fecSolPac" value="#{oGenRecCol.fechaAux}" effect="fold" locale="es" showOn="button"
+                                                    pattern="dd/MMM/yyyy" required="true" readonlyInput="true" >
+                                            <p:ajax event="dateSelect" update="fechaAux"/>
+                                        </p:calendar>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search">
+                                            <p:ajax update="tablaMedSolSur" listener="#{oGenRecCol.buscaMedicamentoSolSur()}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>                 
+                            <p:panelGrid id="ConsReceta" styleClass="frm_centrado">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="3"></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column>
+                                    <p:column>
+                                        <h:outputLabel id="fechaAux" value="#{oGenRecCol.fechaAux}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sPop}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.nombreCompleto}" /></p:column>                             
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.edadNumero}" /></p:column> 
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.seg.numero}" /></p:column>
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.paciente.expediente.numero}" /></p:column>
+                                    <p:column><h:outputText value="#{oGenRecCol.episodioMedico.cama.numero}" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="Receta colectiva"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5">
+                                        <p:dataTable id="tablaMedSolSur" var="MedSolSur" value="#{oGenRecCol.recetaMedSol}">
+                                            <p:column headerText="#{etiq.nombre}">
+                                                <h:outputText value="#{MedSolSur.medicamento.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}">
+                                                <h:outputText value="#{MedSolSur.medicamento.presentacion}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidadSol}">
+                                                <h:outputText value="#{MedSolSur.cantSolicitada}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidadSur}">
+                                                <h:outputText value="#{MedSolSur.cantSurtida}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/><br/>
+                            <p:commandButton value="Imprimir" onclick="" icon="ui-icon-print">
+                                <p:printer target="ConsReceta"/>
+                            </p:commandButton>
+                        </p:dialog>
+
+
+                        <!--**************************************************************************************************************************************************************************-->
+
+
+
+                        
+
+                        <p:dialog header="Total de medicamento solicitado y surtido" widgetVar="dlgMedicamentoTotal" height="500" width="900" resizable="false" modal="true">
+                            <p:panelGrid styleClass="frm_centrado">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="Fecha de solicitud: " styleClass="mensaje"/> 
+                                        <p:calendar id="fecSolSurArea" value="#{oGenRecCol.fechaAux}" effect="fold" locale="es" showOn="button" 
+                                                    pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                            <p:ajax event="dateSelect" update="fechaAux3"></p:ajax>
+                                        </p:calendar>
+                                    </p:column> 
+                                    <p:column>
+                                        <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search">
+                                            <p:ajax update="tablaMedAreaSolSur areaTotImp" listener="#{oGenRecCol.buscaMedicamentoSolSurTot()}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>               
+                            <p:panelGrid id="MedAreaSolSur" styleClass="frm_centrado">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column>
+                                    <p:column>
+                                        <h:outputLabel id="fechaAux3" value="#{oGenRecCol.fechaAux}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="Recetario colectivo"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2"><h:outputLabel id="areaTotImp" value="#{oGenRecCol.areaServ.descripcion}" /></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:dataTable id="tablaMedAreaSolSur" var="MedSolSur" value="#{oGenRecCol.recetaMedSolTot}">
+                                            <p:column headerText="#{etiq.nombre}">
+                                                <h:outputText value="#{MedSolSur.medicamento.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}">
+                                                <h:outputText value="#{MedSolSur.medicamento.presentacion}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidadSol}">
+                                                <h:outputText value="#{MedSolSur.cantidadSolTot}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidadSur}">
+                                                <h:outputText value="#{MedSolSur.cantidadSurTot}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/><br/>
+                            <p:commandButton value="Imprimir" onclick="" icon="ui-icon-print">
+                                <p:printer target="MedAreaSolSur"/>
+                            </p:commandButton>
+                        </p:dialog>
+                        
+
+                    </h:form>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+</html>

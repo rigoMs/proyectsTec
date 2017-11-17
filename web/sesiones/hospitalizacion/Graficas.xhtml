@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div>
+
+            <h:form class="centrar">
+                <br/>
+                <p:growl id="messages" showDetail="true"/>
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                <h2><h:outputLabel value="#{etiq.graficas}"/><h:outputLabel value=" #{etiq.hospitalizacion}"/></h2>
+                <p:panelGrid styleClass="frm_centrado" id="RegPaciente"> 
+
+                    <f:facet name="header">
+                          <p:row>
+                              <p:column>
+                              <h:outputLabel value="#{etiq.areaServicio}"/>
+                             </p:column>
+                         </p:row>
+                     </f:facet>                                        
+                      <p:row>
+                          <p:column>
+                              <p:selectOneMenu id="rbSRN1" value="#{oGraPed.ASerHRRB.clave}">                                            
+                                  <f:selectItem itemLabel="SELECCIONA" itemValue="" />                                            
+                                  <f:selectItems value="#{oGraPed.listaAreasServicio}" var="areaSer" 
+                                                 itemLabel="#{areaSer.descripcion}" itemValue="#{areaSer.clave}"/>                                       
+                              </p:selectOneMenu>  
+                           </p:column>                                     
+                       </p:row>              
+                     <p:row>
+                          <p:column styleClass="ui-widget-header">
+                          <h:outputLabel value="#{etiq.rangoFechas}"/>
+                         </p:column>
+                     </p:row>                    
+
+                      <p:row>
+                          <p:column>
+                              <p:outputLabel value="#{etiq.fechaEmisionDel}: "/>
+
+                              <p:calendar id="fechaIni"  effect="fold" required="true" value="#{oGraPed.fechaIni}" maxdate="#{oGraPed.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                <p:ajax event="dateSelect" update="fechaFin"/>
+                            </p:calendar>
+                            <p:outputLabel value=" #{etiq.al}: "/>
+                            <p:calendar id="fechaFin"  effect="fold" required="true" value="#{oGraPed.fechaFin}" mindate="#{oGraPed.fechaIni}" maxdate="#{oGraPed.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar>
+                           </p:column>                                     
+                       </p:row> 
+
+                        <p:row>
+                             <p:column>
+                                 <p:selectOneMenu id="EPa" value="#{oGraPed.tipoGra}">
+                                    <f:selectItem itemLabel="Elige un opción" itemValue="0"/>
+                                     <f:selectItem itemLabel="Por Edades" itemValue="1"/>
+                                     <f:selectItem itemLabel="Por Sexo" itemValue="2"/>
+                                     <f:selectItem itemLabel="Por Motivo Egreso" itemValue="3"/>
+                                     <f:selectItem itemLabel="Motivo De Egreso Por Edad" itemValue="4"/>
+                                     <f:selectItem itemLabel="Motivo De Egreso Por Sexo" itemValue="5"/>
+                                     <f:selectItem itemLabel="Diagnóstico Por Sexo" itemValue="6"/>
+                                 </p:selectOneMenu>
+                             </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>            
+                                <p:commandButton id="bGenerar" styleClass="frm_login" value="#{etiq.consultar}" icon="ui-icon-search" action="#{oGraPed.generar()}" update="gra1, gra2, :resultados:tablaDes" onclick="this.form.target='_self'"/>                  
+                                <br/> 
+                            </p:column>
+                        </p:row> 
+                </p:panelGrid>
+                     <br/>
+                     
+                     <p:chart type="bar" model="#{oGraPed.barModel}" id="gra1" style="height:300px; width: 100%; margin: 0 auto;"/>
+                     <br/><br/><br/>
+                     <p:chart type="line" model="#{oGraPed.lineModel}" id="gra2" style="height:300px; width: 100%; margin: 0 auto;"/>
+                     
+                     <br/><br/>
+  
+            </h:form>
+                    
+            <h:form id="resultados">
+                <div class="tabla_descripcion">
+                <p:dataTable id="tablaDes" var="oDescripcion" value="#{oGraPed.hospitalizacion}" emptyMessage="Sin Afecciones" style="#{oGraPed.estilo}">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.principales} #{etiq.afeccionesTratadas}"/>
+                </f:facet>                
+                
+                <p:column headerText="#{etiq.cie10}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.clave}"/>
+                </p:column> 
+                    
+                <p:column headerText="#{etiq.causes}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.causes.clave}"/>
+                </p:column>     
+                
+                <p:column headerText="#{etiq.diagnostico}" style="width:50%">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.descripcionDiag}"/>
+                </p:column>                           
+
+                <p:column headerText="#{etiq.hombres}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.cantidadH}"/>
+                </p:column> 
+                
+                <p:column headerText="#{etiq.mujeres}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.cantidadM}"/>
+                </p:column>        
+                
+                <p:column headerText="#{etiq.total}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.total}"/>
+                </p:column>                 
+                </p:dataTable>
+                </div>
+                
+                <p:panelGrid>   
+                        <p:row>
+                            <p:column>                                
+                                <p:commandButton value="#{etiq.descargar}" styleClass="centrar" action="GraficasImp" icon="ui-icon-arrowthickstop-1-s" ajax="false" onclick="this.form.target='_blank'"/>          
+                            </p:column>  
+                        </p:row>
+                </p:panelGrid>                        
+               </h:form>
+                    
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>                    
+                 </div>
+            </ui:define>
+        </ui:composition>
+            
+</html>

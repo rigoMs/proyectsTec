@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">   
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+         <h:form id="frm1">
+             <p:growl id="mensajes"  showDetail="true" />
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+              <h2><center><h:outputLabel value="#{etiq.agenda}"/></center></h2>
+      <p:panelGrid style="margin-top:30px" id="buscafeca"> 
+          <f:facet name="header">
+        <p:row>
+           <p:column><center><h:outputLabel value="#{etiq.buscarFecha}"/> </center></p:column>   
+        </p:row>
+    </f:facet>
+          <p:row>
+              <p:column><p:calendar id="fecha" value="#{agendar.agend.fechaCita}" pattern="yyyy/MM/dd" required="true" locale="es" disabledWeekends="true"/>
+                  <p:commandButton value="Buscar" update=":forma:agendados :frm1:mensajes :frm1:buscafeca" action="#{agendar.inicializa()}">
+                </p:commandButton>
+              </p:column>
+          </p:row>
+      </p:panelGrid>    
+    </h:form>
+    <h:form id="form1">
+          <p:panelGrid id="paciente">             
+    <f:facet name="header">
+        <p:row>
+           <p:column colspan="8" styleClass="ui-widget-header"><center> 
+               <h:outputLabel value="#{etiq.ingresarDatos}"/> </center></p:column>   
+        </p:row>
+    </f:facet>
+        <p:row> 
+            <p:column><h:outputLabel value="#{etiq.id}" /></p:column>
+            <p:column><p:inputText id="id" value="#{agendar.paci.idNacional}" required="true"/>
+                <p:commandButton  icon="ui-icon-search" title="Buscar" update="nombrec hora"/>
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.nombreCompleto}"/><br/></p:column>
+            <p:column><h:outputText id="nombrec" value="#{agendar.nombrec}"/></p:column>  
+            <p:column><h:outputLabel value="#{etiq.hora}" /></p:column>
+            <p:column> <p:inputMask id="hora" mask="99:99" value="#{agendar.agend.hora}" size="6" validator="mx.gob.hrrb.validadores.HoraCitaCapaValidador"/></p:column>       
+        </p:row>
+        <p:row>  
+            <p:column styleClass="centrado_texto" colspan="6">
+                <p:commandButton type="submit" value="#{etiq.registrar}" icon="ui-icon-disk"  action="#{agendar.almacena()}" update=":frm1:mensajes :forma:agendados"/> 
+            </p:column>
+        </p:row>
+</p:panelGrid> 
+</h:form>
+<h:form id="forma">
+    <p:dataTable var="agend" value="#{agendar.lista}" id="agendados" editable="true">
+    <f:facet name="header">
+                    <h:outputLabel value="#{etiq.agendados}"/>
+    </f:facet>
+        <p:ajax event="rowEdit" listener="#{agendar.onEdit}" update=":frm1:mensajes"/>
+        <p:ajax event="rowEditCancel" listener="#{agendar.onCancel}" update=":frm1:mensajes" />
+    <p:column>
+        <f:facet name="header">
+             <h:outputLabel  value="#{etiq.fecha}"/>
+        </f:facet>
+        <p:cellEditor>
+            <f:facet name="output">
+                <h:inputHidden value="#{agend.folioCita}"/>
+                <h:inputHidden value="#{agend.noconsult.noConsultorio}"/>
+                <h:outputText value="#{agend.fechaCita}"/>
+            </f:facet>
+            <f:facet name="input">
+                <p:calendar value="#{agend.fechaCita}"  navigator="true"  label="fecha" pattern="yyyy/MM/dd" locale="es" disabledWeekends="true"/> 
+            </f:facet> 
+        </p:cellEditor>
+    </p:column>
+    <p:column>
+        <f:facet name="header"> 
+             <h:outputLabel value="#{etiq.hora}"/>
+        </f:facet>
+        <p:cellEditor>
+            <f:facet name="output">
+                <h:outputText value="#{agend.horaAlmacenada}"/>
+            </f:facet>
+            <f:facet name="input">
+                <p:inputMask id="hora" mask="99:99" value="#{agend.hora}" size="6" validator="mx.gob.hrrb.validadores.HoraCitaCapaValidador" required="true"/>
+            </f:facet> 
+        </p:cellEditor>
+    </p:column>
+    <p:column>
+        <f:facet name="header"> 
+             <h:outputLabel value="#{etiq.idSalvar}"/>
+        </f:facet>
+        <h:outputText value="#{agend.pacienteCapa.idNacional}"/>
+    </p:column>
+    <p:column>
+        <f:facet name="header"> 
+             <h:outputLabel value="#{etiq.paciente}"/>
+        </f:facet>
+        <h:outputText value="#{agend.pacienteCapa.nombreCompleto}"/>
+    </p:column>
+    <p:column style="width:6%"> 
+            <p:rowEditor/>                                                            
+    </p:column>
+</p:dataTable>          
+</h:form>
+       <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+    </ui:define>
+</ui:composition>
+</html>

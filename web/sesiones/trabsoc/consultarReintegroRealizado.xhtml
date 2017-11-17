@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reintegro} #{etiq.realizados}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+               <p:panelGrid>
+                    <p:row>
+                    <p:column>  
+                        <p:outputLabel value="#{etiq.seleccfecha}:"/>
+                             <p:calendar id="fechaIni"  effect="fold" required="true" value="#{RepotReintReali.fechaIni}" maxdate="#{RepotReintReali.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                 <p:ajax event="dateSelect" update="fechaFin"/>
+                             </p:calendar>
+                            <p:outputLabel value=" #{etiq.al}: "/>
+                            <p:calendar id="fechaFin"  effect="fold" required="true" value="#{RepotReintReali.fechaFin}" mindate="#{RepotReintReali.fechaIni}" maxdate="#{RepotReintReali.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                     </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/> <br/>
+                <p:panelGrid styleClass="frm_centrado">
+                    <p:row>
+                        <p:column colspan="7" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.formasdebusq}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombrePaciente}:"/></p:column>
+                        <p:column> 
+                            <h:inputText id="txtnompac" value="#{oVarTip.texto}" size="30">
+                                <f:validateLength minimum="4" maximum="254"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.folio} #{etiq.de} #{etiq.recibo}:"/></p:column>
+                        <p:column> 
+                            <h:inputText id="txtprog" value="#{oVarTip.texto}" size="30">
+                                <f:validateLength minimum="4" maximum="254"/>
+                            </h:inputText>
+                        </p:column> 
+                        <p:column>
+                            <p:commandButton id="btnbuscpacofolio" value="#{etiq.buscar}" icon="ui-icon-search"  type="button"/>   
+                        </p:column> 
+                    </p:row>
+                </p:panelGrid> 
+                 <br/> 
+                              <p:dataTable   var="oPacEnc" paginator="true"   rows="20" paginatorPosition="both"
+                                     emptyMessage="NO HAY REGISTROS" >
+                                   <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.reintegro} #{etiq.realizados}"/>
+                                </f:facet>
+                             <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.fechade} #{etiq.realizacion}"/>
+                                </f:facet>
+                                <h:outputText value="" />
+                              </p:column> 
+                               <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.folio}"/>
+                                </f:facet>
+                                <h:outputText value="" />
+                              </p:column> 
+                               <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.tipoDe} #{etiq.recibo}"/>
+                                </f:facet>
+                                <h:outputText value="" />
+                              </p:column> 
+                              <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.nombrePaciente}"/>
+                                </f:facet>
+                                <h:outputText value="" />
+                              </p:column> 
+                                <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.monto} #{etiq.total}"/>
+                                </f:facet>
+                                <h:outputText value="" />
+                              </p:column> 
+                              <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.monto} #{etiq.reintegrado}"/>
+                                </f:facet>
+                                <h:outputText value="" />
+                              </p:column>
+                              <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.detalles}"/>
+                                </f:facet>
+                                <h:outputText value="" />
+                              </p:column> 
+                                  <p:column style="width:32px;text-align: center">
+                                           <p:commandButton id="detallesdereint" value="#{etiq.cuenta} "
+                                             onclick="PF('detallrein').show();" type="button"/>
+                                  </p:column>
+                                  
+                          </p:dataTable>
+               
+                 
+                   <p:dialog header="#{etiq.detalles} #{etiq.delaCuenta}" widgetVar="detallrein" 
+                                      showEffect="puff" resizable="false" >  
+                    <p:panelGrid>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.concepto}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.costo}:"/></p:column> 
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fecha}:"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.reintegrado}:"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputText value="Radiografia"/></p:column>
+                                        <p:column><h:outputText value="1200"/></p:column>
+                                        <p:column><h:outputText value="19/09/15"/></p:column>
+                                        <p:column><h:outputText value="no"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputText value="Gasometria"/></p:column>
+                                        <p:column><h:outputText value="800"/></p:column>
+                                        <p:column><h:outputText value="19/09/15"/></p:column>
+                                        <p:column><h:outputText value="si"/></p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                        </p:dialog>
+
+                <p:commandButton value="#{etiq.exportar} a #{etiq.excel}" icon="ui-icon-arrowthickstop-1-s"/> 
+
+                
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

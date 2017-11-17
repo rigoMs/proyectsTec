@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.mantener} #{etiq.catalogo}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+            <p:panelGrid styleClass="frm_centrado">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="8"><h:outputLabel value="Solicitud de material a CEYE"/></p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column styleClass="ui-widget-header">
+                        <h:outputLabel value="#{etiq.servicio}:"/>
+                    </p:column>
+                    <p:column styleClass="ui-widget-header">
+                        <h:outputLabel value="#{etiq.enfSol}:"/>
+                    </p:column>                 
+                    <p:column styleClass="ui-widget-header">
+                        <h:outputLabel value="#{etiq.fecha}:" />
+                    </p:column>
+                    <p:column styleClass="ui-widget-header">
+                        <h:outputLabel value="#{etiq.hora}:" />
+                    </p:column>
+                    <p:column styleClass="ui-widget-header" colspan="3">
+                        <h:outputLabel value="" />
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="#{etiq.anes}"/></p:column>
+                    <p:column><h:outputLabel value="LORE CORY HERNÁNDEZ"/></p:column>
+                    <p:column><h:outputLabel  value="17/07/2015" /></p:column>
+                    <p:column><h:outputLabel  value="20:40:19" /></p:column>
+                    <p:column><p:commandButton value="Solicitar material" icon="ui-icon-plus" onclick="PF('dlgMatCeye').show();" type="button"/></p:column>
+                    <p:column><p:commandButton value="Consultar material solicitado" icon="ui-icon-search" onclick="PF('dlgConsMatCeye').show();" type="button"/></p:column>
+                    <p:column><p:commandButton value="Consultar inventario" icon="ui-icon-search" onclick="PF('dlgConsInv').show();" type="button"/></p:column>
+                </p:row>
+            </p:panelGrid>
+                <br/>
+                <br/>
+                <!--Solicitar solicitado a CEYE -->
+                <p:dialog header="Solicitar material a CEYE" widgetVar="dlgMatCeye" height="400" width="600" resizable="false">
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="3">
+                                    <h:outputLabel value="Solicitar material a CEYE"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>                         
+                                <p:column><h:outputLabel value="#{etiq.material}"/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.cantidad}"/></p:column>
+                                <p:column><h:outputLabel value=""/></p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column><p:inputText  value="" required="true"></p:inputText></p:column>
+                            <p:column><p:inputText value="" size="5" styleClass="bordes"/></p:column>
+                            <p:column><p:commandButton value="Agregar material" type="button" icon="ui-icon-plus"/></p:column>                            
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="ABATELENGUAS"/></p:column>
+                            <p:column><p:outputLabel value="2"/></p:column>
+                            <p:column><p:commandButton value="Borrar" icon="ui-icon-trash"/></p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>                    
+                    <p:commandButton value="Solicitar" icon="ui-icon-disk"/>                                              
+                </p:dialog>
+                <!--Material solicitado a CEYE-->
+                <p:dialog header="Material solicitado a CEYE" widgetVar="dlgConsMatCeye" 
+                          height="400" width="600" resizable="false">
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="2"><h:outputLabel value="Medicina interna"/></p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="Fecha de solicitud: " styleClass="mensaje"/>
+                                <p:calendar id="fecSolPac" effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>
+                            <p:column><p:commandButton value="Buscar" icon="ui-icon-search"/></p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <br/>
+                    <p:panelGrid class="frm_centrado">   
+                        <f:facet name="header">
+                            <p:row>  
+                                <p:column><h:outputLabel value="#{etiq.material}"/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.cantidadSol}"/></p:column>  
+                                <p:column><h:outputLabel value="#{etiq.cantidadSur}"/></p:column>  
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column><p:outputLabel value="ABATELENGUAS"/></p:column>
+                            <p:column><p:outputLabel value="2"/></p:column>
+                            <p:column><p:outputLabel value="2"/></p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+                <!-- Material disponible en Ceye-->
+                <p:dialog header="Material disponible en CEYE" widgetVar="dlgConsInv" height="400" width="900" resizable="false">
+                    <h:panelGrid class="frm_centrado" columns="4" border="1">
+                            <h:outputLabel value="Nombre" styleClass="mensaje"/>
+                            <h:outputText value="Cantidad en existencia" styleClass="mensaje"/>
+                            <h:outputLabel value="Nombre" styleClass="mensaje"/>
+                            <h:outputText value="Cantidad en existencia" styleClass="mensaje"/>
+                            <h:outputText value="ABATELENGUAS"/>
+                            <h:outputText value="40"/>
+                            <h:outputText value="AGUJAS DESECHABLES 20X32"/>
+                            <h:outputText value="70"/>
+                            <h:outputText value="CATETER EPIDURIAL"/>
+                            <h:outputText value="100"/>
+                            <h:outputText value="EQUIPO P.V.C."/>
+                            <h:outputText value="20"/>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

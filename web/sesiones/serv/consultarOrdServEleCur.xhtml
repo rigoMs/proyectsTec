@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.ordenesEnvio}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <h:panelGrid styleClass="frm_centrado" columns="10">
+                    <p:outputLabel styleClass="mensaje" value="#{etiq.numexpe} " />
+                    <p:inputText id="txtNumExp" size="20"/>
+                    <br/>
+                    <p:outputLabel id="fecPacXFec" value="#{etiq.selFecha} " styleClass="mensaje"/>
+                    <p:calendar id="tFecCita2"  effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                    <br/>
+                    <p:commandButton value="Buscar" icon="ui-icon-search"/>
+                </h:panelGrid>
+                 
+            </h:form>
+            <p:dataTable value="" var="" emptyMessage="No hay datos">      
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.listpac}" styleClass="mensaje"/>
+                </f:facet>
+                <p:column width="5%">
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.seleccionar}"/>
+                    </f:facet>
+                    <p:selectOneRadio id="rdSel2">
+                        <f:selectItem itemLabel="1" itemValue="1"/>
+                    </p:selectOneRadio>
+                </p:column>
+                <p:column width="18%">
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.nompac}"/>
+                    </f:facet>
+                </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.numexpe}"/>
+                    </f:facet>
+                </p:column>
+                <p:column width="20%">
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.diagnostico}"/>
+                    </f:facet>
+                </p:column>
+                <p:column width="15%">
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.estudioSol}"/>
+                    </f:facet>
+                 </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.estatusSol}"/>
+                    </f:facet>
+                    <p:selectBooleanButton id="bbtApro" offLabel="No Aprobado" onLabel="Aprobado"/>
+                </p:column>
+            </p:dataTable>
+           
+            <h:panelGrid columns="2" styleClass="frm_centrado">
+                <p:commandButton value="Ver detalles" onclick="PF('dlgPaciente').show();" type="button"/>
+            </h:panelGrid>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+         <p:dialog header="Datos del Paciente" widgetVar="dlgPaciente"
+                   height="50%" width="80%" resizable="false" position="center">
+             <p:panelGrid styleClass="frm_centrado"> 
+                <p:row>
+                    <p:column colspan="1" rowspan="1">
+                        <h:outputLabel value="#{etiq.nompac} " styleClass="mensaje"/>
+                     </p:column>
+                    <p:column colspan="3" rowspan="1">
+                         <h:outputText value="Llarena López Jośe Pablo" />
+                     </p:column>
+                    <p:column colspan="1" rowspan="1">
+                        <h:outputLabel value="#{etiq.numexpe} " styleClass="mensaje" />
+                     </p:column>
+                    <p:column colspan="1" rowspan="1">
+                        <h:outputText value="1234567890"/>
+                     </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="1" rowspan="1"> 
+                         <h:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje" />
+                     </p:column>
+                    <p:column colspan="1" rowspan="1">
+                         <h:outputText value="17/12/2015"/>
+                     </p:column>
+                    <p:column colspan="1" rowspan="1"> 
+                         <h:outputLabel value="#{etiq.fechanac}" styleClass="mensaje" />
+                     </p:column>
+                    <p:column colspan="1" rowspan="1">
+                         <h:outputText value="16/05/1992"/>
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.cama} " styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputText value="541"/>
+                     </p:column>
+                </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.edad} " styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                        <h:outputText value="23 años"/>
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.sexo} " styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputText value="Masculino"/>
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.area} " styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputText value="Hospitalización"/>
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.servicio} " styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputText value="Cirugía"/>
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="3" rowspan="1">
+                        <h:outputText value="Dr. José Pablo Llarena López"/>
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.diagnostico} " styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="3" rowspan="1">
+                         <h:outputText value="Gripe"/>
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.analisisSol}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value=""/>
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.especimen}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value=""/>
+                     </p:column>
+                      <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.fecYHoraM}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="2015-17-10 12:00:45"/>
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.temperatura}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value=""/>
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.obserYComen}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="5" rowspan="1">
+                         <h:outputLabel value=""/>
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.domicilio}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="5" rowspan="1">
+                         <h:outputLabel value="" />
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.LabDestino}" styleClass="mensaje" />
+                     </p:column>
+                     <p:column colspan="5" rowspan="1">
+                         <h:outputText value=""/>
+                     </p:column>
+                 </p:row>
+                 <p:row>
+                     <p:column colspan="1" rowspan="1">
+                         <h:outputLabel value="#{etiq.estatusSol}" styleClass="mensaje"/>
+                     </p:column>
+                     <p:column colspan="2" rowspan="1">
+                         <h:outputText value=""/>
+                     </p:column>
+                     <p:column colspan="1" rowspan="1">
+                         <p:outputLabel value="#{etiq.estatusPago}" styleClass="mensaje"/>
+                     </p:column>
+                     <p:column colspan="2" rowspan="1">
+                         <p:outputLabel value="No Pagado" styleClass="mensaje"/>
+                     </p:column>
+                 </p:row>  
+               </p:panelGrid>
+            </p:dialog>
+    </ui:define>         
+</ui:composition>
+
+</html>

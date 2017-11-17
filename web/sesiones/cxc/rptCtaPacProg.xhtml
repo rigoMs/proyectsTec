@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporte} #{etiq.general} #{etiq.cuentpaci}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+           <p:growl id="msgs" showDetail="true" />
+            <p:outputLabel for="txtinic" value="Fecha de inicio:" />
+            <p:calendar id="txtinic" value="#{fec.nac}" pattern="dd/MMM/yyyy" 
+                        locale="es" showOn="button">
+                 <p:ajax event="dateSelect" 
+                         listener="#{fec.onDateSelect}" update="msgs" />
+            </p:calendar>
+            <b/>  
+            <p:growl id="msgs2" showDetail="true" />
+            <p:outputLabel for="txtFinal" value="Fecha de final:" />
+            <p:calendar id="txtFinal" value="#{fec.nac}" pattern="dd/MMM/yyyy" 
+                        locale="es" showOn="button">
+                 <p:ajax event="dateSelect" 
+                         listener="#{fec.onDateSelect}" update="msgs2" />
+            </p:calendar>
+            <br/>
+             Nombre del paciente:
+            <h:inputText id="txtnompac" value="#{oVarTip.texto}" size="30">
+                <f:validateLength minimum="4" maximum="254"/>
+            </h:inputText>
+             
+              Programa:
+            <h:inputText id="txtprog" value="#{oVarTip.texto}" size="30">
+                <f:validateLength minimum="4" maximum="254"/>
+               
+            </h:inputText>
+              
+               Tipo de pago:
+            <h:inputText id="txtpag" value="#{oVarTip.texto}" size="30">
+                <f:validateLength minimum="4" maximum="254"/> <p/>
+               
+            </h:inputText> 
+               <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search"/> <br/><br/>
+         
+         
+                 
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

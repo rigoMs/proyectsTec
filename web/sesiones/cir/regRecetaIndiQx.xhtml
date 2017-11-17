@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="Recetas Individuales"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="frm_busqueda">
+                <h:panelGrid id="panel_Busca" columns="5">
+                    <p:outputLabel value="#{etiq.buscarMed}" styleClass="mensaje"/>
+                    <p:selectOneMenu  id="selMedico" value="#{oRecetasQx.anestesiologo.noTarjeta}" required="true">
+                        <f:selectItem itemLabel="Elegir Anestesiologo" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oRecetasQx.listaAnestesiologos}" var="oAnestesio" 
+                                       itemLabel="#{oAnestesio.nombreCompleto}" itemValue="#{oAnestesio.noTarjeta}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="#{etiq.fecha}: " styleClass="mensaje"/>
+                    <p:calendar id="fechaAct" value="#{oRecetasQx.procedimientos.fechaProgramada}" 
+                                required="true" locale="es" effect="explode" >
+                    </p:calendar>
+                    <p:commandButton  id="btnBusRep" icon="ui-icon-search" value="#{etiq.buscar}"
+                                      actionListener="#{oRecetasQx.buscaProcedimientos()}" update=":frm_busqueda:tabla_Paciente: :frm_busqueda:btnReceta:"/>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable id="tabla_Paciente" value="#{oRecetasQx.listaProcedimientos}"
+                             var="oPacientes" emptyMessage="#{etiq.noDatos}"
+                             style=" width: 1300px; visibility: #{oRecetasQx.visibilidad}"
+                             rowKey="#{oPacientes.episodioMedico.paciente.folioPaciente}"
+                             selection="#{oRecetasQx.seleccionado}" styleClass="frm_centrado"> 
+                    <p:ajax event="rowSelectRadio"></p:ajax>
+                    <p:column selectionMode="single" style="width: 13px;"></p:column>
+                    <p:column width="250" headerText="#{etiq.paciente}">
+                        <h:outputText value="#{oPacientes.episodioMedico.paciente.nombreCompleto}" />
+                    </p:column>
+                    <p:column headerText="#{etiq.proceQx}" style=" width: 400px">
+                        <h:outputText value="#{oPacientes.CIE9.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.segpop}" style=" width: 100px">
+                        <h:outputText value="#{oPacientes.episodioMedico.paciente.seg.numero}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.expediente}" style=" width: 100px">
+                        <h:outputText value="#{oPacientes.episodioMedico.paciente.expediente.numero}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="btnReceta" icon="ui-icon-note" value="Receta"
+                                 style="visibility: #{oRecetasQx.visibilidad}"
+                                 onclick="PF('revRec').show();" type="button">
+                    <p:ajax listener="#{oRecetasQx.llenaDatosProcedimiento()}" update=":frm_Receta:recetaInd:"></p:ajax>
+                </p:commandButton>
+            </h:form>
+            <h:form id="frm_Receta">
+                <p:dialog header="Receta Individual" widgetVar="revRec" resizable="false" modal="true" style=" width: 2300px">
+                    <p:panelGrid id="agregaMedicamento">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.clave}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.medicamento}" /></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.presentacion}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.dosis}"/></p:column>
+                            <p:column styleClass="ui-widget-header"/>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:inputText id="clvMedicamento" value="#{oRecetasQx.medicamento.claveMedicamento}" disabled="true">
+                                    <p:ajax></p:ajax>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:autoComplete id="nombreMedicamento" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="40" minQueryLength="3" required="true" styleClass="bordes"  
+                                        value="#{oRecetasQx.medicamento.nombre}" completeMethod="#{oRecetasQx.detalleRec.medicamento.completarMedCntrl}" effect="fade"
+                                        onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300" requiredMessage="Debe ingresar un nombre de medicamento">
+                                    <p:ajax listener="#{oRecetasQx.buscaClave()}" update=":frm_Receta:clvMedicamento: :frm_Receta:preMedicamento:" event="itemSelect"/>
+                                </p:autoComplete>
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="preMedicamento" value="#{oRecetasQx.medicamento.presentacion}" disabled="true">
+                                    <p:ajax></p:ajax>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{oRecetasQx.cantidadMed}" size="10">
+                                    <p:ajax></p:ajax>
+                                </p:inputText>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:commandButton id="btnAgrega" value="#{etiq.añadir}">
+                                </p:commandButton>
+                            </p:column>
+                            
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid id="recetaInd" style="width: 950px">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.uniAplica}"/>
+                            </p:column>
+                            <p:column colspan="2" style="width: 160px">
+                                <h:outputText value="HOSPITAL REGIONAL RIO BLANCO" />
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" colspan="2">
+                                <p:outputLabel value="#{etiq.expediente}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oRecetasQx.procedimientos.episodioMedico.paciente.expediente.numero}" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.nombrePaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oRecetasQx.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.edad}" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{oRecetasQx.procedimientos.episodioMedico.paciente.edadNumero}" />
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.fecha}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="17/05/15"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"> 
+                                <p:outputLabel value="#{etiq.segpop}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <h:outputText value="#{oRecetasQx.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.servicio}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:outputLabel value="ANESTESIOLOGÍA"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.clave}"/>
+                            </p:column>
+                            <p:column colspan="4" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.nombre} del #{etiq.medicamento}"/>                                
+                            </p:column>
+                            <p:column styleClass=" ui-widget-header">
+                                <p:outputLabel value="#{etiq.cantidad} Surtida"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="1"/>
+                            </p:column>
+                            <p:column colspan="4">
+                                <h:outputText value="Fentanil"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="120 ml"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="2"/>
+                            </p:column>
+                            <p:column colspan="5">
+                                <h:outputText value="El paciente presenta inicios de ....."/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="3"/>
+                            </p:column>
+                            <p:column colspan="5">
+                                <h:outputText value="Aspirado de Medula Osea"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="4"/>
+                            </p:column>
+                            <p:column colspan="5">
+                                <h:outputText value="#{oRecetasQx.procedimientos.episodioMedico.paciente.calleNum} #{oRecetasQx.procedimientos.episodioMedico.paciente.colonia}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.nombreMedico}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <h:outputText value="#{oRecetasQx.procedimientos.anestesio.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.cedulaProf}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <h:outputText value="147852369"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                    <p:printer target="recetaInd"/>
+                                </p:commandButton>
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

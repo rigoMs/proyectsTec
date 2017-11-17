@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.SolValeIndividual}"/>
+                </h2>
+                <br/>
+                <div class="centrado_texto">
+                    <h:form id="fechaS">
+                       
+
+                        <p:outputLabel value="BUSCA POR FECHA" styleClass="mensaje"/>
+                        <p:calendar  value="#{oIndividual.valeMaterial.fechaEmision}"  id="fecha" locale="es" mode="popup"  effect="explode" showOn="button"
+                                     placeholder="dd/mm/aa"  readonlyInput="true"   pattern="dd/MM/yyyy" navigator="true"  
+                                     required="true"  requiredMessage="Ingrese Fecha de Recepcion" onkeypress="return validaCaracter(event)"
+                                     maxdate="#{oIndividual.fechaActual}">                             
+                        </p:calendar>  &nbsp;&nbsp;
+                        <p:commandButton value="buscar" 
+                                         actionListener="#{oIndividual.eventoBuscaFechaPacienteIndividual}" 
+                                         update=":servi:tblServicios :fechaS:fecha " icon="ui-icon-search"/> 
+                    </h:form>
+                </div>
+                <br/><br/>
+                <div >   
+                    <h:form id="servi">
+                        <!-- ************************************************************************************************************************* -->
+                        <p:growl id="msgs" showDetail="true"/>
+                        <p:growl id="m" showDetail="true"/>
+                        <p:dataTable var="servicios" value="#{oIndividual.listaValePaciente}"  editable="true" emptyMessage="No Registrados" 
+                                     id="tblServicios"  
+                                     rowKey="#{servicios.episodio.paciente.folioPaciente}" 
+                                     selection="#{oIndividual.seleccionado}"  >
+
+                            <p:ajax event="rowSelectRadio"></p:ajax>                   
+                            <p:column selectionMode="single" style=" width: 5px"></p:column>
+
+                            <f:facet name="header">
+                                LISTA DE SURTIDO
+                            </f:facet>
+                            <p:column headerText="ÁREA"   width="3">                                                          
+                                <h:outputText value="#{servicios.areaOrigen.descripcion}"/>                              
+                            </p:column>
+                            <p:column headerText="FOLIO PACIENTE"   width="3">                                                          
+                                <h:outputText value="#{servicios.episodio.paciente.folioPaciente}"/>                              
+                            </p:column>
+                            <p:column headerText="PACIENTE"   width="45">                                                          
+                                <h:outputText value="#{servicios.episodio.paciente.nombreCompleto}"/>                              
+                            </p:column>
+                            <p:column headerText="No.SEGURO" width="15"    >                                                          
+                                <h:outputText value="#{servicios.episodio.paciente.seg.numero}"/>                           
+                            </p:column>
+                            <p:column headerText="No.EXPEDIENTE" width="10" >                                                          
+                                <h:outputText value="#{servicios.episodio.paciente.expediente.numero}"/>                              
+                            </p:column> 
+                            <f:facet name="footer">
+                                <p:commandButton id="btnProQx" icon="ui-icon-note" value="ver detalles"
+                                                 process="tblServicios"  onclick="PF('vpp').show()"                                    
+                                                 update=":surtirPaciente:panel_Paciente
+                                                 :surtirPaciente:pa                                                     
+                                                 :surtirPaciente:folio 
+                                                 :surtirPaciente:txtcve 
+                                                 :surtirPaciente:no-seguro
+                                                 :surtirPaciente:no-expediente "
+                                                 actionListener="#{oIndividual.llenaDatosValePacienteIndividual}" 
+                                                 rendered="#{oIndividual.listaValePaciente.size()>0}"  > 
+                                </p:commandButton> 
+                            </f:facet>
+                        </p:dataTable>                        
+                    </h:form>
+                    <h:form id="surtirPaciente"> 
+                        <p:dialog header="Surtir Materiales" widgetVar="vpp"
+                                  showEffect="blind" hideEffect="blind" 
+                                  resizable="false"   draggable="false" 
+                                  height="350" width="900" modal="true"   
+                                  closable="false"   >
+                            <p:growl id="mm" showDetail="true"/>
+                            <p:panelGrid id="panel_Paciente" style="width: 800px;"  > 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column  colspan="4" style="font-weight: bold;"><h:outputLabel value="Datos Del Pacientes" /></p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>                                     
+                                    <p:column style="font-weight: bold;"><h:outputLabel value=" No.Folio Paciente" /></p:column> 
+                                    <p:column style="font-weight: bold;"><h:outputLabel value=" Paciente" /></p:column>    
+                                    <p:column style="font-weight: bold;"><h:outputLabel value=" No.Seguro" /></p:column> 
+                                    <p:column style="font-weight: bold;"><h:outputLabel value=" No.Expediente" /></p:column> 
+                                </p:row>                                                                        
+                                <p:row>   
+                                    <p:column><h:outputText id="folio" value=" #{oIndividual.detalleValeMaterial.episodio.paciente.folioPaciente} " /></p:column>
+                                    <p:column><h:outputText id="txtcve" value=" #{oIndividual.detalleValeMaterial.episodio.paciente.nombreCompleto}" /></p:column>
+                                    <p:column><h:outputText id="no-seguro" value="#{oIndividual.detalleValeMaterial.episodio.paciente.seg.numero}"/></p:column>
+                                    <p:column><h:outputLabel id="no-expediente" value="#{oIndividual.detalleValeMaterial.episodio.paciente.expediente.numero}" /></p:column>
+                                </p:row>
+                            </p:panelGrid>                                
+                            <p:panelGrid id="pa" style="width: 800px;">
+                                <p:row>
+                                    <p:column width="20">
+                                        <p:dataTable value="#{oIndividual.listaMateriales}" var="lis" editable="true" id="tblE"
+                                                     rowKey="#{lis.material.claveMaterial}"
+                                                     selection="#{oIndividual.seleccionaClave}">  
+                                            <p:ajax event="rowSelectRadio"></p:ajax>                   
+                                            <p:column selectionMode="single" style=" width: 5px"></p:column>
+
+                                            <p:column width="30" headerText="Clave ">
+                                                <h:outputLabel value="#{lis.material.claveMaterial}"/>
+                                            </p:column>
+                                            <p:column width="30" headerText="Nombre ">
+                                                <h:outputLabel value="#{lis.material.nombre}"/>
+                                            </p:column>
+                                            <p:column width="30" headerText="Cant.Solicitada ">
+                                                <h:outputLabel value="#{lis.cantSolicitada}"/>
+                                            </p:column>
+                                            <f:facet name="footer">
+                                                <p:commandButton id="btnLotes" icon="ui-icon-check" value="Surtir"
+                                                                 process="tblE"  onclick="PF('surtir').show()"                                    
+                                                                 update=":surtirLotes:panel_Lotes
+                                                                 :surtirLotes:paLotes                                                   
+                                                                 :surtirLotes:cvm 
+                                                                 :surtirLotes:nm 
+                                                                 :surtirLotes:csol
+                                                                 :surtirLotes:tblLotes:btnGuardar"
+                                                                
+                                                                 actionListener="#{oIndividual.llenaDatosMateriales}"
+                                                                 rendered="#{oIndividual.listaMateriales.size()>0}"                                                
+                                                                    > 
+                                                </p:commandButton>                                                
+                                                <p:commandButton value="Regresar" onclick="PF('vpp').hide();" icon="ui-icon-left" 
+                                                                 actionListener="#{oIndividual.actualizaPrincipal}"/>                                                 
+                                            </f:facet>
+                                        </p:dataTable>  
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:dialog>
+                    </h:form>
+                    <h:form id="surtirLotes">
+                         <p:dialog header="Surtir Materiales" widgetVar="surtir"
+                                  showEffect="blind" hideEffect="blind" 
+                                  resizable="false"   draggable="false" 
+                                  height="350" width="900" modal="true"   
+                                  closable="false"   >
+                            <p:growl id="mensaje" showDetail="true"/>
+                            <p:panelGrid id="panel_Lotes" style="width: 800px;"  > 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column  colspan="3" style="font-weight: bold;"><h:outputLabel value="Lista de Lotes" /></p:column>
+                                    </p:row>
+                                </f:facet>
+
+                                <p:row>                                     
+                                    <p:column style="font-weight: bold;"><h:outputLabel value=" ClaveMaterial" /></p:column> 
+                                    <p:column style="font-weight: bold;"><h:outputLabel value=" Nombre Del Material" /></p:column>    
+                                    <p:column style="font-weight: bold;"><h:outputLabel value=" Cantidad Solicitada" /></p:column>                                      
+                                </p:row>                                                                        
+                                <p:row>                                                                      
+                                    <p:column><h:outputText id="cvm" value=" #{oIndividual.detalleLote.material.claveMaterial} " /></p:column>
+                                    <p:column><h:outputText id="nm" value=" #{oIndividual.detalleLote.material.nombre}"/></p:column>
+                                    <p:column><h:outputText id="csol" value="#{oIndividual.detalleLote.cantSolicitada}"/></p:column>                                   
+                                </p:row>
+                            </p:panelGrid>                                
+                            <p:panelGrid id="paLotes" style="width: 800px;">
+                                <p:row>
+                                    <p:column width="20">
+                                        <p:remoteCommand name="refreshFooter" update=":surtirLotes:tblLotes:outputTotal"/>
+                                        <p:dataTable value="#{oIndividual.listaLotes}" var="lo" editable="true" id="tblLotes" >  
+                                            
+                                            <p:ajax event="rowEdit" listener="#{oIndividual.editaExistencia}" 
+                                                 update=":surtirLotes:mensaje :surtirLotes:tblLotes:outputTotal :surtirLotes:tblLotes:canSu"   />
+                                            <p:ajax event="rowEditCancel" listener="#{oIndividual.onRowCancel}" 
+                                                    update=":surtirLotes:mensaje  :surtirLotes:tblLotes:can"  />    
+
+                                            <p:column width="30" headerText="Lote ">
+                                                <h:outputLabel value="#{lo.inv.lote}"/>
+                                            </p:column>
+                                            <p:column width="30" headerText="Existencia ">
+                                                <h:outputLabel value="#{lo.inv.existencia}"/>
+                                            </p:column>
+                                            
+                                            <p:column headerText="CANTIDAD SURT." width="30" >                                         
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <h:outputText value="#{lo.cantSurtida}" id="can" />
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{lo.cantSurtida}" size="10" maxlength="5" id="canSu"
+                                                                     required="true" requiredMessage="Ingrese cantidad a solicitar"  label="cantidad surtidad" >
+                                                            <poue:keyFilter  regEx="/[0-9_]/i"/>  
+                                                              <p:ajax event="change" oncomplete="refreshFooter();"/>
+                                                           <p:ajax update=":surtirLotes:tblLotes:canSu"/>
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor> 
+                                            </p:column>
+                                            <p:column  width="10"  >
+                                                <p:rowEditor />
+                                            </p:column>                                            
+                                            <f:facet name="footer">
+                                                 <h:outputLabel    value="#{etiq.total}   "/> 
+                                                  <h:outputLabel value="#{oIndividual.total}" id="outputTotal"/> <br/>  <br/>
+                                                  <p:commandButton  id="btnGuardar" value="#{etiq.guardar}" 
+                                                                 icon="ui-icon-disk" onclick="PF('guarda').show()"                                                                  
+                                                                 disabled="#{oIndividual.btnLote}"/>                                    
+
+                                                 <p:commandButton value="Cancelar" onclick="PF('surtir').hide();" icon="ui-icon-left"
+                                                                  actionListener="#{oIndividual.cancelar}" update=":surtirLotes:tblLotes"/>
+                                            </f:facet>
+                                        </p:dataTable>  
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                        </p:dialog> 
+                    </h:form>
+                    
+                    <div align="center">
+                        <p:confirmDialog message="¿¿#{etiq.preguntaColectivo}??" style="background-color: lightblue"
+                                         showEffect="fold" hideEffect="fold"   
+                                         header="#{etiq.confirmar}" severity="alert" widgetVar="guarda">
+                            <h:form>
+                                <p:commandButton value="#{etiq.aceptar}"
+                                                 onclick="PF('guarda').hide()"
+                                                 update=" :surtirLotes :surtirPaciente:tblE :servi:tblServicios"  
+                                                 actionListener="#{oIndividual.eventoGuardar}"
+                                                 icon="ui-icon-check" styleClass="ui-confirmdialog-yes" >
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.cancelar}"   onclick="PF('guarda').hide()"      icon="ui-icon-close" styleClass="ui-confirmdialog-no"/>
+                            </h:form>
+                        </p:confirmDialog>
+                    </div> 
+
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

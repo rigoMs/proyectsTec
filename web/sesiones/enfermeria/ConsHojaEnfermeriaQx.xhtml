@@ -1,0 +1,997 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"      
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+       <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div>
+                    <h:form id="frm-bspact">
+                        <br/><br/>                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.buscaHojaQx}"/></h3>
+                        <p:outputPanel style=" width: 870px;" styleClass="centrar">
+                                   <p:accordionPanel>
+                                       <p:tab title="#{etiq.buscarDatosBasicos}">
+                                           <p:panelGrid columns="4" >
+                                               <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                               <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                               <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                               <h:outputLabel />
+                                               <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPaciente.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>                        
+                                               <p:inputText styleClass="bordes" id="app" value="#{oBuscarPaciente.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                               <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPaciente.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                               <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search"
+                                                                update=":frm-bspact :frm-bspact:AC:tablaPac">
+                                                   <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{0}"/>
+                                                   <f:setPropertyActionListener target="#{oBuscaHojaQx.render}" value="#{false}"/>
+                                               </p:commandButton>
+                                           </p:panelGrid>
+                                       </p:tab>
+                                       <p:tab title="#{etiq.buscarPorExpediente}">
+                                           <p:panelGrid columns="3" styleClass="frmlogin">
+                                               <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                               <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPaciente.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                                                   <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                                   <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                                               </p:inputText>
+                                               <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search"
+                                                                update=":frm-bspact :frm-bspact:AC:tablaPac ">
+                                                   <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{1}"/>
+                                                   <f:setPropertyActionListener target="#{oBuscaHojaQx.render}" value="#{false}"/>
+                                               </p:commandButton>
+                                           </p:panelGrid>
+                                           <p:message for="exp" id="mentExp"></p:message>
+                                       </p:tab>
+                                   </p:accordionPanel>                            
+                        </p:outputPanel> 
+                        <br/> 
+                        <p:outputPanel id="outIdent" style="width: 87%; padding: 0px;" styleClass="centrar">
+                             <div class="centrar">
+                                 <p:accordionPanel id="AC" rendered="#{not empty oBuscarPaciente.paciente.buscarPacienteDatos()}" style="padding: 0px; ">
+                                       <p:tab title="#{etiq.pacEncontra}">
+                                            <p:dataTable paginator="true" rows="4"  id="tablaPac" var="oPacEnc" 
+                                                         value="#{oBuscarPaciente.paciente.buscarPacienteDatos()}" emptyMessage="#{etiq.noRegistro}">
+                                                <!--<f:facet name="header">
+                                                    <h:outputText value="#{etiq.pacEncontra}"/>
+                                                </f:facet>-->
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.apPaterno}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.apMaterno}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.nombres}"/>
+                                                </p:column>
+                                                <p:column style="width: 8%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.fechaNac}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </h:outputText>
+                                                </p:column>                                     
+                                                <p:column style="width: 7%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.edadNumero}"/>
+                                                </p:column>
+                                                
+                                                <p:column style="width: 10%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                                                </p:column>
+                                                <p:column style="width: 9%;">                                         
+                                                    <p:commandButton icon="ui-icon-folder-open" value="#{etiq.buscar}">                              
+                                                        <p:ajax listener="#{oBuscaHojaQx.buscarHojas(oPacEnc.folioPaciente, oPacEnc.claveEpisodio, oPacEnc.nombres,oPacEnc.apPaterno,oPacEnc.apMaterno,oPacEnc.expediente.numero)}"
+                                                                update=":verHojaQx :frm-bspact:msgs" />                                                        
+                                                     </p:commandButton>
+                                                </p:column>                                               
+                                            </p:dataTable>
+                                       </p:tab>
+                                 </p:accordionPanel>
+                             </div>
+                         </p:outputPanel>               
+                        
+                    </h:form>
+                </div>
+                <div class="centrarar" id="hojaEnfermeria">                    
+                    <h:form id="frmHojaQx">
+                        <br/>
+                        <p:growl id="msgs" showDetail="true"></p:growl>                       
+                        <!--<p:outputPanel id="reder">-->
+                        <p:outputPanel styleClass="centrar">
+                            <p:tabView id="tabQx" style="width: 98%; margin-bottom: 5px;" styleClass="centrar" rendered="#{oBuscaHojaQx.render}" dynamic="true">
+                                <p:tab title="#{etiq.vistaAnverso}">
+                                    <p:panelGrid   style="width: 100%; height: 220px; margin-bottom: 6px;" id="pnlinfo">
+                                        <p:row>
+                                            <p:column colspan="8" style="border-color: black; text-align: center;" styleClass="ui-widget-header">
+                                                <b><p:outputLabel  value="#{etiq.hojaEnfermeriaQuirurgica}"/></b>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="border-color: transparent; border-bottom-color: black;" colspan="8"></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="5" style="width: 380px; border-color: black; border-left-color: black; text-align: left;" >
+                                                <b><p:outputLabel value="#{etiq.nombreM}:"/></b>&nbsp;&nbsp;
+                                                <p:outputLabel style="font-size: 17px;" value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.nombreCompleto}"/>                                        
+                                            </p:column>
+                                            <p:column colspan="1" style="width: 60px; border-color: black; text-align: left;" >
+                                                <b><p:outputLabel value="#{etiq.noEXPM}:"/></b>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <p:outputLabel style="font-size: 17px;" value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.expediente.numero}"/>
+                                            </p:column>
+                                            <p:column  colspan="2" style="width: 70px; border-color: black;border-right-color: black; text-align: left;">
+                                                <b><p:outputLabel value="#{etiq.camaM}:"/></b>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <p:outputLabel style="font-size: 17px;" value="#{oBuscaHojaQx.buscaHoja.episodioMedico.cama.numero}"/>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style=" width: 1%;border-color: black; border-right-color:  transparent;">
+                                                <b><p:outputLabel style="text-align: center; " value="#{etiq.eda2}:"/></b>                                        
+                                            </p:column>
+                                            <p:column style=" width: 6%;border-color: black; text-align: left;">
+                                                <p:outputLabel style="font-size: 15px;" value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.edadNumero}"/>
+                                            </p:column>
+                                            <p:column  style=" width: 1%;border-color: black; border-right-color:  transparent;">
+                                                <b><p:outputLabel style="text-align: center;" value="#{etiq.sex2}:"/></b>
+                                            </p:column>
+                                            <p:column style=" width: 5%;border-color: black; text-align: left;">
+                                                <p:outputLabel style="font-size: 17px;" value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.sexoP}"/>
+                                            </p:column>
+                                            <p:column style=" width: 1%;border-color: black; text-align: center; border-right-color: transparent;">
+                                                <b> <p:outputLabel value="#{etiq.ser}:"/></b>
+                                            </p:column>
+                                            <p:column style=" width: 13%;border-color: black; text-align: left;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.area.descripcion}"/>
+                                            </p:column>
+                                            <p:column  style=" width: 2%;border-color: black; text-align: center; border-right-color: transparent;">
+                                                <b><p:outputLabel  value="#{etiq.fechaa1}:"/></b>
+                                            </p:column>
+                                            <p:column style=" width: 14%;border-color: black; border-right-color: black; text-align: left;">
+                                                <p:outputLabel style="font-size: 17px;" value="#{oBuscaHojaQx.buscaHoja.fechaCreacion}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="4" style="border-color: black; border-left-color:  black; text-align: center;" styleClass="ui-widget-header">
+                                                <b><p:outputLabel value="#{etiq.cirujanoo}"/></b>
+                                            </p:column>
+                                            <p:column colspan="2"  style="width: 18%;border-color: black; text-align: center;"  styleClass="ui-widget-header">
+                                                <b><p:outputLabel value="#{etiq.primerAyuda}"/></b>
+                                            </p:column>
+                                            <p:column colspan="2" style="border-color: black; border-right-color: black; text-align: center;" styleClass="ui-widget-header">
+                                                <b><p:outputLabel value="#{etiq.anst}"/></b>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="4" style="border-color: black; border-left-color: black; text-align: center;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.procedimiento.cirujano.nombreCompleto}"/>                                    
+                                            </p:column>
+                                            <p:column colspan="2" style="border-color: black; text-align: center;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.ayudante.nombreCompleto}"/>                                    
+                                            </p:column>
+
+                                            <p:column colspan="2" style="border-color: black; border-right-color: black; text-align: center;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.anesteciologo.nombreCompleto}"/>                                    
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="4" style="border-color: black; border-left-color:  black; text-align: center;" styleClass="ui-widget-header">
+                                                <b><p:outputLabel value="#{etiq.instrum}"/></b>
+                                            </p:column>
+                                            <p:column colspan="2"  style="width: 18%;border-color: black; text-align: center;"  styleClass="ui-widget-header">
+                                                <b><p:outputLabel value="#{etiq.circulante}"/></b>
+                                            </p:column>
+                                            <p:column colspan="2" style="border-color: black; border-right-color: black; text-align: center;" styleClass="ui-widget-header">
+                                                <b><p:outputLabel value="#{etiq.diagPreop}"/></b>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="4" style="border-color: black; border-left-color: black; text-align: center;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.instrumentista.nombreCompleto}"/>                                    
+                                            </p:column>
+                                            <p:column colspan="2" style="border-color: black; text-align: center;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.circulante.nombreCompleto}"/>                                      
+                                            </p:column>
+
+                                            <p:column colspan="2" style="border-color: black; border-right-color: black; text-align: center;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.diagnosticoPre.descripcionDiag}"/>                                      
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="5" style="text-align: center; border-color: black;border-left-color: black;" styleClass="ui-widget-header" >
+                                                <p:outputLabel style="text-transform: uppercase"
+                                                    value="#{etiq.cirugia}"/>
+                                            </p:column>
+                                            <p:column colspan="3" style="text-align: center; border-color: black; border-right-color: black; " styleClass="ui-widget-header">
+                                                <p:outputLabel value="#{etiq.otroProce}"/>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="border-color: black; text-align: center;" colspan="5" >
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.procedimiento.CIE9.descripcion}"/>
+                                            </p:column>
+                                            <p:column colspan="3" style="border-color: black; text-align: center;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.otrosProc}"/>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    <p:dataTable id="tblActRe" var="oAc" emptyMessage="#{etiq.sinDat}" value="#{oBuscaHojaQx.buscaHoja.arrActividadesRealizadasQx}">
+                                        <p:column style="width: 6%; font-weight: bold; border-color: black; color: black;" headerText="#{etiq.horaM}" >
+                                            <p:outputLabel style="font-size: 14px; font-weight: normal;" value="#{oAc.horaActividadString}"/>
+                                        </p:column>
+                                        <p:column style="font-weight: bold; border-color: black; color:black;" headerText="#{etiq.activQuiro}" >
+                                            <p:outputLabel style="font-size: 14px; font-weight: normal;" value="#{oAc.actividad}"/>
+                                        </p:column>                                                   
+                                    </p:dataTable>  
+                                     <p:panelGrid style="width: 100%; margin-top: 4px;">
+                                        <p:row>
+                                            <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center; font-size: 14px;">
+                                                <b><p:outputLabel value="#{etiq.conteo}"/></b>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style=" width: 10%;" styleClass="ui-widget-header" >
+                                                <p:outputLabel value="#{etiq.conteoGasas}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 10%;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.conteoGasas}"/>
+                                            </p:column>
+                                            <p:column style=" width: 10%;" styleClass="ui-widget-header" >
+                                                <p:outputLabel value="#{etiq.cuentaa}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 9%;">
+                                                <p:selectBooleanCheckbox value="#{oBuscaHojaQx.buscaHoja.cuentaGasas}" disabled="true"/>                                                     
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                           <p:column style=" width: 250px;" styleClass="ui-widget-header"  >
+                                               <p:outputLabel value="#{etiq.conteoComp}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.conteoCompresas}"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;" styleClass="ui-widget-header" >
+                                                <p:outputLabel value="#{etiq.cuentaa}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;">
+                                                <p:selectBooleanCheckbox value="#{oBuscaHojaQx.buscaHoja.cuentaCompresas}" disabled="true"/>                                                  
+                                            </p:column>
+                                        </p:row> 
+                                        <p:row>
+                                            <p:column style=" width: 250px;" styleClass="ui-widget-header" >
+                                                <p:outputLabel value="#{etiq.instru}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.instrumental}"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;" styleClass="ui-widget-header" >
+                                                <p:outputLabel value="#{etiq.comple}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;">
+                                                <p:selectBooleanCheckbox value="#{oBuscaHojaQx.buscaHoja.completoIns}" disabled="true"/>                                                   
+                                            </p:column>
+                                        </p:row> 
+                                        <p:row>
+                                            <p:column style=" width: 250px;" styleClass="ui-widget-header" >
+                                                 <p:outputLabel value="#{etiq.mateQuiru}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;">
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.materialQx}"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px; " styleClass="ui-widget-header" >
+                                                 <p:outputLabel value="#{etiq.comple}:"/>
+                                            </p:column>
+                                            <p:column style=" width: 250px;">
+                                                <p:selectBooleanCheckbox  value="#{oBuscaHojaQx.buscaHoja.completoMQ}" disabled="true"/>                                                   
+                                            </p:column>
+                                        </p:row> 
+                                        <p:row>
+                                            <p:column colspan="2" styleClass="ui-widget-header" style="text-align: left;">
+                                                <p:outputLabel value="#{etiq.envioPoBQ}"/>
+                                            </p:column>
+                                            <p:column colspan="2" >
+                                                <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.envioPiezaBiopsia}"/>
+                                            </p:column>     
+                                        </p:row>
+                                    </p:panelGrid>
+                                    
+                                </p:tab>
+                                <p:tab title="#{etiq.vistaReverso}">
+                                    <p:panelGrid style="width: 100%; margin-bottom: 5px;">
+                                        <p:row>
+                                            <p:column  styleClass="ui-widget-header" style="text-align: center;">
+                                                <p:outputLabel value="#{etiq.sigVita}" style="font-size: 16px;"/>
+                                            </p:column> 
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="padding: 0px;">
+                                                <p:dataTable value="#{oBuscaHojaQx.buscaHoja.arrMustraSignos}" var="oMSig" emptyMessage="#{etiq.sinDat}" id="tblSignoss">                                                    
+                                                    <p:column headerText="#{etiq.signosHora}" style="width: 12%;">
+                                                        <p:outputLabel value="#{oMSig.signoValor.signoValor}" style="font-size: 11px; font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column headerText="7" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora7.valor}" style="font-size: 9px; font-weight: normal;" />                                                                                                                         
+                                                    </p:column>
+                                                    <p:column headerText="8" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora8.valor}" style="font-size: 9px; font-weight: normal;" />                                                      
+                                                    </p:column>
+                                                    <p:column headerText="9"  style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora9.valor}" style="font-size: 9px; font-weight: normal;" />                                                         
+                                                    </p:column>
+                                                    <p:column headerText="10" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora10.valor}" style="font-size: 9px; font-weight: normal;" />                                                         
+                                                    </p:column>
+                                                    <p:column headerText="11" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora11.valor}" style="font-size: 9px; font-weight: normal;" />                                                       
+                                                    </p:column>
+                                                    <p:column headerText="12" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora12.valor}" style="font-size: 9px; font-weight: normal;" />                                                         
+                                                    </p:column>
+                                                    <p:column headerText="13" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora13.valor}" style="font-size: 9px; font-weight: normal;" />                                                       
+                                                    </p:column>
+                                                    <p:column headerText="14" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora14.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="15" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora15.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="16" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora16.valor}" style="font-size: 9px;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="17" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora17.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="18" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora18.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="19" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora19.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="20" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora20.valor}" style="font-size: 9px; font-weight: normal;" />                                                      
+                                                    </p:column>
+                                                    <p:column headerText="21" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora21.valor}" style="font-size: 9px; font-weight: normal;" />                                                         
+                                                    </p:column>
+                                                    <p:column headerText="22" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora22.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="23" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora23.valor}" style="font-size: 9px; font-weight: normal;" />                                                         
+                                                    </p:column>
+                                                    <p:column headerText="24" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora24.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="1" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora1.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="2" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora2.valor}" style="font-size: 9px; font-weight: normal;" />                                                         
+                                                    </p:column>
+                                                    <p:column headerText="3" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora3.valor}" style="font-size: 9px; font-weight: normal;" />                                                         
+                                                    </p:column>
+                                                    <p:column headerText="4" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora4.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="5" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora5.valor}" style="font-size: 9px; font-weight: normal;" />                                                        
+                                                    </p:column>
+                                                    <p:column headerText="6" style=" width: 15px; color: black;">
+                                                        <h:outputText value="#{oMSig.sigHora6.valor}" style="font-size: 9px; font-weight: normal;" />                                                       
+                                                    </p:column>                                                    
+                                                </p:dataTable>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    <p:panelGrid style="width: 100%; margin-bottom: 5px;">                                                    
+                                        <p:row>
+                                            <p:column colspan="3" styleClass="ui-widget-header" style="font-size: 16px; text-align: center;">
+                                                <b><p:outputLabel value="#{etiq.terapeuticaEmpleada}"  /></b>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="2" style="width: 900px;">
+                                                <p:dataTable id="tblMedic" value="#{oBuscaHojaQx.buscaHoja.arrTerapeuticaEmpleada}" var="oMe" emptyMessage="#{etiq.sinDat}">
+                                                    <p:column style="width:25%; color: black; font-weight: bold;text-transform: uppercase" headerText="#{etiq.medicamentos}">
+                                                        <p:outputLabel value="#{oMe.medicamento.nombre}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 10%; color: black; font-weight: bold;" headerText="#{etiq.dosisM}">
+                                                        <p:outputLabel value="#{oMe.dosis}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 10%; color: black; font-weight: bold;" headerText="#{etiq.viaAdM}">
+                                                        <p:outputLabel value="#{oMe.via.valor}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 10%; color: black; font-weight: bold;" headerText="#{etiq.horaM}">
+                                                        <p:outputLabel value="#{oMe.fechaAplicacionFormat}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 10%; color: black; font-weight: bold;" headerText="#{etiq.turno}">
+                                                        <p:outputLabel value="#{oMe.turno.descripcion}" style="font-weight: normal;"/>
+                                                    </p:column>                                                               
+                                                </p:dataTable>                                          
+                                            </p:column>                                                       
+                                        </p:row>
+                                        <br/>
+                                        <br/>
+                                        <p:row>
+                                            <p:column style="padding: 0px;">
+                                                <!--<div class="centrar">-->
+                                                <p:dataTable  value="#{oBuscaHojaQx.buscaHoja.arrSoluciones}" var="oSolu" emptyMessage="" id="tblSolc">
+                                                    <p:column headerText="#{etiq.soluciones}" style=" width: 55%; color: black; font-weight: bold;">
+                                                        <p:outputLabel value="#{oSolu.medicamento.nombre}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.cantM}" style=" width: 13%; color: black; font-weight: bold;">
+                                                        <p:outputLabel value="#{oSolu.cantAplicada}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 8%; color: black; font-weight: bold;" headerText="#{etiq.horaM}">
+                                                        <p:outputLabel value="#{oSolu.fechaAplicacionString}" style="font-weight: normal;"/>
+                                                    </p:column>                                                                
+                                                </p:dataTable>
+
+                                                <!--</div>-->
+                                            </p:column>
+                                            <p:column style="padding: 0px;">
+                                                <p:dataTable id="tblHerms"  value="#{oBuscaHojaQx.buscaHoja.arrHemoderivados}" var="oHem" emptyMessage="">
+                                                    <p:column headerText="#{etiq.hemoderivados}" style=" width: 55%; font-weight: bold; color: black;">
+                                                        <p:outputLabel value="#{oHem.hemoderivado}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.cantM}" style=" width: 13%; font-weight: bold; color: black;">
+                                                        <p:outputLabel value="#{oHem.cantidad}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 8%; font-weight: bold; color: black;" headerText="#{etiq.horaM}">
+                                                        <p:outputLabel value="#{oHem.horaAplicadaString}" style="font-weight: normal;"/>
+                                                    </p:column>                                                             
+                                                </p:dataTable>                                                         
+                                            </p:column>
+                                        </p:row>                                     
+                                    </p:panelGrid>
+                                    <p:panelGrid style=" width: 100%;" styleClass="centrado_texto">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="font-size: 16px;" >
+                                                <p:outputLabel value="#{etiq.controlLiquidos}"/>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column   styleClass="ui-widget-header" > 
+                                                <p:outputLabel value="#{etiq.gres}"/>
+                                            </p:column>
+                                        </p:row> 
+                                        <p:row>
+                                            <p:column  style="padding: 0px;" id="rowtbl" >
+                                                <p:dataTable value="#{oBuscaHojaQx.buscaHoja.arrControlLiquidos}" var="oCtr" emptyMessage="" id="tlbControl">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="#{etiq.ser}" style="width: 13.4%; color: black; font-weight: bold;"/>
+                                                            <p:column headerText="#{etiq.totalEgresoLQ}" style="width: 8.5%; color: black; font-weight: bold;"/>
+                                                            <p:column headerText="#{etiq.sangrado}" style="width: 8.5%; color: black; font-weight: bold;"/>
+                                                            <p:column headerText="#{etiq.deuresis}" style="width: 8.5%; color: black; font-weight: bold;"/>
+                                                            <p:column headerText="#{etiq.otros}" style="width: 15.9%; color: black; font-weight: bold;"/>                                                           
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column  style="width: 13%;">
+                                                        <p:outputLabel value="#{oCtr.tipoControl.valor}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 13%;">
+                                                        <p:outputLabel value="#{oCtr.totalEgresos}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 10%;">
+                                                        <p:outputLabel value="#{oCtr.sangrado}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column  style="width: 10%;">
+                                                        <p:outputLabel value="#{oCtr.diuresis}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column style="width: 10%;">
+                                                        <p:outputLabel value="#{oCtr.otros}" style="font-weight: normal;"/>
+                                                    </p:column>                                                                
+                                                </p:dataTable>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="6">
+                                                <p:dataTable id="tblRecuperacion" value="#{oBuscaHojaQx.buscaHoja.arrActividadesRecuperacion}" var="oAcRe" emptyMessage="#{etiq.sinDat}">
+                                                    <p:column headerText="#{etiq.horaM}" style="width:8%; color: black; font-weight: bold;">
+                                                        <p:outputLabel value="#{oAcRe.horaRecuString}" style="font-weight: normal;"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.recuperacion}" style="width: 70%; color: black; font-weight: bold;">
+                                                        <p:outputLabel value="#{oAcRe.recuperacion}" style="font-weight: normal;"/>
+                                                    </p:column>                                                                
+                                                </p:dataTable>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:tab>                                
+                            </p:tabView>
+                            <p:panelGrid id="pgBonton" style="width: 90.5%;" rendered="#{oBuscaHojaQx.render}">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <div class="centrar">                                       
+                                            <p:commandButton  value="Abrir Para #{etiq.imprimir}" icon="ui-icon-folder-open" onclick="PF('impriirHojaQx').show();" update=":impHojaQx">                                                
+                                            </p:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>                     
+                    </h:form>                    
+                </div>
+                
+                              
+                <p:dialog widgetVar="hojasQx"  showEffect="puff" hideEffect="puff" modal="true" resizable="false" header="#{etiq.hojasQx}">
+                    <h:form id="verHojaQx">
+                        <p:panelGrid style="width: 500px; margin-bottom: 6px;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 70%; text-align: center;">
+                                    <p:outputLabel value="#{etiq.nombres}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 25%; text-align: center;">
+                                    <p:outputLabel value="#{etiq.noExp}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center;">
+                                    <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.nombreCompleto}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.expediente.numero}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:outputPanel style="width: 500px;" styleClass="centrar">
+                            <p:dataTable value="#{oBuscaHojaQx.arrHojas}" var="oHj" emptyMessage="" id="tblHojas"
+                                         paginator="true" rows="3">
+                                <p:column style="text-transform: uppercase"
+                                    headerText="#{etiq.fechaApertura}">
+                                    <p:outputLabel value="#{oHj.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{etiq.numHoja}">
+                                    <p:outputLabel value="#{oHj.idHoja}"/>
+                                </p:column>
+                                <p:column headerText="">
+                                    <p:commandButton icon="ui-icon-folder-open" value="#{etiq.abrir}">
+                                        <p:ajax listener="#{oBuscaHojaQx.buscaHojaEnfermeriaQuirurgica(oHj.idHoja)}" update=":frmHojaQx :frmHojaQx:tabQx :frmHojaQx:pgBonton"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>                        
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog id="imprimir" modal="true" showEffect="puff" hideEffect="puff" widgetVar="impriirHojaQx" style=" width: 1300px;" height="600" dynamic="true" resizable="false">
+                    <h:form id="impHojaQx" >
+                        <p:outputPanel style=" width: 1050px;; background: white; background-color: white;" id="imp1" >
+                            <p:panelGrid style="width: 100%;background: white; background-color: white; margin-bottom: 12px;">
+                                <p:row>
+                                    <p:column  style="width: 20%; background: white;border-color: transparent;">
+                                         <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="40" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 60%; background: white;border-color: transparent; text-align: center; font-size: 15px;">
+                                        <b><p:outputLabel value="#{etiq.secretariadesalud}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.direccionAten}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                      
+                                    </p:column>
+                                    <p:column style="width: 20%; background: white; border-color: transparent;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/PreveSeguCa.png"  align="middle"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid style=" width: 100%; background: white; background-color: white; margin-bottom: 6px;">
+                                <p:row>
+                                    <p:column style="text-align: center; font-size: 16px; background: white; background-color: white; border-color: black;">
+                                        <b><p:outputLabel  value="#{etiq.hojaEnfermeriaQuirurgica}"/></b>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panel style=" width: 99.5%; background: white; background-color: white; border-color: black; border-width: 2px; padding: 1px;">
+                                <p:panelGrid style=" width: 100%; margin-bottom: 0px; font-size: 11px;">
+                                    <p:row>
+                                        <p:column style=" width: 40%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.nombreM}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column style=" width: 20%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.noEXPM}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.expediente.numero}"/>
+                                        </p:column>
+                                        <p:column style=" width: 15%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.camaM}"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.cama.numero}"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>                                
+                                <p:panelGrid style=" width: 100%; font-size: 11px;">
+                                    <p:row>
+                                        <p:column style=" width: 10%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.eda2}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.edadNumero}"/>
+                                        </p:column>
+                                        <p:column style=" width: 12%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.sex2}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.paciente.sexoP}"/>
+                                        </p:column>
+                                        <p:column style=" width: 25%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.ser}"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.episodioMedico.area.descripcion}"/>
+                                        </p:column>
+                                        <p:column style=" width: 15%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.fechaa1}"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:panelGrid style=" width: 100%; font-size: 11px;">
+                                    <p:row>
+                                        <p:column style=" width: 33.3%; background-color: white; border-color: transparent;padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.cirujanoo}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.procedimiento.cirujano.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column style=" width: 33.3%; background-color: white; border-color: transparent;padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.primerAyuda}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.ayudante.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column style=" width: 33.3%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.anst}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.anesteciologo.nombreCompleto}"/>
+                                        </p:column>                                        
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style=" width: 33.3%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.instrum}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.instrumentista.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column style=" width: 33.3%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.circulante}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.circulante.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column style=" width: 33.3%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.diagPreop}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.diagnosticoPre.descripcionDiag}"/>
+                                        </p:column>                                        
+                                    </p:row>                                    
+                                </p:panelGrid>
+                                <p:panelGrid style=" width: 100%; font-size: 11px;">
+                                    <p:row>
+                                        <p:column  style=" width: 35%; background-color: white; border-color: transparent; padding: 1px;">
+                                            <b><p:outputLabel style="text-transform: uppercase"
+                                                    value="#{etiq.cirugia}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.procedimiento.CIE9.descripcion}"/>
+                                        </p:column>
+                                        <p:column  style=" width: 65%; background-color: white; border-color: transparent;padding: 1px;">
+                                            <b><p:outputLabel value="#{etiq.otroProce}:"/></b>&nbsp; <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.otrosProc}"/>
+                                        </p:column>
+                                    </p:row>                                    
+                                </p:panelGrid>                                
+                            </p:panel>
+                            <div style="margin-bottom: 6px;"/>
+                            <p:outputPanel style=" width: 100%; background: white;">
+                                <p:dataTable value="#{oBuscaHojaQx.buscaHoja.arrActividadesRealizadasQx}" var="oActQx" emptyMessage="">
+                                    <p:column headerText="#{etiq.horaM}" style=" width: 8.1%; font-size: 11px; color: black; border-color: black; font-weight: bold; background: white; background-color: white; ">
+                                        <p:outputLabel value="#{oActQx.horaActividadString}" style="font-size: 11px; font-weight: normal;"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.activQuiro}" style=" width: 86%; font-size: 11px; color: black; border-color: black; font-weight: bold;background: white; background-color: white;">
+                                        <p:outputLabel value="#{oActQx.actividad}" style="font-size: 11px; font-weight: normal;"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:outputPanel>
+                            <p:panelGrid style="width: 100%;">                                
+                                <p:row>
+                                    <p:column style=" width: 8.1%; background-color: white; border-color: black; font-size: 11px; ">
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column style=" width: 43%; border-color: black; background-color: white; font-size: 11px;" >
+                                        <p:outputLabel value="#{etiq.conteoGasas}:"/>&nbsp;
+                                        <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.conteoGasas}"/>
+                                    </p:column>                                    
+                                    <p:column style=" width: 43%; border-color: black; background-color: white; font-size: 11px;" >
+                                        <p:outputLabel value="#{etiq.cuentaa}:"/>&nbsp;
+                                        <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.completoGasas}"/>
+                                    </p:column>                                   
+                                </p:row>
+                                <p:row>
+                                    <p:column style=" width: 6%; background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                   <p:column style=" width: 43%; background-color: white; border-color: black; font-size: 11px;" >
+                                       <p:outputLabel value="#{etiq.conteoComp}:"/>&nbsp;
+                                       <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.conteoCompresas}"/>
+                                    </p:column>
+                                    
+                                    <p:column style=" width: 43%; background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value="#{etiq.cuentaa}:"/>&nbsp;
+                                        <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.completoCompresas}"/>
+                                    </p:column>                                    
+                                </p:row> 
+                                <p:row>
+                                    <p:column style=" width: 6%; background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column style=" width: 43%;background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value="#{etiq.instru}:"/>&nbsp;
+                                        <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.instrumental}"/>
+                                    </p:column>
+                                    
+                                    <p:column style=" width: 43%;background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value="#{etiq.comple}:"/>&nbsp;
+                                        <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.completoInstru}"/>
+                                    </p:column>                                    
+                                </p:row> 
+                                <p:row>
+                                    <p:column style=" width: 6%; background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value=""/>&nbsp;
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column style=" width: 43%;background-color: white; border-color: black; font-size: 11px;">
+                                         <p:outputLabel value="#{etiq.mateQuiru}:"/>&nbsp;
+                                         <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.materialQx}"/>
+                                    </p:column>
+                                    
+                                    <p:column style=" width: 43%;background-color: white; border-color: black; font-size: 11px;">
+                                         <p:outputLabel value="#{etiq.comple}:"/>&nbsp;
+                                         <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.completoMat}"/>
+                                    </p:column>
+                                    
+                                </p:row> 
+                                <p:row>
+                                    <p:column style=" width: 6%; background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value=""/>&nbsp;
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column colspan="2"  style="background-color: white; border-color: black; font-size: 11px;">
+                                        <p:outputLabel value="#{etiq.envioPoBQ}:"/>&nbsp;
+                                        <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.envioPiezaBiopsia}"/>
+                                    </p:column>
+                                    
+                                </p:row>
+                            </p:panelGrid>                            
+                        </p:outputPanel>
+                        <div style=" margin-bottom: 10px; background: white;"/>
+                        <p:outputPanel id="imp2" style=" width: 1050px;; background: white;">
+                            <p:panelGrid style="width: 100%;">
+                                <p:row>
+                                    <p:column style="text-align: center; font-size: 13px;  background: white; border-color: transparent;">
+                                        <b><p:outputLabel value="#{etiq.sigVita}"/></b>
+                                    </p:column> 
+                                </p:row>                                
+                            </p:panelGrid>
+                            <p:outputPanel style="width: 100%; background: white; margin-bottom: 6px;" >
+                                <p:dataTable value="#{oBuscaHojaQx.buscaHoja.arrMustraSignos}" var="oSigM" emptyMessage="#{etiq.sinDat}" id="tblSignoss">
+                                    <p:column headerText="#{etiq.signosHora}" style="width: 10%; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.signoValor.signoValor}" style=" font-size: 10px;"/>
+                                    </p:column>
+                                    <p:column headerText="7" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora7.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="8" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora8.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="9"  style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora9.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="10" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora10.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="11" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora11.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="12" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black;  padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora12.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="13" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora13.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="14" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora14.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="15" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora15.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="16" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora16.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="17" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora17.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="18" style=" width: 15px; font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora18.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="19" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora19.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="20" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora20.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="21" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora21.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="22" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora22.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="23" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora23.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="24" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora24.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="1" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora1.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="2" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora2.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="3" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora3.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="4" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora4.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="5" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora5.valor}" style="font-size: 9px;"/>
+                                    </p:column>
+                                    <p:column headerText="6" style=" width: 15px;font-size: 12px; color: black; background: white; border-color: black; padding-left: 2px;">
+                                        <p:outputLabel value="#{oSigM.sigHora6.valor}" style="font-size: 9px;"/>
+                                    </p:column>                                            
+                                </p:dataTable>
+                            </p:outputPanel>
+                            
+                            <p:panelGrid style="width: 100%; background: white;">
+                                <p:row>
+                                    <p:column colspan="2"  style=" background-color: white; text-align: center; font-size: 13px; border-color: transparent;">
+                                        <b><p:outputLabel value="#{etiq.terapeuticaEmpleada}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column rowspan="2" style=" background: white; padding: 1px; border-color: transparent;">
+                                        <div style=" margin: 0px; position: static; top: 0px; left: 0px;">
+                                            <p:dataTable id="tblMedic" value="#{oBuscaHojaQx.buscaHoja.arrTerapeuticaEmpleada}" var="oMed" emptyMessage="#{etiq.sinDat}" style=" position: relative;">
+                                                <p:column style="width:25%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;text-transform: uppercase" headerText="#{etiq.medicamentos}">
+                                                    <p:outputLabel value="#{oMed.medicamento.nombre}" style="font-size: 10px;"/>
+                                                </p:column>
+                                                <p:column style="width: 10%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;" headerText="#{etiq.dosisM}">
+                                                    <p:outputLabel value="#{oMed.dosis}" style="font-size: 10px;"/>
+                                                </p:column>
+                                                <p:column style="width: 10%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;" headerText="#{etiq.viaAdM}">
+                                                    <p:outputLabel value="#{oMed.via.valor}" style="font-size: 10px;"/>
+                                                </p:column>
+                                                <p:column style="width: 10%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;" headerText="#{etiq.horaM}">
+                                                    <p:outputLabel value="#{oMed.fechaAplicacionString}" style="font-size: 10px;"/>
+                                                </p:column>
+                                            </p:dataTable>                             
+                                        </div>                                        
+                                    </p:column>
+                                    <p:column style=" background: white; padding: 0px; border-color: transparent;">
+                                        <p:dataTable  value="#{oBuscaHojaQx.buscaHoja.arrSoluciones}" var="oSol" emptyMessage="" id="tblSolc" style="position: static; top: 0px; left: 0px;">
+                                            <p:column headerText="#{etiq.soluciones}" style=" width:20%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;">
+                                                <p:outputLabel value="#{oSol.medicamento.nombre}" style="font-size: 10px;"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantM}" style=" width: 10%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;">
+                                                <p:outputLabel value="#{oSol.cantAplicada}" style="font-size: 10px;"/>
+                                            </p:column>
+                                            <p:column style="width: 10%;font-size: 12px; color: black; background: white; background-color: white; border-color: black;" headerText="#{etiq.horaM}">
+                                                <p:outputLabel value="#{oSol.fechaAplicacionString}" style="font-size: 10px;"/>
+                                            </p:column>                               
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style=" background: white; padding: 0px; border-color: transparent;">
+                                        <p:dataTable style="top: 0px; left: 0px;" id="tblHerms" widgetVar="agreHerm" value="#{oBuscaHojaQx.buscaHoja.arrHemoderivados}" var="oHem" emptyMessage="">
+                                            <p:column headerText="#{etiq.hemoderivados}" style=" width: 20%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;">
+                                                <p:outputLabel value="#{oHem.hemoderivado}" style="font-size: 10px;"/>
+                                                &nbsp;<p:outputLabel value="#{oHem.tipoSangre.valor}" style="font-size: 10px;"/>&nbsp;
+                                                <p:outputLabel value="#{oHem.tipoRH.valor}" style="font-size: 10px;"/>
+                                                
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantM}" style=" width: 10%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;">
+                                                <p:outputLabel value="#{oHem.cantidad}" style="font-size: 10px;"/>
+                                            </p:column>
+                                            <p:column style="width: 10%; font-size: 12px; color: black; background: white; background-color: white; border-color: black;" headerText="#{etiq.horaM}">
+                                                <p:outputLabel value="#{oHem.horaAplicadaString}" style="font-size: 10px;"/>
+                                            </p:column>                                                                
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 3px;"/>
+                            <p:panelGrid style=" width: 100%;" styleClass="centrado_texto">
+                                <p:row>
+                                    <p:column colspan="5" style=" background-color: white; border-color: transparent; border-bottom-color: black; font-size: 12px;" >
+                                        <b><p:outputLabel value="#{etiq.controlLiquidos}"/></b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  colspan="5" style=" background-color: white; font-size: 12px; border-color: black;"> 
+                                        <b><p:outputLabel value="#{etiq.gres}"/></b>
+                                    </p:column>
+                                </p:row>                                
+                            </p:panelGrid>
+                            <p:dataTable value="#{oBuscaHojaQx.buscaHoja.arrControlLiquidos}" var="oCl" emptyMessage="">
+                                <p:column headerText="#{etiq.ser}" style="width: 8%; font-size: 12px; background: white; background-color: white; color: black; border-color: black;">
+                                    <p:outputLabel value="#{oCl.tipoControl.valor}" style=" font-size: 11px;"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.totalEgresoLQ}" style="width: 15%; font-size: 12px; background: white; background-color: white;color: black; border-color: black;">
+                                    <p:outputLabel value="#{oCl.totalEgresos}" style=" font-size: 11px;"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.sangrado}" style="width: 14%; font-size: 12px; background: white; background-color: white;color: black; border-color: black;">
+                                    <p:outputLabel value="#{oCl.sangrado}" style=" font-size: 11px;"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.deuresis}" style="width: 10%; font-size: 12px; background: white; background-color: white;color: black; border-color: black;">
+                                    <p:outputLabel value="#{oCl.diuresis}" style=" font-size: 11px;"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.otros}" style="width: 10%; font-size: 12px; background: white; background-color: white;color: black; border-color: black;">
+                                    <p:outputLabel value="#{oCl.otros}" style=" font-size: 11px;"/>
+                                </p:column>
+                            </p:dataTable>
+                            <div style=" margin-bottom: 15px;"/>
+                            <p:dataTable id="tblRecuperacion" widgetVar="tblRecuperacion" value="#{oBuscaHojaQx.buscaHoja.arrActividadesRecuperacion}" var="oActRec" emptyMessage="">
+                                <p:column headerText="#{etiq.horaM}" style="width:8%; background: white; background-color: white;font-size: 12px; color: black; border-color: black; font-weight: bold;">
+                                    <p:outputLabel value="#{oActRec.horaRecuString}" style="font-size: 12px;font-weight: normal;"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.recuperacion}" style="background: white; background-color: white; font-size: 12px; color: black; border-color: black; font-weight: bold;">
+                                    <p:outputLabel value="#{oActRec.recuperacion}" style="font-size: 11px; font-weight: normal; "/>
+                                </p:column>                                
+                            </p:dataTable>
+                            <div style=" margin-bottom: 8px;"/>
+                            <p:panelGrid style="width: 100%;">
+                                <p:row>
+                                    <p:column style=" background-color: white; border-color: transparent; font-size: 12px; text-align: center; width: 47%; padding-bottom: 1px;">
+                                        <p:outputLabel value="#{etiq.nombreEnferQxToco} QUIROFANO"/>
+                                    </p:column>
+                                    <p:column style=" background-color: white; border-color: transparent; width: 5%;font-size: 12px;">
+                                        
+                                    </p:column>
+                                    <p:column style=" background-color: white; border-color: transparent; font-size: 12px; text-align: center;width: 47%; padding-bottom: 1px;">
+                                        <p:outputLabel value="#{etiq.nombreEnferRecu}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style=" background-color: white; border-color: transparent; border-bottom-color: black; text-align: center; padding-top: 0px; padding-bottom: 1px;">
+                                        <p:outputLabel value="#{oBuscaHojaQx.buscaHoja.enfermeraQxToco.nombreCompleto}" style=" font-size: 10px;"/>
+                                    </p:column>
+                                    <p:column style=" background-color: white; border-color: transparent;">
+                                        <p:outputLabel value="" style=" font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style=" background-color: white; border-color: transparent;border-bottom-color: black; text-align: center; padding-top: 0px; padding-bottom: 1px;">
+                                        <p:outputLabel value="#{oBuscaHojasQx.busaHoja.enfermeraRecupera.nombreCompleto}" style=" font-size: 11px;"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </h:form>
+                    <div style=" margin-bottom: 8px;"/>
+                    <h:form>
+                        <p:panelGrid  style="" styleClass="centrar">
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">                                       
+                                        <p:printer target=":impHojaQx"/>
+                                    </p:commandButton> 
+                                    &nbsp;
+                                    &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('impriirHojaQx').hide()">                                        
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>                        
+                    </h:form>    
+                </p:dialog>               
+             
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+       </ui:composition>        
+</html>
+

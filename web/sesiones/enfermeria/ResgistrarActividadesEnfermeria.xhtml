@@ -1,0 +1,375 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+    >
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div id="renewact">
+                    <h:form id="busca">     
+                        <br/>
+                        <p:accordionPanel styleClass="centrar" style=" width: 45%; font-weight: bold;">
+                            <p:tab title="#{etiq.ser}" >
+                                <p:outputPanel styleClass="centrar" style="width:100%; margin: 0px;">
+                                    <p:panelGrid style="width:100%;">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header">
+                                                <p:outputLabel value="#{etiq.servicio}:"/>
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header">
+                                                <p:outputLabel value="#{etiq.fecha}:"/>
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:selectOneMenu effect="puff" id="cmbAreas" value="#{oRAct.detalleAct.cabeceraAct.areaServicio.clave}">                                                   
+                                                   <f:selectItem itemLabel="Elegir servicio" itemValue=""/>
+                                                   <f:selectItems value="#{oRAct.arrServicios}" var="oS" itemLabel="#{oS.areaServicio.descripcion}" itemValue="#{oS.areaServicio.clave}"/>    
+                                                   <p:ajax event="change" listener="#{oRAct.buscaNombreServicio()}" update=":reActEnf"/>
+                                                   <p:ajax/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:calendar value="#{oRAct.detalleAct.cabeceraAct.fechaRegistroo}" size="9" maxdate="#{oRAct.detalleAct.cabeceraAct.fechaRegistroo}"
+                                                             effect="puff" pattern="dd/MM/yyyy" locale="es"  readonlyInput="true" showOn="button"> 
+                                                    <p:ajax event="dateSelect" update=":reActEnf:fec"/>
+                                                </p:calendar>
+                                            </p:column>
+                                            <p:column>
+                                                <p:commandButton value="Cargar" icon="ui-icon-search">
+                                                    <p:ajax listener="#{oRAct.buscaActividadesDelServicioSeleccionado}" 
+                                                            update=":reActEnf:msgs :reActEnf:opan2"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:row>                                                               
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <div style="margin-bottom: 15px;"/>
+                    </h:form>
+                    
+                    <h:form id="reActEnf">                       
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <p:panelGrid style="width: 80%;" id="pan1" rendered="#{oRAct.render}">
+                            <p:row>
+                                <p:column colspan="5" styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.regs}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" styleClass="ui-widget-header" style="text-align: left;">
+                                    <p:outputLabel  value="#{etiq.ser}:"/>&nbsp;&nbsp;
+                                    <p:outputLabel id="ser" value="#{oRAct.detalleAct.cabeceraAct.areaServicio.descripcion}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: right;">
+                                    <p:outputLabel  value="#{etiq.fechaa1}:"/>
+                                </p:column>
+                                <p:column colspan="3" styleClass="ui-widget-header">
+                                    <p:outputLabel id="fec" value="#{oRAct.detalleAct.cabeceraAct.fechaStr2}"/>
+                                </p:column>   
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="5" styleClass="ui-widget-header" style="padding: 0px;">
+                                    <p:panelGrid style=" width: 100%;">
+                                        <p:row>
+                                            <p:column style="width: 25%;" styleClass="ui-widget-header">
+                                                <p:outputLabel value="SELECCIONA TIPO ACTIVIDAD:"/>
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu value="#{oRAct.claveBusca}" effect="puff" >
+                                                    <p:ajax event="change" listener="#{oRAct.onActividadChange()}" update=":reActEnf:act  :reActEnf:msgs"/>
+                                                    <f:selectItem  itemValue="" itemLabel="Elige Tipo de Actividad" noSelectionOption="true"/>
+                                                    <f:selectItems value="#{oRAct.tipoActividad}"/>                                                    
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>                                    
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;" >
+                                   <p:outputLabel value="#{etiq.actvE}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                   <p:outputLabel value="#{etiq.cantM} MAT"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                   <p:outputLabel value="#{etiq.cantM} VES"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                   <p:outputLabel value="#{etiq.cantM} NOC"/>
+                                </p:column> 
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                   <p:outputLabel value="Ctr"/>
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column >
+                                    <p:selectOneMenu id="act" value="#{oRAct.actividad.tipoActividad.claveParametro}" effect="puff" 
+                                                     disabled="#{oRAct.disable}" filter="true" filterMatchMode="startsWith">
+                                       <f:selectItem itemLabel="Elige Actividad" itemValue="" noSelectionOption="true"/>
+                                       <f:selectItems value="#{oRAct.arrTipoActividad}" var="oAc" itemLabel="#{oAc.valor}" itemValue="#{oAc.claveParametro}"/>
+                                       <p:ajax event="valueChange"/>
+                                    </p:selectOneMenu>                                   
+                                </p:column>
+                                <p:column style="margin: 0 auto; text-align: center;">
+                                    <p:spinner value="#{oRAct.actividad.cantidadMAT}" size="4" min="0" max="100" id="cm" >
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner>
+                                </p:column>
+                                <p:column style="margin: 0 auto; text-align: center;">
+                                    <p:spinner value="#{oRAct.actividad.cantidadVES}" size="4" min="0" max="100" id="cv" >
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner>
+                                </p:column>
+                                <p:column style="margin: 0 auto;text-align: center;">
+                                    <p:spinner value="#{oRAct.actividad.cantidadNOC}" size="4" min="0" max="100" id="cn" >
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.agra}" icon="ui-icon-plus">
+                                        <p:ajax listener="#{oRAct.agregarActividad}" update=":reActEnf:msgs :reActEnf:act :reActEnf:cm :reActEnf:cv :reActEnf:cn :reActEnf:tbStActiv :reActEnf:opan2"/>
+                                    </p:commandButton>
+                                </p:column>                                                         
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="5" styleClass="ui-widget-header" style="margin: 0 auto; text-align: center;">                                   
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br/><!-- rendered="#{not empty oRAct.detalleAct.arrActividades }"-->
+                        <p:outputPanel style="width: 80%; margin: 0 auto; margin-bottom: 15px;" id="opan2" rendered="#{oRAct.render}">               
+                            <p:dataTable var="oT" value="#{oRAct.detalleAct.arrActividades}" emptyMessage="" 
+                                         id="tbStActiv" rendered="#{not empty oRAct.detalleAct.arrActividades }">                                
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column headerText="" style="width: 1%"/>
+                                        <p:column headerText="#{etiq.actd}" style="width: 40%;"/>                                       
+                                        <p:column headerText="MAT" style="width: 3%;"/>
+                                        <p:column headerText="VES" style="width: 3%;"/>
+                                        <p:column headerText="NOC" style="width: 3%;"/>
+                                        <p:column style="text-align: center; margin: 0 auto; width: 9%" headerText="Ctr"/>
+                                    </p:row>                                   
+                                </p:columnGroup>
+                                <p:subTable value="#{oT.arrActividades}" var="oS">                                    
+                                    <f:facet name="header">
+                                        <h:outputText value="#{oT.nombreTipoActividad}" style="text-align: center;font-size: 13px;"/>
+                                    </f:facet>
+                                    <p:column style="font-size: 12px;">
+                                        <p:outputLabel value="#{oS.tipoActividad.claveParametro}" />
+                                    </p:column>
+                                    <p:column style="font-size: 12px;">
+                                        <p:outputLabel value="#{oS.tipoActividad.valor}" />
+                                    </p:column>
+                                    <p:column >
+                                        <p:outputLabel value="#{oS.cantidadMAT}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{oS.cantidadVES}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{oS.cantidadNOC}"/>
+                                    </p:column>
+                                    <p:column style="text-align: center; margin: 0 auto; width: 8%">
+                                        <p:commandButton icon="ui-icon-pencil" onclick="PF('ModAct').show()" title="Modificar" 
+                                                        actionListener="#{oRAct.buscaModificarActividadEnArregloTemporal(oS.tipoActividad.tipoParametro, oS.tipoActividad.claveParametro)}"
+                                                        update=":modact">                                           
+                                        </p:commandButton> 
+                                        &nbsp;
+                                        <p:commandButton icon="ui-icon-trash" title="Eliminar"
+                                                         actionListener="#{oRAct.eliminarActividad(oS)}" update=":reActEnf:opan2 :reActEnf:tbStActiv">                                         
+                                        </p:commandButton> 
+                                    </p:column>                                    
+                                </p:subTable>
+                                <f:facet name="footer">
+                                     <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}"> 
+                                         <p:ajax listener="#{oRAct.guardarActividades}"/>
+                                     </p:commandButton>
+                                </f:facet>
+                            </p:dataTable>                            
+                        </p:outputPanel>
+                        <p:accordionPanel   style=" width: 80%; font-weight: bold; margin: 0 auto; text-align: center;" 
+                                            rendered="#{ not empty oRAct.busca.arrActividades}" id="tabla2" dynamic="true" >
+                            <p:tab title="#{etiq.actvEnfAgre}" >
+                                <p:outputPanel  style="width:100%; margin: 0px; text-align: left;">
+                                    <p:panelGrid style="width: 100%;">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header centrar">
+                                                <p:outputLabel value="#{etiq.regs}"/>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:dataTable value="#{oRAct.busca.arrActividades}" var="oTs" id="tbStActiv2">                                                     
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="" style="width: 1%"/>
+                                                            <p:column headerText="#{etiq.actd}" style="width: 40%;"/>                                       
+                                                            <p:column headerText="MAT" style="width: 4.7%;"/>
+                                                            <p:column headerText="VES" style="width: 4.7%;"/>
+                                                            <p:column headerText="NOC" style="width: 4.7%;"/>
+                                                            <p:column headerText="TOTAL" style="width: 3.5%;"/>
+                                                            <p:column style="text-align: center; margin: 0 auto; width: 3%" headerText="Ctr"/>
+                                                        </p:row>                                   
+                                                    </p:columnGroup>
+                                                    <p:subTable value="#{oTs.arrActividades}" var="oS">                                    
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{oTs.nombreTipoActividad}" style="text-align: center;font-size: 13px;"/>
+                                                        </f:facet>
+                                                        <p:column style="font-size: 12px;">
+                                                            <p:outputLabel value="#{oS.tipoActividad.claveParametro}" />
+                                                        </p:column>
+                                                        <p:column style="font-size: 12px;">
+                                                            <p:outputLabel value="#{oS.tipoActividad.valor}" />
+                                                        </p:column>
+                                                        <p:column >    
+                                                            <h:outputLabel value="#{oS.cantidadMAT}"/>
+                                                        </p:column>
+                                                        <p:column>      
+                                                            <h:outputLabel value="#{oS.cantidadVES}"/>
+                                                        </p:column>
+                                                        <p:column>     
+                                                            <h:outputLabel value="#{oS.cantidadNOC}"/>
+                                                        </p:column>
+                                                        <p:column>                                                
+                                                            <p:outputLabel value="#{oS.totalCalculado}"/>
+                                                        </p:column>
+                                                        <p:column style="text-align: center; margin: 0 auto; width: 9%">
+                                                            <p:commandButton onclick="PF('ModActAgregada').show()" icon="ui-icon-pencil" 
+                                                                             title="#{etiq.modificar}" 
+                                                                             actionListener="#{oRAct.buscaActividadModificarAgregadas(oS.tipoActividad.tipoParametro, oS.tipoActividad.claveParametro)}"
+                                                                             update=":modactAgregada">                            
+                                                            </p:commandButton>                                        
+                                                        </p:column>                                    
+                                                    </p:subTable>                                        
+                                                </p:dataTable>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header centrar">
+                                                <p:commandButton icon="ui-icon-disk" value="#{etiq.modificar}"> 
+                                                    <p:ajax  listener="#{oRAct.guardaModificacionActividadesEnfermeria()}" update=":reActEnf:msgs :reActEnf:tabla2:tbStActiv2"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                    </h:form>                    
+                </div>
+                <p:dialog widgetVar="ModAct" modal="true" showEffect="puff" hideEffect="puff" header="MODIFICAR ACTIVIDAD ANTES DE GUARDAR " resizable="false" width="860">
+                    <h:form id="modact">
+                        <p:panelGrid style="width: 100%;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="text-align: center; width: 70%;">
+                                    <p:outputLabel value="#{etiq.actn}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.cantM} MAT"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.cantM} VES"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.cantM} NOC"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{oRAct.busca.tipoActividad.valor}"/>
+                                </p:column>
+                                <p:column style="text-align: center; margin: 0 auto;">
+                                    <p:spinner value="#{oRAct.busca.cantidadMAT}" size="5" min="0" max="100">
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner>                                    
+                                </p:column>
+                                <p:column style="text-align: center; margin: 0 auto;">
+                                    <p:spinner value="#{oRAct.busca.cantidadVES}" size="5" min="0" max="100">
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner> 
+                                </p:column>
+                                <p:column style="text-align: center; margin: 0 auto;">
+                                    <p:spinner value="#{oRAct.busca.cantidadNOC}" size="5" min="0" max="100">
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner> 
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4" styleClass="ui-widget-header" style=" text-align: center;margin: 0 auto;">
+                                    <p:commandButton icon="ui-icon-disk" value="#{etiq.modificar}">
+                                        <p:ajax listener="#{oRAct.modificarActividadArregloTemporal}"/>
+                                    </p:commandButton>
+                                    &nbsp;&nbsp;
+                                    <p:commandButton onclick="PF('ModAct').hide()" icon="ui-icon-close" value="#{etiq.cerrar}">                            
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>         
+                    </h:form>
+                </p:dialog>         
+                <p:dialog widgetVar="ModActAgregada" modal="true" showEffect="puff" hideEffect="puff" header="MODIFICACIÓN DE ACTIVIDAD"
+                          resizable="false" width="860">
+                    <h:form id="modactAgregada">
+                        <p:panelGrid style="width: 100%;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="text-align: center; width: 70%;">
+                                    <p:outputLabel value="#{etiq.actn}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.cantM} MAT"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.cantM} VES"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.cantM} NOC"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{oRAct.modifica.tipoActividad.valor}"/>
+                                </p:column>
+                                <p:column style="text-align: center; margin: 0 auto;">
+                                    <p:spinner value="#{oRAct.modifica.cantidadMAT}" size="5" min="0" max="100">
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner>                                    
+                                </p:column>
+                                <p:column style="text-align: center; margin: 0 auto;">
+                                    <p:spinner value="#{oRAct.modifica.cantidadVES}" size="5" min="0" max="100">
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner> 
+                                </p:column>
+                                <p:column style="text-align: center; margin: 0 auto;">
+                                    <p:spinner value="#{oRAct.modifica.cantidadNOC}" size="5" min="0" max="100">
+                                        <p:ajax event="valueChange"/>
+                                    </p:spinner> 
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4" styleClass="ui-widget-header" style=" text-align: center;margin: 0 auto;">
+                                    <p:commandButton icon="ui-icon-disk" value="#{etiq.modificar}">
+                                        <p:ajax listener="#{oRAct.modificarActividadesAgregadas()}"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>         
+                    </h:form>
+                </p:dialog>         
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+</html>
+

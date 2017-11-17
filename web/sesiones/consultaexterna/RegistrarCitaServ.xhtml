@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+  <ui:define name="cuerpo">
+   <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+   <h2 class="centrado_texto"><p:outputLabel id="titModPac" value="#{etiq.registrarCita}"/></h2>
+   <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+   <div class="centrado_texto">
+
+       <h:form>
+           <p:commandButton value="#{etiq.añadirCita}" icon="ui-icon-disk" type="button" onclick="PF('dlg1').show();" styleClass="#{oRegCitaServ.muestraExtra()}"/>
+       
+            <p:dialog header="Confirmación" widgetVar="dlg1" closable="true" styleClass="centrado_texto">
+                <h:outputText value="Ya hay #{oRegCitaServ.citados} citados. ¿Seguro que desea añadir otro?" />
+                <br/>
+                <p:commandButton value="Si" icon="ui-icon-check"  validateClient="true" ajax="false" action="#{oRegCitaServ.addExtra()}"/>
+            </p:dialog>
+       </h:form>
+       
+      <h:form id="formReg">
+        <p:panelGrid styleClass="frm_centrado centrado_texto">
+            <f:facet name="header">
+              <p:row>
+                  <p:column colspan="4" styleClass="encabezados"><p:outputLabel id="titDatCita" value="#{etiq.datosDeCita}"/></p:column>
+              </p:row>
+              <p:row>
+                  <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="fecCita" value="#{etiq.fechaCita}:"/></p:column>
+                  <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="horReg" value="#{etiq.horaRegistro}:"/></p:column>
+              </p:row>
+          </f:facet>
+          <p:row>
+              <p:column>
+                  <p:calendar id="tFecCita" value="#{oRegCitaServ.estReal.fechaProgramado}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yyyy" mindate="#{oRegCitaServ.fechaHoraMinimo()}" required="true"  readonlyInput="true"/>
+              </p:column>
+              <p:column>
+                  <p:selectOneMenu id="tTurno" value="#{oRegCitaServ.estReal.area.turno.clave}" required="true">
+                      <f:selectItems value="#{oRegCitaServ.estReal.area.turno.buscarTurnosCE()}" var="oTurno" 
+                                     itemLabel="#{oTurno.descripcion}" itemValue="#{oTurno.clave}"></f:selectItems>
+                  </p:selectOneMenu>
+              </p:column>
+          </p:row>
+          <p:row>
+              <p:column styleClass="centrado_texto" colspan="4">
+                  <p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk"  action="#{oRegCitaServ.registraCita()}" validateClient="true" ajax="false">
+                      <f:setPropertyActionListener target="#{oBuscarPac.estudioReal.area.clave}" value="${null}" />
+                  </p:commandButton>
+              </p:column>
+          </p:row>
+        </p:panelGrid>
+      </h:form>
+     <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus> 
+   </div>
+  </ui:define>         
+</ui:composition>
+</html>

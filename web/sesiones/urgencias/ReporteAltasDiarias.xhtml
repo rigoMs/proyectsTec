@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+      <div class="centrar">
+        <h2><p:outputLabel value="#{etiq.reporteAltas}"/></h2>
+        <br></br>
+              <h:form id="datos">
+                  <p:growl id="messages" showDetail="true"/>
+                    <br/>
+                         <p:panelGrid styleClass="frm_centrado"> 
+
+                             <p:row>
+                                 <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>  
+                                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.altasDiarias}"/></p:column> 
+                                 <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>   
+                             </p:row>
+
+                             <p:row>
+
+                                 <p:column>
+                                     <p:outputLabel value="#{etiq.seleccionar} #{etiq.fechaEmision}:"/>
+                                 </p:column>
+
+                                 <p:column>
+                                     <p:calendar id="fechaIni" effect="fold" readonlyInput="true" maxdate="#{oRepAltas.fechaHoy}" required="true" requiredMessage="Debe ingresar una fecha de emisión" value="#{oRepAltas.fechaInicial}" locale="es">
+                                         <p:ajax event="dateSelect" />
+                                     </p:calendar>  
+                                </p:column>
+                                 <p:column>
+                                    <p:commandButton styleClass="frm_login" value="#{etiq.consultar}" icon="ui-icon-search" action="#{oRepAltas.generar()}" update="tablaRes"/>
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                    <br></br>
+               
+                    <p:dataTable id="tablaRes" var="oTab" value="#{oRepAltas.admision}" emptyMessage="No se han encontrado resultados" style="#{oRepAltas.activaTabla} margin: 0 auto;">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.altasDiarias}"/>
+                        </f:facet> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.sPop}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.paciente.seg.numero}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.servicio}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.areaServicioHRRB}"/>
+                        </p:column>
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.noCam}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.cama.numero}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.nExp}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.paciente.expediente.numero}"/>
+                        </p:column> 
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.nivSE}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.nivelSocioEcoStr}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.nombrePaciente}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.paciente.nombres} #{oTab.paciente.apPaterno} #{oTab.paciente.apMaterno}"/>
+                        </p:column>
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.cie10}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.diagIngreso.clave}"/>
+                        </p:column> 
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.causes}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.diagIngreso.causes.clave}"/>
+                        </p:column> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.diagnosticoIngreso}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.diagIngreso.descripcionDiag}"/>
+                        </p:column> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.mAlta}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.destinoSTR}"/>
+                        </p:column> 
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.paciente.edadNumero}"/>
+                        </p:column>
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.horaEgreso}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.fechaAdm}"/>
+                        </p:column>
+                        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.doc}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.docEntregada}"/>
+                        </p:column>
+               
+                     </p:dataTable>      
+                     <br/>
+                        <div class="centrar">
+                            <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false">
+                            <p:dataExporter type="xls" target="tablaRes" fileName="Reporte de Altas (#{oRepAltas.fechaI})" postProcessor="#{oRepAltas.postProcessXLS}"/>
+                     </p:commandButton>
+                        </div>
+                </h:form>
+                         
+   </div> 
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

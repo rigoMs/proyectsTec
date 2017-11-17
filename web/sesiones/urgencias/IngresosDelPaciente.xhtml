@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <div class="centrar">
+        <h:form id="datos">
+            <br/>
+                 <p:panelGrid styleClass="frm_centrado"> 
+                    
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+                     </p:row>
+                      <p:row>
+                          <p:column>
+                              <h:outputLabel value="#{oIngresos.ingresosPac.paciente.nombres}"/>
+                          </p:column>
+                          <p:column>
+                              <h:outputLabel value=" #{oIngresos.ingresosPac.paciente.apPaterno}"/>
+                          </p:column>
+                          <p:column>
+                              <h:outputLabel value="#{oIngresos.ingresosPac.paciente.apMaterno}"/>
+                          </p:column>
+                          
+                          <p:column>
+                              <p:selectOneRadio id="sexo" value="#{oIngresos.ingresosPac.paciente.sexoP}" disabled="true" validatorMessage="Debe ingresar el sexo del paciente">
+                                <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                </p:selectOneRadio>
+                        </p:column>
+                          
+                          <p:column>
+                              <h:outputLabel value="#{oIngresos.ingresosPac.paciente.curp}"/>
+                          </p:column>
+                          
+                      </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.seguro}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numero}:"/></p:column>
+                        <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                     </p:row>
+                     <p:row>
+                         <p:column>
+                             <h:outputLabel  id="fechaNac" value="#{oIngresos.admisionUrgs.paciente.fechaNacTexto}">
+                             </h:outputLabel>
+                          </p:column>
+                         <p:column>
+                             <h:outputLabel value="#{oIngresos.ingresosPac.paciente.seg.derechohabienteP}"/>
+                         </p:column>
+                         <p:column>
+                             <h:outputLabel value="#{oIngresos.ingresosPac.paciente.seg.numero}"/>
+                         </p:column>
+                         
+                  <p:column colspan="2">
+                      <h:outputLabel id="dom" value="#{oIngresos.ingresosPac.paciente.calleNum}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                     </p:row>
+                     
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.colonia}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.pais}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.municipio}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.localidad}:"/><br/></p:column>
+             </p:row>
+             
+             <p:row>
+                 
+                 <p:column>
+                     <h:outputLabel id="colonia" value="#{oIngresos.ingresosPac.paciente.colonia}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel  value="#{oIngresos.ingresosPac.paciente.otroPais}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                     </h:outputLabel>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="enti" disabled="true" value="#{oIngresos.ingresosPac.paciente.estado.claveEdo}" >
+                         <p:ajax update="muni" event="valueChange"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oIngresos.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="muni" disabled="true" value="#{oIngresos.ingresosPac.paciente.municipio.claveMun}">
+                         <p:ajax update="loc" event="valueChange"/>
+                         <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oIngresos.listaMunicipios}" var="oMun" 
+                                        itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="loc" disabled="true" value="#{oIngresos.ingresosPac.paciente.ciudad.claveCiu}">
+                         <p:ajax update="codp" event="valueChange"/>
+                         <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oIngresos.listaCiudades}" var="oCiu"
+                                        itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+               </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cp}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/><br/></p:column>  
+                <p:column styleClass="ui-widget-header"/>  
+                <p:column styleClass="ui-widget-header"/>  
+                <p:column styleClass="ui-widget-header"/>  
+             </p:row>
+                 
+             <p:row>
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="codp" disabled="true" value="#{oIngresos.ingresosPac.paciente.ciudadCP.cp}">
+                         <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oIngresos.listaCP}" var="oCP" 
+                                        itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 <p:column>
+                     <h:outputLabel value="#{oIngresos.ingresosPac.paciente.expediente.numero}"/>
+                 </p:column>
+                 <p:column></p:column>
+                 <p:column></p:column>
+                 <p:column></p:column>
+                 
+            </p:row>
+             
+                     
+                </p:panelGrid>
+        </h:form>
+            </div> 
+    
+    <h:form id="ingresos" class="centrar">
+       <br/>
+            <div class="centrar">  
+         <!--INGRESOS DEL PACIENTE-->
+         <p:dataTable id="tablaIngresos" var="oIng" value="#{oIngresos.ingresosPac.buscarIngresos()}">
+                <f:facet name="header">
+                        <h:outputText value="#{etiq.ingresos}"/>
+                 </f:facet>
+             
+             
+                <p:column style="width: 7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.fechaHoraIngreso}"/>
+                    </f:facet>
+                    <h:outputText value="#{oIng.fechaIngresoStr}"/>
+                </p:column>
+                
+                <p:column style="width: 7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.altaHospitalaria}"/>
+                    </f:facet>
+                    <h:outputText value="#{oIng.altaHospitalariaStr}"/>
+                </p:column>
+                
+                <p:column style="width: 6%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                    </f:facet>
+                    <h:outputText value="#{oIng.folioAdmision}"/>
+                </p:column>
+                
+                <p:column style="width: 6%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.referencia}"/>
+                    </f:facet>
+                    <h:outputText value="#{oIng.paciente.referencia.descripcion}"/>
+                </p:column>                 
+                
+                <p:column style="width: 5%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.cie10}"/>
+                    </f:facet>
+                    <h:outputText value="#{oIng.diagIngreso.clave}"/>
+                </p:column>
+                        
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.diagnostico}"/>
+                    </f:facet>
+                    <h:outputText value="#{oIng.diagIngreso.descripcionDiag}"/>
+                </p:column>                
+                
+                <p:column style="width: 12%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.areaUrgs}"/>
+                    </f:facet>
+                    <h:outputText value="#{oIng.areaServicioSTR}"/>
+                </p:column>     
+
+               <p:column style="width: 12%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.medicoRecibe}"/>
+                    </f:facet>
+                   <h:outputText value="#{oIng.medicoRecibe.nombres}"/>
+                </p:column>    
+             
+             <p:column style="width: 7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.areaHosp}"/>
+                    </f:facet>
+                 <h:outputText value="#{oIng.areaServicioHRRBCad}"/>
+                </p:column>    
+             
+             <p:column style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.medicoTratante}"/>
+                    </f:facet>
+                 <h:outputText value="#{oIng.medicoTratante.nombres}"/>
+                </p:column>  
+             
+             <p:column style="width: 7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.destino}"/>
+                    </f:facet>
+                 <h:outputText value="#{oIng.destinoSTR}"/>
+                </p:column>  
+        </p:dataTable>      
+            
+         <!--FIN INGRESOS DEL PACIENTE-->
+     
+      </div>
+    </h:form>
+    
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

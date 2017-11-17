@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>   
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/>
+                <div id="page-wrap" style="min-height:100vh;"> 
+
+                    <h:form id="formR" style=" position: absolute; margin-top:30px; float: left;" >            
+                        <p:panelGrid>
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3"> <h:outputLabel value="#{etiq.recepcionMedicamento}"/></p:column>
+                                </p:row> 
+                            </f:facet>
+                            <p:row>
+                                <p:column style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.codigoBarras}:"/>
+                                    <p:inputText value="#{oLLegada.codBarras}" id="codigo" required="true" requiredMessage="Ingresar Código de Barras" converterMessage="Cod. Barras, Solo ingresar números"/>
+                                    <br/>
+                                    <p:commandButton value="#{etiq.buscar}" onclick="location.replace()" ajax="false"/>
+                                </p:column>
+                            </p:row>           
+                        </p:panelGrid>    
+                    </h:form>
+
+                    <h:form id="forms" style=" position: absolute; margin-top:200px; float: left;">
+                        <p:dialog header="#{etiq.recepcionMedicamento}" widgetVar="dlg1"  height="400" width="600" modal="true"  visible="#{oLLegada.encontrado}" closable="false" draggable="false" resizable="false" >
+                            <div style="font-weight: bold; text-align: center;">
+                                <h:outputLabel id="resultado" value="#{oLLegada.nombre}"/><br/>
+                                <h:outputLabel id="descripcion" value="#{oLLegada.med.descripcion}"/> 
+                            </div>
+
+                            <br/>            
+                            <p:growl id="msgs" showDetail="true" /> 
+                            <p:panelGrid  id="datos">               
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="3"><h:outputLabel value="#{etiq.detalle}"/></p:column>
+                                    </p:row> 
+                                </f:facet>
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.lote} "/>
+                                        <p:inputText value="#{oLLegada.detMed.lote}" id="lote" size="20" onkeyup="this.value = this.value.toUpperCase();" required="true" requiredMessage="Ingrese Lote"/>                 
+                                    </p:column>  
+                                </p:row> 
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.cantidad} "/>
+                                        <p:inputText value="#{oLLegada.detMed.existencia}" id="cantidad" size="20" required="true" requiredMessage="Ingrese Cantida" converterMessage="Cantidad, Solo ingresar números"/>                 
+                                    </p:column>  
+                                </p:row> 
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <p:outputLabel for="multi" value="#{etiq.caducidad} "/>
+                                        <p:calendar value="#{oLLegada.detMed.caducidad}" locale="es" id="multi" pages="3" pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="Ingrese Caducidad" />               
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.precio} "/>
+                                        <p:inputText value="#{oLLegada.detMed.precio}" id="precio" size="20" required="true" requiredMessage="Ingrese Precio" converterMessage="Precio, Solo ingresar números"/>                 
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.proveedor} "/>
+                                        <p:selectOneMenu id="prov" editable="false" value="#{oLLegada.claveProveedor}" style="width: 200px"  required="true" requiredMessage="Seleccione Proveedor" >
+                                            <p:ajax update="presentacion"/>
+                                            <f:selectItems value="#{oLLegada.proveedores}"/>                            
+                                        </p:selectOneMenu>              
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;" rendered="#{oLLegada.almenorUnProveedor}">
+                                        <h:outputLabel value="#{etiq.presentacion} "/>
+                                        <p:selectOneMenu id="presentacion" value="#{oLLegada.presentacion}" required="true" editable="false" style="width: 300px" requiredMessage="Selecciones Presentacion">
+                                            <f:selectItems value="#{oLLegada.presentaciones}"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>              
+                                <p:row>                           
+                                    <p:column colspan="3" style="font-weight: bold; text-align: center;">
+                                        <p:commandButton update="msgs :productos :formR :forms :productos:tblPro"  value="#{etiq.anadir}" action="#{oLLegada.setLista()}"/>
+                                        <p:commandButton type="submit" update=":formR:codigo"  value="#{etiq.cancelar}" action="#{oLLegada.forzarEncontrado()}" onclick="PF('dlg1').hide()"/>
+                                    </p:column> 
+                                </p:row>      
+                            </p:panelGrid> 
+                        </p:dialog> 
+                    </h:form>    
+
+
+                    <h:form id="productos" style=" float: right; margin-top:30px;  right:0;  width:970px;" >
+                        <p:remoteCommand name="refreshFooter" update=":productos:tblPro:outputTotal"/>
+                        <p:dataTable var="oMed" value="#{oLLegada.lista}"  
+                                     id="tblPro" editable="true" resizableColumns="true"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}" 
+                                     rendered="#{oLLegada.almenosUno}">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.registroLlegada}"/>
+                            </f:facet>
+                            <p:ajax event="rowEdit"  listener="#{oLLegada.onRowEdit}" update=":productos:tblPro :forms:msgs" />
+                            <p:ajax event="rowEditCancel" listener="#{oLLegada.onRowCancel}" update=":forms:msgs" />
+                            <p:column headerText="#{etiq.clave}" width="15">
+                                <h:outputLabel value="#{oMed.claveMedicamento}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.nombre}" width="30">                
+                                <h:outputLabel value="#{oMed.nombre}"/>                              
+                            </p:column>
+                            <p:column headerText="#{etiq.presentacion}" width="30">
+                                <h:outputLabel value="#{oMed.presentacion}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.descripcion}" width="30">
+                                <h:outputLabel value="#{oMed.descripcion}"/>
+                            </p:column> 
+                            <p:column headerText="#{etiq.proveedor}" width="18">
+                                <h:outputLabel value="#{oMed.proveedor.getNombre()}"/>                       
+                            </p:column>  
+                            <p:column headerText="#{etiq.cantidad}" width="17" >
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputLabel value="#{oMed.existencia}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oMed.existencia}" size="3" required="true" requiredMessage="Ingrese Cantidad" converterMessage="Cantidad, Solo ingresar números">
+                                            <p:ajax event="change" oncomplete="refreshFooter();"/>
+                                        </p:inputText>    
+                                    </f:facet>   
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{etiq.lote}" width="12">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputLabel value="#{oMed.lote}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oMed.lote}" size="3"/>
+                                    </f:facet>                        
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{etiq.caducidad}" width="22" >
+                                <p:cellEditor>
+                                    <f:facet name="output" class="" > 
+                                        <h:outputLabel value="#{oMed.caducidad}" />
+                                    </f:facet>
+                                    <f:facet name="input" >                                  
+                                        <p:calendar value="#{oMed.caducidad}" pattern="yyyy/MM/dd" navigator="true" size="5"> 
+                                        </p:calendar>                             
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{etiq.precio}" width="15">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputLabel value="#{oMed.precio}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oMed.precio}" size="3" required="true" requiredMessage="Ingrese Precio" converterMessage="Precio, Solo ingresar números" >
+                                            <p:ajax event="change" oncomplete="refreshFooter();"/>       
+                                        </p:inputText>
+                                    </f:facet>   
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{etiq.subtotal}" width="15">
+                                <h:outputLabel value="#{oMed.subTotal}"/>              
+                            </p:column>  
+                            <p:column width="15">
+                                <p:commandButton icon="ui-icon-trash" onclick="PF('confirmation').show()" immediate="true" actionListener="#{oLLegada.medicamentoSeleccionado(oMed)}"/> 
+                                <p:rowEditor>
+                                </p:rowEditor>    
+                            </p:column>
+
+                            <f:facet name="footer" class="centrar">                    
+                                <h:outputLabel  value="#{etiq.total}: "/>  <h:outputLabel value="#{oLLegada.total}" id="outputTotal"/>   
+                            </f:facet>                  
+                        </p:dataTable>
+
+                        <p:growl id="messages" showDetail="true" />
+                        <br/>
+                        <div style="text-align: center" id="botones"> 
+                            <p:column> <p:commandButton  update=":productos" value="Guardar" action="#{oLLegada.guarda}" rendered="#{oLLegada.almenosUno}"/>
+                                <p:commandButton  value="Limpiar" rendered="#{oLLegada.almenosUno}" onclick="PF('confLimp').show()"/>
+                            </p:column>
+                        </div> 
+                    </h:form>
+
+                    <p:confirmDialog message="¿¿#{etiq.preguntaEliminacion}??"
+                                     showEffect="bounce" hideEffect="explode"
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="confirmation">
+                        <h:form>
+                            <p:commandButton value="#{etiq.aceptar}" actionListener="#{oLLegada.remueveMedicamento(1)}" 
+                                             update=":productos" onclick="PF('confirmation').hide()"/>
+                            <p:commandButton value="#{etiq.cancelar}" actionListener="#{oLLegada.remueveMedicamento(0)}" onclick="PF('confirmation').hide()"/>
+                        </h:form>
+                    </p:confirmDialog>
+
+                    <p:confirmDialog message="¿¿#{etiq.preguntaLimpLista}??"
+                                     showEffect="bounce" hideEffect="explode"
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="confLimp">
+                        <h:form>
+                            <p:commandButton value="#{etiq.aceptar}" actionListener="#{oLLegada.limpia()}" styleClass="button"
+                                             update=":productos" onclick="PF('confLimp').hide() recarga()"/>
+                            <p:commandButton value="#{etiq.cancelar}" onclick="PF('confLimp').hide()"/>
+                        </h:form>
+                    </p:confirmDialog>
+                </div>
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

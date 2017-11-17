@@ -1,0 +1,230 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <div class="centrar">
+        <h:form id="datos">
+            <p:growl id="messages" showDetail="true"/>
+          <c:choose>
+            <c:when test="${oHospitalizar.ope=='a' || oHospitalizar.folioPac gt 0 }">  
+       
+            <br/>
+            <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+                 <p:panelGrid styleClass="frm_centrado" style="#{oHospitalizar.hospiPac.estadoHosp}"> 
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="5">
+                           <h:outputLabel value="#{etiq.hospitalizar}"/>
+                           </p:column>
+                       </p:row>
+                   </f:facet>  
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+                     </p:row>
+                      <p:row>
+                          <p:column>
+                              <h:outputLabel value="#{oHospitalizar.hospiPac.paciente.nombres}"/>
+                          </p:column>
+                          <p:column>
+                              <h:outputLabel value=" #{oHospitalizar.hospiPac.paciente.apPaterno}"/>
+                          </p:column>
+                          <p:column>
+                              <h:outputLabel value="#{oHospitalizar.hospiPac.paciente.apMaterno}"/>
+                          </p:column>
+                          
+                          <p:column>
+                              <p:selectOneRadio id="sexo" value="#{oHospitalizar.hospiPac.paciente.sexoP}" disabled="true" validatorMessage="Debe ingresar el sexo del paciente">
+                                <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                <p:ajax update="serHosp" event="valueChange"/>
+                                </p:selectOneRadio>
+                        </p:column>
+                          
+                          <p:column>
+                             <h:outputLabel value="#{oHospitalizar.hospiPac.paciente.curp}"/>
+                          </p:column>
+                          
+                      </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.seguro}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numero}:"/></p:column>
+                        <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                     </p:row>
+                     <p:row>
+                         <p:column>
+                             <h:outputLabel id="fechaNac" value="#{oHospitalizar.hospiPac.paciente.fechaNacTexto}">
+                             </h:outputLabel>
+                          </p:column>
+                         <p:column>
+                             <h:outputLabel  value="#{oHospitalizar.hospiPac.paciente.seg.derechohabienteP}"/>
+                         </p:column>
+                         <p:column>
+                             <h:outputLabel  value="#{oHospitalizar.hospiPac.paciente.seg.numero}"/>
+                         </p:column>
+                         
+                  <p:column colspan="2">
+                      <h:outputLabel id="dom" value="#{oHospitalizar.hospiPac.paciente.calleNum}"/>
+                  </p:column>
+                     </p:row>
+                     
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.colonia}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.pais}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.municipio}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.localidad}:"/><br/></p:column>
+             </p:row>
+             
+             <p:row>
+                 
+                 <p:column>
+                     <h:outputLabel id="colonia" value="#{oHospitalizar.hospiPac.paciente.colonia}" />
+                  </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel  value="#{oHospitalizar.hospiPac.paciente.pais}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                     </h:outputLabel>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="enti" disabled="true" value="#{oHospitalizar.hospiPac.paciente.estado.claveEdo}" >
+                         <p:ajax update="muni" event="valueChange"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="muni" disabled="true" value="#{oHospitalizar.hospiPac.paciente.municipio.claveMun}">
+                         <p:ajax update="loc" event="valueChange"/>
+                         <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.listaMunicipios}" var="oMun" 
+                                        itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="loc" disabled="true" value="#{oHospitalizar.hospiPac.paciente.ciudad.claveCiu}">
+                         <p:ajax update="codp" event="valueChange"/>
+                         <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.listaCiudades}" var="oCiu"
+                                        itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+               </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cp}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicioIngreso}:"/><br/></p:column> 
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.medicoRecibe}:"/><br/></p:column>  
+             </p:row>
+                 
+             <p:row>
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="codp" disabled="true" value="#{oHospitalizar.hospiPac.paciente.ciudadCP.cp}">
+                         <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.listaCP}" var="oCP" 
+                                        itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel value="#{oHospitalizar.hospiPac.paciente.expediente.numero}" />
+                 </p:column>
+                 
+                 <p:column>
+                     <h:outputLabel  id="ser" value="#{oHospitalizar.hospiPac.areaServicioSTR}"/>
+                  </p:column>
+                 
+                 <p:column colspan="2">
+                     <h:outputLabel  id="medUrg" value="#{oHospitalizar.hospiPac.medicoRecibe.nombres}"/>
+                 </p:column>
+                 
+            </p:row> 
+                     
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="5"><p:outputLabel value="#{etiq.datosParaHospi}:"/></p:column>
+                    </p:row>
+            
+                     <p:row>
+                         <p:column styleClass="ui-widget-header" ><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.areaServicio}:"/></p:column>
+                         <p:column styleClass="ui-widget-header" ><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.subservicio}:"/></p:column>
+                         <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.medicoTratante}:"/></p:column>
+                         <p:column styleClass="ui-widget-header" ><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.asignarCama}:"/></p:column>
+                     </p:row>
+                     <p:row>
+                  <p:column>
+                      <p:selectOneMenu id="serHosp" value="#{oHospitalizar.hospiPac.areaServicioHRRBSTR}" required="true" requiredMessage="Indique un area de servicio">
+                         <f:selectItem itemLabel="AREA DE SERVICIO" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.hospiPac.listaAreasHosp}" var="areasHosp"
+                                        itemLabel="#{areasHosp.descripcion}" itemValue="#{areasHosp.clave}"/>
+                         <p:ajax update="subSerHosp" event="valueChange"/>
+                     </p:selectOneMenu>
+                     
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="subSerHosp" value="#{oHospitalizar.hospiPac.subServicioHRRB}" required="true" requiredMessage="Indique un subservicio">
+                         <f:selectItem itemLabel="SUB-SERVICIO" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.hospiPac.listaSubServicioHosp}" var="subareasHosp"
+                                        itemLabel="#{subareasHosp.descripcion}" itemValue="#{subareasHosp.clave}"/>
+                     </p:selectOneMenu>
+                  </p:column>
+                         
+                 <p:column colspan="2">
+                     <p:selectOneMenu id="medRes" value="#{oHospitalizar.hospiPac.medicoTratante.noTarjeta}" required="true" requiredMessage="Indique un medico tratante">
+                         <f:selectItem itemLabel="MEDICO TRATANTE" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.hospiPac.medicoTratante.listaMedicosHosp}" var="oMedH"
+                                    itemLabel="#{oMedH.apPaterno} #{oMedH.apMaterno} #{oMedH.nombres}" itemValue="#{oMedH.noTarjeta}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                         
+                  <p:column>
+                      <p:selectOneMenu id="cama" value="#{oHospitalizar.hospiPac.cama.numero}" required="true" requiredMessage="Debe elegir una cama">
+                         <f:selectItem itemLabel="CAMA" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHospitalizar.hospiPac.cama.listaCamas}" var="cama"
+                                        itemLabel="#{cama.numero} / #{cama.areaServicioHRRB}" itemValue="#{cama.numero}"/>
+                     </p:selectOneMenu>
+                  </p:column>
+                  
+                </p:row>
+           </p:panelGrid>
+            <br/>
+            <p:commandButton value="#{etiq.hospitalizar}" style="#{oHospitalizar.hospiPac.estadoHosp}" action="#{oHospitalizar.insertaHospitalizacion()}" validateClient="true" ajax="false" icon="ui-icon-disk"/>
+         
+     </c:when> 
+          <c:otherwise>
+              <h1>El Paciente ya se encuentra Admitido u Hospitalizado</h1>
+          </c:otherwise>
+    </c:choose> 
+    </h:form>
+            
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+   </div> 
+    
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

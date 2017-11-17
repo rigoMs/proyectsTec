@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.solInstCeye}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:dataTable value="" var="" rows="8" 
+                              filteredValue="" emptyMessage="No hay datos" 
+                              style="width: 700px" styleClass="frm_centrado">
+                     <p:column style="width: 15px">
+                        <f:facet name="header">
+                            <p:outputLabel value="No."/>
+                        </f:facet>
+                        <h:outputText value="1"/>
+                    </p:column>
+                     <p:column style="width: 80px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.servicio}"/>
+                        </f:facet>
+                        <h:outputText value="Quirofanos"/>
+                    </p:column>
+                    <p:column style="width: 180px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.enfSol}"/>
+                        </f:facet>
+                        <h:outputLabel value="Ana Carmelita Perez"/>
+                    </p:column>     
+                    <p:column style="width: 100px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.fecha}"/>
+                        </f:facet>
+                        <h:outputText value="99/99/9999"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.verSol}" style="width: 80px">
+                        <p:commandButton id="btnConsultar" icon="ui-icon-search"
+                                         onclick="PF('conVales').show();" type="button"/>
+                    </p:column>
+                </p:dataTable>
+                <!--Solicitud  a CEYE -->
+                <p:dialog header="#{etiq.valeInstrumental}" widgetVar="conVales" 
+                          style="width: 620px" resizable="false">
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="3">
+                                    <h:outputLabel value="#{etiq.valeInstrumental}"/>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="#{etiq.datosValeIns1}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="Pinzas, Bisturí, "/>  
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="#{etiq.datosValeIns2}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="147850 "/>  
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="#{etiq.datosValeIns3}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="QUIROFANOS"/>  
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="#{etiq.observaciones}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value=""/>  
+                            </p:column>
+                        </p:row>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column colspan="3" styleClass="centrado_texto">
+                                    <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}"/>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                    </p:panelGrid>                                            
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

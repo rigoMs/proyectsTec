@@ -1,0 +1,984 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+  <ui:define name="cuerpo">
+   <div>
+    <h:form>
+        <h2 class="centrado_texto"><p:outputLabel id="titConfCitas" value="#{etiq.confirmarCita}"/></h2>  
+        <h:panelGrid columns="4" class="frm_centrado">
+                <p:outputLabel id="fecConfCitas" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                <p:calendar id="tFecCita" value="#{oConfirmaCita.cita.fechaAux}" mindate="#{oConfirmaCita.cita.fechaDeHoy}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search"  update="tabla1 tabla2 tabla3 tabla4 tabla5 tabla6 tabla7 tabla8 tabla9 tabla10 tabla11 tabla12 tabla13 tabla14 tabla15 tabla16 tabla17 tabla18"/>
+         </h:panelGrid>
+    
+     <p:fieldset legend="#{etiq.consultorio} 01" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla1" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(1)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 01"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="centrado_texto columnamed4">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 02" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla2" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(2)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 02"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 03" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla3" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(3)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 03"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 04" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla4" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(4)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 04"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 05" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla5" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(5)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 05"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 06" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla6" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(6)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 06"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 07" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla7" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(7)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 07"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 08" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla8" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(8)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 08"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 09" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla9" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(9)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 09"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 10" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla10" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(10)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 10"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 11" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla11" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(11)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 11"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 12" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla12" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(12)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 12"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 13" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla13" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(13)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 13"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 14" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla14" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(14)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 14"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 15" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla15" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(15)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 15"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 16" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla16" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(16)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 16"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 17" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla17" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(17)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 17"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+    <p:fieldset legend="#{etiq.consultorio} 18" toggleable="true" toggleSpeed="500">
+        <p:dataTable id="tabla18" styleClass="frm_centrado" var="oCitasConf" value="#{oConfirmaCita.cita.buscarCitasEnEspera(18)}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.consultorio} 18"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noPaciente}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oCitasConf.noConsulta}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.folioCita}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 28%">
+                    <h:outputText value="#{oCitasConf.paciente.apPaterno} #{oCitasConf.paciente.apMaterno} #{oCitasConf.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.hora}" styleClass="centrado_texto columnamed2">
+                    <h:outputText value="#{oCitasConf.horaCita}"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tipoPacienteHosp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primHos}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed3">
+                    <h:outputText value="#{oCitasConf.primEsp}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.accion}" styleClass="columnamed4 centrado_texto">
+                    <p:commandButton value="#{etiq.confirmar}" action="#{oConfirmaCita.confirmarCitaCE}" icon="ui-icon-check"  validateClient="true" ajax="false" disabled="#{oConfirmaCita.btnConfirma}">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primHos}" value="#{oCitasConf.primHos}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.primEsp}" value="#{oCitasConf.primEsp}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.expediente.numero}" value="#{oCitasConf.paciente.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.horaCita}" value="#{oCitasConf.horaCita}" />
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.borrar}" action="#{oConfirmaCita.cita.borraCitaCE()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.folioCita}" value="#{oCitasConf.folioCita}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.paciente.folioPaciente}" value="#{oCitasConf.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.areaServicio.clave}" value="#{oCitasConf.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oConfirmaCita.cita.PH.noTarjeta}" value="#{oCitasConf.PH.noTarjeta}" /> 
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+    </p:fieldset>
+      </h:form>
+    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+     </p:ajaxStatus> 
+   </div>
+  </ui:define> 
+        
+</ui:composition>
+</html>

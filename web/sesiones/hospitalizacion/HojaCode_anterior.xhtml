@@ -1,0 +1,1422 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                 <div class="centrar">
+                     <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                     <h2 class="negrita centrado_texto"><h:outputLabel value="#{etiq.hojaHospitalizacion}"/></h2>  
+                     <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+                 <h:form id="frm1">
+                    <p:growl id="message" showDetail="true" />
+                <c:choose>
+                    <c:when test="${oCode.ope=='a' || oCode.numHospitalizacion gt 0}">      
+                     <p:tabView effect="fade" effectDuration="slow" id="tab1" cache="false">     
+                        <p:tab title="#{etiq.datosDelHospital}">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column colspan="4" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.datosDelHospital}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.unidad}:"/></p:column>
+                                    <p:column colspan="3"><p:inputText styleClass="negrita" value="Hospital Regional Río Blanco" readonly="true" size="30"/></p:column>                          
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.clues}:"/></p:column>
+                                    <p:column><p:inputText styleClass="negrita" value="VZSSA004860" readonly="true"/></p:column>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.folio}:"/></p:column>
+                                    <p:column>
+                                        <p:inputMask id="imFolioCode" mask="9?9999999999999999999" styleClass="negrita" size="15" value="#{oCode.hosp.folioCode}" readonly="#{oCode.bloqueado}">
+                                            <p:ajax update="@this, :frm1:btnCerCODE" event="valueChange"/> 
+                                        </p:inputMask>                                    
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3"></p:column>
+                                    <p:column>                                
+                                        <p:commandButton styleClass="frm_login" value="#{etiq.guardar}" action="#{oCode.guardar()}" 
+                                                         icon="ui-icon-disk" ajax="false" validateClient="true" style="#{oCode.mostrarBotonCerrarCODE()}" onclick="this.form.target='_self'"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:tab>        
+                        
+                        <p:tab title="#{etiq.datosPaciente}">
+                            <p:panelGrid>
+
+                                <p:row>
+                                    <p:column colspan="4" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.datosPaciente}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.nombre}:"/></p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="app" value="#{oCode.code.paciente.apPaterno}" readonly="true"/><br/>
+                                        <h:outputLabel class="negrita pie" value="#{etiq.appat}:"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="apm" value="#{oCode.code.paciente.apMaterno}" readonly="true"/><br/>
+                                        <h:outputLabel class="negrita pie" value="#{etiq.apmat}:"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="nom" value="#{oCode.code.paciente.nombres}" readonly="true"/><br/>
+                                        <h:outputLabel class="negrita pie" value="#{etiq.nombres}:"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column rowspan="3" styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.edad}:"/></p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="edad" readonly="true" size="3" value="#{oCode.code.paciente.edad}"/>
+                                        <p:inputText styleClass="bordes" id="claveEdad" readonly="true" size="5" value="#{oCode.code.paciente.claveEdadP}"/>
+                                    </p:column>                            
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.sexo}:"/></p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="sexo" readonly="true" value="#{oCode.code.paciente.sexoP}"/>
+                                    </p:column>                                        
+                                </p:row>
+                                <p:row>                                    
+                                    <p:column rowspan="2">
+                                        <h:outputLabel class="negrita pie" value="#{etiq.pacienteMenor} #{etiq.nacioHospital}:"/><br/>
+                                        <p:inputText styleClass="bordes" id="nacHos" readonly="true" size="3" value="#{oCode.code.paciente.nacidoEnHospitalP}"/>
+                                    </p:column>   
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.talla}:"/></p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="estatura" readonly="true" size="3" value="#{oCode.code.paciente.talla}"/>
+                                        <h:outputLabel class="negrita" value=" #{etiq.cm}"/>
+                                    </p:column>  
+                                </p:row>                                   
+                                <p:row>                                     
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.peso}:"/></p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="peso" readonly="true" size="3" value="#{oCode.code.paciente.peso}"/>
+                                        <h:outputLabel class="negrita" value=" #{etiq.kg}"/>
+                                    </p:column>                            
+                                </p:row>                       
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.derechohabiente}:"/></p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="itDere" readonly="true" value="#{oCode.code.seguro.derechohabienteP}"/> 
+                                    </p:column>                                     
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.segpop}:"></h:outputLabel></p:column>                             
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="itSePop" readonly="true" size="13" value="#{oCode.code.seguro.numero}"/> 
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.curp}:"/></p:column>                             
+                                    <p:column><p:inputText styleClass="bordes" id="itCurp" readonly="true" size="20" value="#{oCode.code.paciente.curp}"/></p:column>                                     
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.expediente}:"/></p:column>                             
+                                    <p:column><p:inputText styleClass="bordes" id="itExp" readonly="true" size="13" value="#{oCode.code.paciente.expediente.numero}"/></p:column>                                    
+                                </p:row>                                
+                                <p:row>
+                                    <p:column colspan="4" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.residenciaHabitual}"></h:outputLabel></p:column>                             
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.entidad}:"></h:outputLabel></p:column>                             
+                                    <p:column colspan="2">
+                                        <p:inputText styleClass="bordes" id="itEnt" readonly="true" value="#{oCode.code.estado.descripcionEdo}"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <p:inputText styleClass="bordes" id="itEntC" readonly="true" size="2" value="#{oCode.code.estado.claveEdo}"/>
+                                    </p:column>                                    
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.municipio}:"></h:outputLabel></p:column>                             
+                                    <p:column colspan="2">
+                                        <p:inputText styleClass="bordes" id="itMun" readonly="true" value="#{oCode.code.municipio.descripcionMun}"/>
+                                    </p:column>
+                                    <p:column>                                        
+                                        <p:inputText styleClass="bordes" id="itMunC" readonly="true" size="3" value="#{oCode.code.municipio.claveMun}"/>
+                                    </p:column>                                     
+                                </p:row>                                
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.localidad}:"></h:outputLabel></p:column>                             
+                                    <p:column colspan="2">
+                                        <p:inputText styleClass="bordes" id="itLoc" readonly="true" value="#{oCode.code.ciudad.descripcionCiu}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="itLocC" readonly="true" size="4" value="#{oCode.code.ciudad.claveCiu}"/>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header centrado_texto">
+                                        <p:outputLabel styleClass="negrita" value="#{etiq.perteneceAUn}"/><br/>
+                                        <p:outputLabel styleClass="negrita" value="#{etiq.grupoIndigena}"/>                  
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto">
+                                        <p:outputLabel styleClass="negrita" value="#{etiq.hablaOEntiende}"/><br/>
+                                        <p:outputLabel styleClass="negrita" value="#{etiq.algunaLengIndigena}"/>                                 
+                                    </p:column>                
+                                    <p:column styleClass="ui-widget-header centrado_texto">
+                                        <p:outputLabel styleClass="negrita" value="#{etiq.cualEsLenguaInd}"/><br/>
+                                        <p:outputLabel styleClass="negrita" value="#{etiq.queHablaOEntiende}"/>                                   
+                                    </p:column>         
+                                    <p:column styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negrita" value="#{etiq.hablaEspañol}"/><br/>                             
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="itPer" readonly="true" value="#{oCode.code.etnicidad.pertenenciaGpoIndP}"/> 
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="itHab" readonly="true" value="#{oCode.code.etnicidad.hablaLenguaIndP}"/> 
+                                    </p:column>                            
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="itLengua" readonly="true" size="2" value="#{oCode.code.etnicidad.claveLengua}"/> 
+                                    </p:column>                            
+                                    <p:column>
+                                        <p:inputText styleClass="bordes" id="itEspa" readonly="true" value="#{oCode.code.etnicidad.hablaEspaniolP}"/>  
+                                    </p:column>                            
+                                </p:row> 
+                            </p:panelGrid>
+                        </p:tab>                        
+          
+                        <p:tab title="#{etiq.datosEstancia}">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="requerido" value="*"/><h:outputLabel class="negrita" value="#{etiq.estancia}"/>
+                                    </p:column>
+                                    <p:column colspan="5" styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="requerido" value="*"/><h:outputLabel class="negrita" value="#{etiq.servicio}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column rowspan="2" styleClass="subDato">
+                                        <h:outputLabel class="negrita" value="#{etiq.ingreso}:"/>
+                                    </p:column>
+                                    <p:column rowspan="2">
+                                        <h:outputLabel class="negrita" value="#{oEstancia.code.episodioMedico.FIngreso}"/>
+                                    </p:column>     
+                                    <p:column rowspan="4">                                      
+                                        <p:selectOneRadio id="rbSer" layout="grid" columns="1" value="#{oEstancia.code.tipoEstancia}" disabled="#{oEstancia.bloqueado}">
+                                            <p:ajax update="auSerIn auSerEg auSerIn popup :frm1:btnAutCODE"/>
+                                            <f:selectItem itemLabel="NORMAL" itemValue="1"/>
+                                            <f:selectItem itemLabel="CORTA ESTANCIA" itemValue="2"/>
+                                        </p:selectOneRadio> 
+
+                                    </p:column>     
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.deIngreso}:"/></p:column>
+                                    <p:column colspan="2">
+                                        <p:autoComplete id="auSerIn" queryDelay="1000" size="40" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.servicioIngreso.areaServicioSAEH.descripcion}" completeMethod="#{oEstancia.code.servicioIngreso.areaServicioSAEH.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(15)}" readonly="#{oEstancia.bloqueado}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="SerInC, auSerSe, auSerEg, rbSer, :frm1:btnAutCODE" event="itemSelect"/> 
+                                            <p:ajax update="SerInC, auSerSe, auSerEg, rbSer, :frm1:btnAutCODE" event="blur"/> 
+                                        </p:autoComplete>                                    
+                                    </p:column>                                    
+                                    <p:column>
+                                        <p:inputText id="SerInC" value="#{oEstancia.code.servicioIngreso.areaServicioSAEH.clave}" size="3"  readonly="true" styleClass="bordes"/>                                         
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>               
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.segundo}:"/></p:column>
+                                    <p:column colspan="2">
+                                        <p:autoComplete id="auSerSe" queryDelay="1000" size="40" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.servicioSegundo.areaServicioSAEH.descripcion}" completeMethod="#{oEstancia.code.servicioSegundo.areaServicioSAEH.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(16)}" readonly="#{oEstancia.bloqueado}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="SerSeC auSerTe" event="itemSelect"/>  
+                                            <p:ajax update="SerSeC auSerTe" event="blur"/>  
+                                        </p:autoComplete>                                    
+                                    </p:column>                                    
+                                    <p:column>
+                                        <p:inputText id="SerSeC" value="#{oEstancia.code.servicioSegundo.areaServicioSAEH.clave}" size="3"  readonly="true" styleClass="bordes"/>                                         
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column rowspan="2" styleClass="subDato">
+                                        <h:outputLabel class="negrita" value="#{etiq.egreso}:" for="popup"/>
+                                    </p:column>
+                                    <p:column rowspan="2">                                        
+                                        <p:calendar id="popup" effect="fold" value="#{oEstancia.code.episodioMedico.altaHospitalaria}" locale="es" disabled="#{oEstancia.altaHosp()}" mindate="#{oEstancia.minDateAlta()}" maxdate="#{oEstancia.hosp.fechaActual()}" readonlyInput="true">   
+                                            <p:ajax event="dateSelect" update="rbSer, :frm1:btnAutCODE"/>
+                                        </p:calendar>                                        
+                                    </p:column>
+
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.tercero}:"/></p:column>
+                                    <p:column colspan="2">
+                                        <p:autoComplete id="auSerTe" queryDelay="1000" size="40" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.servicioTercero.areaServicioSAEH.descripcion}" completeMethod="#{oEstancia.code.servicioTercero.areaServicioSAEH.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(17)}" readonly="#{oEstancia.bloqueado}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="SerTeC auSerEg" event="itemSelect"/>   
+                                            <p:ajax update="SerTeC auSerEg" event="blur"/>   
+                                        </p:autoComplete>                                    
+                                    </p:column>                                    
+                                    <p:column>
+                                        <p:inputText id="SerTeC" value="#{oEstancia.code.servicioTercero.areaServicioSAEH.clave}" size="3"  readonly="true" styleClass="bordes"/>                                         
+                                    </p:column>
+                                </p:row>                                  
+                                <p:row>                           
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.deEgreso}:"/></p:column>
+                                    <p:column colspan="2">
+                                        <p:autoComplete id="auSerEg" queryDelay="1000" size="40" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.servicioEgreso.areaServicioSAEH.descripcion}" completeMethod="#{oEstancia.code.servicioEgreso.areaServicioSAEH.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(18)}" readonly="#{oEstancia.bloqueado}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="SerEgC :frm1:btnAutCODE" event="itemSelect"/>  
+                                            <p:ajax update="SerEgC :frm1:btnAutCODE" event="blur"/>  
+                                        </p:autoComplete>                                    
+                                    </p:column>                                    
+                                    <p:column>
+                                        <p:inputText id="SerEgC" value="#{oEstancia.code.servicioEgreso.areaServicioSAEH.clave}" size="3"  readonly="true" styleClass="bordes"/>                                         
+                                    </p:column>
+                                </p:row> 
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.estanciaServApoyo}"/></p:column>
+                                    <p:column colspan="3" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negritas" value="#{etiq.procedencia}"/></p:column>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negritas" value="#{etiq.motivoEgreso}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.salaLabor}:"/></p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes" id="itSl" mask="9?9" maxlength="2" size="5" value="#{oEstancia.code.salaLabor.tiempoUso}" disabled="#{oCode.code.paciente.sexos}" readonly="#{oEstancia.bloqueado}">
+                                        </p:inputMask>
+                                        <h:outputLabel class="negritas" value="  HORAS"/>
+                                    </p:column>
+                                    <p:column rowspan="4" colspan="3">
+                                        <p:selectOneRadio id="rbPro" layout="grid" columns="1" value="#{oEstancia.code.procedenciaP}" disabled="#{oEstancia.bloqueado}">
+                                            <p:ajax update="ref :frm1:btnAutCODE"/>
+                                            <f:selectItems value="#{oCode.listaProcedencias}" var="proc" 
+                                                           itemLabel="#{proc.valor}" itemValue="#{proc.claveParametro}#{proc.tipoParametro}"/>
+                                        </p:selectOneRadio>                                                               
+                                    </p:column>
+                                    <p:column rowspan="4" colspan="2">         
+                                        <p:selectOneRadio id="rbEgre" layout="grid" columns="2" value="#{oEstancia.code.episodioMedico.motivoEgresoP}" disabled="#{oEstancia.bloqueado}">
+                                            <p:ajax update="paseIns rbMP itFCD auCDa itCDa somCDa :frm1:btnAutCODE"/>
+                                            <f:selectItems value="#{oCode.listaMotivosEgreso}" var="motEgre" 
+                                                           itemLabel="#{motEgre.valor}" itemValue="#{motEgre.claveParametro}#{motEgre.tipoParametro}"/>
+                                        </p:selectOneRadio>                                          
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.salaExpulsion}:"/></p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes" id="itSe" mask="9?9" maxlength="2" size="5" value="#{oEstancia.code.salaExpulsion.tiempoUso}" disabled="#{oCode.code.paciente.sexos}" readonly="#{oEstancia.bloqueado}">
+                                        </p:inputMask>
+                                        <h:outputLabel class="negritas" value="  HORAS"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.salaRecuperacion}:"/></p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes" id="itSr" mask="9?9" maxlength="2" size="5" value="#{oEstancia.code.salaRecuperacion.tiempoUso}" readonly="#{oEstancia.bloqueado}">
+                                        </p:inputMask>
+                                        <h:outputLabel class="negritas" value="  HORAS"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.terapiaIntensiva}:"/></p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes" id="itTi" mask="9?99" maxlength="4" size="5" value="#{oEstancia.code.terapiaIntensiva.tiempoUso}" readonly="#{oEstancia.bloqueado}">
+                                        </p:inputMask>
+                                        <h:outputLabel class="negritas" value="  HORAS"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.terapiaIntermedia}:"/></p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes" id="itTin" mask="9?99" maxlength="4" size="5" value="#{oEstancia.code.terapiaIntermedia.tiempoUso}" readonly="#{oEstancia.bloqueado}">                                          
+                                        </p:inputMask>
+                                        <h:outputLabel class="negritas" value="  HORAS"/>
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <h:outputLabel class="negrita pie" value="#{etiq.institucion}: "/><br/>
+                                        <p:selectOneMenu id="ref" value="#{oEstancia.code.paciente.referencia.clave}" disabled="#{oEstancia.habilita(20)}" required="#{oEstancia.requerido(20)}" requiredMessage="Se Necesita Especificar Una Referencia">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaReferencias}" var="refe"
+                                                           itemLabel="#{refe.descripcion}" itemValue="#{refe.clave}"/>
+                                        </p:selectOneMenu>
+                                    </p:column>    
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negrita pie" value="#{etiq.institucion}/#{etiq.voluntario}: "/><br/>
+                                        <p:inputText styleClass="bordes" id="paseIns" disabled="#{oEstancia.habilita(19)}" value="#{oEstancia.code.episodioMedico.razonAltaVolunTrasl}" onkeyup="this.value=this.value.toUpperCase();" readonly="#{oEstancia.bloqueado}" required="#{oEstancia.requerido(19)}" requiredMessage="Se Necesita Especificar A Donde Fue Transladado" onkeypress="return validaCaracter(event);"></p:inputText>                                        
+                                    </p:column>                                    
+                                </p:row>      
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.afeccionesTratadas}"/></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.cie10}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negritas" value="#{etiq.afeccionPrincipal}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auAP" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afePrincipal.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afePrincipal.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(0)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10AP auPr auResAp CIE10R :frm1:btnAutCODE" event="itemSelect"/>                                            
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE10AP" value="#{oEstancia.code.episodioMedico.afePrincipal.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes" />                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.primera}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auPr" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afePrimera.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afePrimera.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(1)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE101 auSeg" event="itemSelect"/>    
+                                            <p:ajax update="CIE101 auSeg" event="blur"/> 
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE101" value="#{oEstancia.code.episodioMedico.afePrimera.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>                                
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.segunda}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auSeg" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afeSegunda.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afeSegunda.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(2)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE102 auTe" event="itemSelect"/>  
+                                            <p:ajax update="CIE102 auTe" event="blur"/>  
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE102" value="#{oEstancia.code.episodioMedico.afeSegunda.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.tercera}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auTe" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afeTercera.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afeTercera.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(3)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE103 auCu" event="itemSelect"/> 
+                                            <p:ajax update="CIE103 auCu" event="blur"/> 
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE103" value="#{oEstancia.code.episodioMedico.afeTercera.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.cuarta}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auCu" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afeCuarta.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afeCuarta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(4)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE104 auQu" event="itemSelect"/> 
+                                            <p:ajax update="CIE104 auQu" event="blur"/> 
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE104" value="#{oEstancia.code.episodioMedico.afeCuarta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.quinta}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auQu" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afeQuinta.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afeQuinta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(5)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE105 auSex" event="itemSelect"/>  
+                                            <p:ajax update="CIE105 auSex" event="blur"/>  
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE105" value="#{oEstancia.code.episodioMedico.afeQuinta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>       
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.sexta}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auSex" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afeSexta.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afeSexta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(6)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE106" event="itemSelect"/>  
+                                            <p:ajax update="CIE106" event="blur"/>  
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE106" value="#{oEstancia.code.episodioMedico.afeSexta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.reseleccionAFP}:"></h:outputLabel></p:column>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="auResAp" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.afeResAP.CIE10.descripcionDiag}" completeMethod="#{oEstancia.code.episodioMedico.afeResAP.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(1)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10R" event="itemSelect"/>                                            
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE10R" value="#{oEstancia.code.episodioMedico.afeResAP.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>                                                                                             
+                                
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negritas" value="#{etiq.afeccionPrincipal}:"></h:outputLabel></p:column>
+                                    <p:column>
+                                        <p:selectOneRadio id="rbAT"  layout="grid" columns="2" value="#{oEstancia.code.episodioMedico.tipoAfePrinc}" disabled="#{oEstancia.bloqueado}">
+                                            <p:ajax update=":frm1:btnAutCODE"/>
+                                            <f:selectItem itemLabel="PRIMERA VEZ" itemValue="1"/>
+                                            <f:selectItem itemLabel="SUBSECUENTE" itemValue="2"/> 
+                                        </p:selectOneRadio>                                 
+                                    </p:column>
+                                    <p:column colspan="3" styleClass="subDato"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negritas" value="#{etiq.infeccionIntraH}:"></h:outputLabel></p:column>
+                                    <p:column colspan="2">
+                                        <p:selectOneRadio id="rbIIH" value="#{oEstancia.code.episodioMedico.infeccionIntrahospitalaria}" disabled="#{oEstancia.bloqueado}">
+                                            <p:ajax update=":frm1:btnAutCODE"/>
+                                            <f:selectItem itemLabel="SI" itemValue="S"/>
+                                            <f:selectItem itemLabel="NO" itemValue="N"/> 
+                                        </p:selectOneRadio>                                 
+                                    </p:column>                               
+                                </p:row>
+
+                                <p:row>
+                                    <p:column colspan="2" rowspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.procedimientosDiag}"></h:outputLabel></p:column>
+                                    <p:column rowspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.tipoAnestesia}"></h:outputLabel></p:column>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.quirofano}"></h:outputLabel></p:column>
+                                    <p:column rowspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.medicoCirujano}"></h:outputLabel></p:column>
+                                    <p:column rowspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.cie9}"></h:outputLabel></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value=" #{etiq.en}|#{etiq.fuera}"/></p:column>       
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.hrsmin}"></h:outputLabel></p:column>                               
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="1:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ1" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe1.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe1.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(7)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE91 auPDTQ2 auTA2 rbQ2 imp2 auMC2 auMC1 :frm1:btnAutCODE" event="itemSelect"/>                                            
+                                        </p:autoComplete>                                          
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA1" styleClass="bordes" disabled="#{oEstancia.habilita(7)}" value="#{oEstancia.code.episodioMedico.proceRe1.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>                                                                                                                        
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ1" disabled="#{oEstancia.habilita(7)}" value="#{oEstancia.code.episodioMedico.proceRe1.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp1" mask="99:99" size="5" disabled="#{oEstancia.habilita(7)}" value="#{oEstancia.code.episodioMedico.proceRe1.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC1" disabled="#{oEstancia.habilita(7)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe1.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe1.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(1)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 1">
+                                            <p:ajax update=":frm1:btnAutCODE" event="itemSelect"/>   
+                                        </p:autoComplete>                                           
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE91" value="#{oEstancia.code.episodioMedico.proceRe1.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/>    
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="2:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ2" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe2.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe2.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(8)}"  readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE92 auPDTQ3 auTA3 rbQ3 imp3 auMC3 auMC2" event="itemSelect"/> 
+                                            <p:ajax update="CIE92 auPDTQ3 auTA3 rbQ3 imp3 auMC3 auMC2" event="blur"/> 
+                                        </p:autoComplete>   
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA2" styleClass="bordes" disabled="#{oEstancia.habilita(8)}" value="#{oEstancia.code.episodioMedico.proceRe2.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>   
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ2" disabled="#{oEstancia.habilita(8)}" value="#{oEstancia.code.episodioMedico.proceRe2.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp2" mask="99:99" size="5" disabled="#{oEstancia.habilita(8)}" value="#{oEstancia.code.episodioMedico.proceRe2.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC2" disabled="#{oEstancia.habilita(8)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe2.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe2.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(2)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 2">
+                                        </p:autoComplete>                                           
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE92" value="#{oEstancia.code.episodioMedico.proceRe2.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>
+                                </p:row>
+                                <p:row>  
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="3:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ3" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe3.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe3.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(9)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE93 auPDTQ4 auTA4 rbQ4 imp4 auMC4 auMC3" event="itemSelect"/> 
+                                            <p:ajax update="CIE93 auPDTQ4 auTA4 rbQ4 imp4 auMC4 auMC3" event="blur"/> 
+                                        </p:autoComplete>   
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA3" styleClass="bordes" disabled="#{oEstancia.habilita(9)}" value="#{oEstancia.code.episodioMedico.proceRe3.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>   
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ3" disabled="#{oEstancia.habilita(9)}" value="#{oEstancia.code.episodioMedico.proceRe3.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp3" mask="99:99" size="5" disabled="#{oEstancia.habilita(9)}" value="#{oEstancia.code.episodioMedico.proceRe3.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC3" disabled="#{oEstancia.habilita(9)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe3.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe3.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(3)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 3">
+                                        </p:autoComplete>  
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE93" value="#{oEstancia.code.episodioMedico.proceRe3.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="4:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ4" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe4.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe4.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(10)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE94 auPDTQ5 auTA5 rbQ5 imp5 auMC5 auMC4" event="itemSelect"/> 
+                                            <p:ajax update="CIE94 auPDTQ5 auTA5 rbQ5 imp5 auMC5 auMC4" event="blur"/> 
+                                        </p:autoComplete>   
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA4" styleClass="bordes" disabled="#{oEstancia.habilita(10)}" value="#{oEstancia.code.episodioMedico.proceRe4.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>   
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ4" disabled="#{oEstancia.habilita(10)}" value="#{oEstancia.code.episodioMedico.proceRe4.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp4" mask="99:99" size="5" disabled="#{oEstancia.habilita(10)}" value="#{oEstancia.code.episodioMedico.proceRe4.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC4" disabled="#{oEstancia.habilita(10)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe4.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe4.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(4)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 4">
+                                        </p:autoComplete>  
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE94" value="#{oEstancia.code.episodioMedico.proceRe4.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="5:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ5" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe5.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe5.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(11)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE95 auPDTQ6 auTA6 rbQ6 imp6 auMC6 auMC5" event="itemSelect"/> 
+                                            <p:ajax update="CIE95 auPDTQ6 auTA6 rbQ6 imp6 auMC6 auMC5" event="blur"/> 
+                                        </p:autoComplete>   
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA5" styleClass="bordes" disabled="#{oEstancia.habilita(11)}" value="#{oEstancia.code.episodioMedico.proceRe5.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>  
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ5" disabled="#{oEstancia.habilita(11)}" value="#{oEstancia.code.episodioMedico.proceRe5.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp5" mask="99:99" size="5" disabled="#{oEstancia.habilita(11)}" value="#{oEstancia.code.episodioMedico.proceRe5.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC5" disabled="#{oEstancia.habilita(11)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe5.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe5.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(5)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 5">
+                                        </p:autoComplete>  
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE95" value="#{oEstancia.code.episodioMedico.proceRe5.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="6:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ6" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe6.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe6.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(12)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE96 auPDTQ7 auTA7 rbQ7 imp7 auMC7 auMC6" event="itemSelect"/> 
+                                            <p:ajax update="CIE96 auPDTQ7 auTA7 rbQ7 imp7 auMC7 auMC6" event="blur"/> 
+                                        </p:autoComplete>   
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA6" styleClass="bordes" disabled="#{oEstancia.habilita(12)}" value="#{oEstancia.code.episodioMedico.proceRe6.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>    
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ6" disabled="#{oEstancia.habilita(12)}" value="#{oEstancia.code.episodioMedico.proceRe6.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp6" mask="99:99" size="5" disabled="#{oEstancia.habilita(12)}" value="#{oEstancia.code.episodioMedico.proceRe6.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC6" disabled="#{oEstancia.habilita(12)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe6.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe6.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(6)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 6">
+                                        </p:autoComplete>  
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE96" value="#{oEstancia.code.episodioMedico.proceRe6.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>               
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="7:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ7" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe7.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe7.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(13)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE97  auPDTQ8 auTA8 rbQ8 imp8 auMC8 auMC7" event="itemSelect"/>  
+                                            <p:ajax update="CIE97  auPDTQ8 auTA8 rbQ8 imp8 auMC8 auMC7" event="blur"/>  
+                                        </p:autoComplete>   
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA7" styleClass="bordes" disabled="#{oEstancia.habilita(13)}"  value="#{oEstancia.code.episodioMedico.proceRe7.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>   
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ7" disabled="#{oEstancia.habilita(13)}" value="#{oEstancia.code.episodioMedico.proceRe7.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp7" mask="99:99" size="5" disabled="#{oEstancia.habilita(13)}" value="#{oEstancia.code.episodioMedico.proceRe7.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC7" disabled="#{oEstancia.habilita(13)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe7.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe7.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(7)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 7">
+                                        </p:autoComplete>  
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE97" value="#{oEstancia.code.episodioMedico.proceRe7.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negritas" value="8:"></h:outputLabel>
+                                        <p:autoComplete id="auPDTQ8" queryDelay="1000" size="80" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oEstancia.code.episodioMedico.proceRe8.CIE9.descripcion}" completeMethod="#{oEstancia.code.episodioMedico.proceRe8.CIE9.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oEstancia.habilita(14)}" readonly="#{oEstancia.leido}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE98 auMC8" event="itemSelect"/> 
+                                            <p:ajax update="CIE98 auMC8" event="blur"/> 
+                                        </p:autoComplete>   
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="auTA8" styleClass="bordes" disabled="#{oEstancia.habilita(14)}"  value="#{oEstancia.code.episodioMedico.proceRe8.tipoAnestesiaP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaAnestesias}" var="tipoAnes"
+                                                           itemLabel="#{tipoAnes.valor}" itemValue="#{tipoAnes.claveParametro}#{tipoAnes.tipoParametro}"/>
+                                        </p:selectOneMenu>   
+                                    </p:column>               
+                                    <p:column>
+                                        <p:selectOneRadio id="rbQ8" disabled="#{oEstancia.habilita(14)}" value="#{oEstancia.code.episodioMedico.proceRe8.quirofano}">
+                                            <f:selectItem itemValue="E"/>
+                                            <f:selectItem itemValue="F"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>      
+                                    <p:column>
+                                        <p:inputMask id="imp8" mask="99:99" size="5" disabled="#{oEstancia.habilita(14)}" value="#{oEstancia.code.episodioMedico.proceRe8.duracionP}" readonly="#{oEstancia.leido}"></p:inputMask>
+                                    </p:column>                                 
+                                    <p:column>
+                                        <p:autoComplete queryDelay="1000" minQueryLength="3" styleClass="bordes" id="auMC8" disabled="#{oEstancia.habilita(14)}" 
+                                                        value="#{oEstancia.code.episodioMedico.proceRe8.cirujano.nombres}" completeMethod="#{oEstancia.code.episodioMedico.proceRe8.cirujano.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="150" readonly="#{oEstancia.leido}" required="#{oEstancia.requerido(8)}" onkeypress="return validaCaracter(event);" requiredMessage="Se Necesita Especificar El Médico Del Procedimiento 8">
+                                        </p:autoComplete>  
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputText id="CIE98" value="#{oEstancia.code.episodioMedico.proceRe8.CIE9.claveCIE9}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                             
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5"></p:column>
+                                    <p:column colspan="2">                                
+                                        <p:commandButton id="botonEstancia" styleClass="frm_login" value="#{etiq.guardar}" action="#{oEstancia.guardar()}" 
+                                                         icon="ui-icon-disk" ajax="false" validateClient="true" onclick="this.form.target='_self'" style="#{oCode.mostrarBotonGuardar()}">
+                                            <f:setPropertyActionListener target="#{oDefuncion.buscado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oAtnObs.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oLesion.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oHospPsi.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oEstancia.bloqueado}" value="#{false}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:tab>                       
+                        
+                         <p:tab title="#{etiq.defuncion}"> 
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column colspan="5" styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.causaDefuncion}"></h:outputLabel>                               
+                                    </p:column>  
+                                    <p:column rowspan="2" styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.intervaloAproximado}"></h:outputLabel>                               
+                                    </p:column>                            
+                                    <p:column rowspan="2" styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.cie10}"></h:outputLabel>                               
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column>
+                                        <h:outputLabel class="negritas" value="#{etiq.ministerioPublico}:"></h:outputLabel>
+                                    </p:column>
+                                    <p:column>                                
+                                        <p:selectOneRadio layout="grid" columns="6" id="rbMP" value="#{oDefuncion.code.episodioMedico.avisoMinisterioDefun}" disabled="#{oEstancia.habilitaDef()}">
+                                            <f:selectItem itemLabel="SI" itemValue="S"/>
+                                            <f:selectItem itemLabel="NO" itemValue="N"/>                                   
+                                        </p:selectOneRadio>                                 
+                                    </p:column> 
+                                    <p:column>
+                                        <h:outputLabel class="negritas" value="#{etiq.folioCertificado}:"></h:outputLabel>
+                                    </p:column>
+                                    <p:column>                                
+                                        <p:inputMask styleClass="bordes" id="itFCD" mask="999999999" maxlength="9" size="9" value="#{oDefuncion.code.paciente.folioDefuncion}"  disabled="#{oEstancia.habilitaDef()}" readonly="#{oDefuncion.bloqueado}">
+                                            <p:ajax update="rbEgre" event="valueChange"/>
+                                        </p:inputMask>
+                                    </p:column>                             
+                                </p:row>
+                                <p:row>
+                                    <p:column rowspan="4">
+                                        <h:outputLabel class="negritas" value="I     "></h:outputLabel>
+                                    </p:column>    
+                                    <p:column colspan="4">
+                                        <h:outputLabel class="negritas" value="a)"></h:outputLabel>
+                                        <p:autoComplete id="auCDa" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oDefuncion.code.episodioMedico.afePrimera.CIE10.descripcionDiag}" completeMethod="#{oDefuncion.code.episodioMedico.afePrimera.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300"  disabled="#{oEstancia.habilitaDef()}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="rbEgre CIE10a auCDb itCDb somCDb auCDRAF CIE10RD" event="itemSelect"/>                                              
+                                        </p:autoComplete>   
+                                        <br/><h:outputLabel class="negrita pie" value="#{etiq.debidoAConsecuencia}:"/>
+                                    </p:column>          
+                                    <p:column>                                
+                                        <p:inputMask styleClass="bordes textover" id="itCDa" mask="9?9" size="3" value="#{oDefuncion.code.episodioMedico.afePrimera.numEnfermedadMuerte}"  disabled="#{oEstancia.habilitaDef()}" />
+                                        <p:selectOneMenu styleClass="bordes textover" id="somCDa" disabled="#{oEstancia.habilitaDef()}" value="#{oDefuncion.code.episodioMedico.afePrimera.tiempoEnfermedadMuerteP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaTiempoEnfermedadMuerte}" var="tEnfMue" 
+                                                           itemLabel="#{tEnfMue.valor}" itemValue="#{tEnfMue.claveParametro}#{tEnfMue.tipoParametro}"/>
+                                        </p:selectOneMenu>  
+                                    </p:column>     
+                                    <p:column>
+                                        <p:inputText id="CIE10a" value="#{oDefuncion.code.episodioMedico.afePrimera.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>   
+                                    </p:column>                             
+                                </p:row>                              
+                                <p:row>
+                                    <p:column colspan="4">
+                                        <h:outputLabel class="negritas" value="b)"></h:outputLabel>
+                                        <p:autoComplete id="auCDb" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oDefuncion.code.episodioMedico.afeSegunda.CIE10.descripcionDiag}" completeMethod="#{oDefuncion.code.episodioMedico.afePrimera.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oDefuncion.habilita(1)}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10b auCDc itCDc somCDc auCDRAF" event="itemSelect"/>   
+                                            <p:ajax update="CIE10b auCDc itCDc somCDc auCDRAF" event="blur"/>   
+                                        </p:autoComplete>   
+                                        <br/><h:outputLabel class="negrita pie" value="#{etiq.debidoAConsecuencia}:"/>
+                                    </p:column>          
+                                    <p:column>           
+                                        <p:inputMask styleClass="bordes textover" id="itCDb" mask="9?9" size="3" value="#{oDefuncion.code.episodioMedico.afeSegunda.numEnfermedadMuerte}" disabled="#{oDefuncion.habilita(1)}"/>
+                                        <p:selectOneMenu styleClass="bordes textover" id="somCDb" disabled="#{oDefuncion.habilita(1)}" value="#{oDefuncion.code.episodioMedico.afeSegunda.tiempoEnfermedadMuerteP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaTiempoEnfermedadMuerte}" var="tEnfMue" 
+                                                           itemLabel="#{tEnfMue.valor}" itemValue="#{tEnfMue.claveParametro}#{tEnfMue.tipoParametro}"/>
+                                        </p:selectOneMenu>                                         
+                                    </p:column>     
+                                    <p:column>
+                                        <p:inputText id="CIE10b" value="#{oDefuncion.code.episodioMedico.afeSegunda.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                             
+                                </p:row>                                                               
+                                <p:row>
+                                    <p:column colspan="4">
+                                        <h:outputLabel class="negritas" value="c)"></h:outputLabel>
+                                        <p:autoComplete id="auCDc" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oDefuncion.code.episodioMedico.afeTercera.CIE10.descripcionDiag}" completeMethod="#{oDefuncion.code.episodioMedico.afeTercera.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oDefuncion.habilita(2)}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10c auCDd itCDd somCDd" event="itemSelect"/> 
+                                            <p:ajax update="CIE10c auCDd itCDd somCDd" event="blur"/> 
+                                        </p:autoComplete>   
+                                        <br/><h:outputLabel class="negrita pie" value="#{etiq.debidoAConsecuencia}:"/>
+                                    </p:column>          
+                                    <p:column>                                
+                                        <p:inputMask styleClass="bordes textover" id="itCDc" mask="9?9" size="3" value="#{oDefuncion.code.episodioMedico.afeTercera.numEnfermedadMuerte}" disabled="#{oDefuncion.habilita(2)}" />
+                                        <p:selectOneMenu styleClass="bordes textover" id="somCDc" disabled="#{oDefuncion.habilita(2)}" value="#{oDefuncion.code.episodioMedico.afeTercera.tiempoEnfermedadMuerteP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaTiempoEnfermedadMuerte}" var="tEnfMue" 
+                                                           itemLabel="#{tEnfMue.valor}" itemValue="#{tEnfMue.claveParametro}#{tEnfMue.tipoParametro}"/>
+                                        </p:selectOneMenu>                                         
+                                    </p:column>     
+                                    <p:column>
+                                        <p:inputText id="CIE10c" value="#{oDefuncion.code.episodioMedico.afeTercera.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                             
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4">
+                                        <h:outputLabel class="negritas" value="d)"></h:outputLabel>
+                                        <p:autoComplete id="auCDd" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oDefuncion.code.episodioMedico.afeCuarta.CIE10.descripcionDiag}" completeMethod="#{oDefuncion.code.episodioMedico.afeCuarta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oDefuncion.habilita(3)}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10d auCDe itCDe somCDe" event="itemSelect"/>
+                                            <p:ajax update="CIE10d auCDe itCDe somCDe" event="blur"/>
+                                        </p:autoComplete>   
+                                        <br/><h:outputLabel class="negrita pie" value="#{etiq.debidoAConsecuencia}:"/>
+                                    </p:column>          
+                                    <p:column>                                
+                                        <p:inputMask styleClass="bordes textover" id="itCDd" mask="9?9" size="3" value="#{oDefuncion.code.episodioMedico.afeCuarta.numEnfermedadMuerte}" disabled="#{oDefuncion.habilita(3)}"/>
+                                        <p:selectOneMenu styleClass="bordes textover" id="somCDd" disabled="#{oDefuncion.habilita(3)}" value="#{oDefuncion.code.episodioMedico.afeCuarta.tiempoEnfermedadMuerteP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaTiempoEnfermedadMuerte}" var="tEnfMue" 
+                                                           itemLabel="#{tEnfMue.valor}" itemValue="#{tEnfMue.claveParametro}#{tEnfMue.tipoParametro}"/>
+                                        </p:selectOneMenu>                                           
+                                    </p:column>     
+                                    <p:column>
+                                        <p:inputText id="CIE10d" value="#{oDefuncion.code.episodioMedico.afeCuarta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                             
+                                </p:row>
+                                <p:row>
+                                    <p:column rowspan="2">
+                                        <h:outputLabel class="negritas" value="II     "></h:outputLabel>
+                                    </p:column>    
+                                    <p:column colspan="4">                                
+                                        <p:autoComplete id="auCDe" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oDefuncion.code.episodioMedico.afeQuinta.CIE10.descripcionDiag}" completeMethod="#{oDefuncion.code.episodioMedico.afeQuinta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oDefuncion.habilita(4)}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10e auCDf itCDf somCDf" event="itemSelect"/> 
+                                            <p:ajax update="CIE10e auCDf itCDf somCDf" event="blur"/> 
+                                        </p:autoComplete>                                          
+                                    </p:column>          
+                                    <p:column>                         
+                                        <p:inputMask styleClass="bordes textover" id="itCDe" mask="9?9" size="3" value="#{oDefuncion.code.episodioMedico.afeQuinta.numEnfermedadMuerte}" disabled="#{oDefuncion.habilita(4)}"/>
+                                        <p:selectOneMenu styleClass="bordes textover" id="somCDe" disabled="#{oDefuncion.habilita(4)}" value="#{oDefuncion.code.episodioMedico.afeQuinta.tiempoEnfermedadMuerteP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaTiempoEnfermedadMuerte}" var="tEnfMue" 
+                                                           itemLabel="#{tEnfMue.valor}" itemValue="#{tEnfMue.claveParametro}#{tEnfMue.tipoParametro}"/>
+                                        </p:selectOneMenu>                                           
+                                    </p:column>     
+                                    <p:column>
+                                        <p:inputText id="CIE10e" value="#{oDefuncion.code.episodioMedico.afeQuinta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/> 
+                                    </p:column>                             
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4">                                
+                                        <p:autoComplete id="auCDf" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oDefuncion.code.episodioMedico.afeSexta.CIE10.descripcionDiag}" completeMethod="#{oDefuncion.code.episodioMedico.afeSexta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oDefuncion.habilita(5)}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10f" event="itemSelect"/> 
+                                            <p:ajax update="CIE10f" event="blur"/> 
+                                        </p:autoComplete>  
+                                    </p:column>          
+                                    <p:column>         
+                                        <p:inputMask styleClass="bordes textover" id="itCDf" mask="9?9" size="3" value="#{oDefuncion.code.episodioMedico.afeSexta.numEnfermedadMuerte}" disabled="#{oDefuncion.habilita(5)}"/>
+                                        <p:selectOneMenu styleClass="bordes textover" id="somCDf" disabled="#{oDefuncion.habilita(5)}" value="#{oDefuncion.code.episodioMedico.afeSexta.tiempoEnfermedadMuerteP}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaTiempoEnfermedadMuerte}" var="tEnfMue" 
+                                                           itemLabel="#{tEnfMue.valor}" itemValue="#{tEnfMue.claveParametro}#{tEnfMue.tipoParametro}"/>
+                                        </p:selectOneMenu>                                         
+                                    </p:column>     
+                                    <p:column>
+                                        <p:inputText id="CIE10f" value="#{oDefuncion.code.episodioMedico.afeSexta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                          
+                                    </p:column>   
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column>           
+                                        <h:outputLabel class="negritas" value="#{etiq.seleccionCausaBasica}:"></h:outputLabel>
+                                    </p:column>                                     
+                                    <p:column colspan="4">                                            
+                                        <p:autoComplete id="auCDRAF" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oDefuncion.code.episodioMedico.afeResAPDef.CIE10.descripcionDiag}" completeMethod="#{oDefuncion.code.episodioMedico.afeResAPDef.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oDefuncion.habilita(1)}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10RD" event="itemSelect"/>                                            
+                                        </p:autoComplete>  
+                                    </p:column>     
+                                    <p:column></p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE10RD" value="#{oDefuncion.code.episodioMedico.afeResAPDef.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                          
+                                    </p:column>   
+                                </p:row>                                                                                           
+                                
+                                <p:row>
+                                    <p:column colspan="6"></p:column>
+                                    <p:column>                                
+                                        <p:commandButton styleClass="frm_login" value="#{etiq.guardar}" action="#{oDefuncion.guardar()}" 
+                                                         icon="ui-icon-disk" ajax="false" validateClient="true" onclick="this.form.target='_self'" style="#{oCode.mostrarBotonGuardar()}">
+                                            <f:setPropertyActionListener target="#{oDefuncion.buscado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oAtnObs.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oLesion.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oHospPsi.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oEstancia.bloqueado}" value="#{false}"/>
+                                        </p:commandButton>                                            
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:tab>                        
+                        
+                        <p:tab title="#{etiq.atencionObstetrica}" disabled="#{oCode.code.paciente.sexos}">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header centrado_texto" colspan="2"><p:outputLabel styleClass="negritas" value="#{etiq.numeroDe}"></p:outputLabel></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.extraccionExpulsion}"></p:outputLabel></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.tipoAtencion}"></p:outputLabel></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.semanasGestacion}"></p:outputLabel></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.conProducto}"></p:outputLabel></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.tipoNacimiento}"></p:outputLabel></p:column>
+                                    <p:column colspan="3" styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.planificacionFamiliar}"></p:outputLabel></p:column>
+                                </p:row>
+                                <p:row>
+                                   <p:column><p:outputLabel styleClass="negritas" value="#{etiq.gestaciones}:"></p:outputLabel></p:column>
+                                   <p:column>              
+                                       <p:inputMask styleClass="bordes textover" id="itNG" mask="9?9" maxlength="2" size="2" value="#{oAtnObs.code.atencionObstetrica.antecGinecoObstetricos.gestaciones}" readonly="#{oAtnObs.bloqueado}"></p:inputMask>                                     
+                                       <p:message for="itNG" id="gestacionesM"></p:message>
+                                   </p:column>                                                                                
+                                   <p:column rowspan="3">
+                                       <p:selectOneRadio layout="grid" columns="1" id="rbEE" value="#{oAtnObs.code.atencionObstetrica.extraccion}" disabled="#{oAtnObs.bloqueado}">
+                                            <f:selectItem itemLabel="SI" itemValue="S"/>
+                                            <f:selectItem itemLabel="NO" itemValue="N"/>                                 
+                                        </p:selectOneRadio>                                 
+                                    </p:column>   
+                                   <p:column rowspan="3">
+                                       <p:selectOneRadio layout="grid" columns="1" id="rbTA" value="#{oAtnObs.code.atencionObstetrica.tipoAtencion}" disabled="#{oAtnObs.bloqueado}">
+                                           <p:ajax update="itSG rbCP rbTP"/>
+                                            <f:selectItem itemLabel="ABORTO" itemValue="A"/>
+                                            <f:selectItem itemLabel="PARTO" itemValue="P"/>                                 
+                                        </p:selectOneRadio>                                 
+                                    </p:column> 
+                                   <p:column rowspan="3">
+                                       <p:inputMask styleClass="bordes" id="itSG" mask="9?9" maxlength="2" size="2" value="#{oAtnObs.code.atencionObstetrica.semanasGestacion}" disabled="#{oAtnObs.habilita()}" readonly="#{oAtnObs.bloqueado}" validatorMessage="Error: Debe Poner Un Número Entre #{oAtnObs.minimo(1)} y #{oAtnObs.maximo(1)}">
+                                           <f:validateLongRange minimum="#{oAtnObs.minimo(1)}" maximum="#{oAtnObs.maximo(1)}"/>
+                                           <f:ajax render="semGes" execute="@this" event="valueChange"/>
+                                       </p:inputMask>
+                                       <p:message for="itSG" id="semGes"></p:message> 
+                                   </p:column>                                  
+                                   <p:column rowspan="3">
+                                       <p:selectOneRadio layout="grid" columns="1" id="rbCP" value="#{oAtnObs.code.atencionObstetrica.conProducto}" disabled="#{oAtnObs.habilita2()}">
+                                           <p:ajax update="itPRN2 rbSRN2 rbCRN2 itFRN2 itA5M2 rbRNN2 itEC2 rbCRNVM2"/>
+                                            <f:selectItem itemLabel="ÚNICO" itemValue="U"/>
+                                            <f:selectItem itemLabel="MÚLTIPLE" itemValue="M"/>                                 
+                                        </p:selectOneRadio>                                 
+                                    </p:column> 
+                                   <p:column rowspan="3">
+                                       <p:selectOneRadio layout="grid" columns="1" id="rbTP" value="#{oAtnObs.code.atencionObstetrica.tipoNacimientoP}" disabled="#{oAtnObs.habilita2()}">
+                                            <f:selectItems value="#{oCode.listaTipoNacimiento}" var="tipNac"
+                                                           itemLabel="#{tipNac.valor}" itemValue="#{tipNac.claveParametro}#{tipNac.tipoParametro}"/>
+                                        </p:selectOneRadio>                                             
+                                    </p:column> 
+                                   <p:column colspan="3"  rowspan="3" >
+                                       <p:selectOneRadio layout="grid" columns="2" id="rbPF" value="#{oAtnObs.code.atencionObstetrica.antecGinecoObstetricos.metodoAnticonceptivo.clave}" disabled="#{oAtnObs.bloqueado}">
+                                           <f:selectItems value="#{oCode.listaMetodosAnticonceptivos}" var="metAnt"
+                                                          itemLabel="#{metAnt.descripcion}" itemValue="#{metAnt.clave}"/>
+                                        </p:selectOneRadio>                                 
+                                    </p:column>                            
+                                </p:row>  
+                                <p:row>
+                                    <p:column><p:outputLabel styleClass="negritas" value="#{etiq.partos}:"></p:outputLabel></p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itNP" mask="9?9" maxlength="2" size="2" value="#{oAtnObs.code.atencionObstetrica.antecGinecoObstetricos.partos}" readonly="#{oAtnObs.bloqueado}"></p:inputMask>
+                                        <p:message for="itNP" id="partosM"></p:message>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                   <p:column><p:outputLabel styleClass="negritas" value="#{etiq.abortos}:"></p:outputLabel></p:column>
+                                   <p:column>
+                                       <p:inputMask styleClass="bordes textover" id="itNA" mask="9?9" maxlength="2" size="2" value="#{oAtnObs.code.atencionObstetrica.antecGinecoObstetricos.abortos}" readonly="#{oAtnObs.bloqueado}"></p:inputMask>
+                                       <p:message for="itNA" id="abortosM"></p:message>                                    
+                                   </p:column>
+                                </p:row>                                
+                                <p:row>
+                                    <p:column colspan="3" styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.datosProducto}"></p:outputLabel></p:column>
+                                    <p:column colspan="7" styleClass="ui-widget-header centrado_texto"><p:outputLabel styleClass="negritas" value="#{etiq.paraNacidoVivo}"></p:outputLabel></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel styleClass="negritas" value="#{etiq.pesoAlNacer}"/><br/>
+                                        <p:outputLabel styleClass="negritas" value="#{etiq.gramos}:"/>
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <p:outputLabel styleClass="negritas" value="#{etiq.sexo}:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <p:outputLabel styleClass="negritas" value="#{etiq.condicionAl} #{etiq.nacimiento}:"></p:outputLabel>
+                                    </p:column>                            
+                                    <p:column><p:outputLabel styleClass="negritas" value="#{etiq.folioDelNacimiento}:"></p:outputLabel></p:column>
+                                    <p:column><p:outputLabel styleClass="negritas" value="#{etiq.apgar}:"></p:outputLabel></p:column>
+                                    <p:column><p:outputLabel styleClass="negritas" value="#{etiq.reanimacionNeonatal}:"></p:outputLabel></p:column>
+                                    <p:column><p:outputLabel styleClass="negritas" value="#{etiq.estanciaCunero}:"></p:outputLabel></p:column>
+                                    <p:column colspan="2">
+                                        <p:outputLabel styleClass="negritas" value="#{etiq.condicionNacidoVivo}:"></p:outputLabel>
+                                    </p:column>
+                                </p:row>   
+                                <p:row>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itPRN1" mask="9?999" maxlength="4" size="4" value="#{oAtnObs.code.atencionObstetrica.p1.pesoAlNacer}" disabled="#{oAtnObs.bloqueado}" readonly="#{oAtnObs.bloqueado}" validatorMessage="Error:Debe Poner un Número Entre #{oAtnObs.minimo(2)} y #{oAtnObs.maximo(2)}">
+                                           <f:validateLongRange minimum="#{oAtnObs.minimo(2)}" maximum="#{oAtnObs.maximo(2)}"/>
+                                           <f:ajax render="pesoNacer1" execute="@this" event="valueChange"/>                                            
+                                        </p:inputMask>
+                                        <p:message for="itPRN1" id="pesoNacer1"></p:message>  
+                                    </p:column>                                  
+                                    <p:column colspan="2">                              
+                                        <p:selectOneMenu id="rbSRN1" value="#{oAtnObs.code.atencionObstetrica.p1.sexoProductoP}" disabled="#{oAtnObs.bloqueado}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaSexo}" var="sexoRN1" 
+                                                           itemLabel="#{sexoRN1.valor}" itemValue="#{sexoRN1.claveParametro}#{sexoRN1.tipoParametro}"/>
+                                        </p:selectOneMenu>                                            
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbCRN" value="#{oAtnObs.code.atencionObstetrica.p1.condicionNacimiento}" disabled="#{oAtnObs.bloqueado}">
+                                            <f:selectItem itemLabel="MUERTE FETAL" itemValue="M"/>
+                                            <f:selectItem itemLabel="NACIDO VIVO" itemValue="N"/>  
+                                        </p:selectOneRadio>                                 
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itFRN1" mask="999999999" maxlength="9" size="9" value="#{oAtnObs.code.atencionObstetrica.p1.folioCertificadoNac}" readonly="#{oAtnObs.bloqueado}" disabled="#{oAtnObs.bloqueado}"></p:inputMask>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itA5M1" mask="9?9" maxlength="2" size="2" value="#{oAtnObs.code.atencionObstetrica.p1.apgar5Min}" disabled="#{oAtnObs.bloqueado}" readonly="#{oAtnObs.bloqueado}" validatorMessage="Error:Debe Poner un Número Entre 0 y 10">                                       
+                                            <f:validateLongRange minimum="0" maximum="10"/>
+                                            <f:ajax render="apgar1" execute="@this" event="valueChange"/>
+                                        </p:inputMask>    
+                                        <p:message for="itA5M1" id="apgar1"></p:message>
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbRNN" value="#{oAtnObs.code.atencionObstetrica.p1.reanimacionNeonatal}" disabled="#{oAtnObs.bloqueado}">
+                                            <f:selectItem itemLabel="SI" itemValue="S"/>
+                                            <f:selectItem itemLabel="NO" itemValue="N"/>  
+                                        </p:selectOneRadio>                                 
+                                    </p:column>                                                                   
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itEC1" mask="9?99" maxlength="3" size="3" value="#{oAtnObs.code.atencionObstetrica.p1.estanciaEnCunero}" readonly="#{oAtnObs.bloqueado}" disabled="#{oAtnObs.bloqueado}"/>                                           
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <p:selectOneMenu id="rbCRNVM1" value="#{oAtnObs.code.atencionObstetrica.p1.condicion}" disabled="#{oAtnObs.bloqueado}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaCondicionEgreso}" var="conEgre1" 
+                                                           itemLabel="#{conEgre1.valor}" itemValue="#{conEgre1.claveParametro}#{conEgre1.tipoParametro}"/>
+                                        </p:selectOneMenu>                                            
+                                    </p:column>                            
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itPRN2" mask="9?999" maxlength="4" size="4" value="#{oAtnObs.code.atencionObstetrica.p2.pesoAlNacer}" readonly="#{oAtnObs.bloqueado}" validatorMessage="Error:Debe Poner un Número Entre #{oAtnObs.minimo(2)} y #{oAtnObs.maximo(2)}" disabled="#{oAtnObs.habilitaPro(2)}">
+                                            <f:validateLongRange minimum="#{oAtnObs.minimo(2)}" maximum="#{oAtnObs.maximo(2)}"/>
+                                           <f:ajax render="pesoNacer2 itPRN3 rbSRN3 rbCRN3 itFRN3 itA5M3 rbRNN3 itEC3" execute="@this" event="valueChange"/>      
+                                        </p:inputMask>             
+                                        <p:message for="itPRN2" id="pesoNacer2"></p:message>  
+                                    </p:column>                                    
+                                    <p:column colspan="2">
+                                        <p:selectOneMenu id="rbSRN2" value="#{oAtnObs.code.atencionObstetrica.p2.sexoProductoP}"  disabled="#{oAtnObs.habilitaPro(2)}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaSexo}" var="sexoRN2" 
+                                                           itemLabel="#{sexoRN2.valor}" itemValue="#{sexoRN2.claveParametro}#{sexoRN2.tipoParametro}"/>
+                                        </p:selectOneMenu>                                   
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbCRN2" value="#{oAtnObs.code.atencionObstetrica.p2.condicionNacimiento}"  disabled="#{oAtnObs.habilitaPro(2)}">
+                                            <f:selectItem itemLabel="MUERTE FETAL" itemValue="1"/>
+                                            <f:selectItem itemLabel="NACIDO VIVO" itemValue="2"/>  
+                                        </p:selectOneRadio>                                 
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itFRN2" mask="999999999" maxlength="9" size="9" value="#{oAtnObs.code.atencionObstetrica.p2.folioCertificadoNac}" disabled="#{oAtnObs.habilitaPro(2)}" readonly="#{oAtnObs.bloqueado}"></p:inputMask>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itA5M2" mask="9?9" maxlength="2" size="2" value="#{oAtnObs.code.atencionObstetrica.p2.apgar5Min}" readonly="#{oAtnObs.bloqueado}" validatorMessage="Error:Debe Poner un Número Entre 0 y 10"  disabled="#{oAtnObs.habilitaPro(2)}"> 
+                                            <f:validateLongRange minimum="0" maximum="10"/>
+                                            <f:ajax render="apgar2" execute="@this" event="valueChange"/>
+                                        </p:inputMask>
+                                        <p:message for="itA5M2" id="apgar2"></p:message>
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbRNN2" value="#{oAtnObs.code.atencionObstetrica.p2.reanimacionNeonatal}" disabled="#{oAtnObs.habilitaPro(2)}">
+                                            <f:selectItem itemLabel="SI" itemValue="S"/>
+                                            <f:selectItem itemLabel="NO" itemValue="N"/> 
+                                        </p:selectOneRadio>                                 
+                                    </p:column>                                                                   
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itEC2" mask="9?99" maxlength="3" size="3" value="#{oAtnObs.code.atencionObstetrica.p2.estanciaEnCunero}" disabled="#{oAtnObs.habilitaPro(2)}" readonly="#{oAtnObs.bloqueado}"/>
+                                    </p:column>                                          
+
+                                    <p:column colspan="2">
+                                        <p:selectOneMenu id="rbCRNVM2" value="#{oAtnObs.code.atencionObstetrica.p2.condicion}" disabled="#{oAtnObs.habilitaPro(2)}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaCondicionEgreso}" var="conEgre2" 
+                                                           itemLabel="#{conEgre2.valor}" itemValue="#{conEgre2.claveParametro}#{conEgre2.tipoParametro}"/>
+                                        </p:selectOneMenu>                                  
+                                    </p:column>                            
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itPRN3" mask="9?999" maxlength="4" size="4" value="#{oAtnObs.code.atencionObstetrica.p3.pesoAlNacer}" readonly="#{oAtnObs.bloqueado}" validatorMessage="Error:Debe Poner un Número Entre #{oAtnObs.minimo(2)} y #{oAtnObs.maximo(2)}" disabled="#{oAtnObs.habilitaPro(3)}">
+                                           <f:validateLongRange minimum="#{oAtnObs.minimo(2)}" maximum="#{oAtnObs.maximo(2)}"/>
+                                           <f:validateLongRange minimum="0" maximum="7000"/>
+                                           <f:ajax render="pesoNacer3" execute="@this" event="valueChange"/>                                            
+                                        </p:inputMask>
+                                        <p:message for="itPRN3" id="pesoNacer3"></p:message> 
+                                    </p:column>                                     
+                                    <p:column colspan="2">
+                                        <p:selectOneMenu id="rbSRN3" value="#{oAtnObs.code.atencionObstetrica.p3.sexoProductoP}" disabled="#{oAtnObs.habilitaPro(3)}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaSexo}" var="sexoRN3" 
+                                                           itemLabel="#{sexoRN3.valor}" itemValue="#{sexoRN3.claveParametro}#{sexoRN3.tipoParametro}"/>
+                                        </p:selectOneMenu>                                  
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbCRN3"  value="#{oAtnObs.code.atencionObstetrica.p3.condicionNacimiento}" disabled="#{oAtnObs.habilitaPro(3)}">
+                                            <f:selectItem itemLabel="MUERTE FETAL" itemValue="1"/>
+                                            <f:selectItem itemLabel="NACIDO VIVO" itemValue="2"/>  
+                                        </p:selectOneRadio>                                 
+                                    </p:column>           
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itFRN3" mask="999999999" maxlength="9" size="9" value="#{oAtnObs.code.atencionObstetrica.p3.folioCertificadoNac}" disabled="#{oAtnObs.habilitaPro(3)}" readonly="#{oAtnObs.bloqueado}"></p:inputMask>                                        
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itA5M3" mask="9?9" maxlength="2" size="2" value="#{oAtnObs.code.atencionObstetrica.p3.apgar5Min}" readonly="#{oAtnObs.bloqueado}" validatorMessage="Error:Debe Poner un Número Entre 0 y 10" disabled="#{oAtnObs.habilitaPro(3)}"> 
+                                            <f:validateLongRange minimum="0" maximum="10"/>
+                                            <f:ajax render="apgar3" execute="@this" event="valueChange"/>
+                                        </p:inputMask>
+                                        <p:message for="itA5M3" id="apgar3"></p:message>
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbRNN3" value="#{oAtnObs.code.atencionObstetrica.p3.reanimacionNeonatal}" disabled="#{oAtnObs.habilitaPro(3)}">
+                                            <f:selectItem itemLabel="SI" itemValue="S"/>
+                                            <f:selectItem itemLabel="NO" itemValue="N"/>  
+                                        </p:selectOneRadio>                                 
+                                    </p:column>                                                                   
+                                    <p:column>
+                                        <p:inputMask styleClass="bordes textover" id="itEC3" mask="9?99" maxlength="3" size="3" value="#{oAtnObs.code.atencionObstetrica.p3.estanciaEnCunero}" disabled="#{oAtnObs.habilitaPro(3)}" readonly="#{oAtnObs.bloqueado}"/>
+                                    </p:column>                                          
+                                    <p:column colspan="2">
+                                        <p:selectOneMenu id="rbCRNVM3" value="#{oAtnObs.code.atencionObstetrica.p3.condicion}" disabled="#{oAtnObs.habilitaPro(3)}">
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{oCode.listaCondicionEgreso}" var="conEgre3" 
+                                                           itemLabel="#{conEgre3.valor}" itemValue="#{conEgre3.claveParametro}#{conEgre3.tipoParametro}"/>
+                                        </p:selectOneMenu>                                          
+                                    </p:column>                            
+                                </p:row>                        
+                                <p:row>
+                                    <p:column colspan="9"></p:column>
+                                    <p:column>                                
+                                        <p:commandButton styleClass="frm_login" value="#{etiq.guardar}" action="#{oAtnObs.guardar()}" 
+                                                         icon="ui-icon-disk" ajax="false" validateClient="true"  style="#{oCode.mostrarBotonAutorizarCODE()}">  
+                                            <f:setPropertyActionListener target="#{oDefuncion.buscado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oAtnObs.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oLesion.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oHospPsi.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oEstancia.bloqueado}" value="#{false}"/>
+                                        </p:commandButton>                                            
+                                    </p:column>
+                                </p:row>                        
+                            </p:panelGrid>
+                        </p:tab>                        
+                        
+                        <p:tab title="#{etiq.lesion}">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column  styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.describaCircunstancias}"></h:outputLabel>
+                                    </p:column>
+                                    <p:column  styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.codigoCie10}"></h:outputLabel>                               
+                                    </p:column>                             
+                                </p:row>
+                                <p:row>                                   
+                                    <p:column>
+                                        <p:autoComplete id="auLes" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{oLesion.code.afeccionTratada.CIE10.descripcionDiag}" completeMethod="#{oLesion.lesion.afeccionTratada.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" readonly="#{oLesion.bloqueado}" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10L, rbLesSit, rbLesInt" event="itemSelect"/>
+                                            <p:ajax update="CIE10L, rbLesSit, rbLesInt" event="blur"/>
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE10L" value="#{oLesion.lesion.afeccionTratada.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>                                                                            
+                                <p:row>
+                                    <p:column  styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.sitioOcurrencia}"></h:outputLabel>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.intencionalidad}"></h:outputLabel>
+                                    </p:column>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column>                                
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbLesSit" value="#{oLesion.code.sitioOcurrencia.claveCode}" disabled="#{oLesion.habilita(1)}" required="#{oLesion.requiere(1)}" requiredMessage="Se Requiere Poner Sitio Ocurrencia">
+                                            <f:selectItems value="#{oCode.listaSitioOcurrenciaCODE}" var="sitOcu" 
+                                                           itemLabel="#{sitOcu.sitioOcurrencia.descripcion}" itemValue="#{sitOcu.sitioOcurrencia.claveCode}"/>
+                                        </p:selectOneRadio>                                                                               
+                                    </p:column>                             
+                                    <p:column>                                
+                                        <p:selectOneRadio layout="grid" columns="1" id="rbLesInt" value="#{oLesion.code.intencionalidad.claveCode}" disabled="#{oLesion.habilita(1)}" required="#{oLesion.requiere(2)}" requiredMessage="Se Requiere Poner Intencionalidad">
+                                            <f:selectItems value="#{oCode.listaIntencionalidadCODE}" var="inten" 
+                                                           itemLabel="#{inten.intencionalidad.descripcion}" itemValue="#{inten.intencionalidad.claveCode}"/>
+                                        </p:selectOneRadio>                                           
+                                    </p:column>                                               
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column>                                
+                                        <p:commandButton styleClass="frm_login" value="#{etiq.guardar}" action="#{oLesion.guardar()}" 
+                                                         icon="ui-icon-disk" ajax="false" validateClient="true" style="#{oCode.mostrarBotonAutorizarCODE()}">
+                                            <f:setPropertyActionListener target="#{oDefuncion.buscado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oAtnObs.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oLesion.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oHospPsi.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oEstancia.bloqueado}" value="#{false}"/>
+                                        </p:commandButton>                                            
+                                    </p:column>
+                                </p:row>                        
+                            </p:panelGrid>
+                            
+                        </p:tab>
+                        
+                        <p:tab title="#{etiq.hospitalesPsiquiatricos}">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column  styleClass="ui-widget-header  centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.tipoUnidad}"></h:outputLabel>
+                                    </p:column>
+                                    <p:column  styleClass="ui-widget-header  centrado_texto">
+                                        <h:outputLabel class="negritas" value="#{etiq.servicios}"></h:outputLabel>
+                                    </p:column>                             
+                                </p:row>
+                                <p:row>
+                                    <p:column rowspan="3">                                       
+                                        <p:selectOneRadio layout="grid" columns="1" id="rbHosPsi" value="#{oHospPsi.code.tipoUnidadP}" disabled="#{oHospPsi.bloqueado}">
+                                            <p:ajax update="rbHosPsi1 rbHosPsi2"/>
+                                            <f:selectItems value="#{oCode.listaHospitalPsiquiatrico}" var="hospPsi" 
+                                                           itemLabel="#{hospPsi.valor}" itemValue="#{hospPsi.claveParametro}#{hospPsi.tipoParametro}"/><br/><br/>                                                
+                                        </p:selectOneRadio>                                  
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneRadio layout="grid" columns="3" id="rbHosPsi1" value="#{oHospPsi.code.serviciosHCP}" disabled="#{oHospPsi.habilita(2)}" required="#{oHospPsi.requiere(2)}" requiredMessage="Se Necesita Especificar el Servicio">
+                                            <f:selectItems value="#{oCode.listaServiciosHC}" var="serviHC" 
+                                                           itemLabel="#{serviHC.valor}" itemValue="#{serviHC.claveParametro}#{serviHC.tipoParametro}"/>                                               
+                                        </p:selectOneRadio>                                     
+                                    </p:column>                                
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:selectOneRadio layout="grid" columns="2" id="rbHosPsi2" value="#{oHospPsi.code.serviciosHPP}" disabled="#{oHospPsi.habilita(3)}" required="#{oHospPsi.requiere(3)}" requiredMessage="Se Necesita Especificar el Servicio">
+                                            <f:selectItems value="#{oCode.listaServiciosHP}" var="serviHP" 
+                                                           itemLabel="#{serviHP.valor}" itemValue="#{serviHP.claveParametro}#{serviHP.tipoParametro}"/>                                             
+                                        </p:selectOneRadio>                                        
+                                    </p:column>                                
+                                </p:row>      
+                                <p:row>
+
+                                    <p:column>                                
+                                        <p:commandButton styleClass="frm_login" value="#{etiq.guardar}" action="#{oHospPsi.guardar()}" 
+                                                         icon="ui-icon-disk" ajax="false" validateClient="true" style="#{oCode.mostrarBotonAutorizarCODE()}">
+                                            <f:setPropertyActionListener target="#{oDefuncion.buscado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oAtnObs.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oLesion.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oHospPsi.bloqueado}" value="#{false}"/>
+                                            <f:setPropertyActionListener target="#{oEstancia.bloqueado}" value="#{false}"/>
+                                        </p:commandButton>                                            
+                                    </p:column>
+                                </p:row>                         
+                            </p:panelGrid>
+                        </p:tab>                                                                          
+                    </p:tabView>                        
+                    <p:panelGrid>   
+                        <p:row>
+                            <p:column style="#{oCode.mostrarBotonAutorizarCODE()}">
+                                <p:commandButton id="btnAutCODE" value="#{etiq.cerrar} #{etiq.hojaHospitalizacion}" icon="ui-icon-disk" type="button" onclick="PF('dlg1').show();" disabled="#{oEstancia.botonCerrarCODE()}">   
+                                </p:commandButton>    
+                                 <p:dialog header="#{etiq.confirmar}" widgetVar="dlg1" closable="true" styleClass="centrado_texto">
+                                     <h:outputText value="#{etiq.confirmarCode}" />
+                                     <br/>
+                                     <p:commandButton value="#{etiq.aceptar}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  validateClient="true" ajax="false" action="#{oCode.cerrarCODE()}">                                         
+                                         <f:setPropertyActionListener target="#{oDefuncion.activar}" value="#{true}"/>
+                                         <f:setPropertyActionListener target="#{oAtnObs.activar}" value="#{true}"/>
+                                         <f:setPropertyActionListener target="#{oLesion.activar}" value="#{true}"/>
+                                         <f:setPropertyActionListener target="#{oHospPsi.activar}" value="#{true}"/>
+                                         <f:setPropertyActionListener target="#{oEstancia.activar}" value="#{true}"/>
+                                     </p:commandButton>
+                                     <p:commandButton value="#{etiq.cancelar}" styleClass="ui-confirmdialog-no" icon="ui-icon-closethick"  validateClient="true" ajax="false" />
+                                 </p:dialog>                                                           
+                            </p:column>                            
+                            
+                            <p:column style="#{oCode.mostrarBotonCerrarCODE()}">
+                                <p:commandButton value="#{etiq.finalizar} #{etiq.hojaHospitalizacion}" id="btnCerCODE" type="button" onclick="PF('dlg2').show();" styleClass="frm_login" icon="ui-icon-disk"  disabled="#{oCode.activarBtnCODE()}"/>  
+                                 <p:dialog header="#{etiq.confirmar}" widgetVar="dlg2" closable="true" styleClass="centrado_texto">
+                                     <h:outputText value="#{etiq.confirmarCode}" />
+                                     <br/>         
+                                     <p:commandButton value="#{etiq.aceptar}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  validateClient="true" ajax="false" action="#{oCode.cerrarCODELLena()}" onclick="this.form.target='_self'">
+                                         <f:setPropertyActionListener target="#{oDefuncion.activar}" value="#{true}"/>
+                                         <f:setPropertyActionListener target="#{oEstancia.activar}" value="#{true}"/>
+                                     </p:commandButton>
+                                     <p:commandButton value="#{etiq.cancelar}" styleClass="ui-confirmdialog-no" icon="ui-icon-closethick"  validateClient="true" ajax="false" onclick="this.form.target='_self'"/>
+                                 </p:dialog>                                   
+                            </p:column>
+                            
+                            <p:column style="#{oCode.mostrarBotonDescargarCODE()}">                                
+                                <p:commandButton value="#{etiq.descargar}" action="#{oCodeImp.recuperaDatos()}" icon="ui-icon-arrowthickstop-1-s" ajax="false" onclick="this.form.target='_blank'">
+                                    <f:setPropertyActionListener target="#{oCodeImp.folioPaciente}" value="#{oCode.hosp.paciente.folioPaciente}" />
+                                    <f:setPropertyActionListener target="#{oCodeImp.numIngresoHosp}" value="#{oCode.hosp.numIngresoHos}" />
+                                    <f:setPropertyActionListener target="#{oCodeImp.claveEpisodio}" value="#{oCode.hosp.episodioMedico.claveEpisodio}" />
+                                </p:commandButton>                                
+                            </p:column>
+                        </p:row>                         
+                   </p:panelGrid>   
+                    <br/><br/>                    
+                    </c:when>
+                    <c:otherwise>
+                        <h1>Paciente No Hospitalizado</h1>    
+                        <p:commandButton value="#{etiq.volver}" styleClass="frm_centrado" action="../BuscarPaciente" icon="ui-icon-arrowreturnthick-1-w" ajax="false"/>
+                    </c:otherwise>
+                </c:choose>   
+            </h:form>   
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>
+                </div>
+            </ui:define> 
+        </ui:composition>
+    
+</html>

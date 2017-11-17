@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo"><br/><br/>
+        <p:tabView dynamic="true" cache="true">
+        <p:tab title="#{etiq.modificarMed}">
+       <h:form id="frmedico">
+           <p:growl id="mensajes"  showDetail="true" /><br/><br/>
+           <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+           <center><h2><h:outputLabel value="#{etiq.modificarMed}"/></h2></center>
+            <p:panelGrid style="margin-top:30px" id="buscapac"> 
+          <f:facet name="header">
+        <p:row>
+           <p:column><center><h:outputLabel value="#{etiq.buscarMed}"/> </center></p:column>   
+        </p:row>
+    </f:facet>
+        <p:row>
+             <p:column> <h:outputLabel value="#{etiq.noTarjeta}"/>
+                  <p:inputText id="id1" value="#{oAddMedCapa.med.noTarjeta}"  required="true" requiredMessage="INGRESAR NUMERO DE NÚMERO DE TARJETA" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO NO. DE TARJETA"/> 
+                  <p:commandButton value="#{etiq.buscar}" action="#{oAddMedCapa.busca()}" update="mensajes" onclick="recarga()">
+                  </p:commandButton> 
+             </p:column>  
+          </p:row>
+      </p:panelGrid>
+       </h:form>
+            <h:form id="frmedic">
+           <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+           <p:column colspan="6" styleClass="ui-widget-header"><center> 
+               <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+        </p:row>
+    </f:facet> 
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+            <p:column>  <p:inputText id="nombre" value="#{oAddMedCapa.med.nombres}"  required="true" requiredMessage="INGRESAR NOMBRE(S)" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/>
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+            <p:column> <p:inputText id="ppaterno" value="#{oAddMedCapa.med.apPaterno}"   required="true" requiredMessage="INGRESAR APELLIDO PATERNO" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+            <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+            <p:column><p:inputText id="pmaterno" value="#{oAddMedCapa.med.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+        </p:row>     
+        <p:row>
+            <p:column ><h:outputLabel value="#{etiq.sexo}"/> </p:column>
+            <p:column>
+                <p:selectOneRadio id="sexo" value="#{oAddMedCapa.med.sexos}" required="true" requiredMessage="INGRESAR SEXO, FALTA SELECIONAR SEXO">
+                    <f:selectItem itemLabel="Femenino " itemValue="F"/>
+                    <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                </p:selectOneRadio>
+            </p:column> 
+            <p:column><h:outputLabel  value="#{etiq.fechanac}"/> </p:column>
+            <p:column> <p:calendar value="#{oAddMedCapa.med.fechaNac}" id="nacimientom" pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="INGRESAR FECHA DE NACIMIENTO" locale="es">
+                </p:calendar>
+            </p:column>   
+            <p:column><h:outputLabel value="#{etiq.curp}"/></p:column>
+            <p:column><p:inputMask id="tCurp" mask="aaaa999999aaaaaa99" required="false" value="#{oAddMedCapa.med.curp}" style="text-transform: uppercase;"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="6" styleClass="ui-widget-header">
+                <center>  <h:outputLabel value="#{etiq.otrosDatos}"/> </center>
+             </p:column>    
+        </p:row>
+        <p:row>       
+            <p:column><p:outputLabel id="noTarjeta" value="#{etiq.noTarjeta}:"/></p:column>
+            <p:column><p:outputLabel id="tNoTarjeta" value="#{oAddMedCapa.med.noTarjeta}"/></p:column>
+            <p:column><p:outputLabel id="especialidad" value="#{etiq.especialidad}:"/></p:column>
+            <p:column>
+                <p:selectOneMenu id="tEspecialidad" value="#{oAddMedCapa.med.especialidad}" required="true"> 
+                    <f:selectItems value="#{oAddMedCapa.listaEspecialidad}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column><h:outputLabel value="#{etiq.puesto}"/></p:column>
+            <p:column>
+                <p:selectOneMenu id="puesto" value="#{oAddMedCapa.med.claveActividad}">
+                <f:selectItem itemLabel="MÉDICO GENERAL" itemValue="32"/>
+                <f:selectItem itemLabel="ODONTOLOGO" itemValue="37"/>
+                <f:selectItem itemLabel="NUTRICIÓN" itemValue="55"/>
+                <f:selectItem itemLabel="PSICOLOGÍA" itemValue="56"/>
+                <f:selectItem itemLabel="TRABAJO SOCIAL" itemValue="57"/>
+                <f:selectItem itemLabel="LABORATORIO" itemValue="47"/>
+             </p:selectOneMenu>     
+            </p:column> 
+        </p:row>
+        <p:row>
+            <p:column><p:outputLabel id="tipoMedico" value="#{etiq.tipoMedico}:"/></p:column>
+            <p:column colspan="5">
+                <p:autoComplete id="tTipoMedico" size="60" minQueryLength="3" required="true" styleClass="bordes" requiredMessage="INGRESAR TIPO DE MEDICO"
+                                value="#{oAddMedCapa.med.desTipoMed}" completeMethod="#{oAddMedCapa.completar}" effect="fade"
+                                      onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300">
+                </p:autoComplete>
+            </p:column> 
+        </p:row>
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.turno}"/></p:column>
+            <p:column>
+                <p:selectOneMenu id="turno" value="#{oAddMedCapa.tur.clave}">
+                <f:selectItem itemLabel="MATUTINO" itemValue="MAT"/>
+                <f:selectItem itemLabel="VESPERTINO" itemValue="VES"/>
+             </p:selectOneMenu>     
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.consultorio}"/></p:column>
+            <p:column colspan="3">
+             <p:selectOneMenu id="consultorio" value="#{oAddMedCapa.consul.noConsultorio}">
+                <f:selectItem itemLabel="CONSULTA EXTERNA 1" itemValue="19"/>
+                <f:selectItem itemLabel="CONSULTA EXTERNA 2" itemValue="20"/>
+                <f:selectItem itemLabel="NUTRICIÓN" itemValue="22"/>
+                <f:selectItem itemLabel="ODONTODOLOGÍA" itemValue="24"/>
+                <f:selectItem itemLabel="PSICOLOGÍA" itemValue="23"/>
+                <f:selectItem itemLabel="TRABAJO SOCIAL" itemValue="21"/>
+                <f:selectItem itemLabel="LABORATORIO" itemValue="25"/>
+             </p:selectOneMenu>     
+            </p:column>
+        </p:row> 
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.cedulaProf}"/></p:column>
+            <p:column><p:inputText id="cprof" value="#{oAddMedCapa.med.cedProf}" maxlength="7"/></p:column> 
+            <p:column><h:outputLabel value="#{etiq.cedulaEsp}"/></p:column>
+            <p:column><p:inputText id="cesp" value="#{oAddMedCapa.med.cedEsp}" maxlength="7"/></p:column> 
+            <p:column><h:outputLabel value="#{etiq.cedulaIMSS}"/></p:column>
+            <p:column><p:inputText id="cimss" value="#{oAddMedCapa.med.cedIMSS}" maxlength="7"/></p:column> 
+        </p:row>                
+        <p:row>
+            <p:column colspan="6" styleClass="ui-widget-header">
+                <center>  <h:outputLabel value="#{etiq.datosUsuario}"/> </center>
+             </p:column>    
+        </p:row>
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.nombUsuario}"/></p:column>
+            <p:column><p:inputText id="nomusu" value="#{oAddMedCapa.usua.idUsuario}" maxlength="10" required="true" requiredMessage="INGRESAR USUARIO" onkeyup="this.value=this.value.toUpperCase();"/></p:column>
+            <p:column> <h:outputLabel value="#{etiq.contraseña}"/></p:column>
+            <p:column colspan="3">
+                <p:password id="constrasena" value="#{oAddMedCapa.usua.password}" feedback="true" maxlength="20" required="true" requiredMessage="INGRESAR CONTRASEÑA"/>
+            </p:column> 
+        </p:row>
+        <p:row>
+            <p:column styleClass="centrado_texto" colspan="6">
+                <p:commandButton value="#{etiq.guardarCambios}" icon="ui-icon-disk" ajax="false" action="#{oAddMedCapa.modifica()}" update="mensajes"/>
+                <p:commandButton value="#{etiq.borrar}" action="#{oAddMedCapa.borrar()}" onclick="recarga()"/>
+            </p:column>   
+        </p:row>      
+</p:panelGrid> 
+       </h:form>      
+        </p:tab>
+            
+        <p:tab title="#{etiq.buscarMed}">
+       <h:form id="bmedico">
+           <p:growl id="mensajes1"  showDetail="true" />
+           <br/><br/>
+           <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+           <center><h2><h:outputLabel value="#{etiq.buscarMed}"/></h2></center>
+            <p:panelGrid style="margin-top:30px" id="buscapac"> 
+          <f:facet name="header">
+        <p:row>
+           <p:column><center><h:outputLabel value="#{etiq.buscarMed}"/> </center></p:column>   
+        </p:row>
+    </f:facet>
+        <p:row>
+              <p:column> <h:outputLabel value="#{etiq.noTarjeta} "/>
+                  <p:inputText id="id1" value="#{busMed.med.noTarjeta}"  required="true" requiredMessage="INGRESAR NUMERO DE NUMERO DE TARJETA" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO NO. TARJETA"/> 
+                  <p:commandButton value="#{etiq.buscar}" action="#{busMed.busca()}" update="datos mensajes1">
+                  </p:commandButton> 
+              </p:column>
+          </p:row>
+      </p:panelGrid>
+           <p:dialog visible="#{busMed.visible}" id="datos" header="#{etiq.informacionMedi}" widgetVar="dlgtem" closable="true" width="350"  height="480" resizable="false">
+                   <b><h:outputLabel value="#{etiq.nombre} "/></b>
+                   <h:outputLabel id="nombrec" value="#{busMed.med.nombreCompleto}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel  value="#{etiq.fechanac} "/> </b>
+            <h:outputLabel value="#{busMed.med.fechaNac}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel  value="#{etiq.sexo} "/></b>
+            <h:outputLabel value="#{busMed.med.sexos}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.curp} "/></b>
+            <h:outputLabel value="#{busMed.med.curp}"/>
+            <br/>
+            <br/>     
+            <b><h:outputLabel value="#{etiq.especialidad} "/></b>
+            <h:outputLabel value="#{busMed.med.descEsp}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.tipoMedico} "/></b>
+            <h:outputLabel value="#{busMed.med.desTipoMed}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.consultorio} "/></b>
+            <h:outputLabel value="#{busMed.med.cons.nomConsultorio}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.turno} "/></b>
+            <h:outputLabel value="#{busMed.med.turn.clave}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.cedulaProf} "/></b>
+            <h:outputLabel value="#{busMed.med.cedProf}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.cedulaEsp} "/></b>
+            <h:outputLabel value="#{busMed.med.cedEsp}"/>
+            <br/>
+            <br/>
+            <b><h:outputLabel value="#{etiq.cedulaIMSS} "/></b>
+            <h:outputLabel value="#{busMed.med.cedIMSS}"/>
+            <br/>
+            <br/>
+            <p:commandButton value="#{etiq.borrar}" action="#{busMed.borrar()}" onclick="recarga()"/>
+        </p:dialog>
+       </h:form>      
+        </p:tab>    
+    </p:tabView>
+    </ui:define>
+</ui:composition>
+</html>
+                
+

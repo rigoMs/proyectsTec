@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">          
+            <h:form id="frmpac">
+                <p:growl id="mensajes"  showDetail="true" /> <br/><br/>
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/> 
+                <p:accordionPanel>
+                    <p:tab title="#{etiq.modificar} #{etiq.nota} #{etiq.paciente}">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <p:panelGrid style="margin-top:30px" id="buscap"> 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column><center><h:outputLabel value="#{etiq.buscar} #{etiq.paciente}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column> <h:outputLabel value="#{etiq.id} "/>
+                                        <p:inputText id="id1" value="#{notaPac.pacienteCapa.idNacional}"  required="true" requiredMessage="INGRESAR NUMERO DE ID SALVAR" converterMessage="ID, Solo ingresar números"/> 
+                                        <p:commandButton value="#{etiq.buscar}" action="#{notaPac.buscarPacienteModEli()}" update=":frmpac :tmodi:frmpa :tmodi:frmeli" onclick="location.replace()"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid> 
+                        </h:panelGrid>
+                    </p:tab>    
+                </p:accordionPanel>   
+            </h:form>
+            <p:tabView id="tmodi" dynamic="true" cache="true">
+                <p:tab  id="tabmodi" title="#{etiq.modificar}">
+                    <h:form id="frmpa">
+
+                        <p:tab title="#{etiq.modificar} #{etiq.nota}">
+                            <p:panelGrid style="margin-top:30px">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><center> 
+                                                <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet> 
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+                                    <p:column>  <p:inputText id="nombre" value="#{notaPac.pacienteCapa.nombres}" readonly="true"/>
+                                    </p:column> 
+                                    <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+                                    <p:column> <p:inputText id="ppaterno" value="#{notaPac.pacienteCapa.apPaterno}" readonly="true"/></p:column>
+                                    <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+                                    <p:column><p:inputText id="pmaterno" value="#{notaPac.pacienteCapa.apMaterno}" readonly="true"/></p:column>
+                                </p:row>    
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header">
+                                        <center>  <h:outputLabel value="#{etiq.nota}"/> </center>
+                                    </p:column>    
+                                </p:row>
+                                <p:row>       
+                                    <p:column colspan="6"><p:inputTextarea rows="6" cols="130" value="#{notaPac.notaAux}" onkeyup="this.value = this.value.toUpperCase();" /></p:column>
+                                </p:row>       
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" colspan="6">
+                                        <p:commandButton value="#{etiq.modificar}" icon="ui-icon-disk"  action="#{notaPac.modificar()}"  update=":frmpac:mensajes" onclick="location.replace()" rendered="#{notaPac.botonVisible}"/>
+                                    </p:column>   
+                                </p:row>      
+                            </p:panelGrid> 
+                        </p:tab>
+
+                    </h:form> 
+                </p:tab>
+                <p:tab  id="tabelim" title="#{etiq.eliminar}">
+                    <h:form id="frmeli">
+
+                        <p:tab title="#{etiq.eliminar} #{etiq.nota}">
+                            <p:panelGrid style="margin-top:30px">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><center> 
+                                                <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet> 
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+                                    <p:column>  <p:inputText id="nombre" value="#{notaPac.pacienteCapa.nombres}" readonly="true"/>
+                                    </p:column> 
+                                    <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+                                    <p:column> <p:inputText id="ppaterno" value="#{notaPac.pacienteCapa.apPaterno}" readonly="true"/></p:column>
+                                    <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+                                    <p:column><p:inputText id="pmaterno" value="#{notaPac.pacienteCapa.apMaterno}" readonly="true"/></p:column>
+                                </p:row>     
+
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header">
+                                        <center>  <h:outputLabel value="#{etiq.nota}"/> </center>
+                                    </p:column>    
+                                </p:row>
+                                <p:row>       
+                                    <p:column colspan="6"><p:inputTextarea rows="6" cols="130" value="#{notaPac.notaAux}" onkeyup="this.value = this.value.toUpperCase();" /></p:column>
+                                </p:row>       
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" colspan="6">
+                                        <p:commandButton value="#{etiq.eliminar}" icon="ui-icon-disk" ajax="false" action="#{notaPac.eliminar()}" update="mensajes :tmodi:frmeli" rendered="#{notaPac.botonVisible}"/>
+                                    </p:column>   
+                                </p:row>      
+                            </p:panelGrid> 
+                        </p:tab>
+
+                    </h:form> 
+                </p:tab>
+            </p:tabView>
+        </ui:define>
+    </ui:composition>
+</html>
+

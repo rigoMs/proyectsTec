@@ -1,0 +1,617 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.solicitudesAnteRef}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>  
+                                    <p:outputLabel value="#{etiq.seleccfecha}:"/>
+                                    <p:calendar id="fechaIni"  effect="fold" required="true" value="#{RepotSolcituRefe.fechaIni}" maxdate="#{RepotSolcituRefe.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                        <p:ajax event="dateSelect" update="fechaFin"/>
+                                    </p:calendar>
+                                    <p:outputLabel value=" #{etiq.al}: "/>
+                                    <p:calendar id="fechaFin"  effect="fold" required="true" value="#{RepotSolcituRefe.fechaFin}" mindate="#{RepotSolcituRefe.fechaIni}" maxdate="#{RepotSolcituRefe.hosp.fechaActual()}" locale="es" readonlyInput="true">
+                                        <p:ajax event="dateSelect"/>
+                                        <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                                    </p:calendar> 
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br/><br/>
+                        <p:panelGrid styleClass="frm_centrado"> 
+                            <p:row>
+                                <p:column colspan="7" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.formasdebusq}" /></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                                <p:column> 
+                                    <p:inputText id="txtnompac" value="#{RepotSolcituRefe.paciente.nombres}" size="30" 
+                                                 onkeyup="this.value=this.value.toUpperCase();"
+                                                 onkeypress="return validaCaracter(event);"> 
+                                        <p:ajax/>
+                                    </p:inputText>
+                                </p:column>
+                                  <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/></p:column>
+                                <p:column> 
+                                    <p:inputText id="txtapellpat" value="#{RepotSolcituRefe.paciente.apPaterno}" size="30"
+                                                 onkeyup="this.value=this.value.toUpperCase();"
+                                                 onkeypress="return validaCaracter(event);"> 
+                                        <p:ajax/>
+                                    </p:inputText>
+                                </p:column>
+                                  <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                                <p:column> 
+                                    <p:inputText id="txtapellmat" value="#{RepotSolcituRefe.paciente.apMaterno}" size="30"
+                                                 onkeyup="this.value=this.value.toUpperCase();"
+                                                 onkeypress="return validaCaracter(event);"> 
+                                        <p:ajax/>
+                                    </p:inputText>
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nExp}:"/></p:column>
+                                <p:column>  
+                                    <p:inputText id="txtnumexp" value="#{RepotSolcituRefe.paciente.expediente.numero}" size="30">
+                                        <f:validateLength minimum="4" maximum="254"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange" /> 
+                                        <p:ajax/>
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton  id="btnbusexp" value="#{etiq.buscar} " icon="ui-icon-search">
+                                        <p:ajax listener="#{RepotSolcituRefe.consultaSolicitudes()}" update="tablaPac"></p:ajax>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid> <br/> 
+
+                        <p:dataTable id="tablaPac" var="SoliAntRef" paginator="true"
+                                     paginatorPosition="both" rows="15" value="#{RepotSolcituRefe.listaPac}"
+                                     emptyMessage="NO HAY REGISTROS" >
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombrePaciente}"/>
+                                </f:facet>
+                                <h:outputText value="#{SoliAntRef.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{SoliAntRef.episodioMedico.paciente.expediente.numero}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.fechade} #{etiq.solicitud}"/>
+                                </f:facet>
+                                <h:outputText value="#{SoliAntRef.fechaSolicitud}">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy"/> 
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.area}"/>
+                                </f:facet>
+                                <h:outputText value="#{SoliAntRef.episodioMedico.area.descripcion}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.medico}"/>
+                                </f:facet>
+                                <h:outputText value="#{SoliAntRef.medicoAuto.nombreCompleto}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombrede} #{etiq.trabajadorasocial}"/>
+                                </f:facet>
+                                <h:outputText value="#{SoliAntRef.tstramito.nombreCompleto}"/>
+                            </p:column> 
+                            <p:column>
+                                 <p:commandButton id="refConsult" value="#{etiq.consultar}" icon="ui-icon-search" oncomplete="PF('RefConsul').show()" >
+                                    <p:ajax listener="#{RepotSolcituRefe.impPac(SoliAntRef)}" update=":dialog1"></p:ajax>
+                                </p:commandButton>
+                            </p:column> 
+                        </p:dataTable>  
+                    </h:form>
+
+                    <p:dialog header="#{etiq.HojaReferencia}" widgetVar="RefConsul" id="dialog1"
+                              showEffect="bounce" minimizable="true" width="1100" height="550" >
+                        <h:form> 
+                            <p:panelGrid id="DocumtRef">
+                                <p:row> 
+                                    <p:column colspan="12" style="text-align: end; border-color:#ffffff; background-color:#ffffff;">
+                                        <b> <p:outputLabel value="#{etiq.noControl}" style="font-size:9px;" /> </b>
+                                    </p:column>
+                                </p:row>
+                                <p:row> 
+                                    <p:column colspan="12" style="border-color:#ffffff; background-color:#ffffff;">
+
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff;">
+                                                    <h:graphicImage value="/imgs/logo-salud.jpg" style="width: 50px;" />   
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; width: 400px; background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.secresaludver}" style="font-size:10px;" /> <br/>
+                                                        <p:outputLabel value="#{etiq.sistrefecontrpac}" style="font-size:10px;" /> </b>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff;">
+                                                    <p:panelGrid>
+                                                        <p:row> 
+                                                            <p:column colspan="2" style="border-color:#000000; text-align: center; background-color:#ffffff;">
+                                                                <b> <p:outputLabel value="#{etiq.urgeM}" style="font-size:12px;" /> </b> 
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color:#000000; text-align: center;  background-color:#ffffff;">
+                                                                <b>   <p:outputLabel value="#{etiq.si}" style="font-size:12px;" /> </b> <p:selectBooleanCheckbox value="#{RepotSolcituRefe.ungent}" disabled="true" />
+                                                            </p:column>
+                                                            <p:column style="border-color:#000000; text-align: center;  background-color:#ffffff;">
+                                                                <b>   <p:outputLabel value="#{etiq.no}" style="font-size:12px;" /> </b> <p:selectBooleanCheckbox value="#{RepotSolcituRefe.nourgent}" disabled="true" />
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid> 
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" styleClass="ui-widget-header" style="text-align: center;" >
+                                        <p:outputLabel value="#{etiq.hojaReferncia}" style="font-size:12px;" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="9" style="border-color:#ffffff;  background-color:#ffffff;">
+
+                                    </p:column>
+                                    <p:column colspan="3" style="border-color:#ffffff;  background-color:#ffffff;">
+
+                                        <p:panelGrid> 
+                                            <p:row>
+                                                <p:column rowspan="2" style="border-color:#ffffff;  background-color:#ffffff; border-right-color:#000000;">
+                                                    <p:outputLabel value="#{etiq.fechaM}:" style="font-size:10px;" />  
+                                                </p:column>  
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.diaM}" style="font-size:10px;" /> </b>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.mesM}" style="font-size:10px;" /> </b>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.anoM}" style="font-size:10px;" /> </b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row> 
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{oImpHojRef.now}" style="font-size:10px;" >
+                                                        <f:convertDateTime type="date" pattern="dd"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{oImpHojRef.now}" style="font-size:10px;">
+                                                        <f:convertDateTime type="date" pattern="MM"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{oImpHojRef.now}" style="font-size:10px;">
+                                                        <f:convertDateTime type="date" pattern="yyyy"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid> 
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" styleClass="ui-widget-header" style="text-align: left;">
+                                        <p:outputLabel value="#{etiq.datosPacientRef}" style="font-size:12px;"  />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" style="border-color:#ffffff;  background-color:#ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="border-color:#ffffff; width:300px;   background-color:#ffffff; text-align: end;;">
+                                                    <p:outputLabel value="#{etiq.NombreDelPaciente}:" style="font-size:10px;" />
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff;  background-color:#ffffff; border-bottom-color: #000000; width: 410px;">
+                                                    <h:outputText value="#{RepotSolcituRefe.paciente.nombreCompleto}" style="font-size:10px;"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color:#ffffff;  background-color:#ffffff; text-align: end; ">
+                                                    <p:outputLabel value="#{etiq.domicilio1}:" style="font-size:10px;" />
+                                                </p:column>   
+                                                <p:column style="border-color:#ffffff;  background-color:#ffffff; text-align: left; border-bottom-color: #000000;">
+                                                    <h:outputText value="#{RepotSolcituRefe.paciente.calleNum}" style="font-size:10px;"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color:#ffffff; text-align: end;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.localidadREF}:"  style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff;  background-color:#ffffff; text-align: left; border-bottom-color: #000000;">
+                                                    <h:outputText value="#{RepotSolcituRefe.paciente.ciudad.descripcionCiu}" style="font-size:10px;"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>   
+                                    </p:column>
+                                    <p:column colspan="6" style="border-color:#ffffff;  background-color:#ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column colspan="3" style="border-color:#000000; text-align: end;  background-color:#ffffff;">
+                                                    <b> <p:outputLabel value="#{etiq.fechanacM}" style="font-size:10px;" /> </b>
+                                                </p:column>
+                                                <p:column colspan="2" style="border-color:#000000; text-align: end; background-color:#ffffff;">
+                                                    <b> <p:outputLabel value="#{etiq.sexoM}" style="font-size:10px;" /> </b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row> 
+                                                <p:column style="border-color:#000000; text-align: center; background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.diaM}" style="font-size:10px;" />
+                                                </p:column >
+                                                <p:column style="border-color:#000000; text-align: center;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.mesM}" style="font-size:10px;" />
+                                                </p:column>
+                                                <p:column style="border-color:#000000; text-align: center; background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.anoM}"  style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column rowspan="2" style="border-color:#000000; text-align: center;  background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.m}" /> </b> <p:selectBooleanCheckbox value="#{RepotSolcituRefe.mascu}" disabled="true" />
+                                                </p:column >
+                                                <p:column rowspan="2" style="border-color:#000000; text-align: center;  background-color:#ffffff;">
+                                                    <b>   <p:outputLabel value="#{etiq.f}" /> </b> <p:selectBooleanCheckbox value="#{RepotSolcituRefe.femen}" disabled="true" />
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{RepotSolcituRefe.paciente.fechaNac}" style="font-size:10px;" >
+                                                        <f:convertDateTime type="date" pattern="dd"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{RepotSolcituRefe.paciente.fechaNac}" style="font-size:10px;" >
+                                                        <f:convertDateTime type="date" pattern="MM"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                   <p:outputLabel value="#{RepotSolcituRefe.paciente.fechaNac}" style="font-size:10px;" >
+                                                        <f:convertDateTime type="date" pattern="yyyy"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="5" style="border-color:#000000; text-align: center; background-color:#ffffff;">
+                                                    <b>    <p:outputLabel value="#{etiq.folioAfiliadoSegPop}" style="font-size:10px;" /> </b>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="5" style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{RepotSolcituRefe.paciente.seg.numero}" style="font-size:10px;" /> 
+                                                </p:column>
+                                            </p:row> 
+                                        </p:panelGrid>    
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  colspan="2"   style="border-color:#ffffff; text-align: end;  background-color:#ffffff;">
+                                        <p:outputLabel value="#{etiq.municipioREF}:" style="font-size:10px;" /> 
+                                    </p:column>
+                                    <p:column   style="border-color:#ffffff;  background-color:#ffffff; border-bottom-color: #000000;">
+                                        <h:outputText value="#{RepotSolcituRefe.paciente.municipio.descripcionMun}" style="font-size:10px;" />
+                                    </p:column>
+                                    <p:column  colspan="2"  style="border-color:#ffffff; text-align: end;  background-color:#ffffff;" >
+                                        <p:outputLabel value="#{etiq.estadoREF}" style="font-size:10px;" /> 
+                                    </p:column>
+                                    <p:column  colspan="7"  style="border-color:#ffffff;  background-color:#ffffff; border-bottom-color: #000000;">
+                                        <h:outputText value="#{RepotSolcituRefe.paciente.estado.descripcionEdo}" style="font-size:10px;"  />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  colspan="2"   style="border-color:#ffffff; text-align: end; background-color:#ffffff;">
+                                        <p:outputLabel value="#{etiq.telefonoREF}" style="font-size:10px;" /> 
+                                    </p:column>
+                                    <p:column  style="border-color:#ffffff;  background-color:#ffffff; border-bottom-color: #000000;">
+                                        <h:outputText value="#{RepotSolcituRefe.paciente.telefono}" style="font-size:10px;"/>
+                                    </p:column>
+                                    <p:column colspan="2"  style="border-color:#ffffff; text-align: end; background-color:#ffffff;">
+                                        <p:outputLabel value="#{etiq.noExpedienteM}:" style="font-size:10px;" /> 
+                                    </p:column>
+                                    <p:column colspan="7"  style="border-color:#ffffff;  background-color:#ffffff; border-bottom-color: #000000;">
+                                        <h:outputText value="#{RepotSolcituRefe.paciente.expediente.numero}" style="font-size:10px;"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" styleClass="ui-widget-header" style="text-align: left;">
+                                        <p:outputLabel value="#{etiq.datosUnidadEnviayRecibe}" style="font-size:12px;"  />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" style="border-color:#ffffff;  background-color:#ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style=" width:400px; border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <b>   <p:outputLabel value="#{etiq.unidadquerefiere}:" style="font-size:10px;"/> </b> <p:outputLabel value="#{etiq.hospitalReginalDeRioBlancoM}" style="font-size:10px;"/> 
+                                                </p:column>
+                                                <p:column style=" width:50px; border-color:#000000;  background-color:#ffffff;"> 
+                                                </p:column>
+                                                <p:column style="width:400px; border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <b> <p:outputLabel value="#{etiq.unidadqueenvia}:" style="font-size:10px;" /> </b> <h:outputText value="#{RepotSolcituRefe.traslado.nombreHospi}" style="font-size:10px;"/> <br/>
+                                                    <b> <p:outputLabel value="#{etiq.servicioREF}:" style="font-size:10px;" /> </b>   <h:outputText value="#{RepotSolcituRefe.traslado.area}" style="font-size:10px;"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>  
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" style="border-color:#ffffff;  background-color:#ffffff;">
+                                        <p:panelGrid> 
+                                            <p:row>
+                                                <p:column rowspan="2" style="border-color:#ffffff; text-align: left;  background-color:#ffffff; border-right-color:#000000;" >
+                                                    <b> <p:outputLabel value="#{etiq.fechadeCitaProgramada}:" style="font-size:10px;" />    </b> 
+                                                </p:column>  
+                                                <p:column style="border-color:#000000; text-align: center;  background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.diaM}" style="font-size:10px;"/>   </b> 
+                                                </p:column>
+                                                <p:column style="border-color:#000000; text-align: center;  background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.mesM}" style="font-size:10px;"/>   </b> 
+                                                </p:column>
+                                                <p:column style="border-color:#000000; text-align: center; background-color:#ffffff;">
+                                                    <b>  <p:outputLabel value="#{etiq.anoM}" style="font-size:10px;"/>   </b> 
+                                                </p:column>
+                                            </p:row>
+                                            <p:row> 
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{RepotSolcituRefe.traslado.fechaDeciable}"  style="font-size:10px;">
+                                                        <f:convertDateTime type="date" pattern="dd"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{RepotSolcituRefe.traslado.fechaDeciable}" style="font-size:10px;">
+                                                        <f:convertDateTime type="date" pattern="MM"/> 
+                                                    </p:outputLabel>
+                                                </p:column>
+                                                <p:column style="border-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{RepotSolcituRefe.traslado.fechaDeciable}"  style="font-size:10px;">
+                                                        <f:convertDateTime type="date" pattern="yyy"/>
+                                                    </p:outputLabel>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column> 
+                                    <p:column colspan="8" style="border-color:#ffffff;  background-color:#ffffff;">
+
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" styleClass="ui-widget-header" style="text-align: left;">
+                                        <p:outputLabel value="#{etiq.resumenClinicoyDiagnost}" style="font-size:12px;" />
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" style="border-color:#ffffff; text-align: left;  background-color:#ffffff; border-bottom-color:#000000; ">
+                                        <b>  <p:outputLabel value="#{etiq.motivodelaReferencia}:" style="font-size:10px;" /> </b>  
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" style="border-color:#000000;  background-color:#ffffff; ">
+                                         <h:outputText value="#{RepotSolcituRefe.episodioMedico.notaMedicaHRRB.resumenClinico}" style="font-size:10px;"/><br/>
+                             <p:outputLabel value="#{etiq.pronostico}:" style="font-size:10px;" />
+                            <h:outputText value="#{RepotSolcituRefe.episodioMedico.notaMedicaHRRB.pronostico}" style="font-size:10px;"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" style="border-color:#ffffff; text-align: left;  background-color:#ffffff; border-bottom-color:#000000;">
+                                        <b>  <p:outputLabel value="#{etiq.auxiliaresdediahnoticopracticos}:" style="font-size:10px;" /> </b>  
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" style="border-color:#000000;  background-color:#ffffff;">
+                                        <p:dataList value="#{RepotSolcituRefe.listAuxDiag}" var="AuxDiag" styleClass="dataList" style=" background-color:#ffffff; border-color:#ffffff; " emptyMessage=" ">
+                                            <f:facet name="header"> 
+                                            </f:facet>
+                                         #{AuxDiag.servicioCobrable.clasifDeEstudio}, #{AuxDiag.impresionDiagnostica}, #{AuxDiag.fechaSolicitud} 
+                                        </p:dataList>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="border-color:#ffffff; text-align: left;  background-color:#ffffff;">
+                                        <b>   <p:outputLabel value="#{etiq.signosvitales}:" style="font-size:10px;"/> </b> 
+                                    </p:column>
+                                    <p:column colspan="6" style="border-color:#ffffff;  text-align: left; background-color:#ffffff;">
+                                        <b>   <p:outputLabel value="#{etiq.sometometria}:" style="font-size:10px;"/> </b> 
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12" style="border-color:#ffffff;  background-color:#ffffff; border-bottom-color:#000000;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column  style="border-color:#000000; width:150px; text-align: center;  background-color:#ffffff; ">
+                                                    <p:outputLabel value="#{etiq.tensionarterial}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; width:150px; text-align: center;   background-color:#ffffff; ">
+                                                    <p:outputLabel value="#{etiq.temperaturaM}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; width:150px; text-align: center;   background-color:#ffffff; ">
+                                                    <p:outputLabel value="#{etiq.refecResp}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; width:150px; text-align: center;  background-color:#ffffff; ">
+                                                    <p:outputLabel value="#{etiq.refcCardiaca}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; width:150px; text-align: center;  background-color:#ffffff; ">
+                                                    <p:outputLabel value="#{etiq.pulsoM}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; width:150px; text-align: center;  background-color:#ffffff; ">
+                                                    <p:outputLabel value="#{etiq.pesoM}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; width:150px; text-align: center;  background-color:#ffffff; ">
+                                                    <p:outputLabel value="#{etiq.tallaM}" style="font-size:10px;"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff; ">
+                                                    <h:outputText value="#{RepotSolcituRefe.episodioMedico.signosVitales.TA} mmHg." style="font-size:10px;" />
+                                                </p:column>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff; ">
+                                                    <h:outputText value="#{RepotSolcituRefe.episodioMedico.signosVitales.temp} °C" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff; ">
+                                                    <h:outputText value="#{RepotSolcituRefe.episodioMedico.signosVitales.FR} X'" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff; ">
+                                                    <h:outputText value="#{RepotSolcituRefe.episodioMedico.signosVitales.FC} X'" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff; ">
+                                                    <h:outputText value="#{RepotSolcituRefe.episodioMedico.signosVitales.pulso} X'" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff; " >
+                                                    <h:outputText value="#{RepotSolcituRefe.paciente.peso} Kg." style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff; " >
+                                                    <h:outputText value="#{RepotSolcituRefe.paciente.talla} cm" style="font-size:10px;"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12"  style="border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                        <b> <p:outputLabel value="#{etiq.diagnosticodeenvio}:" style="font-size:12px;"/> </b> <h:outputText value="#{RepotSolcituRefe.traslado.diagEnvio}" style="font-size:10px;"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12"  style="border-color:#ffffff; text-align: left;  background-color:#ffffff;">
+                                        <b> <p:outputLabel value="#{etiq.motivodeEnvioM}:" style="font-size:10px;"/> </b>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="12"  style="border-color:#ffffff;  background-color:#ffffff;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column  style="border-color:#ffffff; width: 400px;  border-right-color:#000000;  background-color:#ffffff; text-align: left; ">
+                                                    <p:outputLabel value="#{etiq.nohayRespuestasTX}" style="font-size:10px;"/> 
+                                                </p:column> 
+                                                <p:column  style="border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <h:outputText value="#{RepotSolcituRefe.uno}" style="font-size:10px;"/> &nbsp;
+                                                </p:column>
+                                                <p:column  style="border-color:#ffffff;  width: 400px; border-right-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.riesgosdesecuel}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000;  background-color:#ffffff;">
+                                                    <h:outputText value="#{RepotSolcituRefe.cuatro}" style="font-size:10px;"/> &nbsp;
+                                                </p:column>
+                                                <p:column rowspan="3"  style="border-color:#ffffff;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.otroM}:" style="font-size:10px;"/>
+                                                    <h:outputText value="#{RepotSolcituRefe.traslado.otroMotiv}" style="font-size:10px;"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column  style="border-color:#ffffff; text-align: left; border-right-color:#000000; background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.haycomplica}" style="font-size:10px;"/> 
+                                                </p:column> 
+                                                <p:column  style="border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <h:outputText value="#{RepotSolcituRefe.dos}" style="font-size:10px;"/> &nbsp;
+                                                </p:column>
+                                                <p:column  style="border-color:#ffffff; text-align: left; border-right-color:#000000; background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.complementarDX}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <h:outputText value="#{RepotSolcituRefe.cinco}" style="font-size:10px;"/> &nbsp;
+                                                </p:column> 
+                                            </p:row>
+                                            <p:row>
+                                                <p:column  style="border-color:#ffffff; text-align: left; border-right-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.auxdeDignostico}" style="font-size:10px;"/>
+                                                </p:column> 
+                                                <p:column  style="border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <h:outputText value="#{RepotSolcituRefe.tres}" style="font-size:10px;"/> &nbsp;
+                                                </p:column>
+                                                <p:column  style="border-color:#ffffff; text-align: left; border-right-color:#000000;  background-color:#ffffff;">
+                                                    <p:outputLabel value="#{etiq.txEspecializado}" style="font-size:10px;"/>
+                                                </p:column>
+                                                <p:column  style="border-color:#000000; text-align: left;  background-color:#ffffff;">
+                                                    <h:outputText value="#{RepotSolcituRefe.seis}" style="font-size:10px;"/> &nbsp;
+                                                </p:column> 
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5" style="border-color:#ffffff;   text-align: center;  background-color:#ffffff;">
+                                        <p:outputLabel value="__________________________"/>  
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff;  background-color:#ffffff;"> 
+                                    </p:column>
+                                    <p:column colspan="5" style="border-color:#ffffff; border-bottom-color:#000000;  text-align: center; background-color:#ffffff;">
+                                        <p:outputLabel value="#{RepotSolcituRefe.traslado.medicoAuto.nombreCompleto}" style="font-size:10px;"/>   
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5" style="border-color:#ffffff; text-align: center;  background-color:#ffffff;">
+                                        <p:outputLabel value="#{etiq.nombrefirmasellounidad}" style="font-size:10px;"/>  
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff;  background-color:#ffffff;"> 
+                                    </p:column>
+                                    <p:column colspan="5" style="border-color:#ffffff; text-align: center;  background-color:#ffffff;">
+                                        <p:outputLabel value="#{etiq.nombreyfirma}" style="font-size:10px;"/>   
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5" style="border-color:#ffffff; text-align: center;  background-color:#ffffff;">
+                                        <b>   <p:outputLabel value="#{etiq.autorizo}" style="font-size:10px;"/>   </b>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff;  background-color:#ffffff;"> 
+                                    </p:column>
+                                    <p:column colspan="5" style="border-color:#ffffff;  text-align: center; background-color:#ffffff;">
+                                        <b> <p:outputLabel value="#{etiq.medicotratantequeRefiere}" style="font-size:10px;"/>    </b>
+                                    </p:column>
+                                </p:row>
+
+                            </p:panelGrid>  
+                            <p:commandButton value="#{etiq.imprimir}" id="botonimp" icon="ui-icon-print" style=" margin-bottom: 20px;">
+                                <p:printer target="DocumtRef" />
+                            </p:commandButton>  
+                            
+                            <p:commandButton value="#{etiq.salir}" icon="ui-icon-close" oncomplete="PF('RefConsul').hide()">
+                                </p:commandButton>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

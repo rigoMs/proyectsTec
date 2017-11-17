@@ -1,0 +1,735 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.cuenta} #{etiq.de} #{etiq.pacien}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form>
+                         <!--Componenete de busqueda :P-->
+                <p:commandButton id="BuscarPacineT"  value="#{etiq.buscarPac}" icon="ui-icon-search"
+                    onclick="PF('BuscPacie').show(); "> 
+                </p:commandButton>  
+                <p:dialog widgetVar="BuscPacie" id="BuscPacie" width="1050" height="550">   
+        <p:panelGrid >
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarDatosBasicos}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="nom" 
+                                 maxlength="50" size="39" style="text-transform:uppercase;"
+                                 value="#{oBusqPacComunJB.paciente.nombres}" 
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="app" 
+                                 maxlength="50" size="39" style="text-transform:uppercase;"
+                                 value="#{oBusqPacComunJB.paciente.apPaterno}" 
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="apm" 
+                                 maxlength="50" size="39" style="text-transform:uppercase;"
+                                 value="#{oBusqPacComunJB.paciente.apMaterno}"  
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+            </p:row>                
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarPorExpediente}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.noExp}:"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:inputText styleClass="bordes" id="exp" 
+                                 value="#{oBusqPacComunJB.paciente.expediente.numero}" 
+                                 converterMessage="#{etiq.errCapturaCaractEsp}">
+                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                        <f:ajax render="mentExp" execute="@this" 
+                                event="valueChange" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <center>
+            <p:commandButton styleClass="bordes" 
+                            value="#{etiq.buscar}" 
+                            icon="ui-icon-search">
+                <p:ajax update="tablaPac cancel selecc" listener="#{oBusqPacComunJB.buscaPacientesinAltaFisica()}"/>
+            </p:commandButton>
+        </center>
+        <p:message for="exp" id="mentExp"/>
+        <br/><br/>
+        <div class="tabla_pacEnc">
+            <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                     paginatorPosition="both" rows="5" 
+
+                                     value="#{oBusqPacComunJB.listaPac}" 
+                                     emptyMessage="#{etiq.noRegistro}" 
+                                     style="visibility:#{oBusqPacComunJB.visibilidadTabla};"
+                                     rowKey="#{oPacEnc.apMaterno}"
+                                     selection="#{oBusqPacComunJB.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.pacEncontrados}"/>
+                            </f:facet>
+                            <p:column selectionMode="single">
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.nombres}"/>
+                            </p:column>
+                            <p:column style="width: 9%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.edadNumero}"/>
+                            </p:column>   
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.curp}"/>
+                            </p:column>
+                            <p:column style="width: 7%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.folioPaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                            </p:column>  
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                            </p:column>     
+                        </p:dataTable>
+        </div>  
+        
+        <p:commandButton value="#{etiq.seleccionar}" id="selecc" icon="ui-icon-search" style="visibility:#{oBusqPacComunJB.boton};">
+            <p:ajax listener="#{oConsultarCuenta.llenar}" update="BuscPacie Datos1 tablaDatosPac btncostos btncostosdetall"/> 
+        </p:commandButton> 
+        
+            <p:commandButton value="#{etiq.cancelar}" id="cancel" icon="ui-icon-circle-close" style="visibility:#{oBusqPacComunJB.boton2};">
+                        <p:ajax listener="#{oConsultarCuenta.limpiaboton()}" update="BuscPacie Datos1 tablaDatosPac btncostos btncostosdetall"/>
+            </p:commandButton>
+                </p:dialog>
+                
+             <br/> <br/>
+                <!--Componenete de busqueda :P-->
+                        
+                        
+
+                <p:panelGrid styleClass="frm_centrado" id="tablaDatosPac" style="visibility:#{oConsultarCuenta.visible};">
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header encabezados"><p:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tipohospitalizacionurgencia}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.cuenta}:"/></p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.paciente.nombres}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.paciente.apPaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.paciente.apMaterno}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.paciente.sexoP}"/>    
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.tipopac}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.numeroCuenta}"/>
+                                </p:column>
+
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechaDeIngreso}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.horaDeIngreso}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.sPop}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nivSE}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.noCam}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nExp}:"/><br></br></p:column>  
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.episodioMedico.fechaIngreso}">
+                                        <f:convertDateTime type="date" pattern="DD/mm/yyyy"/>
+                                    </h:outputText>
+                                </p:column>  
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.episodioMedico.fechaIngreso}">
+                                        <f:convertDateTime type="time" pattern="HH:mm:ss"/> 
+                                    </h:outputText>
+                                </p:column>  
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.paciente.seg.numero}"/>
+                                </p:column>  
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.paciente.nivelSocio}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.episodioMedico.cama.numero}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.paciente.expediente.numero}"/>
+                                </p:column>
+
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechaEgreso}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.horaEgreso}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.causes}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.programa}:"/></p:column> 
+                                <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.areaServicio}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.episodioMedico.altaHospitalaria}">
+                                         <f:convertDateTime type="date" pattern="dd/MM/yyyy"/> 
+                                    </h:outputText>
+                                </p:column>  
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.episodioMedico.altaHospitalaria}">
+                                        <f:convertDateTime type="time" pattern="HH:mm:ss"/> 
+                                    </h:outputText>
+                                </p:column> 
+                                <p:column>
+                                    <h:outputText value="#{oConsultarCuenta.episodioMedico.diagIngreso.causes.clave}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText  value="#{oConsultarCuenta.programapac}"/>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <h:outputText  value="#{oConsultarCuenta.episodioMedico.area.descripcion}"/>
+                                </p:column>
+
+                            </p:row>
+
+                        </p:panelGrid> <br/> <br/>
+
+                        <p:commandButton  id="btncostos" value="#{etiq.costos}" icon="ui-icon-search" style="visibility:#{oConsultarCuenta.boton2};"
+                                           oncomplete="PF('Costpac').show()">
+                            <p:ajax listener="#{oConsultarCuenta.inicializador()}" update="Dialog1"/>
+                        </p:commandButton><br/> 
+                        
+                        <p:dialog header="#{etiq.costos}" widgetVar="Costpac" id="Dialog1"
+                                  showEffect="puff"
+                                  resizable="false" 
+                                  width="1200" height="500">  
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width:275px;"><p:outputLabel value="#{etiq.servicios}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header" style="width:275px;"><p:outputLabel value="#{etiq.poblacionabierta}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header" style="width:275px;"><p:outputLabel value="#{etiq.seguro} #{etiq.popular}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header" style="width:275px;"><p:outputLabel value="#{etiq.programa}:"/></p:column> 
+                                </p:row> 
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Estudios"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalPacEst}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalSPEst}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalProgEst}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <h:outputLabel value="Procedimientos"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalProcediPac}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalProcediSP}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalProcediProg}"/>
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Otros Servicios"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalOtrosSerPac}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalOtrosSerSP}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.totalOtrosSerProg}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Productos Hemoderivados"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.productHemoderiPac}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.productHemoderiSP}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.productHemoderiProg}"/>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Material"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.materialPac}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.materialSP}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.materialProg}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <h:outputLabel value="Medicamentos"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.medicamentoPac}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.medicamentoSP}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oConsultarCuenta.medicamentoProg}"/>
+                                    </p:column>
+                                </p:row> 
+                            </p:panelGrid> 
+                            <p:panelGrid id="Datos1">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.totalapagar}:"/></p:column>
+                                    <p:column>
+                                        <h:outputLabel value="$ #{oConsultarCuenta.totalPaciente}"/>
+                                    </p:column> 
+                                </p:row> 
+                            </p:panelGrid> <br/>
+
+                            <p:commandButton value="#{etiq.salir}" icon="ui-icon-closethick"/>
+
+                        </p:dialog>
+                        <p:commandButton  id="btncostosdetall" value="#{etiq.costos} #{etiq.detallados}" icon="ui-icon-search"
+                                          oncomplete="PF('Costpacdetall').show()" style="visibility:#{oConsultarCuenta.boton1};">
+                            <p:ajax listener="#{oConsultarCuenta.inicializador()}"  update="Dialog1 dialog2"/>
+                        </p:commandButton>
+                        <p:dialog header="#{etiq.costos} #{etiq.detallados}" widgetVar="Costpacdetall" id="dialog2" 
+                                  showEffect="puff"
+                                  resizable="false" width="1200" height="500">    
+                            <p:tabView orientation="left">
+                                <p:tab title="Estudios">
+                                    <p:dataTable id="tablaPac" var="oEstuPac" paginator="true"
+                                                     paginatorPosition="both" rows="10" 
+                                                     value="#{oConsultarCuenta.estudios}" 
+                                                 emptyMessage="NO HAY REGISTROS" >
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechadeAplica}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oEstuPac.fechaDeRealizacion}">
+                                             <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss"/>   
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.cantM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oEstuPac.cantAplicada}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.depcripM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oEstuPac.descripcion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.seguroM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oEstuPac.montoCubiertoSeguroPopular}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.prograM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oEstuPac.montoCubiertoProgramas}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.poblacM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oEstuPac.montoCubiertoPaciente}"> 
+                                            </h:outputText>
+                                        </p:column>  
+                                    </p:dataTable>
+
+                                </p:tab>
+                                <p:tab title="Cirugias">   
+                                      <p:dataTable id="tabProcedimi" var="oProcemi" paginator="true"
+                                                     paginatorPosition="both" rows="10" 
+                                                     value="#{oConsultarCuenta.procedi}" 
+                                                 emptyMessage="NO HAY REGISTROS" >
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechadeAplica}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oProcemi.fechaDeRealizacion}">
+                                             <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss"/>   
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.cantM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oProcemi.cantAplicada}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.depcripM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oProcemi.descripcion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.seguroM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oProcemi.montoCubiertoSeguroPopular}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.prograM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oProcemi.montoCubiertoProgramas}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.poblacM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oProcemi.montoCubiertoPaciente}"> 
+                                            </h:outputText>
+                                        </p:column>  
+                                    </p:dataTable>
+                                </p:tab>
+                                <p:tab title="Otros Servicios">
+                                     <p:dataTable id="tabOtroSer" var="oOtrosSer" paginator="true"
+                                                     paginatorPosition="both" rows="10" 
+                                                     value="#{oConsultarCuenta.otrosSer}" 
+                                                 emptyMessage="NO HAY REGISTROS" >
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechadeAplica}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oOtrosSer.fechaDeRealizacion}">
+                                             <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss"/>   
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.cantM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oOtrosSer.cantAplicada}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.depcripM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oOtrosSer.descripcion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.seguroM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oOtrosSer.montoCubiertoSeguroPopular}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.prograM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oOtrosSer.montoCubiertoProgramas}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.poblacM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oOtrosSer.montoCubiertoPaciente}"> 
+                                            </h:outputText>
+                                        </p:column>  
+                                    </p:dataTable>  
+                                </p:tab>
+                                  <p:tab title="Productos Hemoderivados">
+                                        <p:dataTable id="tabProdHemod" var="oProdHem" paginator="true"
+                                                     paginatorPosition="both" rows="10" 
+                                                     value="#{oConsultarCuenta.prodHemo}" 
+                                                 emptyMessage="NO HAY REGISTROS" >
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechadeAplica}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oProdHem.fechaDeRealizacion}">
+                                             <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss"/>   
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.cantM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oProdHem.cantAplicada}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.depcripM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oProdHem.descripcion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.seguroM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oProdHem.montoCubiertoSeguroPopular}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.prograM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oProdHem.montoCubiertoProgramas}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.poblacM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oProdHem.montoCubiertoPaciente}"> 
+                                            </h:outputText>
+                                        </p:column>  
+                                    </p:dataTable> 
+                                </p:tab>
+                                  <p:tab title="Material de Curacion">
+                                       <p:dataTable id="tabMaterial" var="oMateri" paginator="true"
+                                                     paginatorPosition="both" rows="10" 
+                                                     value="#{oConsultarCuenta.material}" 
+                                                 emptyMessage="NO HAY REGISTROS" >
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechadeAplica}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oMateri.fechaDeRealizacion}">
+                                             <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss"/>   
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.cantM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oMateri.cantAplicada}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.depcripM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oMateri.descripcion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.seguroM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oMateri.montoCubiertoSeguroPopular}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.prograM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oMateri.montoCubiertoProgramas}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.poblacM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oMateri.montoCubiertoPaciente}"> 
+                                            </h:outputText>
+                                        </p:column>  
+                                    </p:dataTable> 
+                                </p:tab>
+                                  <p:tab title="Madicamento">
+                                         <p:dataTable id="tabMedicamento" var="oMediCamen" paginator="true"
+                                                     paginatorPosition="both" rows="10" 
+                                                     value="#{oConsultarCuenta.medicamento}" 
+                                                 emptyMessage="NO HAY REGISTROS" >
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechadeAplica}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oMediCamen.fechaDeRealizacion}">
+                                             <f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm:ss"/>   
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.cantM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oMediCamen.cantAplicada}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.depcripM}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oMediCamen.descripcion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.seguroM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oMediCamen.montoCubiertoSeguroPopular}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.prograM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oMediCamen.montoCubiertoProgramas}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.poblacM}"/>
+                                            </f:facet>
+                                            <h:outputText value="$ #{oMediCamen.montoCubiertoPaciente}"> 
+                                            </h:outputText>
+                                        </p:column>  
+                                    </p:dataTable> 
+                                </p:tab>  
+                                 <p:tab title="#{etiq.procediminetosespecia}">
+                                      
+                                </p:tab>
+                                  <p:tab title="TOTALES">
+                                      <p:panelGrid id="TablaCostosTotales">
+                                          <p:row>
+                                              <p:column styleClass="ui-widget-header"><p:outputLabel value="CUENTA TOTAL:"/></p:column>
+                                              <p:column styleClass="ui-widget-header"><p:outputLabel value="TOTAL DE SEGURO POPULAR:"/></p:column>
+                                              <p:column styleClass="ui-widget-header"><p:outputLabel value="TOTAL DE PROGRAMA:"/></p:column>
+                                              <p:column styleClass="ui-widget-header"><p:outputLabel value="TOTAL DE POBLACIÓN ABIERTA:"/></p:column>
+                                              
+                                          </p:row>
+                                          <p:row>
+                                              <p:column> 
+                                                  <h:outputText value="$ #{oConsultarCuenta.totalPaciente}"/>
+                                              </p:column>
+                                              <p:column>
+                                                  <h:outputText value="$ #{oConsultarCuenta.totalSegPo}"/>
+                                              </p:column>
+                                              <p:column>
+                                                  <h:outputText value="$ #{oConsultarCuenta.totalProg}"/>
+                                              </p:column> 
+                                              <p:column>
+                                                  <h:outputText value="$ #{oConsultarCuenta.totalPaciente}"/> 
+                                              </p:column>
+                                          </p:row>
+                                      </p:panelGrid>
+
+                                </p:tab>
+                                
+                            </p:tabView>
+                            
+                            <p:commandButton value="#{etiq.salir}" onclick="PF('Costpacdetall').hide();" icon="ui-icon-closethick" />
+                        </p:dialog> 
+                    </h:form>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

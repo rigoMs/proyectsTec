@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+<div class="centrar">
+    <h:form styleClass="centrar" id="frmInicio">
+    <br/>
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+    <h3><h:outputLabel value="#{etiq.consExpDev}"/></h3>
+    <p:tabView dynamic="true" cache="false" id="tvDevoluciones">
+        <p:tab title="#{etiq.por} #{etiq.fecha}" id="tabDevFech">
+            <p:panelGrid >
+                <p:row>
+                    <p:column style="text-align: center" styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.fecha}"/></p:column>
+                    <p:column>
+                        <p:calendar value="#{oExpDev.fechaIni}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect"/>
+                        </p:calendar>
+                    </p:column>
+                </p:row>
+                <f:facet name="footer">
+                    <p:row>
+                        <p:column colspan="2" styleClass="centrar">
+                            <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                                <p:ajax listener="#{oExpDev.buscaExpDevPorFecha()}" update=":frmInicio :frmInicio:tvDevoluciones:tabDevFech :frmInicio:msgs"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="dtExpDev" var="oRpt"
+                        widgetVar="table1"
+                       paginator="false"
+                       paginatorPosition="bottom"
+                       rendered="#{not empty oExpDev.listaDevExpPorFecha}"
+                       rows="10" 
+                       value="#{oExpDev.listaDevExpPorFecha}"
+                       emptyMessage="#{etiq.noRegistros}"
+                       styleClass="centrar">
+                <f:facet name="header" >
+                       <h:outputText style="font-weight: bold; " value="#{etiq.expDev} "/>
+                        <p:outputLabel style="text-align: right" value="#{oExpDev.fechaIni}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                </f:facet>
+                <p:column style="width: 12%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.numero}"/>
+                </p:column> 
+                <p:column style="width: 15%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 8%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.edadNumero}"/>
+                </p:column> 
+                <p:column style="width: 6%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.sexo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.sexoP}"/>
+                </p:column> 
+                <p:column style="width: 13%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.hora} #{etiq.prestamo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaPres}">
+                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 13%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.hora} #{etiq.devolucion}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaDev}">
+                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.pres}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalEntrega.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.solicito}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalRecibe.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.guardo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalGuarda.nombreCompleto}"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:panel style="border: none" rendered="#{not empty oExpDev.listaDevExpPorFecha}">
+                <p:row >
+                    <p:column >
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                            <p:printer target="dtExpDev"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column >
+                        <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                            <p:dataExporter type="xls" target="dtExpDev" fileName="ExpDevueltos #{oExpDev.fechaArch1}" postProcessor="#{oExpDev.postProcessXLS}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panel>
+        </p:tab>   
+        <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <p:tab title="#{etiq.por} #{etiq.rangoFechas}" id="tabDevFech2">
+            <p:panelGrid  styleClass="centrar">
+                <p:row>
+                    <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.rangoFechas}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.del}"/></p:column>
+                    <p:column>
+                        <p:calendar id="txtFechIni" value="#{oExpDev.fechaIni}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect"/>
+                        </p:calendar>
+                    </p:column>
+                    <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.al}"/></p:column>
+                    <p:column>
+                        <p:calendar id="txtFechFin" value="#{oExpDev.fechaFin}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect" listener="#{oExpDev.validaFecha()}" update=":frmInicio:msgs"/>
+                        </p:calendar>
+                    </p:column>
+                </p:row>
+                <f:facet name="footer">
+                    <p:row>
+                        <p:column colspan="4" styleClass="centrar" >
+                            <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                                <p:ajax listener="#{oExpDev.buscaExpDevPorRangoFechas()}" 
+                                        update=":frmInicio :frmInicio:tvDevoluciones:tabDevFech2 :frmInicio:msgs"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="dtExpDev2" var="oRpt"
+                        widgetVar="table2"
+                       paginator="false"
+                       paginatorPosition="bottom"
+                       rendered="#{not empty oExpDev.listaDevExpPorRangoFechas}"
+                       rows="10" 
+                       value="#{oExpDev.listaDevExpPorRangoFechas}"
+                       emptyMessage="#{etiq.noRegistros}"
+                       styleClass="centrar">
+                <f:facet name="header" >
+                    <h:outputText style="font-weight: bold; " value="#{etiq.expDev} #{etiq.del} "/>
+                     <p:outputLabel style="text-align: right" value="#{oExpDev.fechaIni}">
+                         <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                     </p:outputLabel>
+                    <p:outputLabel value=" #{etiq.al} " style="font-weight: bold; "/>
+                    <p:outputLabel style="text-align: right" value="#{oExpDev.fechaFin}">
+                         <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                     </p:outputLabel>
+                 </f:facet>
+                <p:column style="width: 12%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.numero}"/>
+                </p:column> 
+                <p:column style="width: 15%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 8%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.edadNumero}"/>
+                </p:column> 
+                <p:column style="width: 6%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.sexo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.sexoP}"/>
+                </p:column> 
+                <p:column style="width: 13%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.hora} #{etiq.prestamo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaPres}">
+                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 13%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.hora} #{etiq.devolucion}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaDev}">
+                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.pres}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalEntrega.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.solicito}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalRecibe.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.guardo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalGuarda.nombreCompleto}"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:panel style="border: none" rendered="#{not empty oExpDev.listaDevExpPorRangoFechas}">
+                <p:row >
+                    <p:column >
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                            <p:printer target="dtExpDev2"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column >
+                        <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                            <p:dataExporter type="xls" target="dtExpDev2" fileName="ExpDevueltos #{oExpDev.fechaArch1} - #{oExpDev.fechaArch2}" postProcessor="#{oExpDev.postProcessXLS2}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panel>
+        </p:tab>
+        <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <p:tab title="#{etiq.por} #{etiq.noExp}" id="tabDevExp">
+            <p:panelGrid styleClass="frmlogin">
+                <p:row>
+                    <p:column styleClass="ui-widget-header">
+                        <h:outputLabel class="negrita" style="font-weight: bold; " value="#{etiq.noExp}"/>
+                    </p:column>
+                    <p:column >
+                        <p:inputText styleClass="bordes" id="exp" value="#{oExpDev.num}" required="true" requiredMessage="Debe ingresar el numero de expediente" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                        </p:inputText>
+                    </p:column>
+                    <p:column >
+                        <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                            <p:ajax listener="#{oExpDev.buscaExpDevPorExp()}"
+                                    update=":frmInicio :frmInicio:tvDevoluciones:tabDevExp :frmInicio:msgs"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:message for="exp" id="mentExp"></p:message>
+            <br/>
+            <p:dataTable id="dtExpDev3" var="oRpt"
+                   widgetVar="table3"
+                   paginator="false"
+                   paginatorPosition="bottom"
+                   rendered="#{not empty oExpDev.listaDevExpPorExp}"
+                   rows="10"
+                   value="#{oExpDev.listaDevExpPorExp}"
+                   emptyMessage="#{etiq.noRegistros}"
+                   styleClass="centrar">
+                <f:facet name="header" >
+                       <h:outputText style="font-weight: bold; " value="#{etiq.expDev}"/>
+                </f:facet>
+                <p:column style="width: 12%" >
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.numero}"/>
+                </p:column> 
+                <p:column style="width: 15%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 8%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.edadNumero}"/>
+                </p:column> 
+                <p:column style="width: 6%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.sexo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.exp.paciente.sexoP}"/>
+                </p:column> 
+                <p:column style="width: 13%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.hora} #{etiq.prestamo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaPres}">
+                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 13%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.hora} #{etiq.devolucion}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaDev}">
+                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.pres}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalEntrega.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.solicito}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalRecibe.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.guardo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.personalGuarda.nombreCompleto}"/>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:commandButton value="#{etiq.imprimir}" rendered="#{not empty oExpDev.listaDevExpPorExp}" icon="ui-icon-print">
+                <p:printer target="dtExpDev3"/>
+            </p:commandButton>
+        </p:tab>
+    </p:tabView>
+    </h:form>
+    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+        <f:facet name="start">  
+            <p:graphicImage value="/imgs/loading.gif" />  
+        </f:facet>    
+    </p:ajaxStatus>
+</div>
+</ui:define>
+</ui:composition>
+</html>

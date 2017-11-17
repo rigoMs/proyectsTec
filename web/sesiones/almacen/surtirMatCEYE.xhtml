@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" value="#{etiq.SolicitudCEYE}"/>
+                </h2>
+                <br/>
+                <div class="centrado_texto">
+                    <h:form id="fecha">
+                        <p:outputLabel value="FECHA SURTIDO:" styleClass="mensaje"/>&nbsp;&nbsp;
+                        <p:outputLabel value="#{oCEYE.detVale.fechaSurtidoRealizacion}" 
+                                       style="font-size: 17px;color: black; border-bottom: 2px  solid  black;" />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <p:outputLabel value="BUSCA POR FECHA" styleClass="mensaje"/>&nbsp;&nbsp;
+                        <p:calendar  value="#{oCEYE.vaColectivo.fechaEmision}" locale="es" mode="popup"  effect="fold" showOn="button"
+                                     placeholder="dd/mm/aa"  readonlyInput="true" id="fechaRecep"  pattern="dd/MM/yyyy" navigator="true"  
+                                     required="true"  requiredMessage="Ingrese Fecha de Recepcion" onkeypress="return validaCaracter(event)"
+                                     maxdate="#{oCEYE.inven.fechaActual()}">
+                        </p:calendar>  
+                        <p:commandButton value="buscar" actionListener="#{oCEYE.rebotes}"    update=":detalles:tblDeta fecha:fechaRecep " icon="ui-icon-search"/>
+                    </h:form>
+                </div>
+                <br/><br/>
+                <div >   
+                    <h:form id="detalles">        
+                        <p:growl id="msgs" showDetail="true"/>
+                        <p:growl id="m" showDetail="true"/>
+                        <p:dataTable id="tblDeta" var="ceye" 
+                                    value="#{oCEYE.lista}"  
+                                    rowKey="#{ceye.vale.idHoja}#{ceye.material.claveMaterial}" 
+                                    selection="#{oCEYE.detVale}" >
+                            <p:ajax event="rowSelectRadio"/>                   
+                            <p:column 
+                                selectionMode="single" style=" width: 5px"/>
+                            <f:facet name="header">
+                                LISTA DE SURTIDO
+                            </f:facet>
+                            <p:column headerText="CLAVE HOJA" width="5">                          
+                                <h:outputText value="#{ceye.vale.idHoja}"/>
+                            </p:column>
+                            <p:column headerText="CLAVE MATERIAL" width="30">                          
+                                <h:outputText value="#{ceye.material.claveMaterial}"/>
+                            </p:column>
+                            <p:column headerText="DESCRIPCI&Oacute;N DEL ARTICULO" width="60">                   
+                                <h:outputText value="#{ceye.material.nombre}"/>
+                            </p:column>
+                            <p:column headerText="PRESENTACI&Oacute;N" width="20">                                        
+                                <h:outputText value="#{ceye.material.presentacion.valor}"/>
+                            </p:column>
+                            <p:column headerText="CANTIDAD SOL." width="5"
+                                      style="text-align: center">              
+                                <h:outputText value="#{ceye.cantSolicitada}"/>
+                            </p:column>                           
+                            <f:facet name="footer">
+                                <p:commandButton id="btnProQx" icon="ui-icon-note" value="ver detalles"
+                                                    process="tblDeta"  onclick="PF('ProQx').show()"                                    
+                                                   update=":frm_Programacion:panel_Programa 
+                                                   :frm_Programacion:pa
+                                                   :frm_Programacion:txtcve                                                    
+                                                   :frm_Programacion:tblE:btnGuardar" 
+                                                   actionListener="#{oCEYE.llenaDatosProgramacion}"
+                                                   rendered="#{oCEYE.lista.size()>0}"> 
+                                </p:commandButton> 
+                            </f:facet>
+                        </p:dataTable> 
+                        <br/>
+                    </h:form>
+                    <h:form id="frm_Programacion">     
+                         
+                        <p:dialog header="Surtir Materiales" widgetVar="ProQx"
+                                  showEffect="blind" hideEffect="blind" 
+                                  resizable="false" style="width: 600px" draggable="false" >
+                                 <p:growl id="mm" showDetail="true"/>
+                            <p:panelGrid id="panel_Programa" style="width: 500px;"  columns="2" >  
+                                         <p:outputLabel  value="CLAVE MATERIAL"/> 
+                                         <h:outputText id="txtcve" 
+                                                       value="#{oCEYE.detVale.material.claveMaterial}-#{oCEYE.detVale.material.nombre}" />    
+                                         <p:outputLabel  value="CANTIDAD SOLICITADA"/>                                    
+                                         <h:outputText id="txtcant" value="#{oCEYE.detVale.cantSolicitada}"  />                                          
+                            </p:panelGrid>                                
+                            <p:panelGrid id="pa" style="width: 500px;">
+                                <p:row>
+                                    <p:column width="20">
+                                         <p:remoteCommand name="refreshFooter" update=":frm_Programacion:tblE:outputTotal"/>
+                                         <p:dataTable value="#{oCEYE.listaLotesInven}" var="lis" editable="true" id="tblE"  >                                          
+                                            <p:ajax event="rowEdit" listener="#{oCEYE.editaExistencia}" update=":frm_Programacion:mm :frm_Programacion:tblE:outputTotal :frm_Programacion:tblE:canSu"   />
+                                            <p:ajax event="rowEditCancel" listener="#{oCEYE.onRowCancel}" update=":frm_Programacion:mm"  />
+                                            <p:column width="30" headerText="Lista de Lotes">
+                                                <h:outputLabel value="#{lis.lote}"/>
+                                            </p:column>
+                                            <p:column width="30" headerText="Existencia">
+                                                <h:outputLabel value="#{lis.existencia}"/>
+                                            </p:column>
+                                            <p:column headerText="CANTIDAD SURT." width="30" >                                         
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <h:outputText value="#{lis.cantSurtida}" />
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{lis.cantSurtida}" size="10" maxlength="5" id="canSu"
+                                                                     required="true" requiredMessage="Ingrese cantidad a solicitar"  label="cantidad surtidad" >
+                                                            <poue:keyFilter  regEx="/[0-9_]/i"/> 
+                                                            <p:ajax event="change" oncomplete="refreshFooter();"/>
+                                                           <p:ajax update=":frm_Programacion:tblE:canSu"/>
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor> 
+                                            </p:column>
+                                            <p:column  width="10"  >
+                                                <p:rowEditor />
+                                            </p:column>
+                                            <f:facet name="footer" >
+                                                 <h:outputLabel    value="#{etiq.total}   "/> 
+                                                  <h:outputLabel value="#{oCEYE.total}" id="outputTotal"/> <br/>  
+                                                  <p:commandButton  id="btnGuardar" value="#{etiq.guardar}" rendered="#{oCEYE.listaLotesInven.size()>0}"  icon="ui-icon-disk" onclick="PF('guarda').show()" disabled="#{oCEYE.showButton}" />                                    
+                                            </f:facet>
+                                        </p:dataTable>  
+                                        </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:dialog>
+                    </h:form>
+                    <div align="center">
+                        <p:confirmDialog message="¿¿#{etiq.preguntaGuarda}??" style="background-color: lightblue"
+                                         showEffect="fold" hideEffect="fold"   
+                                         header="#{etiq.confirmar}" severity="alert" widgetVar="guarda">
+                            <h:form>
+                                <p:commandButton value="#{etiq.aceptar}"  
+                                                 onclick="PF('guarda').hide()"
+                                                 update=" :frm_Programacion :detalles:tblDeta"  
+                                                 actionListener="#{oCEYE.eventoGuardar}"       icon="ui-icon-check" styleClass="ui-confirmdialog-yes" >
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.cancelar}"   onclick="PF('guarda').hide()"      icon="ui-icon-close" styleClass="ui-confirmdialog-no"/>
+                            </h:form>
+                        </p:confirmDialog>
+                    </div>
+                    <p:confirmDialog message="¿¿#{etiq.preguntaLimpLista}??" style="background-color: lightblue"
+                                     showEffect="bounce" hideEffect="explode"  
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="confLimp">
+                        <h:form id="aceptar">
+                            <p:commandButton value="#{etiq.aceptar}"
+                                             actionListener="#{oCEYE.limpiaSalida}"
+                                             type="button" icon="ui-icon-check"
+                                             styleClass="ui-confirmdialog-yes"                                      
+                                             update=":detalles:tblDeta ::frm_Programacion"
+                                             onclick="PF('confLimp').hide();recarga()" />
+                            <p:commandButton value="#{etiq.cancelar}"  styleClass="button" onclick="PF('confLimp').hide()" />
+                        </h:form> 
+                    </p:confirmDialog>
+
+
+
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

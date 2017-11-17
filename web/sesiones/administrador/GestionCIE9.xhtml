@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <p:panel>
+        <h:form id="formCie9">
+            <p:panelGrid>
+                <p:row>
+                    <p:column>
+                        <p:inputText id="inCveCie9" placeholder="#{etiq.clave}" value="#{gesCauses.causes.procedimientoCIE9.claveCie}" 
+                                     maxlength="6" required="true" requiredMessage="Se necesita una clave" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText id="inDesCie9" placeholder="#{etiq.nombre}" value="#{gesCauses.causes.procedimientoCIE9.descripcion}"
+                                     maxlength="300" required="true" requiredMessage="Debe agregar una nombre" />
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{etiq.requiereQx}: " />
+                        <p:selectBooleanCheckbox id="inReqQx" value="#{gesCauses.causes.procedimientoCIE9.requiereQx}"/>
+                    </p:column>
+                    <p:column >
+                        <p:selectOneMenu value="#{gesCauses.causes.procedimientoCIE9.clave}" filter="true">
+                            <f:selectItems value="#{gesCauses.serviciosCobrablesCie9}" var="serv" 
+                                           itemValue="#{serv.clave}" itemLabel="#{serv.descripcion}" />
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton value="#{etiq.nuevo}" action="#{gesCauses.nuevoCie9(gesCauses.causes.procedimientoCIE9)}"
+                                         update=":messages tablaCies9 inCveCie9 inDesCie9 inReqQx" />
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:dataTable id="tablaCies9" widgetVar="tablaCies9" var="oCie9" value="#{gesCauses.listaCie9}"
+                         editable="true"  paginator="true" rows="20" lazy="true" >
+
+                <p:ajax event="rowEdit" listener="#{gesCauses.modificaCie9}" update=":messages"/>
+
+                <f:facet name="header">
+                    <p:outputLabel value="#{etiq.cie9} Encontrados"/>
+                </f:facet>
+                <p:column headerText="#{etiq.clave}" filterBy="#{oCie9.claveCie}"
+                          filterStyle="text-transform: initial;" >
+                    <p:outputLabel value="#{oCie9.claveCie}" />
+                </p:column>
+                <p:column headerText="#{etiq.nombre}" filterBy="#{oCie9.descripcionSimple}"
+                          filterStyle="text-transform: initial;" >
+                    <p:cellEditor>
+                        <f:facet name="output"><p:outputLabel value="#{oCie9.descripcion}"/></f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{oCie9.descripcion}" style="width: 100%;" maxlength="300"><p:ajax/></p:inputText>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="#{etiq.requiereQx}">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:selectBooleanCheckbox value="#{oCie9.requiereQx}" disabled="true" />
+                        </f:facet>                    
+                        <f:facet name="input">
+                            <p:selectBooleanCheckbox value="#{oCie9.requiereQx}"><p:ajax/></p:selectBooleanCheckbox>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="#{etiq.servicioCob}">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{oCie9.clave}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu value="#{oCie9.clave}" filter="true">
+                                <f:selectItems value="#{gesCauses.serviciosCobrablesCie9}" var="serv" 
+                                               itemValue="#{serv.clave}" itemLabel="#{serv.descripcion}" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column style="width:32px">
+                    <p:rowEditor />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </p:panel>
+</html>

@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">
+          <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+          <h2 class="centrado_texto"><h:outputLabel value="Control de Citas"/></h2><!-- MAKE LABEL??? -->
+           <br/><br/>
+            <h:form id="resultados">
+                <p:growl id="msgs" showDetail="true" />
+                <p:panelGrid styleClass="frm_centrado" >
+                    <f:facet name="header" >
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:outputLabel id="titCitSer" value="Seleccionar Servicio" /><!-- MAKE LABEL? -->
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel class="requerido" value="*"/><p:outputLabel styleClass="textover mensaje" id="servicio" value="#{etiq.servicio}:" />
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:selectOneMenu id="tServicio" value="#{oBuscarPac.cveArea}" required="#{true}"
+                                             requiredMessage="Debe Seleccionar Un Servicio">
+                                <f:selectItem itemLabel="---------------" itemValue="#{null}" />
+                                <f:selectItems value="#{oCitasServicio.getListaAreasServ( oBuscarPac.perfil.clave )}" var="oArea"
+                                    itemLabel="#{oArea.descripcion}" itemValue="#{oArea.clave}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                     </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.fechaDeCita}" styleClass="mensaje" />
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaCita"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha"  value="#{oBuscarPac.fecCitado}" onkeypress="return validaCaracter(event)" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search" actionListener="#{oBuscarPac.buscarPacientesCitadosServicio}" update="tablaEstsEnc" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <div class="tabla_pacEnc">
+                    <p:dataTable id="tablaEstsEnc" 
+                                 var="oEstEnc" 
+                                 value="#{oBuscarPac.pacCitados}" 
+                                 emptyMessage="El paciente no tiene estudios pendientes de cita para el &aacute;rea indicada."
+                                 rowKey="#{oEstEnc.identificador}"
+                                 selection="#{oBuscarPac.paciente}">
+                <f:facet name="header">
+                    <h:outputText value="Estudios Solicitados Encontrados"/> <!-- MAKE LABEL? -->
+                </f:facet>
+                <p:column selectionMode="single" width="5">
+                </p:column>
+                <p:column width="7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.apPaterno}"/>
+                </p:column>
+                
+                <p:column width="7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.apMaterno}"/>
+                </p:column>
+                
+                <p:column width="7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.nombres}"/>
+                </p:column>             
+                
+                <p:column style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.expediente.numero}"/>
+                </p:column>
+                <p:column width="20%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="Descripci&oacute;n Estudio"/><!-- MAKE LABEL? -->
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.estudioDescripcion}"/>
+                </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="Fecha y hora de la cita"/><!-- MAKE LABEL? -->
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.fechaCompleta}"/>
+                </p:column>
+                 <p:column width="15%">
+                     <f:facet name="header">
+                         <h:outputLabel class="negrita" value="#{etiq.accion}" />
+                     </f:facet>    
+                     <p:commandButton value="Cancelar cita" icon="ui-icon-close" action="#{oBuscarPac.cancelaCita}" update=":resultados:tablaEstsEnc :resultados:msgs" />
+                 </p:column>
+                </p:dataTable>      
+            </div>
+               </h:form>
+          </ui:define> 
+        </ui:composition>
+</html>
+

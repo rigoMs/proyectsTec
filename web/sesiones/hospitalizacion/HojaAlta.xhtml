@@ -1,0 +1,412 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+
+        <ui:define name="cuerpo">
+            <div>
+
+             <h:form class="centrar">
+                 <br/>
+                 <p:growl id="messages" showDetail="true"/>
+                 <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                 <h2 class="negrita centrado_texto"><h:outputLabel value="#{etiq.hojaDeAlta}"/></h2><br/>  
+                 <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+                 <p:panelGrid style="width: 80%">
+                                <f:facet name="header">
+                                    
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.datosPaciente}"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.nombrePaciente}"/></p:column>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.edad}"/></p:column>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" value="#{etiq.sexo}"/></p:column>
+                                </p:row>
+                                </f:facet> 
+                                <p:row>
+                                    <p:column colspan="4" styleClass="subDato"><h:outputLabel class="negrita" id="nomPac" value="#{ohojaAlta.alta.paciente.nombres} #{ohojaAlta.alta.paciente.apPaterno} #{ohojaAlta.alta.paciente.apMaterno}"/></p:column>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" id="edadPac" value="#{ohojaAlta.alta.paciente.edad} #{oCode.code.paciente.claveEdadP}"/></p:column>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" id="sexoPac" value="#{ohojaAlta.alta.paciente.sexoP}"/></p:column>                                      
+                                </p:row>
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.noExp}"/></p:column>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.segpop}"/></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.servicio}"/></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.cama}"/></p:column>
+                                </p:row>        
+                                <p:row>
+                                    <p:column colspan="2" styleClass="subDato"><h:outputLabel class="negrita" id="numExpPac" value="#{ohojaAlta.alta.paciente.expediente.numero}"/></p:column>
+                                    <p:column colspan="2" styleClass="subDato"><h:outputLabel class="negrita" id="numSegPopPac" value="#{ohojaAlta.alta.seguro.numero}"/></p:column>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" id="servicioPac" value="#{ohojaAlta.alta.episodioMedico.area.descripcion}"/></p:column>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negrita" id="camaPac" value="#{ohojaAlta.alta.episodioMedico.cama.numero}"/></p:column>
+                                </p:row>  
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.fechaDeIngreso}"/></p:column>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negrita" value="#{etiq.fechaEgreso}"/></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.diasEstancia}"/></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.reingreso}"/></p:column>
+                                </p:row>        
+                                <p:row>
+                                    <p:column colspan="2" styleClass="subDato">
+                                        <h:outputLabel class="negrita" id="fechaIPac" value="#{ohojaAlta.alta.fechaIngresoHos}"/>
+                                    </p:column>
+
+                                    <p:column colspan="2">                                        
+                                        <p:calendar id="fechaEPac" effect="fold" value="#{ohojaAlta.alta.episodioMedico.altaHospitalaria}" locale="es" readonlyInput="true" disabled="true" mindate="#{ohojaAlta.alta.fechaIngresoHos}" maxdate="#{ohojaAlta.hosp.fechaActual()}">   
+                                            <p:ajax event="dateSelect" update="estanciaPac btnCerHojaAlta btnDescargar"/>
+                                        </p:calendar>                                        
+                                    </p:column>                
+                                    
+                                    <p:column styleClass="subDato">
+                                        <h:outputLabel class="negrita" id="estanciaPac" value="#{ohojaAlta.diasEstancia()}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:selectOneRadio id="reingresoPac" value="#{ohojaAlta.alta.reingreso}">
+                                            <p:ajax update="btnCerHojaAlta btnDescargar"/>
+                                            <f:selectItem itemLabel="SI" itemValue="S"/>
+                                            <f:selectItem itemLabel="NO" itemValue="N"/> 
+                                        </p:selectOneRadio>                                 
+                                    </p:column>                                      
+                                    
+                                </p:row>    
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="5" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.diagnosticoIngreso}"/></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.cie10}"/></p:column>
+                                </p:row>                                 
+
+                                <p:row>
+                                    <p:column colspan="5">
+                                        <p:autoComplete id="diag" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.diagIngreso.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.diagIngreso.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" required="true" requiredMessage="Debe Ingresar Un Diagnostico" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="cie10" event="itemSelect"/>                                            
+                                        </p:autoComplete>  
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="cie10" value="#{ohojaAlta.alta.episodioMedico.diagIngreso.claveCIE10}" readonly="true" required="true" size="5"/>
+                                    </p:column>
+                                </p:row>                                
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="5" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.diagnosticoEgreso}"/></p:column>
+                                    <p:column styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negritas" value="#{etiq.cie10}"/></p:column>
+                                </p:row> 
+
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.afeccionPrincipal}:"></h:outputLabel></p:column>
+                                    <p:column colspan="4">
+                                        <p:autoComplete id="auAP" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.afePrincipal.CIE10.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.afePrincipal.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE10AP auPr" event="itemSelect"/>                                            
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE10AP" value="#{ohojaAlta.alta.episodioMedico.afePrincipal.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes" />                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.primera}:"></h:outputLabel></p:column>
+                                    <p:column colspan="4">
+                                        <p:autoComplete id="auPr" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.afePrimera.CIE10.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.afePrimera.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE101 auSeg" event="itemSelect"/>    
+                                            <p:ajax update="CIE101 auSeg" event="blur"/> 
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE101" value="#{ohojaAlta.alta.episodioMedico.afePrimera.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>                                
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.segunda}:"></h:outputLabel></p:column>
+                                    <p:column colspan="4">
+                                        <p:autoComplete id="auSeg" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.afeSegunda.CIE10.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.afeSegunda.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE102 auTe" event="itemSelect"/>  
+                                            <p:ajax update="CIE102 auTe" event="blur"/>  
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE102" value="#{ohojaAlta.alta.episodioMedico.afeSegunda.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.tercera}:"></h:outputLabel></p:column>
+                                    <p:column colspan="4">
+                                        <p:autoComplete id="auTe" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.afeTercera.CIE10.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.afeTercera.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE103 auCu" event="itemSelect"/> 
+                                            <p:ajax update="CIE103 auCu" event="blur"/> 
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE103" value="#{ohojaAlta.alta.episodioMedico.afeTercera.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.cuarta}:"></h:outputLabel></p:column>
+                                    <p:column colspan="4">
+                                        <p:autoComplete id="auCu" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.afeCuarta.CIE10.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.afeCuarta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE104 auQu" event="itemSelect"/> 
+                                            <p:ajax update="CIE104 auQu" event="blur"/> 
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE104" value="#{ohojaAlta.alta.episodioMedico.afeCuarta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.quinta}:"></h:outputLabel></p:column>
+                                    <p:column colspan="4">
+                                        <p:autoComplete id="auQu" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.afeQuinta.CIE10.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.afeQuinta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE105 auSex" event="itemSelect"/>  
+                                            <p:ajax update="CIE105 auSex" event="blur"/>  
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE105" value="#{ohojaAlta.alta.episodioMedico.afeQuinta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>       
+                                <p:row>
+                                    <p:column styleClass="subDato"><h:outputLabel class="negritas" value="#{etiq.sexta}:"></h:outputLabel></p:column>
+                                    <p:column colspan="4">
+                                        <p:autoComplete id="auSex" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                        value="#{ohojaAlta.alta.episodioMedico.afeSexta.CIE10.descripcionDiag}" completeMethod="#{ohojaAlta.alta.episodioMedico.afeSexta.CIE10.completar}" effect="fade"
+                                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="true" onkeypress="return validaCaracter(event);">
+                                            <p:ajax update="CIE106" event="itemSelect"/>  
+                                            <p:ajax update="CIE106" event="blur"/>  
+                                        </p:autoComplete>                                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="CIE106" value="#{ohojaAlta.alta.episodioMedico.afeSexta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>                                        
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="requerido" value="*"/>
+                                        <h:outputLabel class="negrita" value="#{etiq.motivoEgreso}"/>
+                                    </p:column>
+                                </p:row>   
+                 
+                                <p:row>
+                                    <p:column colspan="4">         
+                                        <p:selectOneRadio id="motEgrePac" layout="grid" columns="3" value="#{ohojaAlta.alta.episodioMedico.motivoEgresoP}" disabled="true">
+                                            <p:ajax update="paseIns btnCerHojaAlta btnDescargar"/>
+                                            <f:selectItems value="#{oCode.listaMotivosEgreso}" var="motEgre" 
+                                                           itemLabel="#{motEgre.valor}" itemValue="#{motEgre.claveParametro}#{motEgre.tipoParametro}"/>
+                                        </p:selectOneRadio>                                          
+                                    </p:column>              
+                                    <p:column colspan="2">
+                                        <h:outputLabel class="negrita pie" value="#{etiq.institucion}/#{etiq.voluntario}: "/><br/>
+                                        <p:inputText styleClass="bordes" id="paseIns" disabled="#{ohojaAlta.habilita(1)}" value="#{ohojaAlta.alta.episodioMedico.razonAltaVolunTrasl}" onkeyup="this.value=this.value.toUpperCase();" required="#{ohojaAlta.requiere(1)}" requiredMessage="Se Necesita Especificar A Donde Fue Transladado O El Motivo de Egreso" onkeypress="return validaCaracter(event);"></p:inputText>                                        
+                                    </p:column>                                       
+                                </p:row>
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto">
+                                        <h:outputLabel class="negrita" value="#{etiq.signosVitales} #{etiq.al} #{etiq.egreso}"/>
+                                    </p:column>
+                                </p:row>                                    
+                                 
+                                <p:row>
+                                    <p:column styleClass=""><h:outputLabel class="negrita" value="#{etiq.peso}"/></p:column>
+                                    <p:column styleClass=""><h:outputLabel class="negrita" value="#{etiq.talla}"/></p:column>
+                                    <p:column styleClass=""><h:outputLabel class="negrita" value="#{etiq.temperatura}"/></p:column>
+                                    <p:column styleClass=""><h:outputLabel class="negrita" value="#{etiq.frecCar}"/></p:column>
+                                    <p:column styleClass=""><h:outputLabel class="negrita" value="#{etiq.frecRes}"/></p:column>
+                                    <p:column styleClass=""><h:outputLabel class="negrita" value="#{etiq.frecArt}"/></p:column>
+                                </p:row> 
+                                <p:row>
+                                    <p:column styleClass="">
+                                        <p:inputText  id="pesoEgre" value="#{ohojaAlta.alta.peso}" maxlength="6" validatorMessage="Debe ser un valor entre 0.0 y 500" converterMessage="Debe ingresar un número" requiredMessage="Debe ingresar el peso del paciente" required="true" size="4" styleClass="bordes" onkeypress="return validaCaracter(event);">                                          
+                                            <f:validateDoubleRange minimum="0.0" maximum="500"/>
+                                            <f:ajax render="pesoP" execute="@this" event="valueChange"/>  
+                                        </p:inputText>
+                                        <h:outputLabel value="#{etiq.kg}"/>
+                                        <p:message for="pesoEgre" id="pesoP"></p:message>                                          
+                                    </p:column>
+                                    <p:column styleClass="">
+                                        <p:inputText id="tallaEgre" value="#{ohojaAlta.alta.talla}" maxlength="6" validatorMessage="Debe ser un valor entre 0.0 y 250" converterMessage="Debe ingresar un número" requiredMessage="Debe ingresar la talla del paciente" required="true" size="4" styleClass="bordes" onkeypress="return validaCaracter(event);">   
+                                            <f:validateDoubleRange minimum="0.0" maximum="250"/>
+                                            <f:ajax render="tallaP" execute="@this" event="valueChange"/>  
+                                        </p:inputText>
+                                        <h:outputLabel value="#{etiq.cm}    "/>             
+                                        <p:message for="tallaEgre" id="tallaP"></p:message>                                         
+                                    </p:column>
+                                    <p:column styleClass="">
+                                        <p:inputText id="tempEgre" value="#{ohojaAlta.alta.episodioMedico.signosVitales.temp}" size="5" onkeypress="return validaCaracter(event);"/>
+                                        <h:outputLabel value="°C"/> 
+                                    </p:column>
+                                    <p:column styleClass="">
+                                        <p:inputText id="CardEgre" value="#{ohojaAlta.alta.episodioMedico.signosVitales.FC}"  size="5" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                    <p:column styleClass="">
+                                        <p:inputText id="RespEgre" value="#{ohojaAlta.alta.episodioMedico.signosVitales.FR}" size="5" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                    <p:column styleClass="">
+                                        <p:inputText id="ArteEgre" value="#{ohojaAlta.alta.episodioMedico.signosVitales.TA}" size="5" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                </p:row>         
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.resumenEvo}"/></p:column>
+                                </p:row>                                 
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                        <p:inputTextarea id="resEvo" cols="100" rows="4" value="#{ohojaAlta.alta.resumenEvolucion}" maxlength="1500" styleClass="mayusculas" scrollHeight="6" autoResize="false" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                </p:row>         
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.manejoHosp}"/></p:column>
+                                </p:row>                                 
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                        <p:inputTextarea id="manHosp" cols="100" rows="4" value="#{ohojaAlta.alta.manejo}" maxlength="1500" styleClass="mayusculas" scrollHeight="6" autoResize="false" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                </p:row>      
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.procedimientosAlta}"/></p:column>
+                                </p:row>  
+                                
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                        <p:inputTextarea id="proOpe" cols="100" rows="4" value="#{ohojaAlta.alta.procedimientosOperaciones}" maxlength="1500" styleClass="mayusculas" scrollHeight="6" autoResize="false" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                </p:row>                          
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.problemasCli}"/></p:column>
+                                </p:row>                                 
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                        <p:inputTextarea id="probCli" cols="100" rows="4" value="#{ohojaAlta.alta.problemasPend}" maxlength="1500" styleClass="mayusculas" scrollHeight="6" autoResize="false" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                </p:row> 
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.planTrata}"/></p:column>
+                                </p:row>                                 
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                        <p:inputTextarea id="planTrata" cols="100" rows="4" value="#{ohojaAlta.alta.plan}" maxlength="1500" styleClass="mayusculas" scrollHeight="6" autoResize="false" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                </p:row>      
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.recomendaciones}"/></p:column>
+                                </p:row>                                 
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                        <p:inputTextarea id="recoEgre" cols="100" rows="4" value="#{ohojaAlta.alta.recomendaciones}" maxlength="1500" styleClass="mayusculas" scrollHeight="6" autoResize="false" onkeypress="return validaCaracter(event);"/>
+                                    </p:column>
+                                </p:row>    
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negrita" value="#{etiq.pronostico}"/></p:column>
+                                    <p:column colspan="3" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="requerido" value="*"/><h:outputLabel class="negrita" value="#{etiq.destinoPac}"/></p:column>
+                                    <p:column colspan="1" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.consultaExterna}"/></p:column>
+                                </p:row>                                 
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:selectOneMenu id="pronosPac" styleClass="bordes" value="#{ohojaAlta.alta.pronosticoP}">
+                                            <p:ajax update="btnCerHojaAlta btnDescargar"/>
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                            <f:selectItems value="#{ohojaAlta.listaPronostico}" var="proEgre"
+                                                           itemLabel="#{proEgre.valor}" itemValue="#{proEgre.claveParametro}#{proEgre.tipoParametro}"/>
+                                        </p:selectOneMenu>                                            
+                                    </p:column>  
+                                    <p:column colspan="3">
+                                        <p:selectOneRadio layout="grid" columns="6" id="desPac" value="#{ohojaAlta.alta.episodioMedico.destinoSTR}">
+                                            <p:ajax update="btnCerHojaAlta btnDescargar"/>
+                                            <f:selectItems value="#{ohojaAlta.listaDestino}" var="desEgre" 
+                                                           itemLabel="#{desEgre.valor}" itemValue="#{desEgre.claveParametro}#{desEgre.tipoParametro}"/>
+                                        </p:selectOneRadio>                                                              
+                                    </p:column>
+                                    <p:column colspan="1">
+                                        <h:outputLabel class="negrita" id="consultaExt" value="#{ohojaAlta.alta.consultaExt}"/>                                 
+                                    </p:column>                                      
+                                </p:row>
+                                <p:row><p:column colspan="6"></p:column></p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header centrado_texto"><h:outputLabel class="negrita" value="#{etiq.citas} #{etiq.consultaExterna}"/></p:column>
+                                </p:row>                          
+                                <p:row>         
+                                 
+                                </p:row>                        
+                        </p:panelGrid>
+                        <p:dataTable id="tablaPac" var="oCitaEnc" value="#{ohojaAlta.cita.buscarCitasHojaAlta()}" style="width: 80%; margin: 0 auto;" emptyMessage="No Hay Citas Reservadas O Confirmadas Para Este Paciente Ir A la Opción Reservar Cita Del Menú Citas">             
+
+                            <p:column headerText="#{etiq.fecha} y #{etiq.horaCita}">
+                                <h:outputText value="#{oCitaEnc.fechaCita}  #{oCitaEnc.horaCita}" />
+                            </p:column> 
+
+                            <p:column headerText="#{etiq.servicio}">
+                                <h:outputText value="#{oCitaEnc.areaServicio.descripcion}" />
+                            </p:column>                           
+
+                            <p:column headerText="#{etiq.tiempoAproxCita}">
+                                <h:outputText value="#{oCitaEnc.tiempoAproxP}" />
+                            </p:column> 
+                                     
+                        </p:dataTable>                   
+                    <p:panelGrid>   
+                        <p:row>                                                     
+                            <p:column>
+                                <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" validateClient="true" ajax="false" action="#{ohojaAlta.guardar()}" onclick="this.form.target='_self'"/>
+
+                            </p:column>   
+                            <p:column>                                
+                                <p:commandButton value="#{etiq.cerrar} #{etiq.hojaDeAlta}" id="btnCerHojaAlta" type="button" onclick="PF('dlg1').show();" styleClass="frm_login" icon="ui-icon-disk" disabled="#{ohojaAlta.activarBotones()}"/>  
+                                 <p:dialog header="#{etiq.confirmar}" widgetVar="dlg1" closable="true" styleClass="centrado_texto">
+                                     <h:outputText value="#{etiq.confirmarHojaAlta}" />
+                                     <br/>         
+                                     <p:commandButton value="#{etiq.aceptar}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"  validateClient="true" ajax="false" action="#{ohojaAlta.cerrarHojaAltaLlena()}" onclick="this.form.target='_self'">
+                                     </p:commandButton>
+                                     <p:commandButton value="#{etiq.cancelar}" styleClass="ui-confirmdialog-no" icon="ui-icon-closethick"  validateClient="true" ajax="false" onclick="this.form.target='_self'"/>
+                                 </p:dialog>                                                                                         
+                            </p:column>
+                            <p:column>                                
+                                <p:commandButton id="btnDescargar" value="#{etiq.descargar}" action="#{oAltaImp.recuperaDatos()}" icon="ui-icon-arrowthickstop-1-s" ajax="false" onclick="this.form.target='_blank'" disabled="#{ohojaAlta.activarBotones()}">
+                                    <f:setPropertyActionListener target="#{ohojaAlta.activar}" value="#{true}" />
+                                    <f:setPropertyActionListener target="#{oAltaImp.folioPaciente}" value="#{ohojaAlta.alta.paciente.folioPaciente}" />
+                                    <f:setPropertyActionListener target="#{oAltaImp.numIngresoHosp}" value="#{ohojaAlta.alta.numIngresoHos}" />
+                                    <f:setPropertyActionListener target="#{oAltaImp.claveEpisodio}" value="#{ohojaAlta.alta.episodioMedico.claveEpisodio}" />
+                                </p:commandButton>                                
+                            </p:column>                            
+                        </p:row>                         
+                   </p:panelGrid>                  
+                 </h:form>
+
+                 <br/><br/>
+
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>              
+             </div>
+       </ui:define>
+       </ui:composition>    
+      
+</html>

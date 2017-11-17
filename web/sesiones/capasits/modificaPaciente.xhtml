@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <h:form id="frmpac">
+                <p:growl id="mensajes"  showDetail="true" /> <br/><br/>
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/> 
+                <p:accordionPanel>
+                    <p:tab title="#{etiq.buscarPac}">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <p:panelGrid style="margin-top:30px" id="buscap"> 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column><center><h:outputLabel value="#{etiq.buscarPac}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column> <h:outputLabel value="#{etiq.id} "/>
+                                        <p:inputText id="id1" value="#{buscap.paci.idNacional}"  required="true" requiredMessage="INGRESAR NUMERO DE ID SALVAR" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO ID"/> 
+                                        <p:commandButton value="#{etiq.buscar}" action="#{buscap.bus()}" update=":frmpac:mensajes :frmpac:al"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid> 
+                        </h:panelGrid>
+                    </p:tab>    
+                </p:accordionPanel>
+                <p:growl id="msgs" showDetail="true" /> 
+                <p:dialog visible="#{buscap.visible}" id="al" header="#{etiq.informacionPac}" widgetVar="dlgtem" closable="true" width="350"  height="350" resizable="false">
+                    <b><h:outputLabel value="#{etiq.nombre} "/></b>
+                    <h:outputLabel id="nombrec" value="#{buscap.paci.nombreCompleto}"/>
+                    <br/>
+                    <br/>
+                    <b><h:outputLabel  value="#{etiq.fechanac} "/> </b>
+                    <h:outputLabel value="#{buscap.paci.fechaNac}"/>
+                    <br/>
+                    <br/>
+                    <b><h:outputLabel  value="#{etiq.sexo} "/></b>
+                    <h:outputLabel value="#{buscap.paci.sexos}"/>
+                    <br/>
+                    <br/>
+                    <b><h:outputLabel value="#{etiq.seguro} "/></b>
+                    <h:outputLabel value="#{buscap.paci.param.valor}"/>
+                    <br/>
+                    <br/>     
+                    <b><h:outputLabel value="#{etiq.vigencia} "/></b>
+                    <h:outputLabel value="#{buscap.paci.seg.vigencia}"/>
+                    <br/>
+                    <br/>  
+                    <b><h:outputLabel value="#{etiq.cveSegPop} "/></b>
+                    <h:outputLabel value="#{buscap.paci.seg.numero}"/>
+                    <br/>
+                    <br/>
+                    <b><h:outputLabel value="#{etiq.idSalvar} "/></b>
+                    <h:outputLabel value="#{buscap.paci.idNacional}"/>
+                    <br/>
+                    <br/>
+                    <b><h:outputLabel value="#{etiq.exphrrb} "/></b>
+                    <h:outputLabel value="#{buscap.paci.exp.numero}"/>
+                    <br/>
+                    <br/>
+                    <b><h:outputLabel value="#{etiq.fechaDeIngreso} "/></b>
+                    <h:outputLabel value="#{buscap.paci.primerFechaIngreso}"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton value="#{etiq.borrar}" action="#{buscap.borrar2()}" onclick="recarga()"/>
+                </p:dialog>
+            </h:form>
+            <h:form id="frmpaca">
+                <p:accordionPanel>
+                    <p:tab title="Buscar Paciente Para Modificar">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <p:panelGrid style="margin-top:30px" id="buscapc"> 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column><center><h:outputLabel value="#{etiq.buscarPac}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column> <h:outputLabel value="#{etiq.id} "/>
+                                        <p:inputText  value="#{modpac.pacic.idNacional}"  required="true" requiredMessage="INGRESAR NUMERO DE ID" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO ID"/> 
+                                        <p:commandButton value="#{etiq.buscar}" action="#{modpac.bus()}" update=":frmpac:mensajes :frmpa"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid> 
+                        </h:panelGrid>
+                    </p:tab>    
+                </p:accordionPanel>
+            </h:form>
+            <h:form id="frmpa">
+                <p:accordionPanel>
+                    <p:tab title="#{etiq.modificarPac}">
+                        <h:panelGrid columns="1" cellpadding="10">
+                            <p:panelGrid style="margin-top:30px" id="paciente">             
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><center> 
+                                                <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet> 
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+                                    <p:column>  <p:inputText id="nombre" value="#{modpac.pacic.nombres}" required="true" requiredMessage="INGRESAR NOMBRE(S)" onkeyup="this.value = this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/>
+                                    </p:column> 
+                                    <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+                                    <p:column> <p:inputText id="ppaterno" value="#{modpac.pacic.apPaterno}" required="true" requiredMessage="INGRESAR APELLIDO PATERNO" onkeyup="this.value = this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+                                    <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+                                    <p:column><p:inputText id="pmaterno" value="#{modpac.pacic.apMaterno}" onkeyup="this.value = this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+                                </p:row>     
+                                <p:row>
+                                    <p:column ><h:outputLabel value="#{etiq.sexo}"/> </p:column>
+                                    <p:column>
+                                        <p:selectOneRadio id="sexo" value="#{modpac.pacic.sexos}" required="true" requiredMessage="INGRESAR SEXO, FALTA SELECIONAR SEXO">
+                                            <f:selectItem itemLabel="Femenino " itemValue="F"/>
+                                            <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                                        </p:selectOneRadio>
+                                    </p:column> 
+                                    <p:column><h:outputLabel  value="#{etiq.fechanac}"/> </p:column>
+                                    <p:column> <p:calendar value="#{modpac.pacic.fechaNac}" id="nacimiento" pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="INGRESAR FECHA DE NACIMIENTO" locale="es">
+                                        </p:calendar>
+                                    </p:column>   
+                                    <p:column><h:outputLabel value="#{etiq.discapacitado}"/>
+                                        <p:selectBooleanCheckbox id="discapacitado" value="#{modpac.pacic.discapacitado}"/> </p:column>
+                                    <p:column> <h:outputLabel value="#{etiq.indigena} "/>
+                                        <p:selectOneMenu id="indigena" value="#{modpac.etnic.perteneceGpoInd}">
+                                            <f:selectItems value="#{modpac.etni}" />
+                                        </p:selectOneMenu>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header">
+                                        <center>  <h:outputLabel value="#{etiq.datosSegPop}"/> </center>
+                                    </p:column>    
+                                </p:row>     
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.seguro}"/></p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="seguro" value="#{modpac.seg.tipoSeguro}">
+                                            <p:ajax update="vigencia cvlseguro" /> 
+                                            <f:selectItems value="#{modpac.seguros}"/>
+                                        </p:selectOneMenu>     
+                                    </p:column> 
+                                    <p:column colspan="2"><h:outputLabel value="#{etiq.fechaVencimientoSeguro}"/></p:column>
+                                    <p:column colspan="2"> <p:calendar disabled="#{modpac.habilita()}" value="#{modpac.seg.vigencia}" id="vigencia" pattern="dd/MM/yyyy" navigator="true" locale="es"> 
+                                        </p:calendar>
+                                    </p:column>    
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.cveSegPop}"/></p:column>
+                                    <p:column colspan="5">
+                                        <p:inputMask disabled="#{modpac.habilita()}" id="cvlseguro" value="#{modpac.seg.numero}" mask="9999999999-99"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header">
+                                        <center>  <h:outputLabel value="#{etiq.otrosDatos}"/> </center>
+                                    </p:column>    
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.idSalvar}"/> </p:column>
+                                    <p:column>  <p:inputText id="id" value="#{modpac.pacic.idNacional}" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO ID"/> 
+                                    </p:column> 
+                                    <p:column><h:outputLabel value="#{etiq.exphrrb}"/></p:column>
+                                    <p:column><p:inputText id="expediente" value="#{modpac.expe.numero}"  converterMessage="SOLO SE ACEPTAN NUEMROS EN EL CAMPO EXPEDIENTE HRRB">
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column><h:outputLabel value="#{etiq.fechaDeIngreso}"/></p:column>
+                                    <p:column colspan="3"> <p:calendar value="#{modpac.pacic.primerFechaIngreso}"  id="ingreso" pattern="dd/MM/yyyy"  navigator="true" required="true" requiredMessage="INGRESAR FECHA DE INGRESO" locale="es"/> 
+                                    </p:column> 
+                                </p:row>    
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" colspan="6">
+                                        <p:commandButton  value="#{etiq.guardarCambios}" icon="ui-icon-disk"  action="#{modpac.modifica()}" update=":frmpac:mensajes :frmpa :frmpaca"/>
+                                        <p:commandButton  value="#{etiq.cancelar}" action="#{modpac.cancela()}" update=":frmpa :frmpaca"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>             
+                        </h:panelGrid>
+                    </p:tab>
+                </p:accordionPanel>         
+            </h:form>     
+
+            <h:form id="frmhrr">
+                <p:accordionPanel>
+                    <p:tab title="Buscar paciente HRRB para ingresar a CAPASITS">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <p:panelGrid style="margin-top:30px" id="buscapc"> 
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column><center><h:outputLabel value="#{etiq.buscarPac}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column> <h:outputLabel value="#{etiq.exphrrb} "/>
+                                        <p:inputText  value="#{PacH.expe.numero}"  required="true" requiredMessage="INGRESAR NUMERO DE EXPEDIENTE" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO EXPEDIENTE"/> 
+                                        <p:commandButton value="#{etiq.buscar}" action="#{PacH.bus()}" update=":frmpac:mensajes :frmpah"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid> 
+                        </h:panelGrid>
+                    </p:tab>    
+                </p:accordionPanel>
+            </h:form>
+            <h:form id="frmpah">
+                <p:accordionPanel>
+                    <p:tab title="#{etiq.modificarPac}">
+                        <h:panelGrid columns="1" cellpadding="10">
+                            <p:panelGrid style="margin-top:30px" id="paciente">             
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="6" styleClass="ui-widget-header"><center> 
+                                                <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+                                    </p:row>
+                                </f:facet> 
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+                                    <p:column>  <p:outputLabel id="nombre" value="#{PacH.pacic.nombres}"/>
+                                    </p:column> 
+                                    <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+                                    <p:column> <p:outputLabel id="ppaterno" value="#{PacH.pacic.apPaterno}"/></p:column>
+                                    <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+                                    <p:column><p:outputLabel id="pmaterno" value="#{PacH.pacic.apMaterno}"/></p:column>
+                                </p:row>     
+                                <p:row>
+                                    <p:column ><h:outputLabel value="#{etiq.sexo}"/> </p:column>
+                                    <p:column>
+                                        <p:selectOneRadio id="sexo" value="#{PacH.pacic.sexos}" required="true" requiredMessage="INGRESAR SEXO, FALTA SELECIONAR SEXO" disabled="true">
+                                            <f:selectItem itemLabel="Femenino " itemValue="F"/>
+                                            <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                                        </p:selectOneRadio>
+                                    </p:column> 
+                                    <p:column><h:outputLabel  value="#{etiq.fechanac}"/> </p:column>
+                                    <p:column colspan="3"> <p:outputLabel value="#{PacH.pacic.fechaNac}"/>
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header">
+                                        <center>  <h:outputLabel value="#{etiq.datosSegPop}"/> </center>
+                                    </p:column>    
+                                </p:row>     
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.seguro}"/></p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="seguro" value="#{PacH.seg.tipoSeguro}">
+                                            <p:ajax update="vigencia cvlseguro" /> 
+                                            <f:selectItems value="#{PacH.seguros}"/>
+                                        </p:selectOneMenu>     
+                                    </p:column> 
+                                    <p:column colspan="2"><h:outputLabel value="#{etiq.fechaVencimientoSeguro}"/></p:column>
+                                    <p:column colspan="2"> <p:calendar disabled="#{PacH.habilita()}" value="#{PacH.seg.vigencia}" id="vigencia" pattern="dd/MM/yyyy" navigator="true" locale="es"> 
+                                        </p:calendar>
+                                    </p:column>    
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.cveSegPop}"/></p:column>
+                                    <p:column colspan="5">
+                                        <p:inputMask disabled="#{PacH.habilita()}" id="cvlseguro" value="#{PacH.seg.numero}" mask="9999999999-99"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" styleClass="ui-widget-header">
+                                        <center>  <h:outputLabel value="#{etiq.otrosDatos}"/> </center>
+                                    </p:column>    
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputLabel value="#{etiq.idSalvar}"/> </p:column>
+                                    <p:column>  <p:inputText id="id" value="#{PacH.pacic.idNacional}"  converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO ID"/> 
+                                    </p:column> 
+                                    <p:column><h:outputLabel value="#{etiq.exphrrb}"/></p:column>
+                                    <p:column><p:outputLabel id="expediente" value="#{PacH.expe.numero}"/>
+                                    </p:column>
+                                    <p:column><h:outputLabel value="#{etiq.fechaDeIngreso}"/></p:column>
+                                    <p:column colspan="3"> <p:calendar value="#{PacH.pacic.primerFechaIngreso}"  id="ingreso" pattern="dd/MM/yyyy"  navigator="true" required="true" requiredMessage="INGRESAR FECHA DE INGRESO" locale="es"/> 
+                                    </p:column> 
+                                </p:row>    
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" colspan="6">
+                                        <p:commandButton  value="#{etiq.guardarCambios}" icon="ui-icon-disk"  action="#{PacH.modifica()}" update=":frmpac:mensajes :frmhrr :frmpah"/>
+                                        <p:commandButton  value="#{etiq.cancelar}" action="#{PacH.cancela()}" update=":frmhrr :frmpah"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>             
+                        </h:panelGrid>
+                    </p:tab>
+                </p:accordionPanel>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

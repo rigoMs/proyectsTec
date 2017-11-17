@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/>
+                <div style="text-align: left;">
+                    <h:form>
+                        <p:outputLabel for="multi" value="#{etiq.fechaInicial}"/>
+                        <p:calendar value="#{oRepRecSemana.fechaDia1}" id="multi"  pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="Inserte Fecha" />             
+                        <br/>
+                        <p:outputLabel for="multi2" value="#{etiq.fechaFinal}"/>
+                        <p:calendar value="#{oRepRecSemana.fechaDia2}" id="multi2"  pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="Inserte Fecha" />             
+                        <p:commandButton type="submit" update="msgs :productos :totalRec " value="#{etiq.buscar}" action="#{oRepRecSemana.buscarXSemana()}"/>
+                        <p:growl id="msgs" showDetail="true" />          
+                    </h:form>
+                </div>
+                <div style="text-align: right;">
+                    <h:form id="totalRec">
+                        <h:outputLabel value="#{etiq.totalRecetas} = "/>
+                        <h:outputLabel value="#{oRepRecSemana.totalRecetas}"/>&nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;&nbsp; 
+                    </h:form>
+                </div>    
+                <br/>
+
+                <div class="centrado_texto">
+                    <h:form id="productos">
+                        <p:dataTable var="oMed"
+                                     value="#{oRepRecSemana.listaXRangoSemana}"  
+                                     id="tblRepRecSem"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}"
+                                     style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.informMedSurtXSem} "/>
+                                <h:outputLabel value="#{oRepRecSemana.f1}"/>
+                                <h:outputLabel value=" al "/>
+                                <h:outputLabel value="#{oRepRecSemana.f2}"/>
+                            </f:facet>
+                            <p:column headerText="#{etiq.clave}" width="15%">
+                                <h:outputLabel value="#{oMed.claveMedicamento}"/>
+                            </p:column>                
+                            <p:column headerText="#{etiq.nombre}" width="20%">                  
+                                <h:outputLabel value="#{oMed.nombre}"/>                      
+                            </p:column>
+                            <p:column headerText="#{etiq.desPres}" width="30%">
+                                <h:outputLabel value="#{oMed.descripcionPresentacion}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.cantidad}" width="10%">
+                                <h:outputLabel value="#{oMed.existencia}"/>                        
+                            </p:column>
+                            <f:facet name="footer">                    
+                                <h:outputLabel  value="#{etiq.totalMesSurt}  :"/>  <h:outputLabel value="#{oRepRecSemana.totalMedicSurtidos}"/>   
+                            </f:facet>
+                        </p:dataTable>
+                        <br/>
+                        <div style="text-align: center"> 
+                            <p:column> 
+
+                                <p:commandButton value="#{etiq.exportar}" ajax="false" >
+                                    <p:dataExporter type="xls" target="tblRepRecSem" fileName="#{etiq.medSurtXSem}" postProcessor="#{oRepRecSemana.postProcessXLS}"/>
+                                </p:commandButton>                
+                            </p:column>
+                        </div>   
+                    </h:form>
+                </div>                          
+
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

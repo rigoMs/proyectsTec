@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+    
+  <ui:define name="cuerpo">
+      <br/><br/>
+      <div class="permisos">
+      <h:form>
+          <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+          <p:panelGrid styleClass="frm_centrado">
+                  <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="7"><p:outputLabel id="titVacHora" value="#{etiq.modPer}" /></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.noTarjeta}:" styleClass="columnamed2">
+                            <p:outputLabel value="#{etiq.noTarjeta}:" />
+                        </p:column>
+                        <p:column headerText="#{etiq.nombreCompleto}:" styleClass="espacio-celda">
+                            <p:outputLabel value="#{etiq.nombreCompleto}:" />
+                        </p:column>
+                        <p:column headerText="#{etiq.periodos}:"  styleClass="espacio-celda">
+                            <p:outputLabel value="#{etiq.periodos}:" />
+                        </p:column>
+                        <p:column headerText="#{etiq.horas}:"  styleClass="espacio-celda">
+                            <p:outputLabel value="#{etiq.horas}:" />
+                        </p:column>
+                        <p:column headerText="#{etiq.fechaInicial}:">
+                            <p:outputLabel value="#{etiq.fechaInicial}:" />
+                        </p:column>
+                        <p:column headerText="#{etiq.fechaFinal}:">
+                            <p:outputLabel value="#{etiq.fechaFinal}:" />
+                        </p:column>
+                        <p:column headerText="#{etiq.horas}:">
+                            <p:outputLabel value="#{etiq.horas}:" />
+                        </p:column>
+                    </p:row>
+                  </f:facet> 
+                    
+                    <p:row>
+                        <p:column styleClass="columnamed2 centrado_texto">
+                            <p:outputLabel id="notarjeta" styleClass="textover" value="#{oPer.per.personalHospitalario.noTarjeta}" />                            
+                        </p:column>
+                        <p:column  styleClass="espacio-celda">
+                            <p:outputLabel id="medico" styleClass="textover" value="#{oPer.per.personalHospitalario.apPaterno} #{oPer.per.personalHospitalario.apMaterno} #{oPer.per.personalHospitalario.nombres}" />                            
+                        </p:column>
+                        <p:column  styleClass="espacio-celda centrado_texto">
+                            <p:outputLabel id="fecini" styleClass="textover " value="#{oPer.per.hini}" />
+                            <p:outputLabel styleClass="textover" value="  -  " /> 
+                            <p:outputLabel id="fecfin" styleClass="textover" value="#{oPer.per.hfin}" /> 
+                        </p:column>
+                        <p:column  styleClass="espacio-celda centrado_texto">
+                            <p:outputLabel id="horas" styleClass="textover" value="#{oPer.per.horas}" />                            
+                        </p:column>
+                        <p:column styleClass="centrado_texto">
+                            <p:calendar  id="tFecInicio" value="#{oPer.per.newFechaIni}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Inicial es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" size="7" mindate="#{oPer.per.actual}"  readonlyInput="true">
+                                <p:ajax event="dateSelect" update="tFecFin tHora" />
+                            </p:calendar>                            
+                        </p:column>
+                        <p:column styleClass="centrado_texto">
+                            <p:calendar id="tFecFin" value="#{oPer.per.newFechaFin}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Final es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oPer.per.newFechaIni}" size="7"  readonlyInput="true">
+                                <p:ajax event="dateSelect" update="tHora" />
+                                <f:attribute name="finicial" value="#{oPer.per.newFechaIni}"/>
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar>                            
+                        </p:column>
+                        <p:column styleClass="centrado_texto">
+                            <p:inputMask id="tHora" mask="99:00  -  99:00" size="16" value="#{oPer.per.horas2}" disabled="#{oPer.habilitaHorasMod()}">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.HorasValidator"/>
+                                <f:ajax render="mentHora" execute="@this" event="valueChange"/>
+                            </p:inputMask>                           
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="7" styleClass="centrado_texto"> 
+                            <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" validateClient="true" ajax="false" action="#{oPer.actualizar()}">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>   
+                </p:panelGrid>
+                <p:message for="tHora" id="mentHora"/>
+            </h:form> 
+      </div>
+  </ui:define>      
+</ui:composition>
+</html>

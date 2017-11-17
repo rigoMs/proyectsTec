@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco</title>
+    </h:head>
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+     
+    <ui:define name="cuerpo">
+        <div class="centrar">
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+            <h2><h:outputLabel value="#{etiq.registrar} #{etiq.usuario}"/></h2>
+        <h:form>
+        <p:panelGrid id="pacEnc" styleClass="frmlogin">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="4">
+                        <h:outputLabel class="negrita" value="#{etiq.datosUsuario} "/>
+                    </p:column>
+                </p:row>
+            </f:facet>                
+<!--El sistema mostrará un formulario con los campos de Id, Password, Confirmar Password, 
+CURP y/o No. Tarjeta.-->
+                
+                <p:row>
+                    <p:column colspan="2">
+                        <h:outputLabel class="negrita" value="#{etiq.cuenta}"/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:inputText styleClass="negrita"/>
+                    </p:column>
+                </p:row>                  
+                <p:row>
+                    <p:column colspan="2">
+                        <h:outputLabel class="negrita" value="#{etiq.password}: "/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:password id="password1" value="#{passwordView.password2}" feedback="true"
+                            promptLabel="#{etiq.introduzcaPassword}" weakLabel="#{etiq.passwordDebil}"
+                            goodLabel="#{etiq.passwordNivelMedio}" strongLabel="#{etiq.passwordFuerte}" match="password2"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2">
+                        <h:outputLabel class="negrita" value="#{etiq.confirmar} "/><h:outputLabel class="negrita" value="#{etiq.password}: "/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:password value="#{passwordView.password2}" id="password2"/>
+                    </p:column>
+                </p:row>        
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="4">
+                        <h:outputLabel class="negrita" value="#{etiq.curpTarjeta}:"/>
+                    </p:column>                    
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputMask styleClass="negrita" mask="aaaa999999aaaaaa99"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputLabel class="negrita" value="#{etiq.noTarjeta}"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText styleClass="negrita"/>
+                    </p:column>
+                </p:row>     
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.areaServicio}:"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column><p:inputText id="nom" value="Carlos Daniel" disabled="true"/></p:column>
+                    <p:column><p:inputText id="app" value="Flores" disabled="true"/></p:column>
+                    <p:column><p:inputText id="apm" value="Flores" disabled="true"/></p:column>
+                    <p:column><p:inputText id="areaSer" value="Dirección" disabled="true"/></p:column>
+                </p:row>
+                
+        </p:panelGrid>
+        </h:form>
+       <br/><br/>
+               <h:form class="centrado_texto"><p:button value="#{etiq.registrar}" outcome="ModificarUsuario" icon="ui-icon-disk"></p:button></h:form>    
+               
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+        </div>
+    </ui:define> 
+        
+</ui:composition>
+</html>

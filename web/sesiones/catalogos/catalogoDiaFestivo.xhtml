@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <h:form id="combos">
+                <CENTER><H2> DIAS FESTIVOS </H2></CENTER>
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="cmbAnio" value="Año: "/>
+                            <p:selectOneMenu id="cmbAnio" value="#{oDfAni.anio}">
+                                <p:ajax listener="#{oDfAni.onAnioChan()}" update="btnBuscar"/>
+                                <f:selectItem itemLabel="Elegir Año" itemValue="-1" noSelectionOption="true"/>
+                                <f:selectItems value="#{oDfAni.arrAnio}" var="nAnio" 
+                                               itemLabel="#{nAnio.anio}"
+                                               itemValue="#{nAnio.anio}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel for="txtDiaFestivo" value="Nuevo Día Festivo: " />
+                            <p:calendar id="txtDiaFestivo" value="#{oDfAni.dia}" 
+                                        pattern="dd/MM/yyyy" 
+                                        locale="#{oDfAni.locale}">
+                                <p:ajax event="dateSelect" 
+                                    listener="#{oDfAni.onDateSelect}"/>
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel for="txtFechEliminar" value="Eliminar Día Festivo: "/>
+                            <p:calendar id="txtFechEliminar" value="#{oDfAni.diaEli}"
+                                        pattern="dd/MM/yyyy"
+                                        locale="#{oDfAni.locale}">
+                                <p:ajax event="dateSelect"
+                                    listener="#{oDfAni.onDateSelect}"/>
+                            </p:calendar>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <center>
+                                <p:commandButton id="btnBuscar" value="Ver Fechas">
+                                    <p:ajax listener="#{oDfAni.agregarTabla()}"
+                                            process="@this"
+                                            update="tblFechas"/>
+                                </p:commandButton>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <p:commandButton id="btnAgregar" value="Agregar Fecha">
+                                    <p:ajax listener="#{oDfAni.almacenarFecha()}" process="@this" update="tblFechas :combos:messages"/>
+                                </p:commandButton>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <p:commandButton id="btnEliminar" value="Eliminar Fecha">
+                                    <p:ajax listener="#{oDfAni.eliminarFecha()}" process="@this" update="tblFechas :combos:messages"/>
+                                </p:commandButton>
+                            </center>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                      
+                <br></br>
+                
+                <p:dataTable style="visibility:#{oDfAni.visible}" var="oDiaFestivo"
+                             value="#{oDfAni.lista}"
+                             id="tblFechas"
+                             editable="true"
+                             editMode="cell"
+                             selection="#{oDfAni.seleccion}"
+                             rowKey="#{oDiaFestivo.dia}"
+                             selectionMode="single"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="2,3,4,5,6,7,8,9,10"
+                             paginator="true"
+                             rows="8"
+                             emptyMessage="No Hay Datos">
+                    
+                        <p:column headerText="Fecha">
+                            <p:row>
+                                <h:outputText value="#{oDiaFestivo.dia}"/>
+                            </p:row>
+                            
+                        </p:column>
+                </p:dataTable> 
+                <p:growl id="messages" showDetail="true"/>
+            </h:form>
+            
+             <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                <f:facet name="start">  
+                    <p:graphicImage value="/imgs/loading.gif" />  
+                </f:facet>  
+                <f:facet name="complete">  
+                    <h:outputText value="" />  
+                </f:facet>  
+            </p:ajaxStatus>
+            
+        </ui:define>
+    </ui:composition>
+</html>

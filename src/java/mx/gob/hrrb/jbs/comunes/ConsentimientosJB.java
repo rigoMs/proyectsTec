@@ -1,0 +1,372 @@
+package mx.gob.hrrb.jbs.comunes;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
+import mx.gob.hrrb.jbs.core.Firmado;
+import mx.gob.hrrb.modelo.archivo.PrestamoExp;
+import mx.gob.hrrb.modelo.cir.AnestesiaEspecifica;
+import mx.gob.hrrb.modelo.core.DiagnosticoCIE10;
+import mx.gob.hrrb.modelo.core.EpisodioMedico;
+import mx.gob.hrrb.modelo.core.FamiliarCercano;
+import mx.gob.hrrb.modelo.core.Medico;
+import mx.gob.hrrb.modelo.core.Paciente;
+import mx.gob.hrrb.modelo.core.Persona;
+import mx.gob.hrrb.modelo.core.ProcedimientoCIE9;
+
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.TabChangeEvent;
+
+/**
+ *
+ * @author
+ */
+@ManagedBean(name="oConSen")
+@ViewScoped
+public class ConsentimientosJB {
+    EpisodioMedico oEpMed;
+    Persona oTestigo;
+    FamiliarCercano oFamiliar;
+    PrestamoExp oPresExp;
+    DiagnosticoCIE10 oDiagPre;
+    DiagnosticoCIE10 oDiagIngreso;
+    ProcedimientoCIE9 oCIE9;
+    AnestesiaEspecifica oAnestesia;
+    String sTipoCons="", sUpdate="", sAcepta="", sIdentificado="", sComplicaciones="", sMetodoAnticonceptivo="", sAternaTrata="", sResponsable="";
+    Date dFechaInter;
+    boolean bPgDatos2,bPaciente, bFamCercano, bCIH, bCIPF, bCIIQ, bCIPA, bNom, bExp;
+    private Medico oMedFirm;
+    private Paciente oListaPac[];
+    
+    
+    
+    public ConsentimientosJB() throws Exception{
+        HttpServletRequest req;
+        oEpMed=new EpisodioMedico();
+        oPresExp=new PrestamoExp(); 
+        oDiagPre=new DiagnosticoCIE10();
+        oDiagIngreso= new DiagnosticoCIE10();
+        oCIE9= new ProcedimientoCIE9();
+        oFamiliar= new FamiliarCercano();
+        oTestigo=new Persona();
+        oMedFirm=new Medico();
+        oAnestesia= new AnestesiaEspecifica();
+        req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        if(req.getSession().getAttribute("oFirm") != null){
+            oMedFirm.setIdUsuario(((Firmado) req.getSession().getAttribute("oFirm")).getUsu().getIdUsuario());
+            //oMedFirm.buscaUsuarioFirmado();
+            oMedFirm.buscaPersonalHospitalarioDatos();
+        }
+        bPgDatos2=false;
+        bPaciente=false;
+        bFamCercano=false;
+        bCIH=false;
+        bCIPF=false;
+        bCIIQ=false;
+        bCIPA=false;
+        
+        bNom=true;
+        bExp=false;
+    }
+    
+    public void requerir(TabChangeEvent event){        
+        if(event.getTab().getId().equals("tabE")){
+            bNom=false;
+            bExp=true;
+        }else if(event.getTab().getId().equals("tabN")){
+            bNom=true;
+            bExp=false;
+        }
+        //if(event.getTab()==)
+    }
+    
+    public void buscaPaciente(){
+        String msg="";
+        oListaPac=null;
+        try{
+            oListaPac=oEpMed.getPaciente().buscarPac();
+        }catch(Exception e){
+            e.printStackTrace();
+            FacesContext context= FacesContext.getCurrentInstance();
+            msg="error al buscar pacientes";
+            context.addMessage(null, new FacesMessage("Consentimientos", msg));
+        }
+    }
+    
+    
+    public void actualizaPac(long folioPac){
+        try{
+        System.out.println(folioPac);
+        oEpMed=oPresExp.buscaPaciente(folioPac);
+        bPgDatos2=true;
+        if(oEpMed==null)
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,"INFO","NO SE CARGARON LOS DATOS"));
+        }catch(Exception e){Logger.getLogger(ConsentimientosJB.class.getName()).log(Level.SEVERE,null,e);}
+    }
+    
+    public String getFecha(){
+        SimpleDateFormat formato=new SimpleDateFormat("dd/MM/yyyy");
+        return formato.format(new Date());
+    }
+    
+    public void renderizaPanel(){
+        if(!this.sTipoCons.equals("")){
+            if(sTipoCons.equals("CIH")){
+                sUpdate="pgCIH";
+                bCIH=true;
+                bCIPF=false;
+                bCIIQ=false;;
+                bCIPA=false;
+            }
+            if(sTipoCons.equals("CIPF")){
+                sUpdate="pgCIPF";
+                bCIH=false;
+                bCIPF=true;
+                bCIIQ=false;
+                bCIPA=false;
+            }
+            if(sTipoCons.equals("CIIQ")){
+                sUpdate="pgCIIQ";
+                bCIH=false;
+                bCIPF=false;
+                bCIIQ=true;
+                bCIPA=false;
+            }
+            if(sTipoCons.equals("CIPA")){
+                sUpdate="pgCIPA";
+                bCIH=false;
+                bCIPF=false;
+                bCIIQ=false;
+                bCIPA=true;
+            }
+        }
+        else{
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,"ERROR","Selecccione tipo de Consentimiento"));
+        }
+    }
+   
+    public void muestraDialogo(){
+        if(sUpdate.equals("pgCIH"))
+            RequestContext.getCurrentInstance().execute("PF('dlgCIH').show();");
+        if(sUpdate.equals("pgCIPF"))
+            RequestContext.getCurrentInstance().execute("PF('dlgCIPF').show();");
+        if(sUpdate.equals("pgCIIQ"))
+            RequestContext.getCurrentInstance().execute("PF('dlgCIIQ').show();");
+        if(sUpdate.equals("pgCIPA"))
+            RequestContext.getCurrentInstance().execute("PF('dlgCIPA').show();");
+    }
+    
+    public Paciente[] getListaPac(){
+        return oListaPac;
+    }
+    
+    public EpisodioMedico getEpisodioMed(){
+        return oEpMed;
+    }
+    public void setEpisodioMed(EpisodioMedico oEpMed){
+        this.oEpMed=oEpMed;
+    }
+    
+    public DiagnosticoCIE10 getDiagPre(){
+        return oDiagPre;
+    }
+    
+    public void setDiagPre(DiagnosticoCIE10 oDiagPre){
+        this.oDiagPre=oDiagPre;
+    }
+    
+    public DiagnosticoCIE10 getDiagIngre(){
+        return oDiagIngreso;
+    }
+    
+    public void setDiagIngre(DiagnosticoCIE10 oDiagIngreso){
+        this.oDiagIngreso=oDiagIngreso;
+    }
+    
+    public ProcedimientoCIE9 getCIE9(){
+        return oCIE9; 
+    }
+    public void setCIE9(ProcedimientoCIE9 oCIE9){
+        this.oCIE9 = oCIE9;
+    }
+    
+    public String getTipoCons(){
+        return sTipoCons;
+    }
+    
+    public void setTipoCons(String sTipoCons){
+        this.sTipoCons=sTipoCons;
+    }
+
+    public String getIdentificado(){
+        return sIdentificado;
+    }
+    
+    public void setIdentificado(String val){
+        this.sIdentificado=val;
+    }
+    
+    public String getAcepta(){
+        return sAcepta;
+    }
+    
+    public void setAcepta(String sAcepta){
+        this.sAcepta=sAcepta;
+    }
+    
+    public String getComplica(){
+        return sComplicaciones;
+    }
+    
+    public void setComplica(String val){
+        this.sComplicaciones=val;
+    }
+    
+    public Date getFechaInter(){
+        return dFechaInter;
+    }
+    
+    public void setFechaInter(Date dFechaInter){
+        this.dFechaInter=dFechaInter;
+    }
+    
+    public String getMetodo(){
+        return sMetodoAnticonceptivo;
+    }
+    
+    public void setMetodo(String sMetodoAnticonceptivo){
+        this.sMetodoAnticonceptivo=sMetodoAnticonceptivo;
+    }
+    
+    public AnestesiaEspecifica getAnestesia(){
+        return oAnestesia;
+    }
+    
+    public void setAnestesia(AnestesiaEspecifica val){
+        this.oAnestesia=val;
+    }
+    
+    public String getAlternativas(){
+        return sAternaTrata;
+    }
+    
+    public void setAlternativas(String v){
+        this.sAternaTrata=v;
+    }
+        
+    public boolean getPgDatos2(){
+        return bPgDatos2;
+    }
+    
+    public void setPgDatos2(boolean bPgDatos2){
+        this.bPgDatos2=bPgDatos2;
+    }
+        
+    public String getUpdate(){
+        return sUpdate;
+    }
+    
+    public void setUpdate(String bUpdate){
+        this.sUpdate=bUpdate;
+    }
+    
+    public boolean getCIH(){
+        return bCIH;
+    }
+    
+    public boolean getCIPF(){
+        return bCIPF;
+    }
+    
+    public boolean getCIIQ(){
+        return bCIIQ;
+    }
+    
+    public boolean getCIPA(){
+        return bCIPA;
+    }
+    
+    public String getResponsable(){
+        return sResponsable;
+    }
+    
+    public void setResponsable(String sResponsable){
+        this.sResponsable=sResponsable;
+    }
+    
+    public FamiliarCercano getFamiliar(){
+        return oFamiliar;
+    }
+    
+    public void setFamiliar(FamiliarCercano oFamiliar){
+        this.oFamiliar=oFamiliar;
+    }
+    
+    public Persona getTestigo(){
+        return oTestigo;
+    }
+    
+    public void setTestigo(Persona oTestigo){
+        this.oTestigo=oTestigo;
+    }
+    
+    public boolean getBanPac(){
+        return bPaciente;
+    }
+    
+    public void setBanPac(boolean bPaciente){
+        this.bPaciente=bPaciente;
+    }
+    
+    public boolean getBanFamCercano(){
+        return bFamCercano;
+    }
+    
+    public void setBanFamCercano(boolean bFamCercano){
+        this.bFamCercano=bFamCercano;
+    }
+    
+    public void cambiaFamRes(){
+        if(this.sResponsable.equals("Paciente")){
+            bPaciente=true;
+            bFamCercano=false;
+        }
+        else{
+            bPaciente=false;
+            bFamCercano=true;
+        }
+        RequestContext.getCurrentInstance().execute("PF('dlgIngDatos').show()");
+    }
+    
+    public Medico getMedFirm(){
+        return oMedFirm;
+    }
+    
+    public void setMedFirm(Medico oMedFirm){
+        this.oMedFirm=oMedFirm;
+    }
+    
+    
+    public boolean getNom() {
+        return bNom;
+    }
+
+    public void setNom(boolean bNom) {
+        this.bNom = bNom;
+    }
+    
+    public boolean getExp() {
+        return bExp;
+    }
+
+    public void setExp(boolean bExp) {
+        this.bExp = bExp;
+    }
+}

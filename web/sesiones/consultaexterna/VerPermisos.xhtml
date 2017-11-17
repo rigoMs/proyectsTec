@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+    <ui:define name="cuerpo">
+     <div class="permisos">
+      <br/><br/>
+      <h:form>
+         <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+         <p:dataTable id="tablaConsul" styleClass="frm_centrado"  var="oPerVar"  value="#{oPer.per.buscarPermisosAux()}" emptyMessage="#{etiq.noDatos}">
+                <f:facet name="header">
+                    <p:outputLabel id="titVac" value="#{etiq.programacionPermisos}"/>
+                </f:facet>
+           <p:columnGroup type="header">
+            <p:row>
+                <p:column rowspan="2" headerText="#{etiq.noTarjeta}" styleClass="columnamed2 centrado_texto">
+                </p:column>
+                <p:column rowspan="2" headerText="#{etiq.nombreCompleto}" styleClass="" style="width: 17%;">
+                </p:column>
+                <p:column rowspan="2" headerText="#{etiq.periodos}" styleClass="centrado_texto" style="width: 10%;">
+                </p:column>
+                <p:column colspan="#{oPer.colspan}" headerText="#{etiq.detalle}" styleClass="columnamed4">
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column headerText="#{etiq.horas}" styleClass="columnamed2 espacio-celda">
+                </p:column>
+                <p:column headerText="#{etiq.accion}" styleClass="#{oPer.mostrarColumna()} espacio-celda">
+                </p:column>
+            </p:row>
+           </p:columnGroup>
+             
+                <p:column styleClass="columnamed2 centrado_texto">
+                    <h:outputText value="#{oPerVar.personalHospitalario.noTarjeta}" />
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{oPerVar.personalHospitalario.apPaterno} #{oPerVar.personalHospitalario.apMaterno} #{oPerVar.personalHospitalario.nombres}" />
+                </p:column>
+                <p:column styleClass="espacio-celda centrado_texto">
+                    <h:outputText value="#{oPerVar.hini}"/>
+                    <h:outputText value="  -  " />
+                    <h:outputText value="#{oPerVar.hfin}"/>
+                </p:column>
+              <p:column styleClass="centrado_texto columnamed2 espacio-celda">
+                    <h:outputText value="#{oPerVar.horas}" />
+              </p:column>
+             <p:column  styleClass="#{oPer.mostrarColumna()} centrado_texto espacio-celda" headerText="#{etiq.accion}:">
+                 <p:commandButton id="actualizaBtn" value="#{etiq.modificar}" icon="ui-icon-refresh"  validateClient="true" ajax="false" action="ModificaPermiso">
+                      <f:setPropertyActionListener target="#{oPer.per.personalHospitalario.noTarjeta}" value="#{oPerVar.personalHospitalario.noTarjeta}" />
+                      <f:setPropertyActionListener target="#{oPer.per.fechaIni}" value="#{oPerVar.fechaIni}" />
+                      <f:setPropertyActionListener target="#{oPer.per.horas}" value="#{oPerVar.horas}" />
+                      <f:setPropertyActionListener target="#{oPer.per.hini}" value="#{oPerVar.hini}" />
+                      <f:setPropertyActionListener target="#{oPer.per.hfin}" value="#{oPerVar.hfin}" />
+                      <f:setPropertyActionListener target="#{oPer.per.personalHospitalario.apPaterno}" value="#{oPerVar.personalHospitalario.apPaterno}" />
+                      <f:setPropertyActionListener target="#{oPer.per.personalHospitalario.apMaterno}" value="#{oPerVar.personalHospitalario.apMaterno}" />
+                      <f:setPropertyActionListener target="#{oPer.per.personalHospitalario.nombres}" value="#{oPerVar.personalHospitalario.nombres}" />
+                 </p:commandButton>
+                 <p:commandButton value="#{etiq.borrar}" action="#{oPer.borraPermiso()}" icon="ui-icon-close"  validateClient="true" ajax="false">
+                      <f:setPropertyActionListener target="#{oPer.per.personalHospitalario.noTarjeta}" value="#{oPerVar.personalHospitalario.noTarjeta}" />
+                      <f:setPropertyActionListener target="#{oPer.per.fechaIni}" value="#{oPerVar.fechaIni}" />
+                      <f:setPropertyActionListener target="#{oPer.per.horas}" value="#{oPerVar.horas}" />
+                 </p:commandButton>
+             </p:column>
+         </p:dataTable>
+      </h:form>
+     </div>
+    </ui:define> 
+        
+</ui:composition>
+</html>

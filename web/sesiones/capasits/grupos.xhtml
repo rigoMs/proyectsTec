@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">       
+    <h:form id="formg">
+         <p:growl id="mensajes"  showDetail="true" />
+           <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+           <h2><center><h:outputLabel value="#{etiq.grupos}"/></center></h2>
+        <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+            <p:column colspan="3"><h:outputLabel value="#{etiq.formacionGrup}"/></p:column> 
+        </p:row> 
+    </f:facet> 
+        <p:row> 
+         <p:column styleClass="ui-widget-header">
+           <center> <h:outputLabel value="#{etiq.tipo}"/> </center></p:column>
+           <p:column styleClass="ui-widget-header">
+           <center> <h:outputLabel value="#{etiq.numero}"/></center></p:column> 
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.integrantes}"/></center></p:column> 
+        </p:row>
+            <p:row> 
+                <p:column>
+                    <p:inputText id="tipo" value="#{grupos.grupc.tipo}" size="30" onkeyup="this.value=this.value.toUpperCase();" required="true"/> </p:column> 
+            <p:column><p:inputText id="numero" value="#{grupos.grupc.asistencia}" /> </p:column>
+            <p:column><p:inputText id="integrantes" value="#{grupos.grupc.integrantes}" /> </p:column>
+        </p:row>
+            <p:row>
+                <p:column colspan="3"><p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk" action="#{grupos.almacena()}" update="mensajes" onclick="recarga()"/>
+                    <p:commandButton value="#{etiq.cancelar}" type="reset"/></p:column>
+            </p:row>    
+    </p:panelGrid>          
+    </h:form>
+    <br/>
+     <h:form id="frm1"> 
+        <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+            <p:column colspan="3"><h:outputLabel value="#{etiq.gruposActivos}"/></p:column> 
+        </p:row> 
+    </f:facet> 
+        <p:row> 
+         <p:column styleClass="ui-widget-header">
+           <center> <h:outputLabel value="#{etiq.tipo}"/></center></p:column>
+           <p:column styleClass="ui-widget-header">
+           <center> <h:outputLabel value="#{etiq.numero}"/> </center></p:column> 
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.integrantes}"/></center></p:column> 
+        </p:row>
+          <p:row>
+             <p:column>
+                 <p:selectOneMenu id="cmbPasa" value="#{grupos.grupc.tipo}">
+                <f:selectItem itemLabel="GRUPOS DE ADICTOS" itemValue="GRUPOS DE ADICTOS"/>
+                <f:selectItem itemLabel="GRUPOS DE AYUDA MUTUA" itemValue="GRUPOS DE AYUDA MUTUA"/>
+                <f:selectItem itemLabel="GRUPOS AUTOAYUDA VIOLENCIA" itemValue="GRUPOS AUTOAYUDA VIOLENCIA"/>
+            </p:selectOneMenu>     
+             </p:column> 
+              <p:column><p:inputText id="num" value="#{grupos.grupc.asistencia}" /> </p:column>
+              <p:column><p:inputText id="inte" value="#{grupos.grupc.integrantes}" /> </p:column>
+        </p:row>
+            <p:row>
+                <p:column colspan="3"><p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk" action="#{grupos.almacena2()}" update=":formg:mensajes frm1" onclick="recarga()"/>
+            <p:commandButton value="#{etiq.cancelar}" type="reset"/></p:column>
+            </p:row>    
+    </p:panelGrid>          
+    </h:form>
+    <br/>
+     <h:form id="frm2"> 
+        <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+            <p:column colspan="3"><h:outputLabel value="#{etiq.gruposAcreditados}"/></p:column> 
+        </p:row> 
+    </f:facet> 
+        <p:row> 
+         <p:column styleClass="ui-widget-header">
+           <center> <h:outputLabel value="#{etiq.tipo}"/> </center></p:column>
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.numero}"/> </center></p:column> 
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.integrantes}"/></center></p:column> 
+        </p:row>
+          <p:row>
+             <p:column>
+                 <p:selectOneMenu id="cmbPasa" value="#{grupos.grupc.tipo}">
+                <f:selectItem itemLabel="GRUPOS DE ADICTOS" itemValue="GRUPOS DE ADICTOS"/>
+                <f:selectItem itemLabel="GRUPOS DE AYUDA MUTUA" itemValue="GRUPOS DE AYUDA MUTUA"/>
+            </p:selectOneMenu>     
+             </p:column> 
+              <p:column><p:inputText id="numero" value="#{grupos.grupc.asistencia}"/> </p:column>
+              <p:column><p:inputText id="integrantes" value="#{grupos.grupc.integrantes}"/> </p:column>
+        </p:row>
+            <p:row>
+            <p:column colspan="3"><p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk" action="#{grupos.almacena3()}" update=":formg:mensajes" onclick="recarga()"/>
+            <p:commandButton value="#{etiq.cancelar}" type="reset"/></p:column>
+            </p:row>    
+    </p:panelGrid>          
+    </h:form>
+    <br/>
+    <h:form id="frm3"> 
+        <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+            <p:column colspan="3"><h:outputLabel value="#{etiq.gruposRecibenOrientacion}"/></p:column> 
+        </p:row> 
+    </f:facet> 
+        <p:row> 
+         <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.tipo}"/></center></p:column>
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.numero}"/> </center></p:column> 
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.integrantes}"/> </center></p:column> 
+        </p:row>
+          <p:row>
+              <p:column> 
+                  <h:outputLabel value="GRUPOS DE AYUDA MUTUA"/> </p:column> 
+            <p:column><p:inputText id="numero" value="#{grupos.grupc.asistencia}" /> </p:column>
+            <p:column><p:inputText id="integrantes" value="#{grupos.grupc.integrantes}" /> </p:column>
+        </p:row>
+            <p:row>
+            <p:column colspan="3"><p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk" action="#{grupos.almacena4()}" update=":formg:mensajes" onclick="recarga()"/>
+            <p:commandButton value="#{etiq.cancelar}" type="reset"/></p:column>
+            </p:row>    
+    </p:panelGrid>          
+    </h:form>  
+    <br/>
+    <h:form id="frm4"> 
+        <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+            <p:column colspan="3"><h:outputLabel value="#{etiq.otrasActividades}"/></p:column> 
+        </p:row> 
+    </f:facet> 
+        <p:row> 
+         <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.tipo}"/></center></p:column>
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.numero}"/></center></p:column> 
+           <p:column styleClass="ui-widget-header">
+           <center><h:outputLabel value="#{etiq.integrantes}"/> </center></p:column> 
+        </p:row>
+          <p:row> 
+              <p:column> 
+                  <p:inputText id="tipo" value="#{grupos.grupc.tipo}" size="30" onkeyup="this.value=this.value.toUpperCase();" required="true"/> </p:column> 
+              <p:column><p:inputText id="numero" value="#{grupos.grupc.asistencia}" /> </p:column>
+              <p:column><p:inputText id="integrantes" value="#{grupos.grupc.integrantes}"/> </p:column>
+        </p:row>
+            <p:row>
+                <p:column colspan="3"><p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk" action="#{grupos.almacena5()}"  update=":formg:mensajes" onclick="recarga()"/>
+            <p:commandButton value="#{etiq.cancelar}" type="reset"/></p:column>
+            </p:row>    
+    </p:panelGrid>          
+    </h:form>    
+    </ui:define>
+</ui:composition>
+</html>    

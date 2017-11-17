@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.controlpacexternos}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+           <h:form>
+               <p:growl id="msg" showDetail="true"/>
+                <h:panelGrid columns="2" styleClass="frm_centrado">
+                    <p:commandButton value="#{etiq.agregarFicha}" icon="ui-icon-plus" id="btnAgFicha" oncomplete="PF('dlgFicha').show()" >
+                        <p:ajax listener="#{EstRealPat.datosUsuario}" update="txtrec"></p:ajax>
+                    </p:commandButton>
+                </h:panelGrid>
+            
+            <p:dialog header="Ficha de Recepción" widgetVar="dlgFicha"
+                      height="70%" width="90%" position="center" resizable="false" modal="true">  
+              <p:panelGrid styleClass="frm_centrado">
+                  <p:row>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:inputText id="txtNomPac" value="#{EstRealPat.estPat.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Ingrese el nombre del paciente"><p:ajax></p:ajax></p:inputText>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.appat}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:inputText id="txtappat" value="#{EstRealPat.estPat.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Ingrese el apellido paterno"><p:ajax></p:ajax></p:inputText>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.apmat}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:inputText id="txtapmat" value="#{EstRealPat.estPat.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" required="true"  requiredMessage="Ingrese el apellido materno"><p:ajax></p:ajax></p:inputText>
+                      </p:column>
+                  </p:row>
+                  <p:row>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.sexo}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:selectOneMenu id="sSexo" value="#{EstRealPat.estPat.paciente.sexoP}" >
+                              <f:selectItem itemValue="M" itemLabel="MASCULINO" />
+                              <f:selectItem itemValue="F" itemLabel="FEMENINO" />
+                              <p:ajax></p:ajax>
+                          </p:selectOneMenu>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.fechanac} dd/mm/aaaa" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:inputMask id="txtFecNac" mask="99/99/9999" value="#{EstRealPat.fecNac}" required="true" requiredMessage="Falta la Fecha de Nacimiento"> 
+                          </p:inputMask> 
+                      </p:column>
+                      <p:column colspan="2"></p:column>
+                  </p:row>
+                  <p:row>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.fechaRecepcion}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:calendar id="fechaRecep"  effect="fold" 
+                                      required="true" 
+                                      requiredMessage="Debe seleccionar una fecha"  
+                                      value="#{EstRealPat.estPat.fechaRecepcion}" 
+                                      onkeypress="return validaCaracter(event)" 
+                                      locale="es" readonlyInput="true">
+                            <p:ajax event="dateSelect" update="fechaProg"/>
+                          </p:calendar>
+                      </p:column>
+                       <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.fechaEntrega}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:calendar id="fechaProg"  effect="fold" required="true" 
+                                      requiredMessage="Debe seleccionar una fecha"  
+                                      value="#{EstRealPat.estPat.fechaProgramado}" 
+                                      onkeypress="return validaCaracter(event)"  
+                                      mindate="#{EstRealPat.estPat.fechaRecepcion}" 
+                                      locale="es" readonlyInput="true">
+                            <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                          </p:calendar>
+                      </p:column>
+                      <p:column colspan="2"></p:column>
+                  </p:row>
+                  <p:row>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.nombreFamiliar}"  styleClass="mensaje" />
+                      </p:column>
+                      <p:column colspan="2" rowspan="1">
+                          <p:inputText id="txtnomfam" value="#{EstRealPat.estPat.nombreQuienEntregaMuestra}" onkeyup="this.value=this.value.toUpperCase();" size="50" ><p:ajax></p:ajax></p:inputText>
+                      </p:column>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.espeQx}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="2" rowspan="1">
+                          <p:inputText id="txtEspecimen" value="#{EstRealPat.estPat.especimenMuestraTejido}" onkeyup="this.value=this.value.toUpperCase();" size="40" ><p:ajax></p:ajax></p:inputText>
+                      </p:column>
+                  </p:row>
+                  <p:row>
+                      <p:column>
+                          <p:outputLabel value="#{etiq.proceSol}" styleClass="mensaje" />
+                      </p:column>
+                        <p:column colspan="3">
+                            <p:autoComplete id="tEstudio" queryDelay="1000" size="60" minQueryLength="3" required="true" styleClass="bordes"
+                                            value="#{EstRealPat.estudios.concepto}" completeMethod="#{EstRealPat.estudios.complet}" effect="fade"
+                                            onkeyup="this.value=this.value.toUpperCase();"> 
+                            <p:ajax update="tCveEst" event="itemSelect"/>
+                            </p:autoComplete>
+                        </p:column>
+                      <p:column>
+                          <p:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                      </p:column> 
+                        <p:column>
+                            <p:inputText id="tCveEst" value="#{EstRealPat.estudios.claveEst()}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="1">
+                          <p:outputLabel value="#{etiq.diagnosticoIngreso}" styleClass="mensaje" />
+                      </p:column>
+                        <p:column colspan="3">
+                            <p:autoComplete id="tDiagnostico" queryDelay="1000" size="60" minQueryLength="3" required="true" styleClass="bordes"
+                                            value="#{EstRealPat.diag.descripcionDiag}" completeMethod="#{EstRealPat.diag.completar}" effect="fade"
+                                            onkeyup="this.value=this.value.toUpperCase();"> 
+                            <p:ajax update="tCie10" event="itemSelect"/>
+                            </p:autoComplete>
+                        </p:column>
+                        <p:column colspan="1">
+                            <p:outputLabel id="cie10" value="#{etiq.cie10}:" styleClass="mensaje"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="tCie10" value="#{EstRealPat.diag.clave1CE}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                  <p:row>
+                      <p:column colspan="1" rowspan="1">
+                          <p:outputLabel value="#{etiq.recibeEspecimen}" styleClass="mensaje"/>
+                      </p:column>
+                      <p:column colspan="2" rowspan="1">
+                          <h:outputText id="txtrec" value="#{EstRealPat.personal.nombres} #{EstRealPat.personal.apPaterno} #{EstRealPat.personal.apMaterno}" />
+                      </p:column>
+                  </p:row>
+              </p:panelGrid>
+              <h:panelGrid columns="3" styleClass="frm_centrado">
+                  <p:commandButton  id="btnGuardaFicha" value="#{etiq.guardar}" actionListener="#{EstRealPat.insertaPacienteExterno}" update="msg txtNomPac txtappat txtapmat txtFecNac fechaRecep fechaProg txtnomfam txtEspecimen tEstudio tCveEst tDiagnostico tCie10" icon="ui-icon-plus">
+                  </p:commandButton>
+                  <br/>
+                  <p:commandButton value="#{etiq.volver}" icon="ui-icon-close" id="btnVolver" oncomplete="PF('dlgFicha').hide()" />
+              </h:panelGrid>
+          </p:dialog>
+            </h:form>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+            
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

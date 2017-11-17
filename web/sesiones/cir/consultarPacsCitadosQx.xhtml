@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.paciente} #{etiq.consultaExterna} "/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <h:panelGrid class="frm_centrado" columns="4">
+                    <p:outputLabel id="fechaSolicitud" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar  id="fechaSol" 
+                                 value="#{oConsultaQx.fecha}"
+                                 locale="es" effect="explode" required="true" >
+                    </p:calendar>
+                    <p:commandButton id="btnBusFecha" icon="ui-icon-search" 
+                                     value="#{etiq.buscar}" 
+                                     actionListener="#{oConsultaQx.buscaSolicitudes}"
+                                     update="tablaSolicitudes btnProQx btnPosp"/>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable  id="tablaSolicitudes" 
+                              value="#{oConsultaQx.listaSolicitudes}"
+                              var="oSolicitudes"                            
+                              paginator="false" rows="8"
+                              emptyMessage="#{etiq.noDatos}"
+                              style="width: 1300px; visibility: #{oConsultaQx.visibilidadTabla}"
+                              rowKey="#{oSolicitudes.episodioMedico.paciente.folioPaciente}"
+                              selection="#{oConsultaQx.seleccionado}"
+                              class="frm_centrado">
+                    <p:ajax event="rowSelectRadio"></p:ajax>
+                    <p:column selectionMode="single" style=" width: 20px"></p:column>
+                    <p:column style=" width: 80px">
+                        <f:facet name="header">
+                            <h:outputLabel class="negrita" value="#{etiq.fecha}" />
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.fechaSolicitud}"/>
+                    </p:column>   
+                    <p:column style=" width: 300px;">
+                        <f:facet name="header">
+                            <h:outputLabel class="negrita" value="#{etiq.nombrePaciente}" />
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.episodioMedico.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputLabel class="negrita" value="#{etiq.proceQx}" />
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.CIE9.descripcion}"/>
+                    </p:column>
+                    <p:column style=" width: 100px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.expediente}"/>
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.episodioMedico.paciente.expediente.numero}"/>
+                    </p:column>
+                    <p:column style=" width: 100px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.episodioMedico.paciente.seg.numero}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="btnProQx" icon="ui-icon-note" value="Programa Qx" onclick="PF('ProQx').show();" style=" visibility: #{oConsultaQx.visibilidadTabla}">
+                    <p:ajax listener="#{oConsultaQx.llenaDatosProgramacion()}" update="programa_Proce"></p:ajax>
+                </p:commandButton>
+                &nbsp;
+                <p:commandButton id="btnPosp" icon="ui-icon-cancel" value="Cancelar Qx" onclick="PF('canQx').show();" style="visibility: #{oConsultaQx.visibilidadTabla}">
+                    <p:ajax listener="#{oConsultaQx.llenaDatosProgramacion()}" update="cancela_Proce"></p:ajax>
+                </p:commandButton>
+                
+                <!-- Inicia el Dialgo de la Programación de Qx -->
+                <p:dialog header="Programación Qx" widgetVar="ProQx"
+                          showEffect="bounce" hideEffect="explode"
+                          resizable="false" style="width: 500px">
+                    <p:panelGrid id="programa_Proce" style="width: 500px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.nombreCompleto}"/>
+                            </p:column>
+                            <p:column style="width: 150px;">
+                                <h:outputText value="#{oConsultaQx.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.expediente}"/>
+                            </p:column>
+                            <p:column style="width: 90px;">
+                                <h:outputText value="#{oConsultaQx.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.segpop}"/>
+                            </p:column>
+                            <p:column style="width: 90px;">
+                                <h:outputText value="#{oConsultaQx.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.diagnostico}"/>
+                            </p:column>
+                            <p:column style="width: 90px;" colspan="5">
+                                <p:outputLabel value="#{oConsultaQx.procedimientos.episodioMedico.diagIngreso.descripcionDiag}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.proceQx}"/>
+                            </p:column>
+                            <p:column style="width: 90px;" colspan="5">
+                                <p:outputLabel value="#{oConsultaQx.procedimientos.CIE9.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <!-- Lista de Cirujanos-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.medicoCirujano}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu  id="selCirujanos">
+                                   <f:selectItem itemLabel="Elegir Cirujano" itemValue="" noSelectionOption="true" />
+                                   <f:selectItems value="#{oConsultaQx.lisCirujanos}" 
+                                                  var="oCirujanos" 
+                                                  itemLabel="#{oCirujanos.nombreCompleto}" 
+                                                  itemValue="#{oCirujanos.noTarjeta}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <!-- Lista de Quirofanos-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="#{etiq.qx}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu  id="selQx">
+                                    <f:selectItem itemLabel="Elegir Quirofano" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{oConsultaQx.listaQx}" 
+                                                   var="oPas" 
+                                                   itemLabel="#{oPas.nombre}" 
+                                                   itemValue="#{oPas.clave}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                            
+                            <!-- Lista de Residentes-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="Residente"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:selectOneMenu id="selRes" value="Residentes">
+                                    <f:selectItem itemLabel="Elegir Residente" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{oConsultaQx.listaResidentes}" 
+                                                   var="oResid" 
+                                                   itemLabel="#{oResid.nombreCompleto}" 
+                                                   itemValue="#{oResid.noTarjeta}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <!-- Lista de Anestesiologos-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.anestesio}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu  id="selAnestesio" >
+                                   <f:selectItem itemLabel="Elegir Anestesiólogo" itemValue="" noSelectionOption="true"/>
+                                   <f:selectItems  value="#{oConsultaQx.listaAnestesiologos}" 
+                                                   var="anestesiologo" 
+                                                   itemLabel="#{anestesiologo.nombreCompleto}" 
+                                                   itemValue="#{anestesiologo.noTarjeta}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <!--Anestesias-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="#{etiq.anestesia}"/>
+                            </p:column>
+                           <p:column style="width: 90px">
+                               <p:selectOneMenu  id="selAnes" style="width: 150px" >
+                                   <f:selectItem itemLabel="Elegir Anestesia" itemValue="" noSelectionOption="true" />
+                                   <f:selectItems value="#{oConsultaQx.listaAnestesias}" 
+                                                  var="oAn" 
+                                                  itemLabel="#{oAn.descripcion}" 
+                                                  itemValue="#{oAn.cve}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <!--Terminan Listas-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Ambulatoria"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:selectOneRadio id="rdAmbula" value="#{oConsultaQx.esAmbulatoria}">
+                                    <f:selectItem itemLabel="Sí" itemValue="S"/>
+                                    <f:selectItem itemLabel="No" itemValue="N"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Fecha Hospitalización"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:inputMask id="txtFechos" mask="9999/99/99" style="width: 90px">
+                                    
+                                </p:inputMask>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Hora Hospitalización"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:inputMask id="txtHorah" value="13:10" mask="99:99"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" colspan="2"/>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Fecha Intervención"/>
+                            </p:column>
+                            <p:column style="width: 90px;">
+                                <p:inputMask id="txtFeci" mask="9999/99/99" style="width: 90px"></p:inputMask>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Hora Intervención"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:selectOneMenu editable="false" id="horaQx">
+                                    <f:selectItem itemLabel="Elegir Hora" itemValue="" noSelectionOption="true" />
+                                    <f:selectItem itemValue="a" itemLabel="8:00"/>
+                                    <f:selectItem itemValue="a" itemLabel="9:00"/>
+                                    <f:selectItem itemValue="b" itemLabel="10:00"/>
+                                    <f:selectItem itemValue="a" itemLabel="15:00"/>
+                                    <f:selectItem itemValue="d" itemLabel="AS1"/>
+                                    <f:selectItem itemValue="e" itemLabel="AS2"/>
+                                    <f:selectItem itemValue="f" itemLabel="AS3"/>
+                                    <f:selectItem itemValue="g" itemLabel="AS4"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" colspan="2"/>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.areaServicio}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu >
+                                    <f:selectItem itemLabel="Pedriatría" itemValue="1"/>
+                                    <f:selectItem itemLabel="Medicina Interna" itemValue="2"/>
+                                    <f:selectItem itemLabel="Cirugia General" itemValue="3"/>
+                                    <f:selectItem itemLabel="Gineco Obstetricia" itemValue="4"/>
+                                    <f:selectItem itemLabel="Clinica del Dolor" itemValue="5"/>
+                                    <f:selectItem itemLabel="Gastroenterología" itemValue="6"/>
+                                    <f:selectItem itemLabel="Oncopediatría" itemValue="7"/>
+                                    <f:selectItem itemLabel="Dermatología" itemValue="8"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.observaciones}"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:inputText size="60"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" styleClass="ui-widget-header">
+                                <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+                
+                <!-- Inicia el Dialogo de Cancelación de citas -->
+                <p:dialog id="dialogo2" header="Cancelar Qx" widgetVar="canQx"
+                          showEffect="bounce" hideEffect="explode"
+                    height="400"  resizable="false">
+                    <!--Aqui empieza el panel grid-->
+                    <p:panelGrid id="cancela_Proce" style="width: 750px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.nombreCompleto}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oConsultaQx.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.segpop}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oConsultaQx.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.expediente}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oConsultaQx.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.proceQx}"/>
+                            </p:column>
+                            <p:column colspan="5">
+                                <h:outputText value="#{oConsultaQx.procedimientos.CIE9.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.cancelar} por:"/>
+                            </p:column>
+                            <p:column colspan="5">
+                                <p:selectManyCheckbox id="chCancela" label="">
+                                    <f:selectItem itemLabel="Estudios Incompletos" itemValue="1"/>
+                                    <f:selectItem itemLabel="Estudios Atrasados" itemValue="2"/>
+                                    <f:selectItem itemLabel="Estudios Faltantes" itemValue="3"/>
+                                    <f:selectItem itemLabel="Faltan Donadores" itemValue="4"/>
+                                </p:selectManyCheckbox>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.observaciones}"/>
+                            </p:column>
+                            <p:column colspan="5">
+                                <h:outputText value="Los estudios no están en fecha, mandar a la brevedad posible"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" styleClass="ui-widget-header">
+                                <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

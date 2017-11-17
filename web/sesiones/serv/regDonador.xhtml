@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.control} #{etiq.donadores}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="buscar">
+            <h:form>
+               <p:accordionPanel>
+                <p:ajax event="tabChange" listener="#{oBuscarPac.requerir}" update="@this, nom app exp" />
+                <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                    <p:panelGrid columns="4" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <h:outputLabel />
+                        <p:inputText styleClass="bordes" id="nom" value="#{oBancoSan.nombre}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{oBancoSan.apPaterno}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{oBancoSan.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                    </p:panelGrid>
+                </p:tab>        
+                <p:tab title="#{etiq.buscarPorExpediente}"  id="tabE">
+                    <p:panelGrid columns="3" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                        <p:inputText styleClass="bordes" id="exp" value="#{oBancoSan.numExpe}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" required="#{oBuscarPac.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                        </p:inputText>
+                    </p:panelGrid>
+                    <p:message for="exp" id="mentExp"></p:message>
+                </p:tab>
+               </p:accordionPanel>
+                <br/>
+               <p:panelGrid columns="5" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.fechade} Solicitud"/>
+                        <p:calendar id="fechaFin2"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha"  value="#{oBancoSan.fecSolicitud}" onkeypress="return validaCaracter(event)" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                        </p:calendar> 
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" actionListener="#{oBancoSan.listaPacientesDonadores}" icon="ui-icon-search" update=":frmdonador:tblPacDon"  >
+                        </p:commandButton>
+                </p:panelGrid>
+            </h:form>
+        </div>
+        <br/>
+        <h:form id="frmdonador">
+            <p:growl id="msg" showDetail="true"/>
+        <div class="centrado_texto">
+            <p:dataTable id="tblPacDon" 
+                         value="#{oBancoSan.donadores}" 
+                         var="oDon" 
+                         emptyMessage="No se encontraron registros"
+                         paginator="true"
+                         rows="10"
+                         rowKey="#{oDon.idSolicitud}"
+                         selection="#{oBancoSan.seleccionadoDonador}">
+                <p:ajax event="rowSelectRadio"></p:ajax>
+                <f:facet name="header">
+                    <p:outputLabel value="Informacíón de Donadores" styleClass="mensaje"/>
+                </f:facet>
+                <p:column selectionMode="single" width="90">
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oDon.episodio.paciente.nombres} #{oDon.episodio.paciente.apPaterno} #{oDon.episodio.paciente.apMaterno}" />
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.numexpe}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oDon.episodio.expediente}" />
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.producto}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oDon.detalle.productoH.descripcion}" />
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <p:outputLabel value="Cantidad(Piezas)" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oDon.cantidad}" />
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oDon.detalle.fechaSolicitud}" />
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <p:outputLabel value="Donador" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oDon.donador.nombreDonador}" />
+                </p:column>
+                <f:facet name="footer">
+                    <p:commandButton id="tbnAgre" process="tblPacDon" value="Agregar Donador" icon="ui-icon-plus" actionListener="#{oBancoSan.rebotesSeleccion}" update=":frmdonador:btnGua :frmdonador:msg" oncomplete="PF('dlgDon').show();">
+                    </p:commandButton>
+                    <p:commandButton id="btnDonAlt" process="tblPacDon" value="Agregar Donador Altruista" icon="ui-icon-plus" oncomplete="PF('dlgDonAlt').show();" ></p:commandButton>
+                </f:facet>
+            </p:dataTable>
+            </div>
+            <p:dialog header="Registrar Donador" widgetVar="dlgDon"
+                  height="200" width="500" resizable="false">
+            <p:panelGrid styleClass="frm_centrado">
+                <f:facet name="header">
+                    <p:outputLabel value="Datos del Donador" styleClass="mensaje"/>
+                </f:facet>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.nombredonador} " styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText id="txtNom" value="#{oBancoSan.donador.nombreDonador}" size="20"><p:ajax></p:ajax></p:inputText>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.claveDonador} " styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText id="txtClave" value="#{oBancoSan.donador.consecutivo}" type="number"  size="20"><p:ajax></p:ajax></p:inputText>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.fechaDonacion}" styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <p:calendar id="fechaReg"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha"  value="#{oBancoSan.donador.fechaDonacion}" onkeypress="return validaCaracter(event)" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                        </p:calendar> 
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <h:panelGrid columns="3" styleClass="frm_centrado">
+                <p:commandButton id="btnGua" value="Guardar" icon="ui-icon-disk" disabled="#{oBancoSan.showButton}" actionListener="#{oBancoSan.insertaDonador}" update=":frmdonador:msg :frmdonador:txtNom  :frmdonador:txtClave  :frmdonador:fechaReg"/>
+                <br/>
+                <p:commandButton id="btnCan" value="Cancelar" icon="ui-icon-cancel" oncomplete="PF('dlgDon').hide();"></p:commandButton>
+            </h:panelGrid>
+        </p:dialog>
+        </h:form>
+        <h:form id="frmalt">
+            <p:growl id="msg2" showDetail="true"/>
+             <p:dialog header="Registrar Donador Altruista" widgetVar="dlgDonAlt"
+                  height="200" width="500" resizable="false">
+                <p:panelGrid styleClass="frm_centrado">
+                <f:facet name="header">
+                    <p:outputLabel value="Datos del Donador" styleClass="mensaje"/>
+                </f:facet>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.nombredonador} " styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText id="txtNomD" value="#{oBancoSan.donador.nombreDonador}" size="20"><p:ajax></p:ajax></p:inputText>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.claveDonador} " styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText id="txtClaveD" value="#{oBancoSan.donador.consecutivo}" type="number"  size="20"><p:ajax></p:ajax></p:inputText>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.fechaDonacion}" styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <p:calendar id="fechaRegD"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha"  value="#{oBancoSan.donador.fechaDonacion}" onkeypress="return validaCaracter(event)" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                        </p:calendar> 
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <h:panelGrid columns="3" styleClass="frm_centrado">
+                <p:commandButton id="btnGuaD" value="Guardar" icon="ui-icon-disk" actionListener="#{oBancoSan.rebotesInsert}" update=":frmalt:msg2 :frmalt:txtNomD  :frmalt:txtClaveD  :frmalt:fechaRegD">
+                    <p:ajax></p:ajax>
+                </p:commandButton>
+                <br/>
+                <p:commandButton id="btnCanD" value="Cancelar" icon="ui-icon-cancel" oncomplete="PF('dlgDonAlt').hide();"></p:commandButton>
+            </h:panelGrid>
+        </p:dialog>
+        </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+    </ui:define>         
+</ui:composition>
+
+</html>

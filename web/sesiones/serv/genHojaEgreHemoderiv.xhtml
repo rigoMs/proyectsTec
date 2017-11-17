@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{hojaegresohemo}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <style>
+            div.hoja{
+                background: url(#{facesContext.externalContext.requestContextPath}/imgs/hojaegreso.png);
+            }
+        </style>
+        <br/>   
+        <h:form id="frmOtros">
+            <p:growl id="msg" showDetail="true" />
+            <p:panelGrid styleClass="frm_centrado">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="2" rowspan="1">
+                            <p:outputLabel value="Registro de Solicitudes Externas" styleClass="mensaje" />
+                        </p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column colspan="1" rowspan="1">
+                        <p:outputLabel value="#{etiq.rgApIns}" styleClass="mensaje" />
+                    </p:column>
+                    <p:column colspan="1" rowspan="1">
+                        <p:commandButton value="Registrar" icon="ui-icon-disk" oncomplete="PF('dlgOrdBanco').show();" />
+                    </p:column>
+                </p:row>
+                
+            </p:panelGrid>
+            <p:dialog header="Banco de sangre" widgetVar="dlgOrdBanco" height="600" width="900" resizable="true" modal="true">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="6"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+                            <p:row>
+                                <p:column><h:outputLabel value="#{etiq.nombreInstitucion}:"/></p:column>
+                                <p:column><p:inputText id="txtinst" size="20" value="#{oBancoSan.solicitud.nombreInstitucion}" onkeyup="this.value=this.value.toUpperCase();" ><p:ajax></p:ajax></p:inputText></p:column>
+                                <p:column><h:outputLabel value="#{etiq.nompac}:"/></p:column>
+                                <p:column><p:inputText id="txtnompac" size="20" value="#{oBancoSan.solicitud.paciente.nombres}" required="true" requiredMessage="Ingrese el Nombre del Paciente" onkeyup="this.value=this.value.toUpperCase();" ><p:ajax></p:ajax></p:inputText></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                                <p:column><p:inputText id="txtappat" size="20" value="#{oBancoSan.solicitud.paciente.apPaterno}" required="true" requiredMessage="Ingrese el Apellido Paterno" onkeyup="this.value=this.value.toUpperCase();" ><p:ajax></p:ajax></p:inputText></p:column>
+                                <p:column><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                                <p:column><p:inputText id="txtapmat" size="20" value="#{oBancoSan.solicitud.paciente.apMaterno}"  onkeyup="this.value=this.value.toUpperCase();"><p:ajax></p:ajax></p:inputText></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoPaciente}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hb}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.ho}:"/></p:column>                                                               
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.grupo}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="EXTERNO" styleClass="mensaje" /> </p:column>
+                                <p:column>
+                                    <p:inputText id="txthb" value="#{oBancoSan.solicitud.hb}" size="10" type="number">
+                                        <f:validateDoubleRange minimum="1.0" />
+                                        <p:ajax update=":frmOtros:msg" />
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="txtho" value="#{oBancoSan.solicitud.ho}" size="10" type="number">
+                                        <f:validateDoubleRange minimum="1.0" />
+                                        <p:ajax update=":frmOtros:msg" />
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu styleClass="bordes textover" id="selectGrpSang" value="#{oBancoSan.solicitud.tipoSangre.claveParametro}" required="true" requiredMessage="Debe Seleccionar Un Grupo Sanguíneo">
+                                        <p:ajax  event="change"/>
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                            <f:selectItems value="#{oBancoSan.listaGrupoSan}" var="GrupoSanguineo"
+                                                           itemLabel="#{GrupoSanguineo.valor}" itemValue="#{GrupoSanguineo.claveParametro}"/>
+                                        <p:ajax/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.rh}:"/></p:column> 
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tp}:"/></p:column>   
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.ttp}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noPlaquetas}:"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:selectOneMenu styleClass="bordes textover" id="selectRH" value="#{oBancoSan.solicitud.RH.claveParametro}" required="true" requiredMessage="Debe Seleccionar RH">
+                                        <p:ajax  event="change"/>
+                                            <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                            <f:selectItems value="#{oBancoSan.listaRH}" var="RH"
+                                                           itemLabel="#{RH.valor}" itemValue="#{RH.claveParametro}"/>
+                                        <p:ajax/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                
+                                <p:column>
+                                    <p:inputText id="txttp" value="#{oBancoSan.solicitud.tp}" size="10" type="number">
+                                        <f:validateDoubleRange minimum="1.0" />
+                                        <p:ajax update=":frmOtros:msg"/>
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="txtttp" value="#{oBancoSan.solicitud.TTp}" size="10" type="number">
+                                        <f:validateDoubleRange minimum="1.0" />
+                                        <p:ajax update=":frmOtros:msg" />
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="txtplaquetas" value="#{oBancoSan.solicitud.numPlaquetas}" size="10" type="number">
+                                        <f:validateLongRange minimum="1" />
+                                        <p:ajax update=":frmOtros:msg" />
+                                    </p:inputText>
+                                    <p:outputLabel  value=" MIL" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaYhora}:"/></p:column>
+                                <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>
+                                <p:column rowspan="1" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.codigoCie10}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText  value="#{oBancoSan.fecActual}"><f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="America/Mexico_City"></f:convertDateTime></h:outputText>
+                                </p:column>            
+                                <p:column colspan="2">
+                                <p:autoComplete id="tDiagnostico" queryDelay="1000" size="60" minQueryLength="3" required="true" styleClass="bordes"
+                                                value="#{oBancoSan.diag.descripcionDiag}" completeMethod="#{oBancoSan.diag.completar}" effect="fade"
+                                                onkeyup="this.value=this.value.toUpperCase();"> 
+                                <p:ajax update="tCie10" event="itemSelect"/>
+                                </p:autoComplete>
+                                </p:column>
+                               <p:column>
+                                   <p:inputText id="tCie10" value="#{oBancoSan.diag.clave1CE}" readonly="true"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                 <p:column colspan="4">
+                                    <p:panelGrid id="regProH">
+                                        <p:row>                         
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.productoSol}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noUniVol}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:selectOneMenu styleClass="bordes textover" id="selectProductoHemo" value="#{oBancoSan.solicitud.detalle.productoH.descripcion}" requiredMessage="Debe Seleccionar Un Producto">
+                                                    <p:ajax  event="change"/>
+                                                        <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                                        <f:selectItems value="#{oBancoSan.listaProductos}" var="ProductHem"
+                                                                       itemLabel="#{ProductHem.descripcion}" itemValue="#{ProductHem.descripcion}"/>
+                                                        
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="cantidadHemo" value="#{oBancoSan.solicitud.detalle.productoH.unidades}" type="number">
+                                                    <f:validateLongRange minimum="1" />
+                                                    <p:ajax update=":frmOtros:msg"/>
+                                                </p:inputText>
+                                            </p:column>
+                                            <p:column>
+                                                <p:commandButton value="#{etiq.agregar}" icon="ui-icon-plus" >
+                                                    <p:ajax listener="#{oBancoSan.agregarListaProducto()}" update=":frmOtros:msg :frmOtros:tablaProHemo :frmOtros:cantidadHemo"></p:ajax>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="3">
+                                                <p:dataTable id="tablaProHemo" var="ProHem" value="#{oBancoSan.prodAgregado}">
+                                                    <p:column headerText="#{etiq.productoSol}:" styleClass="columnachica centrado_texto">
+                                                        <h:outputText value="#{ProHem.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.noUniVol}:" styleClass="columnachica centrado_texto">
+                                                        <h:outputText value="#{ProHem.unidades}"/>
+                                                    </p:column>
+                                                    <p:column headerText="" styleClass="columnachica centrado_texto">
+                                                        <p:commandButton value="#{etiq.borrar}" id="btnBorrarHem" icon="ui-icon-trash">
+                                                            <p:ajax listener="#{oBancoSan.borrarProducto(ProHem)}" update=":frmOtros:tablaProHemo"></p:ajax>
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row>
+                    </p:panelGrid>
+                <p:commandButton value="Guardar" icon="ui-icon-disk" validateClient="true">
+                        <p:ajax listener="#{oBancoSan.guardarSolicitudApoyoInstitucional()}" update=":frmOtros:msg :frmOtros:txtinst :frmOtros:txtnompac :frmOtros:txtappat :frmOtros:txtapmat :frmOtros:txthb 
+                                :frmOtros:txtho :frmOtros:selectGrpSang :frmOtros:selectRH :frmOtros:txttp :frmOtros:txtttp :frmOtros:txtplaquetas :frmOtros:selectProductoHemo :frmOtros:cantidadHemo :frmOtros:tablaProHemo" ></p:ajax>
+                    </p:commandButton>
+        </p:dialog>
+        </h:form>
+             
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus>   
+    </ui:define>         
+</ui:composition>
+
+</html>

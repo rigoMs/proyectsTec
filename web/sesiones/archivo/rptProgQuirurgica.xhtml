@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+<div class="centrar">
+<h:form styleClass="centrar" id="frmInicio">
+    <br/>
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+    <h3><h:outputLabel value="#{etiq.prograQuir}"/></h3>
+    <p:tabView id="tvProg" dynamic="true" cache="false">
+        <p:tab id="tabProgPorFecha" title="#{etiq.por} #{etiq.fecha}">
+            <p:panelGrid >
+                <p:row>
+                    <p:column styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.fecha}"/></p:column>
+                    <p:column>
+                        <p:calendar value="#{oRptProg.fechaIni}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect"/>
+                        </p:calendar>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                            <p:ajax listener="#{oRptProg.buscaCirugiasProgramadasPorFecha()}" update=":frmInicio :frmInicio:tvProg:tabProgPorFecha :frmInicio:msgs"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="dt1" var="oRpt"
+                                 widgetVar="table1"
+                                paginator="false"
+                                paginatorPosition="bottom" 
+                                rendered="#{not empty oRptProg.listaProRealPorFecha}"
+                                rows="10" 
+                                value="#{oRptProg.listaProRealPorFecha}"
+                                emptyMessage="#{etiq.noRegistros}"
+                                styleClass="centrar">
+                <f:facet name="header" >
+                       <h:outputText style="font-weight: bold; " value="#{etiq.progra} "/>
+                        <p:outputLabel style="text-align: right" value="#{oRptProg.fechaIni}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                </f:facet>
+                <p:column style="width: 10%" >
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.expediente.numero}"/>
+                </p:column> 
+                <p:column style="width: 15%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 9%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.edadNumero}"/>
+                </p:column> 
+                <p:column style="width: 6%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.sexo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.sexoP}"/>
+                </p:column> 
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaIngreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaPropInternacion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.tipoCirugia}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.tipoCir}"/>
+                </p:column>
+                <p:column>
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechValoPres}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaValAnestesica}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaHoraCirugia}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaProgramada}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:panel style="border: none" rendered="#{not empty oRptProg.listaProRealPorFecha}">
+                <p:row >
+                    <p:column >
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                            <p:printer target="dt1"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column >
+                        <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                            <p:dataExporter type="xls" target="dt1" fileName="Prog_Quirurgicas #{oRptProg.fechaArch1}" postProcessor="#{oRptProg.postProcessXLS}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panel>
+        </p:tab>
+        <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <p:tab id="tabProgPorRangoFechas" title="#{etiq.por} #{etiq.rangoFechas}">
+            <p:panelGrid  styleClass="centrar">
+                <p:row>
+                    <p:column colspan="4" styleClass="ui-widget-header" style="text-align: center"><h:outputLabel style="font-weight: bold; " value="#{etiq.seleccionar} #{etiq.rangoFechas}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.del}"/></p:column>
+                    <p:column>
+                        <p:calendar id="txtFechIni" value="#{oRptProg.fechaIni}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect"/>
+                        </p:calendar>
+                    </p:column>
+                    <p:column><h:outputLabel style="font-weight: bold; " value="#{etiq.al}"/></p:column>
+                    <p:column>
+                        <p:calendar id="txtFechFin" value="#{oRptProg.fechaFin}" required="true" showOn="button" pattern="dd-MM-yyyy" locale="es">
+                            <p:ajax event="dateSelect" listener="#{oRptProg.validaFecha()}" update=":frmInicio:msgs"/>
+                        </p:calendar>
+                    </p:column>
+                </p:row>
+                <f:facet name="footer">
+                    <p:row>
+                        <p:column colspan="4" styleClass="centrar" >
+                            <p:commandButton style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true">
+                                <p:ajax listener="#{oRptProg.buscaCirugiasProgramadasPorRangoFecha()}" 
+                                        update=":frmInicio :frmInicio:tvProg:tabProgPorRangoFechas :frmInicio:msgs"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="dt2" var="oRpt"
+                         widgetVar="table2"
+                        paginator="false"
+                        paginatorPosition="bottom"
+                        rendered="#{not empty oRptProg.listaProReaPorRangoFecha}"
+                        rows="10" 
+                        value="#{oRptProg.listaProReaPorRangoFecha}"
+                        emptyMessage="#{etiq.noRegistros}"
+                        styleClass="centrar">
+                <f:facet name="header" >
+                       <h:outputText style="font-weight: bold; " value="#{etiq.progra} #{etiq.del} "/>
+                        <p:outputLabel style="text-align: right" value="#{oRptProg.fechaIni}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                       <h:outputText style="font-weight: bold; " value=" #{etiq.al} "/>
+                       <p:outputLabel style="text-align: right" value="#{oRptProg.fechaFin}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                </f:facet>
+                <p:column style="width: 10%" >
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px" value="#{etiq.noExp}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.expediente.numero}"/>
+                </p:column> 
+                <p:column style="width: 15%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.pacien}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column style="width: 9%" >
+                    <f:facet name="header" > <h:outputText  style="font-weight: bold;font-size: 13px " value="#{etiq.edad}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.edadNumero}"/>
+                </p:column> 
+                <p:column style="width: 6%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.sexo}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.episodioMedico.paciente.sexoP}"/>
+                </p:column> 
+                <p:column style="width: 15%">
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaIngreso}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaPropInternacion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.tipoCirugia}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.tipoCir}"/>
+                </p:column>
+                <p:column>
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechValoPres}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaValAnestesica}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column>
+                    <f:facet name="header" > <h:outputText style="font-weight: bold;font-size: 13px " value="#{etiq.fechaHoraCirugia}"/> </f:facet>
+                    <p:outputLabel style="font-size: 12px" value="#{oRpt.fechaProgramada}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <p:panel style="border: none" rendered="#{not empty oRptProg.listaProReaPorRangoFecha}">
+                <p:row >
+                    <p:column >
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                            <p:printer target="dt2"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column >
+                        <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                            <p:dataExporter type="xls" target="dt2" fileName="Rpt_Prog_Quirurgicas de #{oRptProg.fechaArch1} al #{oRptProg.fechaArch2}" postProcessor="#{oRptProg.postProcessXLS2}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panel>
+        </p:tab>
+    </p:tabView>
+</h:form>
+<p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+    <f:facet name="start">  
+        <p:graphicImage value="/imgs/loading.gif" />  
+    </f:facet>    
+</p:ajaxStatus>
+</div>
+</ui:define>
+</ui:composition>
+</html>

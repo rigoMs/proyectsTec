@@ -1,0 +1,707 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <div>
+	<f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq" />
+	<h2 class="centrado_texto">
+	    <p:outputLabel id="titBuscPers" value="#{oAddPer.titulo}"/>
+	</h2>
+	<div class="msjrequerido">
+	    <h:outputLabel value="("/>
+	    <h:outputLabel styleClass="requerido" value="*"/>
+	    <h:outputLabel  value=")"/>
+	    <h:outputLabel value="#{etiq.campo}"/>
+	</div>
+	<br/>
+
+	<p:panelGrid styleClass="frm_centrado">
+	    <f:facet name="header">
+		<p:row>
+		    <p:column colspan="6" styleClass="ui-widget-header">
+			<center>
+			    <h:outputText value="#{etiq.datosPersonal}"/>
+			</center>
+		    </p:column>
+		</p:row>
+	    </f:facet>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="nomb" value="#{etiq.nombres}:" />
+		</p:column>
+		<p:column>
+		    <p:inputText id="tNomb" value="#{oAddPer.med.nombres}" required="true" disabled="#{!oAddPer.personalActivo}"
+				 requiredMessage="Se necesita el nombre del personal"
+				 onkeyup="this.value=this.value.toUpperCase();"/>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="app" value="#{etiq.appat}:"/>
+		</p:column>
+		<p:column>
+		    <p:inputText id="tApp" value="#{oAddPer.med.apPaterno}" required="true" disabled="#{!oAddPer.personalActivo}"
+				 requiredMessage="Se necesita el primer apellido"
+				 onkeyup="this.value=this.value.toUpperCase();" />
+		</p:column>
+		<p:column>
+		    <p:outputLabel id="apm" value="#{etiq.apmat}:"/>
+		</p:column>
+		<p:column>
+		    <p:inputText id="tApm" value="#{oAddPer.med.apMaterno}"  onkeyup="this.value=this.value.toUpperCase();"
+				 disabled="#{!oAddPer.personalActivo}"/>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="sexo" value="#{etiq.sexo}:"/>
+		</p:column>
+		<p:column>
+		    <p:selectOneRadio id="tSexo" value="#{oAddPer.med.sexos}" required="true" requiredMessage="Falta el sexo"
+				      disabled="#{!oAddPer.personalActivo}">
+			<f:selectItem itemLabel="Hombre" itemValue="H" />
+			<f:selectItem itemLabel="Mujer" itemValue="M" />
+		    </p:selectOneRadio>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="fechaNac" value="#{etiq.fechanac}:"/>
+		</p:column>
+		<p:column>
+		    <p:calendar id="tFechaNac" value="#{oAddPer.med.fechaNac}" effect="fold"
+				locale="es" disabledWeekends="false" pattern="dd/MM/yyyy"
+				required="true" readonlyInput="true" navigator="true"
+				yearRange="c-90:c+0" maxdate="#{oAddPer.fechaNacMaxRange}"
+				requiredMessage="Falta la fecha de naciemiento"
+				disabled="#{!oAddPer.personalActivo}"
+				placeholder="DD/MM/AAAA" />
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="estadoCivil" value="#{etiq.edoCivil}:"/>
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tEdoCivil" value="#{oAddPer.med.estadoCivil.tipoParametro}" required="true"
+				     requiredMessage="Falta el estado civ&iacute;l" disabled="#{!oAddPer.personalActivo}"> 
+			<p:ajax />
+			<f:selectItem itemLabel="ESTADO CIVIL" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaEstadoCivil}" var="oEdo" 
+				       itemLabel="#{oEdo.valor}" itemValue="#{oEdo.tipoParametro}">
+			</f:selectItems>
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="curp" value="#{etiq.curp}:"/>
+		</p:column>
+		<p:column>
+		    <p:inputMask id="tCurp" mask="aaaa999999aaaaaa99" required="true" disabled="#{!oAddPer.personalActivo}"
+				 value="#{oAddPer.med.curp}" style="text-transform: uppercase;"
+				 requiredMessage="Falta ingresar la CURP">
+                        <p:ajax event="blur" listener="#{oAddPer.verificaCurp()}" update="tCurp :msgs" />
+                    </p:inputMask>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="rfc" value="#{etiq.rfc}:"/>
+		</p:column>
+		<p:column>
+		    <p:inputMask id="tRFC" mask="aaa*99999***?*" required="true" disabled="#{!oAddPer.personalActivo}"
+				 value="#{oAddPer.med.RFC}" style="text-transform: uppercase;"
+				 requiredMessage="Falta ingresar el RFC"/>
+		</p:column>
+		<p:column>
+		    <p:outputLabel id="telefono" value="#{etiq.tel}:"/>
+		</p:column>
+		<p:column>
+		    <p:inputMask id="tTelefono" value="#{oAddPer.med.telefono}" mask="9999999999" maxlength="10" disabled="#{!oAddPer.personalActivo}" />
+		</p:column>
+	    </p:row>
+	    <p:row>
+                <p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="tipoVialidad" value="#{etiq.tipoVialidad}:" />
+		</p:column>
+		<p:column>
+                    <p:selectOneMenu id="tTipoVialidad" value="#{oAddPer.med.tipoVialidad.cveTipoVial}" required="true"
+                                     disabled="#{!oAddPer.personalActivo}" filter="true"
+                                     requiredMessage="Se necesita el tipo de vialidad">
+                        <p:ajax />
+                        <f:selectItem itemLabel="TIPO VIALIDAD" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oAddPer.listaTipoVialidad}" var="oTipoVial"
+                                       itemLabel="#{oTipoVial.descripcion}" itemValue="#{oTipoVial.cveTipoVial}" />
+                    </p:selectOneMenu>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="domicilio" value="#{etiq.domicilio}:" />
+		</p:column>
+		<p:column colspan="3">
+		    <p:inputText id="tDomicilio" value="#{oAddPer.med.calleNum}" required="true" disabled="#{!oAddPer.personalActivo}"
+				 onkeyup="this.value=this.value.toUpperCase();" style="width: 99%;"
+				 requiredMessage="Se necesita el domicilio del personal" />
+		</p:column>
+	    </p:row>
+            <p:row>
+                <p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="noExterno" value="#{etiq.numeroexter}:" />
+		</p:column>
+		<p:column>
+                    <p:inputText id="tNoExterno" value="#{oAddPer.med.numExterior}" required="true" disabled="#{!oAddPer.personalActivo}"
+				 onkeyup="this.value=this.value.toUpperCase();"
+				 requiredMessage="Se necesita el numero externo del domicilio" />
+		</p:column>
+                <p:column>
+		    <p:outputLabel id="noInterno" value="#{etiq.numerointer}:" />
+		</p:column>
+		<p:column>
+                    <p:inputText id="tNoInterno" value="#{oAddPer.med.numInterior}" disabled="#{!oAddPer.personalActivo}"
+				 onkeyup="this.value=this.value.toUpperCase();" />
+		</p:column>
+                <p:column colspan="2" />
+            </p:row>
+	    <p:row>
+                <p:column>
+                    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="tipoAsenta" value="#{etiq.tipoAsentamiento}:" />
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu id="tTipoAsenta" value="#{oAddPer.med.tipoAsentamiento.cveAsenta}" required="true"
+                                     disabled="#{!oAddPer.personalActivo}" filter="true"
+                                     requiredMessage="Se necesita el tipo de asentamiento">
+                        <p:ajax />
+                        <f:selectItem itemLabel="TIPO ASENTAMIENTO" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oAddPer.listaTipoAsentamiento}" var="oTipoAsenta"
+                                       itemLabel="#{oTipoAsenta.descripcion}" itemValue="#{oTipoAsenta.cveAsenta}" />
+                    </p:selectOneMenu>
+                                     
+                </p:column>
+		<p:column>
+                    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="colonia" value="#{etiq.colonia}" />
+		</p:column>
+		<p:column>
+                    <p:inputText id="tColonia" value="#{oAddPer.med.colonia}" required="true" disabled="#{!oAddPer.personalActivo}"
+				 onkeyup="this.value=this.value.toUpperCase();"
+                                 requiredMessage="Se necesita el nombre de la colonia del personal" />
+		</p:column>
+                <p:column colspan="2" />
+	    </p:row>
+            <p:row>
+                <p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="pais" value="#{etiq.pais}" />
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tPais" value="#{oAddPer.med.pais.clavePais}" required="true" disabled="#{!oAddPer.personalActivo}"
+				     requiredMessage="Se necesita el país del domicilio del personal">
+			<p:ajax update="tEntidad tMunicipio tLocalidad tCp" event="change" listener="#{oAddPer.crearListaEstado()}" resetValues="true" />
+			<p:ajax update="tPaisOtro" event="change" listener="#{oAddPer.togglePaisDiferente()}" process="tPaisOtro" resetValues="true" />
+			<f:selectItems value="#{oAddPer.listaPais}" var="oPais"
+				       itemLabel="#{oPais.descripcionPais}" itemValue="#{oPais.clavePais}" />
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column>
+		    <p:outputLabel id="PaisOtro" value="Otro #{etiq.pais}:" />
+		</p:column>
+		<p:column>
+		    <p:inputText id="tPaisOtro" value="#{oAddPer.med.otroPais}" disabled="#{!(oAddPer.otroPais and oAddPer.personalActivo)}"
+				 required="#{oAddPer.otroPais}"
+				 requiredMessage="Se requiere el nombre del país del personal" />
+		</p:column>
+                <p:column colspan="2" />
+            </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="entidad" value="#{etiq.entidad}" />
+		</p:column>
+		<p:column colspan="5">
+		    <p:selectOneMenu id="tEntidad" value="#{oAddPer.med.estado.claveEdo}" required="true" disabled="#{!oAddPer.personalActivo}"
+				     requiredMessage="Se necesita la entidad del domicilio del personal" filter="true">
+			<p:ajax update="tMunicipio tLocalidad tCp" event="change" listener="#{oAddPer.crearListaMunicipio()}" resetValues="true" />
+			<f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaEstado}" var="oEdo"
+				       itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}" />
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="Municipio" value="#{etiq.municipio}" />
+		</p:column>
+		<p:column colspan="5">
+		    <p:selectOneMenu id="tMunicipio" value="#{oAddPer.med.municipio.claveMun}" required="true" filter="true"
+				     requiredMessage="Se necesita el municipio del domicilio del personal" disabled="#{!oAddPer.personalActivo}">
+			<p:ajax update="tLocalidad tCp" event="change" listener="#{oAddPer.crearListaCiudad()}" resetValues="true" />
+			<f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaMunicipio}" var="oMun"
+				       itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}" />
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="localidad" value="#{etiq.localidad}" />
+		</p:column>
+		<p:column colspan="5">
+		    <p:selectOneMenu id="tLocalidad" value="#{oAddPer.med.ciudad.claveCiu}" required="true" filter="true"
+				     requiredMessage="Se necesita la localidad del domicilio del personal" disabled="#{!oAddPer.personalActivo}">
+			<p:ajax update="tCp" event="change" listener="#{oAddPer.crearListaCiudadCP()}" resetValues="true" />
+			<f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaCiudad}" var="oCiu"
+				       itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}" />
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="Cp" value="#{etiq.codPost}" />
+		</p:column>
+		<p:column colspan="5">
+		    <p:selectOneMenu id="tCp" value="#{oAddPer.med.ciudadCP.cp}" required="true" filter="true" disabled="#{!oAddPer.personalActivo}"
+				     requiredMessage="Se necesita el código postal del domicilio del personal">
+			<p:ajax />
+			<f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaCiudadCP}" var="oCP"
+				       itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}" />
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="fechaRegCredElec" value="#{etiq.anioRegCredElector}" />
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tFechaRegCredElec" value="#{oAddPer.med.anoRegCredElector}" required="true" filter="true"
+				     requiredMessage="Falta el año de registro de la credencial de elector" disabled="#{!oAddPer.personalActivo}">
+			<p:ajax />
+			<f:selectItem itemLabel="A&Ntilde;O REGISTRO" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaAnoRegistroCredElector}" />
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column colspan="4" />
+	    </p:row>
+
+
+	    <p:row>
+		<p:column colspan="6" styleClass="ui-widget-header">
+		    <center>
+			<h:outputText value="#{etiq.datosAdministrativos}" />
+		    </center>
+		</p:column>
+	    </p:row>
+
+	    
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="noTarjeta" value="#{etiq.noTarjeta}:"/>
+		</p:column>
+		<p:column>
+		    <p:inputText id="tNoTarjeta" value="#{oAddPer.med.noTarjeta}" required="true"
+                                 disabled="#{oAddPer.modificar}" placeholder="0" maxlength="6"
+				 requiredMessage="Se necesita el número de Tarjeta"
+				 validatorMessage="El número de tarjeta debe ser entre 1 y 999999"
+				 converterMessage="El valor debe ser un número de 1 o más dígitos">
+			<f:validateLongRange for="tNoTarjeta" minimum="1" maximum="999999" />
+			<p:ajax event="blur" listener="#{oAddPer.verificarNoTarjeta()}" update="@this :msgs" resetValues="true" />
+		    </p:inputText>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="fechaRegistro" value="#{etiq.fechaRegistro}" />
+		</p:column>
+		<p:column>
+		    <p:calendar id="tFechaRegistro" value="#{oAddPer.med.fechaRegistro}" effect="fold" locale="es"
+				disabledWeekends="false" pattern="dd/MM/yyyy" required="true" readonlyInput="true" navigator="true"
+				yearRange="c-90:c+0" maxdate="#{oAddPer.fechaHoy}"
+				requiredMessage="Falta la fecha de registro del personal"
+				disabled="#{!oAddPer.personalActivo}" />
+		</p:column>
+		<p:column colspan="2" rendered="#{!oAddPer.modificar}" />
+		<p:column rendered="#{oAddPer.modificar}">
+		    <p:outputLabel id="statusActividad" value="#{etiq.estadoActividad}" />
+		</p:column>
+		<p:column rendered="#{oAddPer.modificar}">
+		    <h:outputText id="tStatusActividad" value="#{oAddPer.med.activo.valor}" />
+		    <h:outputText id="tFechaActivo" value="@#{oAddPer.med.fechaCambioActivo}" rendered="#{oAddPer.med.fechaCambioActivo != null}">
+			<f:convertDateTime pattern="dd/MM/yyyy" locale="es" type="date" />
+		    </h:outputText>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="tipoContrato" value="#{etiq.tipoPlaza}:"/>
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tTipoContrato" value="#{oAddPer.med.tipoContrato.tipoParametro}" required="true" filter="true"
+				     requiredMessage="Falta especificar el tipo de contrato" disabled="#{!oAddPer.personalActivo}">
+			<p:ajax update="pnlPersBaseInterino" event="change" listener="#{oAddPer.revisaInterino()}" />
+			<f:selectItem itemLabel="TIPO PLAZA" itemValue="" noSelectionOption="true" /> <!-- AGREGADO: 02/03/17 (JMHG) -->
+			<f:selectItems value="#{oAddPer.listaTipoContrato}" var="oTipoCon" 
+				       itemLabel="#{oTipoCon.valor}" itemValue="#{oTipoCon.claveParametro}">
+			</f:selectItems>
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="tipoPersonal" value="#{etiq.origenPlaza}:"/>
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tTipoPersonal" value="#{oAddPer.med.tipoPersonal.tipoParametro}" required="true" filter="true"
+				     disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+				     requiredMessage="Falta especificar el origen de la plaza"> 
+			<p:ajax />
+			<f:selectItem itemLabel="ORIGEN PLAZA" itemValue="" noSelectionOption="true" /> <!-- AGREGADO: 02/03/17 (JMHG) -->
+			<f:selectItems value="#{oAddPer.listaTipoPersonal}" var="oTipoPer" 
+				       itemLabel="#{oTipoPer.valor}" itemValue="#{oTipoPer.claveParametro}">
+			</f:selectItems>
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column colspan="2" />
+	    </p:row>
+	    <p:row>
+		<p:column colspan="6">
+		    <p:panelGrid id="pnlPersBaseInterino">
+			<p:row>
+			   <p:column>
+				<p:outputLabel id="noTarjetaBase" value="#{etiq.noTarjeta} Personal Base" />
+			    </p:column>
+			    <p:column colspan="2">
+				<p:inputText id="tNoTarjetaBase" value="#{oAddPer.medicoBase.noTarjeta}"
+					     disabled="#{!(oAddPer.interino and oAddPer.personalActivo)}"
+					     readonly="true" required="#{oAddPer.interino}"
+                                             requiredMessage="Se requiere el número de tarjeta del personal base"/>
+			    </p:column>
+			    <p:column>
+				<p:outputLabel id="nomCompPersBase" value="#{etiq.nombreCompleto} Personal Base" />
+			    </p:column>
+			    <p:column colspan="2">
+				<p:inputText id="tNomCompPersBase" value="#{oAddPer.medicoBase.nombreCompleto}"
+					     disabled="#{!(oAddPer.interino and oAddPer.personalActivo)}"
+					     readonly="true" required="#{oAddPer.interino}"
+                                             requiredMessage="Se requiere el nombre del personal base"/>
+			    </p:column>
+			</p:row>
+			<p:row>
+			    <p:column styleClass="frm_centrado centrado_texto" colspan="6">
+				<p:commandButton id="btnPersBaseInterino" value="Buscar Personal Base" type="button"
+						 disabled="#{!(oAddPer.interino and oAddPer.personalActivo)}"
+						 icon="ui-icon-search" onclick="PF('varDlgBuscaPersonal').show();" />
+			    </p:column>
+			</p:row>
+		    </p:panelGrid>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="tipoEmpleado" value="#{etiq.tipoEmpleado}" />
+		</p:column>
+		<p:column colspan="5">
+		    <p:selectOneMenu id="tTipoEmpleado" value="#{oAddPer.med.tipoEmpleado.tipoParametro}" required="true"
+				     disabled="#{!oAddPer.personalActivo}"
+				     requiredMessage="Falta elegir el tipo de empleado">
+			<p:ajax update="tEspecialidadMed tTipoMedico cedProfReq tCedProf" event="change"
+				listener="#{oAddPer.crearListaPersonalGrupo()}" resetValues="true" />
+			<f:selectItem itemLabel="TIPO EMPLEADO" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaTipoEmpleado}" var="oTipoEmp"
+				       itemLabel="#{oTipoEmp.valor}" itemValue="#{oTipoEmp.tipoParametro}" />
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    
+	    
+	    <p:row>
+		<p:column colspan="6" styleClass="ui-widget-header">
+		    <center>
+			<h:outputText value="#{etiq.datosPersonalMedico}" />
+		    </center>
+		</p:column>
+	    </p:row>
+	    
+	    
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="especialidadMed" value="#{etiq.especialidadPrincipal}" />
+		</p:column>
+		<p:column colspan="2">
+		    <p:selectOneMenu id="tEspecialidadMed" value="#{oAddPer.med.especialidad.claveEsp}" required="#{oAddPer.medico}"
+				     disabled="#{!(oAddPer.medico and oAddPer.personalActivo)}" filter="true" filterMatchMode="contains"
+				     requiredMessage="Se requiere seleccionar una especialidad">
+			<f:selectItem itemLabel="ESPECIALIDAD" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaEspecialidad}" var="oEspMed"
+				       itemLabel="#{oEspMed.descripcion}" itemValue="#{oEspMed.claveEsp}" />
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="tipoMedico" value="#{etiq.tipoMedico}" />
+		</p:column>
+		<p:column colspan="2">
+		    <p:selectOneMenu id="tTipoMedico" value="#{oAddPer.med.tipoMedico.claveTipo}" required="#{oAddPer.medico}"
+				     disabled="#{!(oAddPer.medico and oAddPer.personalActivo)}" filter="true"
+				     requiredMessage="Se requiere seleccionar un tipo de médico">
+			<f:selectItem itemLabel="TIPO MEDICO" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaTipoMedico}" var="oTipoMed"
+				       itemLabel="#{oTipoMed.descripcion}" itemValue="#{oTipoMed.claveTipo}" />
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    
+	    
+	    <p:row>
+		<p:column colspan="6" styleClass="ui-widget-header">
+		    <center>
+			<h:outputText value="#{etiq.datosServicio}" />
+		    </center>
+		</p:column>
+	    </p:row>
+	    
+	    
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="categoria" value="#{etiq.categoriaPersonal}" />
+		</p:column>
+		<p:column colspan="2">
+		    <p:selectOneMenu id="tCategoria" value="#{oAddPer.med.personalAreaServ.personalCategoria.claveCategoria}" required="true"
+				     filter="true" filterMatchMode="contains" disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+				     requiredMessage="Falta elegir el tipo de empleado">
+			<f:selectItem itemLabel="CATEGORIA" itemValue="" noSelectionOption="true" itemEscaped="false" />
+			<f:selectItems value="#{oAddPer.listaPersonalCategoria}" var="oCatPers" itemLabelEscaped="false"
+				       itemLabel="#{oCatPers.descripcion}" itemValue="#{oCatPers.claveCategoria}" />
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="grupo" value="#{etiq.grupoPersonal}" />
+		</p:column>
+		<p:column colspan="2">
+		    <p:selectOneMenu id="tGrupo" value="#{oAddPer.med.personalAreaServ.personalGrupo.claveGrupo}" required="true"
+				     filter="true" filterMatchMode="contains" disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+				     requiredMessage="Falta seleccionar un grupo">
+			<p:ajax update="tPuesto tServicio" event="change" listener="#{oAddPer.crearListaPuesto()}" resetValues="true" />
+			<f:selectItem itemLabel="GRUPO PERSONAL" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaPersonalGrupo}" var="oGrupo"
+				       itemLabel="#{oGrupo.descripcion}" itemValue="#{oGrupo.claveGrupo}" />
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="puesto" value="#{etiq.puesto}:"/>
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tPuesto" value="#{oAddPer.med.personalAreaServ.puesto.clave}" required="true"
+				     filter="true" filterMatchMode="contains" disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+				     requiredMessage="Falta ingresar el puesto">
+			<p:ajax update="tServicio" event="change" listener="#{oAddPer.crearListaAreaServicioHRRB()}" resetValues="true" />
+			<f:selectItem itemLabel="PUESTO" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaPuesto}" var="oPues" 
+				       itemLabel="#{oPues.descripcion}" itemValue="#{oPues.clave}">
+			</f:selectItems>
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="servicio" value="#{etiq.areaServicio}:"/>
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tServicio" value="#{oAddPer.med.personalAreaServ.areaServ.clave}" required="true" filter="true"
+				     disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+				     requiredMessage="Falta especificar el servicio"> 
+			<p:ajax />
+			<f:selectItem itemLabel="AREA DE SERVICIO" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaAreaServicio}" var="oArea" 
+				       itemLabel="#{oArea.descripcion} - #{oArea.tipo}" itemValue="#{oArea.clave}">
+			</f:selectItems>
+		    </p:selectOneMenu>
+		</p:column>
+		<p:column>
+		    <h:outputLabel styleClass="requerido" value="*"/>
+		    <p:outputLabel id="turno" value="#{etiq.turno}:"/>
+		</p:column>
+		<p:column>
+		    <p:selectOneMenu id="tTurno" value="#{oAddPer.med.personalAreaServ.turnoPersonal.claveTurno}" required="true"
+				     disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+				     requiredMessage="Falta especificar el turno">
+			<p:ajax update="tHoraIni tHoraFin tDiasTrabajo" event="change" listener="#{oAddPer.crearTurnoPersonal()}" resetValues="true" />
+			<f:selectItem itemLabel="TURNO" itemValue="" noSelectionOption="true" />
+			<f:selectItems value="#{oAddPer.listaTurnoPersonal}" var="oTurnoPers" 
+				       itemLabel="#{oTurnoPers.descripcion}" itemValue="#{oTurnoPers.claveTurno}">
+
+			</f:selectItems>
+		    </p:selectOneMenu>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column colspan="6" >
+		    <p:panelGrid id="panelHorario" >
+			<p:row>
+			    <p:column>
+				<h:outputLabel styleClass="requerido" value="*"/>
+				<p:outputLabel id="horaIni" value="#{etiq.horaEntrada}" />
+			    </p:column>
+			    <p:column styleClass="centrado_texto">
+				<pe:timePicker id="tHoraIni" value="#{oAddPer.med.personalAreaServ.turnoPersonal.horaIniDate}" mode="popup"
+					       disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+					       intervalMinutes="30" locale="es" required="true"
+					       requiredMessage="Falta la hora de entrada">
+				    <p:ajax />
+				</pe:timePicker>
+			    </p:column>
+			    <p:column>
+				<h:outputLabel styleClass="requerido" value="*"/>
+				<p:outputLabel id="horaFin" value="#{etiq.horaSalida}" />
+			    </p:column>
+			    <p:column styleClass="centrado_texto">
+				<pe:timePicker id="tHoraFin" value="#{oAddPer.med.personalAreaServ.turnoPersonal.horaFinDate}" mode="popup"
+					       disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+					       intervalMinutes="30" locale="es" required="true"
+					       requiredMessage="Falta la hora de entrada">
+				    <p:ajax />
+				</pe:timePicker>
+			    </p:column>
+			</p:row>
+			<p:row>
+			    <p:column>
+				<h:outputLabel styleClass="requerido" value="*"/>
+				<p:outputLabel id="diasTrabajo" value="#{etiq.diasTrabajo}" />
+			    </p:column>
+			    <p:column colspan="3" styleClass="centrado_texto">
+				<p:selectManyCheckbox id="tDiasTrabajo" value="#{oAddPer.med.personalAreaServ.turnoPersonal.arrDiasTrabajo}"
+						      disabled="#{(oAddPer.interino or !oAddPer.personalActivo)}"
+						      required="true" requiredMessage="Seleccione al menos un día de trabajo">
+				    <f:selectItem itemLabel="LUNES" itemValue="L" />
+				    <f:selectItem itemLabel="MARTES" itemValue="M" />
+				    <f:selectItem itemLabel="MIERCOLES" itemValue="X" />
+				    <f:selectItem itemLabel="JUEVES" itemValue="J" />
+				    <f:selectItem itemLabel="VIERNES" itemValue="V" />
+				    <f:selectItem itemLabel="SABADO" itemValue="S" />
+				    <f:selectItem itemLabel="DOMINGO" itemValue="D" />
+				</p:selectManyCheckbox>
+			    </p:column>
+			</p:row>
+		    </p:panelGrid>
+		</p:column>
+	    </p:row>
+	    
+	    
+	    <p:row>
+		<p:column colspan="6" styleClass="ui-widget-header">
+		    <center>
+			<h:outputText value="#{etiq.otrosDatos}" />
+		    </center>
+		</p:column>
+	    </p:row>
+	    
+	    
+	    <p:row>
+		<p:column>
+                    <h:outputLabel id="cedProfReq" styleClass="requerido" value="*" style="#{oAddPer.mostrarCedulaObligatoria}" />
+		    <p:outputLabel id="cedProf" value="#{etiq.cedulaProf}:" />
+		</p:column>
+		<p:column>
+                    <p:inputText id="tCedProf" value="#{oAddPer.med.cedProf}" required="#{oAddPer.cedulaObligatoria}"
+                                 disabled="#{!oAddPer.personalActivo}" maxlength="10"
+				 requiredMessage="Se requiere la cédula profesional"
+				 validatorMessage="La cédula profesional debe ser entre 1 y 9999999999"
+				 converterMessage="El valor debe ser un número de 1 o más dígitos">
+			<f:validateLongRange for="tCedProf" minimum="1" maximum="9999999999" />
+			<p:ajax event="blur" listener="#{oAddPer.verificarCedulaProf()}" update="@this :msgs" resetValues="true" />
+		    </p:inputText>
+		</p:column>
+		<p:column colspan="4" />
+	    </p:row>
+	    <p:row>
+		<p:column colspan="6">
+		    <p:dataTable id="dtCedEsps" value="#{oAddPer.med.listaCedulaEspecialidad}" var="oCedEsp"
+				 emptyMessage="">
+			<p:columnGroup type="header">
+			    <p:row>
+				<p:column headerText="" style="padding: 0px; border-width: 0px; margin: 0px; visibility: hidden;" />
+				<p:column headerText="" style="padding: 0px; border-width: 0px; margin: 0px; visibility: hidden;" />
+				<p:column headerText="" style="padding: 0px; border-width: 0px; margin: 0px; visibility: hidden;" />
+				<p:column headerText="" style="padding: 0px; border-width: 0px; margin: 0px; visibility: hidden; width: 28%" />
+				<p:column headerText="" style="padding: 0px; border-width: 0px; margin: 0px; visibility: hidden;" />
+			    </p:row>
+			</p:columnGroup>
+			<p:column>
+                            <h:outputLabel styleClass="requerido" value="*"/>
+			    <p:outputLabel value="#{etiq.cedulaEsp}:"/>
+			</p:column>
+			<p:column>
+                            <p:inputText value="#{oCedEsp.cedEsp}" maxlength="10" style="text-transform: uppercase;" required="true"
+					 disabled="#{!oAddPer.personalActivo}"
+                                         requiredMessage="Se requiere de la cedula de especialidad">
+				<p:ajax />
+			    </p:inputText>
+			</p:column>
+			<p:column>
+                            <h:outputLabel styleClass="requerido" value="*"/>
+			    <p:outputLabel value="#{etiq.especialidad}:"/>
+			</p:column>
+			<p:column>
+                            <p:selectOneMenu value="#{oCedEsp.especialidad.claveEsp}" filter="true" filterMatchMode="contains" required="true"
+					     disabled="#{!oAddPer.personalActivo}"
+                                             requiredMessage="Se requiere de la especialidad para la cedula de especialidad"> 
+				<f:selectItem itemLabel="ESPECIALIDAD" itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{oAddPer.listaEspecialidad}" var="oEspCed" 
+					       itemLabel="#{oEspCed.descripcion}" itemValue="#{oEspCed.claveEsp}">
+				</f:selectItems>
+				<p:ajax />
+			    </p:selectOneMenu>
+			</p:column>
+			<p:column styleClass="centrado_texto">
+			    <p:commandButton value="Eliminar" icon="ui-icon-minus" disabled="#{!oAddPer.personalActivo}">
+                                <p:ajax update="dtCedEsps" listener="#{oAddPer.delRowCedulaEspecialidad(oCedEsp)}" process="@this" />
+			    </p:commandButton>
+			</p:column>
+		    </p:dataTable>
+		</p:column>
+	    </p:row>
+	    <p:row>
+		<p:column colspan="6" styleClass="centrado_texto">
+		    <p:commandButton value="Agregar Especialidad" icon="ui-icon-plus" disabled="#{!oAddPer.personalActivo}">
+                        <p:ajax update="dtCedEsps" listener="#{oAddPer.addRowCedulaEspecialidad()}" />
+		    </p:commandButton>
+		</p:column>
+	    </p:row>
+	</p:panelGrid>
+	    <p:dialog id="dlgBuscaPersonal" widgetVar="varDlgBuscaPersonal" modal="true" dynamic="true" resizable="false"
+		      closable="true" draggable="true" style="height: 80%; width: 80%;" position="center">
+		<p:scrollPanel style="height: 500px; width: 1000px;" mode="native">
+		    #{oBuscarPersHospJB.limpiar()}
+		    #{oBuscarPersHospJB.setDialog(true)}
+                    #{oBuscarPersHospJB.setPersBase(true)}
+		    <h:form>
+			<ui:include src="compBusqPersHosp.xhtml" />
+			<center>
+			    <p:commandButton id="btnSeleccionarBase" value="Seleccionar Personal" style="display: #{oBuscarPersHospJB.mostrarBusqueda}">
+				<p:ajax oncomplete="PF('varDlgBuscaPersonal').hide();"
+					listener="#{oAddPer.buscarPersonalBase(oBuscarPersHospJB.personalHospitalarioSelect.noTarjeta)}" />
+			    </p:commandButton>
+			</center>
+		    </h:form>
+		</p:scrollPanel>
+	    </p:dialog>
+	<br/>
+    </div>
+</html>

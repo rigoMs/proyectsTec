@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.protocoloQuimio}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <div class="buscar">
+                    <h:form>
+                        <p:accordionPanel>
+                        <p:ajax event="tabChange" listener="#{oBuscarPac.requerir}" update="@this, nom1 app1 exp1" />
+                        <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                            <p:panelGrid columns="4" >
+                                <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                                <h:outputLabel />
+                                <p:inputText styleClass="bordes" id="nom1" value="#{oProtocolo.nombre}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>                        
+                                <p:inputText styleClass="bordes" id="app1" value="#{oProtocolo.apPaterno}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                                <p:inputText styleClass="bordes" id="apm1" value="#{oProtocolo.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                            </p:panelGrid>
+                        </p:tab>        
+                        <p:tab title="#{etiq.buscarPorExpediente}"  id="tabE">
+                            <p:panelGrid columns="3" styleClass="frmlogin">
+                                <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                <p:inputText styleClass="bordes" id="exp1" value="#{oProtocolo.numExpe}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" required="#{oBuscarPac.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                                    <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                    <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                                </p:inputText>
+                            </p:panelGrid>
+                            <p:message for="exp1" id="mentExp"></p:message>
+                        </p:tab>
+                       </p:accordionPanel>   
+                    <br/>      
+                    <p:panelGrid columns="5" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.afecha}"/>
+                        <p:calendar id="fechaEmision"  effect="fold" required="true" requiredMessage="Debe seleccionar una fecha"  value="#{oProtocolo.fecha}" onkeypress="return validaCaracter(event)" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                        </p:calendar> 
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" actionListener="#{oProtocolo.buscarProtocolos}" update=":frmhist:tblHisProt">
+                        </p:commandButton>
+                </p:panelGrid>
+                </h:form>
+                <br/><br/>
+            </div>
+             <h:form id="frmhist">
+                 <p:growl id="msg" showDetail="true" />
+                    <p:dataTable id="tblHisProt"
+                                 value="#{oProtocolo.protocolos}"
+                                var="oPro"
+                                emptyMessage="No se encotraron registros"
+                                paginator="true"
+                                rows="10"
+                                rowKey="#{oPro.detalle.identificador}"
+                                selection="#{oProtocolo.seleccionado}"
+                                >
+                        <p:ajax event="rowSelectRadio"></p:ajax>
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.historialProtocolos}" styleClass="mensaje" />
+                    </f:facet>
+                        <p:column selectionMode="single">     
+                        </p:column>
+                    <p:column  width="10%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje" />
+                        </f:facet>
+                        <h:outputText value="#{oPro.detalle.fechaSolicitud}" />
+                    </p:column>
+                    <p:column  width="60%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.datosTratamiento}" styleClass="mensaje" />
+                        </f:facet>
+                        <h:outputText value="Medicamento: " styleClass="mensaje"/> <h:outputText value=" #{oPro.det.medicamento.nombre}" /> <br/>
+                        <h:outputText value="Presentación: " styleClass="mensaje" /> <h:outputText value="#{oPro.det.medicamento.presentacion}" /> <br/>
+                        <h:outputText value="Dosis " styleClass="mensaje" /> <h:outputText value="#{oPro.det.dosis}" /> <br/>
+                        <h:outputText value="Vía de administración: " styleClass="mensaje" /> <h:outputText value="#{oPro.det.tipoVia.valor}" /> <br/>
+                    </p:column>
+                    <p:column  width="25%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.accion}" styleClass="mensaje" />
+                        </f:facet>
+                        <p:commandButton value="Realizado" icon="ui-icon-check" actionListener="#{oProtocolo.buscarCantidades}" oncomplete="PF('dlgConfirma').show();" update=":frmhist:msg :frmhist:textCant :frmhist:btnG " />
+                        <p:commandButton value="Cancelado" icon="ui-icon-close" actionListener="#{oProtocolo.modificarEstadoProtocolo(2)}" update=":frmhist:msg :frmhist:tblHisProt" />
+                    </p:column>
+                </p:dataTable>
+                    <p:dialog header="Confirmar aplicación de Medicamento" widgetVar="dlgConfirma"
+                              height="40%" width="50%" modal="true">
+                        <p:outputPanel id="panCant">
+                            <p:panelGrid styleClass="frm_centrado">
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1"> 
+                                        <p:outputLabel value="#{etiq.cantSol}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText id="textCant" value="#{oProtocolo.solicitud.det.cantSolicitada}" styleClass="mensaje" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:outputLabel value="#{etiq.cantApl}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:inputText id="txtCantAp" value="#{oProtocolo.solicitud.det.cantAplicada}" size="15" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" rowspan="1">
+                                        <p:commandButton id="btnG" disabled="#{oProtocolo.showButton}" value="#{etiq.guardar}" actionListener="#{oProtocolo.modificarEstadoProtocolo(1)}" icon="ui-icon-disk" update=":frmhist:msg :frmhist:tblHisProt :frmhist:txtCantAp :frmhist:btnG"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </p:dialog>
+                </h:form> 
+        <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+        </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

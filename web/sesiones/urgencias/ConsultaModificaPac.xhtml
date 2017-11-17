@@ -1,0 +1,699 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+    <div class="centrar">
+    <h:form id="cmPacUrg" class="centrar">
+      <c:choose>
+      <c:when test="${oConsModPac.ope=='m' || oConsModPac.folioPac gt 0 }">  
+        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+         <p:growl id="messages" showDetail="true"/>
+         <br/>
+         <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+         <p:panelGrid styleClass="frm_centrado"> 
+              
+        <f:facet name="header">
+             <p:row>
+                 <p:column colspan="5">
+                <h:outputLabel value="#{etiq.consulta}/#{etiq.modificar}"/>
+                </p:column>
+            </p:row>
+        </f:facet>    
+                  
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.status} #{etiq.pacien} :"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+             </p:row>
+             <p:row>
+                 <p:column>
+                     <p:inputText id="status" value="#{oConsModPac.pacCMUrg.statusPac}" readonly="true" required="true" style="background: #{oConsModPac.pacCMUrg.semaforo}" onkeyup="this.value=this.value.toUpperCase();">
+                     </p:inputText>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:inputText id="nombre" value="#{oConsModPac.pacCMUrg.paciente.nombres}" requiredMessage="Debe ingresar el nombre del paciente" maxlength="50" required="true" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax update="mentNom" event="keyup"/>
+                     </p:inputText>
+                     <p:message for="nombre" id="mentNom" />
+         
+                 </p:column>
+                          
+                  <p:column>
+                      <p:inputText id="appat" value="#{oConsModPac.pacCMUrg.paciente.apPaterno}" requiredMessage="Debe ingresar el apellido paterno del paciente" maxlength="50" required="true" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                          <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax update="mentApp" event="keyup"/>
+                     </p:inputText>
+                     <p:message for="appat" id="mentApp" />
+                  </p:column>
+                  
+                  <p:column>
+                      <p:inputText id="apmat" value="#{oConsModPac.pacCMUrg.paciente.apMaterno}"  maxlength="50" required="false" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                          <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax update="mentApm" event="keyup"/>
+                     </p:inputText>
+                     <p:message for="apmat" id="mentApm" />
+                  </p:column>
+                 
+                 
+                  <p:column>
+                      <p:selectOneRadio id="sexo" value="#{oConsModPac.pacCMUrg.paciente.sexoP}" required="true" requiredMessage="Debe ingresar el sexo del paciente">
+                      <f:selectItem itemLabel="Masculino" itemValue="M" />
+                      <f:selectItem itemLabel="Femenino" itemValue="F" />
+                      <p:ajax update="serHosp" event="valueChange"/>
+                  </p:selectOneRadio>
+                  </p:column>
+                 
+                 </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.fechanac}"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad1}:"/><br/></p:column>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel value="¿#{etiq.nacidoHosp}?:"/><br/></p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column><p:inputMask id="curp" value="#{oConsModPac.pacCMUrg.paciente.curp}" mask="aaaa999999aaaaaa99" required="false" style="text-transform: uppercase" /></p:column>
+                 
+                 <p:column>
+                     <p:inputMask mask="99/99/9999"  id="fechaNac" value="#{oConsModPac.pacCMUrg.fechaStr}" required="true" requiredMessage="Debe ingresar la fecha de nacimiento del paciente">
+                        <!--<f:convertDateTime pattern="dd-MM-yyyy"/>-->
+                        <f:validator validatorId="mx.gob.hrrb.validadores.FechasNacValidator"/>
+                        <p:ajax update="edad, nHos ment2" event="valueChange"/>
+                     </p:inputMask>
+                     <p:message for="fechaNac" id="ment2" />
+                  </p:column>
+                 <p:column>
+                     <p:selectOneMenu id="enti1" value="#{oConsModPac.pacCMUrg.paciente.estado.claveEdo}"  requiredMessage="Debe indicar un Estado"  >
+                         <p:ajax update="muni" event="change"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oConsModPac.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                
+                 <p:column>
+                     <p:inputText id="edad" value="#{oConsModPac.pacCMUrg.calculaEdadUrg}" readonly="true">
+                    
+                     </p:inputText>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="nHos" value="#{oConsModPac.pacCMUrg.paciente.nacidoEnHospitalP}" disabled="#{oConsModPac.pacCMUrg.habilitaNHos()}">
+                      <f:selectItem itemLabel="Si" itemValue="S" />
+                      <f:selectItem itemLabel="No" itemValue="N" />
+                  </p:selectOneMenu>
+                     
+                </p:column>
+                 
+                 
+                   
+             </p:row>
+             
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.talla}:"/></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.peso1}:"/></p:column>
+                 <p:column styleClass="ui-widget-header">
+		    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="tipoVialidad" value="#{etiq.tipoVialidad}:" />
+		</p:column>
+                <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                 </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:inputText id="Talla" value="#{oConsModPac.pacCMUrg.paciente.talla}" maxlength="6" validatorMessage="Talla Incorrecta" converterMessage="Debe ingresar una talla entre 15 y 300" requiredMessage="Debe ingresar la talla del paciente" required="true" size="4" styleClass="bordes">
+                      <f:validateDoubleRange minimum="00.10" maximum="999.99"/>
+                     </p:inputText>
+                     <h:outputLabel value="#{etiq.cm}    "/>
+                    </p:column>
+                 <p:column>
+                     <p:inputText  id="peso" value="#{oConsModPac.pacCMUrg.paciente.peso}" maxlength="6" converterMessage="Debe ingresar un peso entre 0.501 y 500" validatorMessage="Peso Incorrecto" requiredMessage="Debe ingresar el peso del paciente" required="true" size="4" styleClass="bordes">
+                        <f:validateDoubleRange minimum="00.501" maximum="500"/>
+                     </p:inputText>
+                     <h:outputLabel value="#{etiq.kg}"/>
+                     <p:inputText  id="gram" value="#{oConsModPac.pacCMUrg.paciente.gramo}" maxlength="6" converterMessage="Debe ingresar un peso entre 0.501 y 500" validatorMessage="Peso Incorrecto" requiredMessage="Debe ingresar el peso del paciente" required="true" size="4" styleClass="bordes">
+                        <f:validateDoubleRange minimum="00.501" maximum="500"/>
+                     </p:inputText>
+                     <h:outputLabel value="#{etiq.gr}"/>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="tTipoVialidad" value="#{oConsModPac.pacCMUrg.paciente.tipoVialidad.cveTipoVial}" required="true"
+                                      filter="true"
+                                     requiredMessage="Se necesita el tipo de vialidad">
+                        <p:ajax />
+                        <f:selectItem itemLabel="TIPO VIALIDAD" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oConsModPac.listaTipoVialidad}" var="oTipoVial"
+                                       itemLabel="#{oTipoVial.descripcion}" itemValue="#{oTipoVial.cveTipoVial}" />
+                    </p:selectOneMenu>
+		</p:column>
+                 
+                  <p:column colspan="2">
+                      <p:inputText size="60" id="dom" value="#{oConsModPac.pacCMUrg.paciente.calleNum}" onkeypress="return validaCaracter(event);" requiredMessage="Debe ingresar una dirección"  maxlength="100" required="true" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                 
+                 
+                 
+               </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header">
+                    <h:outputLabel styleClass="requerido" value="*" />
+		    <p:outputLabel id="tipoAsenta" value="#{etiq.tipoAsentamiento}:" />
+                </p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.colonia}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.pais}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/><br/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel  value="#{etiq.numExt}:"/><br/></p:column>
+                
+             </p:row>
+             
+             <p:row>
+                  <p:column > 
+                      <p:selectOneMenu id="tTipoAsenta" value="#{oConsModPac.pacCMUrg.paciente.tipoAsentamiento.cveAsenta}" required="true"
+                                      filter="true"
+                                     requiredMessage="Se necesita el tipo de asentamiento">
+                        <p:ajax />
+                        <f:selectItem itemLabel="TIPO ASENTAMIENTO" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oConsModPac.listaTipoAsentamiento}" var="oTipoAsenta"
+                                       itemLabel="#{oTipoAsenta.descripcion}" itemValue="#{oTipoAsenta.cveAsenta}" />
+                    </p:selectOneMenu>
+                                     
+                </p:column> 
+                 <p:column>
+                     <p:inputText size="10" id="colonia" value="#{oConsModPac.pacCMUrg.paciente.colonia}" onkeypress="return validaCaracter(event);" maxlength="100" required="false" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:inputText value="#{oConsModPac.pacCMUrg.paciente.pais}" size="15" onkeypress="return validaCaracter(event);" maxlength="20" required="true" requiredMessage="Debe ingresar un país" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                        <f:ajax render="enti muni loc codp" event="keyup" />
+                        <!--<p:ajax update="enti muni loc codp" event="valueChange"/>-->
+                     </p:inputText>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="enti" value="#{oConsModPac.pacCMUrg.paciente.estado.claveEdo}" required="#{oConsModPac.habilitaDir()}" requiredMessage="Debe ingresar un estado" disabled="#{oConsModPac.habilitaPais()}" >
+                         <p:ajax update="muni" event="valueChange"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oConsModPac.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 <p:column>
+                     <!--numero exterior revision no estoy seguro de esto-->
+                     <p:inputText  id="numExt" value="#{oConsModPac.pacCMUrg.paciente.numExterior}"  maxlength="10"/>
+                 </p:column>
+                 
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel  value="#{etiq.numInt}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.municipio}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.localidad}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cp}:"/><br/></p:column> 
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.referencia}:"/></p:column>
+             </p:row>
+                 
+             <p:row>
+                 <p:column>
+                     <!--numero exterior revision no estoy seguro de esto-->
+                     <p:inputText id="numInt" value="#{oConsModPac.pacCMUrg.paciente.numInterior}"  maxlength="10"/>
+                 </p:column>
+                 <p:column>      
+                     <p:selectOneMenu id="muni" value="#{oConsModPac.pacCMUrg.paciente.municipio.claveMun}" required="#{oConsModPac.habilitaDir()}" requiredMessage="Debe ingresar un municipio" disabled="#{oConsModPac.habilitaPais()}">
+                         <p:ajax update="loc" event="valueChange"/>
+                         <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oConsModPac.listaMunicipios}" var="oMun" 
+                                        itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="loc" value="#{oConsModPac.pacCMUrg.paciente.ciudad.claveCiu}" required="#{oConsModPac.habilitaDir()}" requiredMessage="Debe ingresar una ciudad" disabled="#{oConsModPac.habilitaPais()}">
+                         <p:ajax update="codp" event="valueChange"/>
+                         <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oConsModPac.listaCiudades}" var="oCiu"
+                                        itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="codp" value="#{oConsModPac.pacCMUrg.paciente.ciudadCP.cp}" disabled="#{oConsModPac.habilitaPais()}">
+                         <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oConsModPac.listaCP}" var="oCP" 
+                                        itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                  <p:column colspan="2">
+                     <p:selectOneMenu id="ref" value="#{oConsModPac.pacCMUrg.paciente.referencia.clave}" required="true" requiredMessage="Debe ingresar una referencia" style="lista">
+                         <f:selectItems value="#{oConsModPac.pacCMUrg.paciente.referencia.listaReferencias}" var="refe"
+                                        itemLabel="#{refe.tipo} #{refe.descripcion}" itemValue="#{refe.clave}"/>
+                        </p:selectOneMenu>
+                </p:column>
+            </p:row>
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/>
+                   <h:outputLabel value="#{etiq.perteneceAUn}"/><br/>
+                   
+                 </p:column>
+                 
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/>
+                   <h:outputLabel value="#{etiq.hablaOEntiende}"/><br/>
+                   <h:outputLabel value="#{etiq.algunaLengIndigena}:"/><br/>
+                 </p:column>
+                 
+                 <p:column styleClass="ui-widget-header">
+                   <h:outputLabel value="#{etiq.cualEsLenguaInd}"/><br/>
+                   
+                 </p:column>
+                 
+                 <!--p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/>
+                     <h:outputLabel value="#{etiq.hablaEspañol}:"/>
+                 </p:column-->
+                 
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/>
+                     <p:outputLabel value="#{etiq.edoCivil}:"/></p:column>
+                 
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/>
+                     <p:outputLabel value="#{etiq.telefono1}:"/></p:column>
+                     
+             </p:row>
+             
+             <p:row>
+                                     
+                  <p:column>
+                      <p:selectOneRadio id="pgi" value="#{oConsModPac.pacCMUrg.paciente.etnicidad.pertenenciaGpoIndStr}" required="true" requiredMessage="Debe ingresar una pertenencia" layout="pageDirection" >
+                          <f:selectItems value="#{oConsModPac.listaPertGpoIndigena}" var="pert"
+                                         itemLabel="#{pert.valor}" itemValue="#{pert.tipoParametro.trim()}#{pert.claveParametro.trim()}"/>
+                      </p:selectOneRadio>
+                  </p:column>
+                  
+                  <p:column>
+                      <p:selectOneRadio id="heli" value="#{oConsModPac.pacCMUrg.paciente.etnicidad.hablaLenguaIndStr}"  required="true" requiredMessage="Debe indicar si habla una lengua indigena" layout="pageDirection">
+                          <f:selectItems value="#{oConsModPac.listaPertGpoIndigena}" var="heleng"
+                                         itemLabel="#{heleng.valor}" itemValue="#{heleng.tipoParametro.trim()}#{heleng.claveParametro.trim()}"/>
+                          <p:ajax update="nomLeng" event="valueChange"/>
+                  </p:selectOneRadio>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="nomLeng" value="#{oConsModPac.pacCMUrg.paciente.etnicidad.claveLengua}" disabled="#{oConsModPac.habilitaLengua()}" >
+                         <f:selectItems value="#{oConsModPac.pacCMUrg.paciente.etnicidad.listaLenguasIndigenas}" var="nLeng" 
+                                        itemLabel="#{nLeng.descripcionLengua}" itemValue="#{nLeng.claveLengua}"/>
+                  </p:selectOneMenu>
+                  </p:column>
+                 
+                  <!--p:column>
+                      <p:selectOneRadio id="hlei" value="#{oConsModPac.pacCMUrg.paciente.etnicidad.hablaEspaniolStr}" required="true" requiredMessage="Debe indicar si habla español" layout="pageDirection" >
+                          <f:selectItems value="#{oConsModPac.listaPertGpoIndigena}" var="hling"
+                                         itemLabel="#{hling.valor}" itemValue="#{hling.tipoParametro.trim()}#{hling.claveParametro.trim()}"/>
+                      </p:selectOneRadio>
+                  </p:column-->
+                 
+                 
+                <p:column>
+                    <p:selectOneMenu id="edoCivil" value="#{oConsModPac.pacCMUrg.paciente.edoCivilStr}" required="true" requiredMessage="Debe ingresar un estado civil">
+                         <f:selectItems value="#{oConsModPac.listaEdoCivil}" var="edCiv"
+                                        itemLabel="#{edCiv.valor}" itemValue="#{edCiv.claveParametro.trim()}#{edCiv.tipoParametro.trim()}"/>
+                        </p:selectOneMenu>
+               </p:column>
+                  
+                  
+                   <p:column>
+                     <!--telefono revision no estoy seguro de esto-->
+                     <p:inputMask id="telefono" value="#{oConsModPac.pacCMUrg.paciente.telefono}" mask="9999999999" maxlength="10"/>
+                 </p:column>
+             </p:row>
+            
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.derechohabiente}:" /></p:column>
+                 <p:column  styleClass="ui-widget-header"><p:outputLabel value="#{etiq.vigencia}:"/></p:column>
+                 <p:column  colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.seguro}:" /></p:column>
+             <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.gratuidad}:" /></p:column>
+             </p:row>
+             
+             <p:row>
+                
+              <p:column>
+                  <p:selectOneRadio id="tder" value="#{oConsModPac.pacCMUrg.paciente.seg.unaDer}" layout="pageDirection">
+                         <p:ajax update="vigencia1, vigencia2, vigencia3, vigencia4, vigencia5, vigencia6, vigencia7,
+                                 vigencia8, vigenciaG, vigenciaP, num1, num2, num3, num4, num5, num6, num7, num8, numG, numP" event="valueChange"/>
+                         
+                        <f:selectItems value="#{oConsModPac.listaDerechobiente}" var="der1" 
+                                       itemLabel="#{der1.valor}" itemValue="#{der1.claveParametro.trim()}"/>
+                        
+                    </p:selectOneRadio>
+                    </p:column>
+                 <p:column >
+                     <br/>
+                     <p:inputMask id="vigencia1" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('01')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto}" required="#{oConsModPac.activaVigenciaNumero1()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig1" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/>
+                     <p:inputMask id="vigencia2" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('02')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto2}" required="#{oConsModPac.activaVigenciaNumero2()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig2" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/>
+                     <p:inputMask id="vigencia3" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('03')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto3}" required="#{oConsModPac.activaVigenciaNumero3()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig3" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/>
+                     <p:inputMask id="vigencia4" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('04')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto4}" required="#{oConsModPac.activaVigenciaNumero4()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig4" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/><p:inputMask id="vigencia5" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('05')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto5}" required="#{oConsModPac.activaVigenciaNumero5()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig5" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/>
+                     <p:inputMask id="vigencia6" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('06')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto6}" required="#{oConsModPac.activaVigenciaNumero6()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig6" execute="@this" event="valueChange"/></p:inputMask><br/>
+                     <p:inputMask id="vigencia7" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('07')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto7}" required="#{oConsModPac.activaVigenciaNumero7()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig7" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/>                     
+                     <p:inputMask id="vigencia8" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('08')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTexto8}" required="#{oConsModPac.activaVigenciaNumero8()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vig8" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/><br/>
+                     <p:inputMask id="vigenciaG" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('0G')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTextoG}" required="#{oConsModPac.activaVigenciaNumeroG()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vigG" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/>
+                     <p:inputMask id="vigenciaP" mask="99/99/9999" size="15" disabled="#{oConsModPac.habilitaNumSeg('0P')}" value="#{oConsModPac.pacCMUrg.paciente.seg.vigenciaTextoP}" required="#{oConsModPac.activaVigenciaNumeroP()}" requiredMessage="Debe ingresar una vigencia">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                        <f:ajax render="vigP" execute="@this" event="valueChange"/>
+                     </p:inputMask><br/>
+                 <p:message for="vigencia1" id="vig1" />
+                 <p:message for="vigencia2" id="vig2"/>
+                 <p:message for="vigencia3" id="vig3"/>
+                 <p:message for="vigencia4" id="vig4"/>
+                 <p:message for="vigencia5" id="vig5"/>
+                 <p:message for="vigencia6" id="vig6"/>
+                 <p:message for="vigencia7" id="vig7"/>
+                 <p:message for="vigencia8" id="vig8"/>
+                 <p:message for="vigenciaG" id="vigG"/>
+                 <p:message for="vigenciaP" id="vigP"/>
+                 </p:column>
+              
+                 <p:column colspan="2">
+                     <br/>
+                     <p:inputText id="num1" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('01')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero}" required="#{oConsModPac.activaVigenciaNumero1()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputText id="num2" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('02')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero2}" required="#{oConsModPac.activaVigenciaNumero2()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputText id="num3" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('03')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero3}" required="#{oConsModPac.activaVigenciaNumero3()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputText id="num4" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('04')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero4}" required="#{oConsModPac.activaVigenciaNumero4()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputText id="num5" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('05')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero5}" required="#{oConsModPac.activaVigenciaNumero5()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputText id="num6" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('06')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero6}" required="#{oConsModPac.activaVigenciaNumero6()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputText id="num7" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('07')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero7}" required="#{oConsModPac.activaVigenciaNumero7()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputMask mask="9999999999-99" id="num8" disabled="#{oConsModPac.habilitaNumSeg('08')}" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numero8}" required="#{oConsModPac.activaVigenciaNumero8()}" requiredMessage="Debe ingresar un numero"/><br/><br/>
+                     <p:inputText id="numG" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('0G')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numeroG}" required="#{oConsModPac.activaVigenciaNumeroG()}" requiredMessage="Debe ingresar un numero"/><br/>
+                     <p:inputText id="numP" onkeypress="return validaCaracter(event);" disabled="#{oConsModPac.habilitaNumSeg('0P')}" maxlength="20" size="15" value="#{oConsModPac.pacCMUrg.paciente.seg.numeroP}" required="#{oConsModPac.activaVigenciaNumeroP()}" requiredMessage="Debe ingresar un numero"/><br/>
+                 </p:column>  
+                 <p:column>
+                     <p:selectOneRadio id="grat"  requiredMessage="Debe indicar si el paciente habla alguna lengua indigena" required="true" layout="pageDirection">
+                         <f:selectItems value="#{oConsModPac.listaPertGpoIndigena}" var="heleng"
+                                         itemLabel="#{heleng.valor}" itemValue="#{heleng.tipoParametro}#{heleng.claveParametro}"/>
+                          <p:ajax update="nomLeng" event="valueChange"/>
+                  </p:selectOneRadio>
+                  </p:column> 
+                 
+             </p:row>
+        <f:facet name="footer">
+            <p:row>
+                <p:column colspan="6">
+                <div class="centrar">
+                    <p:outputLabel value="#{etiq.noExp}: "/>
+                    <p:inputText value="#{oConsModPac.pacCMUrg.paciente.expediente.numero}" readonly="true" />
+                 
+                </div>
+                </p:column>
+            </p:row>
+        </f:facet>
+        </p:panelGrid>
+         <br/><br/>
+         <p:panelGrid styleClass="#{oConsModPac.pacCMUrg.habilitaAdmision()}">
+             <f:facet name="header">
+                <p:row>
+                    <p:column colspan="5">
+                    <h:outputLabel value="#{etiq.datosPacienteAdm}"/>
+                    </p:column>
+                </p:row>
+            </f:facet>    
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.folioIngreso}:" /></p:column>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.diagnosticoIngreso}:" /></p:column>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.claves}:"/></p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:inputMask mask="999999999" value="#{oConsModPac.pacCMUrg.folioAdmision}" readonly="#{oConsModPac.habilitarCampoFolio()}" size="10"  required="true" requiredMessage="Debe ingresar un folio de admisión">
+                            <p:ajax update="@this" event="valueChange"/>
+                     </p:inputMask>
+                  </p:column>
+                 
+                 <p:column colspan="2"><p:autoComplete id="diagnostico" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="60" minQueryLength="3" required="true" styleClass="bordes"
+                                                       value="#{oConsModPac.pacCMUrg.diagIngreso.descripcionDiag}" completeMethod="#{oConsModPac.pacCMUrg.diagIngreso.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" requiredMessage="Debe ingresar un diagnóstico de ingreso">
+                          <p:ajax update="CIE10 causes" event="itemSelect"/>
+                        </p:autoComplete>
+                 </p:column>
+                 
+                 <p:column>
+                  <p:outputLabel value="#{etiq.cie10}:"/>
+                  <p:inputText id="CIE10" value="#{oConsModPac.pacCMUrg.diagIngreso.clave1}" size="5"  readonly="true" styleClass="bordes"/>
+                  
+                  <br/>
+                  
+                  <p:outputLabel value="#{etiq.causes}:"/>
+                  <p:inputText id="causes" value="#{oConsModPac.pacCMUrg.diagIngreso.clave2}" size="5" readonly="true" styleClass="bordes"/>
+                  
+                </p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.servicioIngreso}:" /></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.medicoRecibe}:" /></p:column>
+                 <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.fechaHoraIngreso}:" /></p:column>
+             </p:row>
+             
+             <p:row>
+                  <p:column>
+                      <p:selectOneMenu id="ser" value="#{oConsModPac.pacCMUrg.areaServicio}" required="true" requiredMessage="Debe ingresar un area de servicio de urgencias">
+                          <f:selectItems value="#{oConsModPac.pacCMUrg.medicoRecibe.area.listaAreasUrgs}" var="areasUrg"
+                                        itemLabel="#{areasUrg.descripcion}" itemValue="#{areasUrg.clave}"/>
+                     </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="medUrg" value="#{oConsModPac.pacCMUrg.medicoRecibe.noTarjeta}" required="true" requiredMessage="Debe ingresar un médico que recibe" >
+                         <f:selectItems value="#{oConsModPac.pacCMUrg.medicoRecibe.listaMedicosUrgs}" var="oMed"
+                                    itemLabel="#{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:inputText value="#{oConsModPac.pacCMUrg.fechaIngresoStr}" readonly="true"/>
+                 </p:column>
+             </p:row>
+         </p:panelGrid>
+         
+         <br/>
+         
+         <p:panelGrid styleClass="#{oConsModPac.pacCMUrg.habilitaHosp}">
+             <f:facet name="header">
+                <p:row>
+                    <p:column colspan="5">
+                    <h:outputLabel value="#{etiq.datosPacienteHosp}"/>
+                    </p:column>
+                </p:row>
+            </f:facet> 
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.areaServicio}:" /></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.subservicio}:" /></p:column>
+                 <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.medicoResponsable}:" /></p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:selectOneMenu id="serHosp" value="#{oConsModPac.pacCMUrg.areaServicioHRRBSTR}" required="#{oConsModPac.habilitaDatosHosp()}" requiredMessage="Debe ingresar un area de servicio">
+                         <f:selectItems value="#{oConsModPac.pacCMUrg.listaAreasHosp}" var="areasHosp"
+                                        itemLabel="#{areasHosp.descripcion}" itemValue="#{areasHosp.clave}"/>
+                         <p:ajax update="subSerHosp" event="valueChange"/>
+                     </p:selectOneMenu>
+                     
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="subSerHosp" value="#{oConsModPac.pacCMUrg.subServicioHRRB}" required="#{oConsModPac.habilitaDatosHosp()}" requiredMessage="Debe ingresar un subservicio">
+                         <f:selectItems value="#{oConsModPac.pacCMUrg.listaSubServicioHosp}" var="subareasHosp"
+                                        itemLabel="#{subareasHosp.descripcion}" itemValue="#{subareasHosp.clave}"/>
+                     </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:selectOneMenu id="medRes" value="#{oConsModPac.pacCMUrg.medicoTratante.noTarjeta}" required="#{oConsModPac.habilitaDatosHosp()}" requiredMessage="Debe elegir un medico tratante">
+                         <f:selectItems value="#{oConsModPac.pacCMUrg.medicoTratante.listaMedicosHosp}" var="oMedH"
+                                    itemLabel="#{oMedH.apPaterno} #{oMedH.apMaterno} #{oMedH.nombres}" itemValue="#{oMedH.noTarjeta}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.datosCama}:" /></p:column>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nivelSocEco}:" /></p:column>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.vigenciaNivel}:" /></p:column>
+                 <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.estadoDeSalud}:" /></p:column>
+             </p:row>
+             
+             <p:row> 
+                 
+                 <p:column>
+                     <h:outputLabel value="#{etiq.cama}: "/>
+                     <p:inputText value="#{oConsModPac.pacCMUrg.cama.numero}" size="6" readonly="true"/>
+                  
+                      <h:outputLabel value="#{etiq.tipoDeCama}: "/>
+                      <p:inputText id="censa" value="#{oConsModPac.pacCMUrg.cama.censable}" styleClass="bordes" size="6" disabled="true"/>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="nivs" value="#{oConsModPac.pacCMUrg.nivelSocioEcoStr}">
+                         <p:ajax update="fechaNiv" event="valueChange"/>
+                         <f:selectItem itemLabel="NIV.SOC.ECO." itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oConsModPac.listaNivelesSocEco}" var="oNiv"
+                                        itemLabel="#{oNiv.tipoParametro}=#{oNiv.valor}" itemValue="#{oNiv.tipoParametro}"/>
+                     </p:selectOneMenu>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:inputMask mask="99/99/9999" id="fechaNiv" value="#{oConsModPac.pacCMUrg.paciente.vigenciaNivelSTR}" requiredMessage="Se requiere que ingrese una vigencia" required="#{oConsModPac.fechaNivel()}">
+                       <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                       <f:ajax render="ment3" execute="@this" event="valueChange"/>
+                     </p:inputMask>
+                     <p:message for="fechaNiv" id="ment3" />
+                  </p:column>
+                                  
+                 <p:column>
+                     <p:selectOneMenu id="edoSalud" value="#{oConsModPac.pacCMUrg.edoSaludStr}">
+                         <f:selectItems value="#{oConsModPac.listaEdosSalud}" var="oNiv"
+                                        itemLabel="#{oNiv.valor}" itemValue="#{oNiv.claveParametro}#{oNiv.tipoParametro}"/>
+                     </p:selectOneMenu>
+                 </p:column>
+                   
+                </p:row>
+                <p:row>
+                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.diasEstancia}:" /></p:column>
+                 <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechaHoraIngresoHosp}:" /></p:column>
+             </p:row>
+             <p:row>
+                 
+                 <p:column>
+                     <p:inputText id="diasEst" value="#{oConsModPac.pacCMUrg.diasEstanciaSTR}" styleClass="bordes" size="6"  readonly="true"/>
+                 </p:column>
+                 
+                 <p:column colspan="3">
+                        <p:inputText value="#{oConsModPac.pacCMUrg.ingresoHosp}" readonly="true" />
+                    </p:column>
+             </p:row>
+         </p:panelGrid>
+         <br/>
+         <p:panelGrid styleClass="#{oConsModPac.pacCMUrg.habilitaHosp}">
+             <p:row>
+                    <p:column colspan="4" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.familiarResponsable}:" /></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.parentesco}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombre}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:" /></p:column>
+                </p:row>
+                
+                <p:row>
+                    
+                    <p:column>
+                        <p:selectOneMenu id="paren" value="#{oConsModPac.pacCMUrg.familiarCercano.parentescoStr}">
+                            <f:selectItem itemLabel="PARENTESCO" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oConsModPac.pacCMUrg.familiarCercano.listaParentescos}" var="oPar"
+                                        itemLabel="#{oPar.valor}" itemValue="#{oPar.claveParametro}#{oPar.tipoParametro}"/>
+                            
+                            <p:ajax update="nomFam apFam t1" event="valueChange"/>
+                     </p:selectOneMenu>
+                    </p:column>
+                 <p:column>
+                     <p:inputText id="nomFam" onkeypress="return validaCaracter(event);" size="20" value="#{oConsModPac.pacCMUrg.familiarCercano.nombresFam}" required="#{oConsModPac.activaFamiliar()}" requiredMessage="Debe ingresar el nombre del familiar" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                 </p:column>
+                 <p:column>
+                     <p:inputText id="apFam" onkeypress="return validaCaracter(event);" size="20" value="#{oConsModPac.pacCMUrg.familiarCercano.apPaternoFam}" required="#{oConsModPac.activaFamiliar()}" requiredMessage="Debe ingresar el apellido paterno del familiar" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                 </p:column>
+                    <p:column>
+                     <p:inputText id="amFam" onkeypress="return validaCaracter(event);" size="20" value="#{oConsModPac.pacCMUrg.familiarCercano.apMaternoFam}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                 </p:column>
+                </p:row>
+             
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="" /></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tel1}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tel2}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tel3}:" /></p:column>
+                </p:row>
+             
+             <p:row>
+                 <p:column></p:column>
+                 <p:column>
+                     <p:inputText id="t1" onkeypress="return validaCaracter(event);" size="20" value="#{oConsModPac.pacCMUrg.familiarCercano.noTel1}" styleClass="bordes" required="#{oConsModPac.activaFamiliar()}" requiredMessage="Debe ingresar un numero telefónico del familiar" disabled="#{oConsModPac.habilitaTelefono()}"/>
+                 </p:column>
+                 <p:column>
+                     <p:inputText id="t2" onkeypress="return validaCaracter(event);"  size="20" value="#{oConsModPac.pacCMUrg.familiarCercano.noTel2}" styleClass="bordes"/>
+                 </p:column>
+                 <p:column>
+                     <p:inputText id="t3" onkeypress="return validaCaracter(event);"  size="20" value="#{oConsModPac.pacCMUrg.familiarCercano.noTel3}" styleClass="bordes"/>
+                 </p:column>
+             </p:row>
+         </p:panelGrid>
+         <br/>
+         <p:commandButton value="#{etiq.guardar}" 
+                          action="#{oConsModPac.modificaPacCM()}" 
+                          validateClient="true" ajax="false" 
+                          icon="ui-icon-disk" 
+                          styleClass="#{oConsModPac.habilitaBotonM()}"/>
+         
+    </c:when> 
+          <c:otherwise>
+              <h1>El Paciente ya se encuentra Admitido u Hospitalizado</h1>
+          </c:otherwise>
+    </c:choose> 
+    </h:form>
+     <br/>
+          
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+     </div>
+        </ui:define>
+</ui:composition>
+    
+
+
+</html>

@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div class="centrado_texto">
+                    <h:form id="regTem">
+                        <p:growl id="msgs" showDetail="true" /> 
+                        <p:dialog visible="#{oFarm.registrarTem}" header="#{etiq.regTempHoy}" widgetVar="dlgtem" closable="false" modal="true" width="350"  height="200" resizable="false">
+                            <h:outputLabel value="#{etiq.tempAmbiental}: "/>
+                            <p:inputText value="#{oFarm.tem.temAmb}" id="tempAmb" size="5" required="true" requiredMessage="Ingrese Temperatura Ambiental" converterMessage="Temp. Ambiental, Solo ingresar números"/> 
+                            <br/>
+                            <br/>
+                            <h:outputLabel value="#{etiq.humAmbiental}: "/>
+                            <p:inputText value="#{oFarm.tem.humAmb}" id="humedad" size="5" required="true" requiredMessage="Ingrese Humedad Ambiental" converterMessage="Hum. Ambiental, Solo ingresar números"/> 
+                            <br/>
+                            <br/>
+                            <h:outputLabel value="#{etiq.tempRefri}: "/>
+                            <p:inputText value="#{oFarm.tem.temRef}" id="tempRef" size="5" required="true" requiredMessage="Ingrese Temperatura de Refrigerador" converterMessage="Temp. Refrigerador, Solo ingresar números"/>
+                            <br/>
+                            <br/>
+                            <p:commandButton type="submit" update="msgs :regTem"  value="#{etiq.guardar}" action="#{oFarm.almacena}"/>                
+                        </p:dialog>        
+                    </h:form> 
+                    <br/>
+                    <div class="centrado_texto">
+                        <h:form id="proximosCaducados">
+                            <p:dataTable var="oMed"
+                                         value="#{oFarm.lista}"  
+                                         id="tblProxCaducados"
+                                         emptyMessage="#{etiq.noMedicamentosCaducar}"
+                                         style="text-align: center;">
+                                <f:facet name="header">
+                                    <h:outputLabel value="#{etiq.infoMedicCaduc}"/>
+                                </f:facet>
+                                <p:column headerText="#{etiq.clave}" width="15%">
+                                    <h:outputLabel value="#{oMed.claveMedicamento}"/>
+                                </p:column>                
+                                <p:column headerText="#{etiq.nombre}" width="20%">                  
+                                    <h:outputLabel value="#{oMed.nombre}"/>                      
+                                </p:column>
+                                <p:column headerText="#{etiq.desPres}" width="30%">
+                                    <h:outputLabel value="#{oMed.descripcionPresentacion}"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.invFisico}" width="10%">
+                                    <h:outputLabel value="#{oMed.existencia}"/>                        
+                                </p:column>
+                                <p:column headerText="#{etiq.lote}" width="20%">
+                                    <h:outputLabel value="#{oMed.lote}"/>        
+                                </p:column>
+                                <p:column headerText="#{etiq.caducidad}" width="30%">
+                                    <h:outputLabel value="#{oMed.caducidad}"/>&nbsp;&nbsp;                        
+                                    <h:commandButton style="background-color:#{oMed.semaforo}; width:10px; height:10px" disabled="true" rendered="#{oFarm.verEdicion}"/>  
+                                </p:column>                
+                            </p:dataTable>
+                            <br/>
+                            <div style="text-align: center"> 
+                                <p:column> 
+                                    <p:commandButton value="#{etiq.exportar}" actionListener="#{oFarm.paraImpresion}" ajax="false">
+                                        <p:dataExporter type="xls" target="tblProxCaducados" fileName="#{etiq.proximCad}" postProcessor="#{oFarm.postProcessXLS}"/>
+                                    </p:commandButton> 
+                                </p:column>
+                            </div>   
+                        </h:form>
+                    </div>                    
+                </div>    
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

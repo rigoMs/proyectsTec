@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.consultar} #{etiq.recibo}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+
+        <div class="centrado_texto">
+            <center>
+                <h:form id="form">
+                    <p:growl id="mensajes"  showDetail="true" />
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="#{etiq.tipodeRecibo}:"></h:outputText>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{oConsultarRec.rec.tipoParametro}" required="true" requiredMessage="Seleccione un tipo de recibo.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                    <f:selectItems value="#{oConsultarRec.tiposRecibo}" var="oRec" 
+                                                   itemLabel="#{oRec.valor}" itemValue="#{oRec.tipoParametro}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>                            
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{etiq.folioDelRecibo}:"></h:outputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText label="Folio" value="#{oConsultarRec.folio}" type="number" required="true" requiredMessage="Ingrese un folio de recibo.">
+                                    <f:validateDoubleRange minimum="1"></f:validateDoubleRange>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search"  styleClass="frm_login" 
+                                                 update="mensajes Recibo ReciboReintegro ReciboCancelado ReciboNoEmitido" actionListener="#{oConsultarRec.preBusqueda}">
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panel id="Recibo" style="border: none; background-color: #FFFFFF;#{oConsultarRec.actRecibo}" class="centrado_texto">
+                        <p:panelGrid style="width: 700px;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{oConsultarRec.rec.valor}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 50%;">
+                                    <h:outputText value="#{etiq.folioRec}:"></h:outputText>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.fecha}:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.folio}"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.fechaEmision}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm"></f:convertDateTime>
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.expediente} No.:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.expediente.numero}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.nombrePaciente}:"></h:outputText>
+                                </p:column>            
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.nombreCompleto}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.domicilio}:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.ubicacion}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:dataTable style="width: 100%;" value="#{oConsultarRec.selectedRecibo.serviciosCubiertos}" var="oServ"
+                                                 emptyMessage="#{etiq.emptydataTable}">
+                                        <p:column headerText="#{etiq.claveServicio}">
+                                            <h:outputText value="#{oServ.servicioCobrable.clave}"></h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.concepto}">
+                                            <h:outputText value="#{oServ.servicioCobrable.descripcion}"></h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.costo}">
+                                            <h:outputText value="#{oServ.costoUnitACobrar}"></h:outputText>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <h:outputText style="#{oConsultarRec.actSub}}" value="#{etiq.subtotal}:"></h:outputText>
+                                            <h:outputText style="#{oConsultarRec.actSub}}" value="#{oConsultarRec.subtotal}"></h:outputText>
+                                            <br/>
+                                            <h:outputText style="#{oConsultarRec.actSub}}" value="#{etiq.subsidio}:"></h:outputText>
+                                            <h:outputText style="#{oConsultarRec.actSub}}" value="#{oConsultarRec.getSubsidio(oConsultarRec.selectedRecibo.cuenta.autorizacionesPago)}"></h:outputText>
+                                            <br/>
+                                            <h:outputText value="#{etiq.total}: #{oConsultarRec.selectedRecibo.monto}"></h:outputText>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>   
+                        </p:panelGrid>
+                        <p:panelGrid style="width: 700px;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.nivelCuota}:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.nivelSocioEco.tipoParametro}" ></h:outputText>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel id="ReciboReintegro" style="background-color: #FFFFFF;border: none;#{oConsultarRec.actRecReintegro}}" class="centrado_texto">
+                        <p:panelGrid style="width: 700px;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{oConsultarRec.rec.valor}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 50%;">
+                                    <h:outputText value="#{etiq.folioRec}:"></h:outputText>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.fecha}:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.folio}"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.fechaEmision}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm"></f:convertDateTime>
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.expediente} No.:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.expediente.numero}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.nombrePaciente}:"></h:outputText>
+                                </p:column>            
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.nombreCompleto}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.domicilio}:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.ubicacion}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:dataTable style="width: 100%;" value="#{oConsultarRec.SR}" 
+                                               var="oServ" emptyMessage="#{etiq.emptydataTable}">
+                                    <p:column headerText="#{etiq.claveServicio}">
+                                        <h:outputText value="#{oServ.servicioCobrable.clave}"></h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.concepto}">
+                                        <h:outputText value="#{oServ.servicioCobrable.descripcion}"></h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.costo}">
+                                        <h:outputText value="#{oServ.costoUnitACobrar}"></h:outputText>
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <h:outputText value="#{etiq.subtotal}: #{oConsultarRec.subtotal}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.subsidio}: #{oConsultarRec.getSubsidio(oConsultarRec.selectedRecibo.cuenta.autorizacionesPago)}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.total}: #{oConsultarRec.selectedRecibo.monto}"></h:outputText>
+                                    </f:facet>
+                                </p:dataTable>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:dataTable value="#{oConsultarRec.SRR}" style="width: 100%;" var="oServ" emptyMessage="#{etiq.emptydataTable}">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{etiq.serviciosReintegrados}"></h:outputText>
+                                    </f:facet>
+                                    <p:column headerText="#{etiq.claveServicio}">
+                                        <h:outputText value="#{oServ.servicioCobrable.clave}"></h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.concepto}">
+                                        <h:outputText value="#{oServ.servicioCobrable.descripcion}"></h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.costo}">
+                                        <h:outputText value="#{oServ.costoUnitACobrar}"></h:outputText>
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <h:outputText value="#{etiq.total}: #{oConsultarRec.totalRecReintegro}"></h:outputText>
+                                    </f:facet>
+                                </p:dataTable>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:panelGrid style="width: 700px;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.nivelCuota}:"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.cuenta.episodio.paciente.nivelSocioEco.tipoParametro}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel id="ReciboCancelado" style="background-color: #FFFFFF;border: none;#{oConsultarRec.actRecCancelado}" class="centrado_texto">
+                        <p:panelGrid style="width: 700px;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{oConsultarRec.rec.valor}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 50%;">
+                                    <h:outputText value="#{etiq.folioRec}"></h:outputText>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.fechaCancelacion}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.folio}"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.fechaCancelacion}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm"></f:convertDateTime>
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.incidencia}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="#{oConsultarRec.selectedRecibo.incidencia}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel id="ReciboNoEmitido" style="background-color: #FFFFFF;border: none;#{oConsultarRec.actRecNoEmitido}" class="centrado_texto">
+                        <p:panelGrid style="width: 700px;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{oConsultarRec.rec.valor}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.folioRec}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                   <h:outputText value="#{oConsultarRec.selectedRecibo.folio}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <h:outputText value="#{etiq.reciboNoEmitido}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
+            </center>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.RegistroSalida}"/>
+                </h2>
+                <br/>
+                <div>
+                    <h:form id="principal" >     
+                        <p:panelGrid style="margin-top:20px; width: 1000px">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="30">
+                                        <h:outputLabel value="#{etiq.salida} #{etiq.de} #{etiq.Material}"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet> 
+                           
+
+
+                            <p:row>
+                                <p:column colspan="30" >
+                                    <h:outputLabel value="#{etiq.fecha} : " style="font-weight: bold;"/>
+                                    <p:calendar  value="#{oSalidad.inventario.fecha}" locale="es" mode="popup"  effect="fold" showOn="button"
+                                                    placeholder="dd/mm/aa"  readonlyInput="true" id="fechaRecep"  pattern="dd/MM/yyyy" navigator="true"  
+                                                    required="true"  requiredMessage="Ingrese Fecha de Recepcion" onkeypress="return validaCaracter(event)"
+                                                    maxdate="#{oSalidad.inventario.fechaActual()}">
+                                          <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                                    </p:calendar>
+                                    
+                                    
+                                    
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <h:outputLabel value="#{etiq.motivo} : " style="font-weight: bold;"/>
+                                    <p:selectOneMenu id="motivo"  value="#{oSalidad.inventario.tipoMovimiento}"  style="width: 200px;">
+                                        <f:selectItems value="#{oSalidad.motivo}"/> 
+                                    </p:selectOneMenu>  
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="30" >   
+                                    <h:outputLabel value="Material : " style="font-weight: bold;"/>   
+                                    <p:autoComplete id="nombreMat"  onkeypress="return validaCaracter(event);"  queryDelay="10" size="30" 
+                                                    minQueryLength="1" required="true" styleClass="bordes"
+                                                    value="#{oSalidad.nombre}" 
+                                                    completeMethod="#{oSalidad.complete}" effect="fade"
+                                                    onkeyup="this.value = this.value.toUpperCase();" 
+                                                    scrollHeight="300" requiredMessage="Debe ingresar un nombre del material">
+
+                                    </p:autoComplete>  &nbsp; &nbsp; &nbsp;
+                                    <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search"   onclick="location.replace()"  ajax="false"  />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+
+                    <h:form  id="regLote">
+
+                        <p:dialog header="Salida De Material"  widgetVar="dlg1"  height="250" width="350" modal="true" visible="#{oSalidad.encontrado}"  closable="false" draggable="false" resizable="false" >
+                            <div style="font-weight: bold; text-align: center;">
+
+                                <h:outputLabel id="resultado" value="#{oSalidad.buscaNombreMaterial}"/><br/> 
+                                <h:outputLabel id="clave" value="#{oSalidad.mat.claveMaterial}"/>                                 
+                            </div>                           
+                            <br/>  
+
+                            <p:growl id="msgs" showDetail="true" /> 
+                            <p:panelGrid >               
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="3"> <h:outputLabel value="Ingresar Datos"/></p:column>
+                                    </p:row> 
+                                </f:facet>                               
+                                <p:row>
+                                    <p:column colspan="30" >
+                                        <h:outputLabel value="Lotes " style="font-weight: bold;"/>                                     
+                                        <p:selectOneMenu id="lotes"  value="#{oSalidad.inventario.tipoLotes}"  style="width: 200px" >
+                                            <f:selectItems value="#{oSalidad.lotesInventario}"  var="oInv" itemValue="#{oInv.lote}" itemLabel="#{oInv.lote}"/>
+                                        </p:selectOneMenu>  
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="Cantidad "/>
+                                        <p:inputText value="#{oSalidad.inventario.cant}"  id="cantidad" size="20" required="true" requiredMessage="Ingrese cantidad a solicitar" >
+                                        <poue:keyFilter  regEx="/[0-9]/i"/>
+                                        </p:inputText>
+                                    </p:column>  
+                                </p:row> 
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold; text-align: center;">
+                                        <p:commandButton  value="#{etiq.añadir}" 
+                                                          update=" msgs :principal   :materialesSalidad:tblSalidad :regLote "
+                                                          icon="ui-icon-disk" actionListener="#{oSalidad.setListaSalida}" />
+
+                                        <p:commandButton type="submit"  update=":principal:nombreMat" 
+                                                         action="#{oSalidad.forzarEncontradoSalidad()}" value="#{etiq.cancelar}"  
+                                                         actionListener="#{oSalidad.reset()}" immediate="true" ajax="false" onclick="PF('dlg1').hide()" >
+                                            <p:resetInput target=":principal:nombreMat"  />                                                          
+                                        </p:commandButton>
+                                    </p:column> 
+                                </p:row>      
+                            </p:panelGrid> 
+                        </p:dialog> 
+                    </h:form>        
+
+
+                    <h:form id="materialesSalidad"   style="margin-top:2px; width: 1000px; margin-left: 168px;"> 
+                        <p:dataTable var="oSal" value="#{oSalidad.listaSalidad}"  
+                                     id="tblSalidad" editable="true" resizableColumns="true"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}" >
+                            <f:facet name="header">
+                                <h:outputLabel value="Lista de Salidad"/>                              
+                            </f:facet> 
+                            <p:ajax event="rowEdit"  listener="#{oSalidad.onRowEdit}" update=":materialesSalidad:tblSalidad  :regLote:msgs" />
+                            <p:ajax event="rowEditCancel" listener="#{oSalidad.onRowCancel}" update=":regLote:msgs" />
+
+                            <p:column headerText="#{etiq.clave}" width="5">
+                                <h:outputLabel value="#{oSal.material.claveMaterial}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.nombre}" width="30">
+                                <h:outputLabel value="#{oSal.material.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Presentacion" width="10">
+                                <h:outputLabel value="#{oSal.material.presentacion.valor}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.lote}" width="5">
+                                <h:outputLabel value="#{oSal.tipoLotes}"/>
+                            </p:column>
+                           
+                            <p:column headerText="cantidad" width="10">
+                                 <p:cellEditor>
+                                    <f:facet name="output">
+                                <h:outputLabel value="#{oSal.cant}"/>
+                                    </f:facet>
+                                     <f:facet name="input">
+                                         <p:inputText value="#{oSal.cant}"  id="cantidadModificada" size="5" required="true"   
+                                                      requiredMessage="Ingrese cantidad a solicitar"       >
+                                             <poue:keyFilter  regEx="/[0-9]/i"/>
+                                            
+                                             <p:ajax event="change"     />
+                                         </p:inputText>
+                                          <h:message for="cantidadModificada"></h:message>
+                                     </f:facet>
+                                 </p:cellEditor>
+                            </p:column>
+                            
+                            
+                            <p:column headerText="Fecha de Salidad" width="30">
+                                <h:outputLabel value="#{oSal.fecha}">
+                                    <f:convertDateTime   pattern="yyyy/MM/dd" />
+                                </h:outputLabel>
+                            </p:column> 
+                             <p:column headerText="opciones" width="10">
+                                 <p:commandButton icon="ui-icon-trash"
+                                        immediate="true"
+                                        onclick="PF('Verificacion').show()" 
+                                        actionListener="#{oSalidad.identSelect(oSal)}" /> 
+                                <p:rowEditor>
+                                </p:rowEditor>    
+                            </p:column>
+                            <f:facet name="footer" >
+                                <p:commandButton  value="#{etiq.añadir}" update=":materialesSalidad:tblSalidad " 
+                                                  icon="ui-icon-disk"                                               
+                                                  actionListener="#{oSalidad.guardarSalida}"
+                                                  immediate="true"
+                                                  onclick="location.replace()"
+                                                  rendered="#{oSalidad.almenosUnoEnLista}">
+                                </p:commandButton>
+                                <p:commandButton  value="Cancelar"  icon="ui-icon-cancel" rendered="#{oSalidad.almenosUnoEnLista}"  onclick="PF('confLimp').show()"/>
+                                 
+                            </f:facet>
+                        </p:dataTable>
+                        
+                       
+                    </h:form>
+
+                    <p:confirmDialog message="¿¿#{etiq.preguntaLimpLista}??" style="background-color: lightblue"
+                                     showEffect="bounce" hideEffect="explode" 
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="confLimp">
+                        <h:form>
+                            <p:commandButton value="#{etiq.aceptar}"
+                                             actionListener="#{oSalidad.limpiaSalidad()}" styleClass="button" 
+                                             update=":materialesSalidad"
+                                             onclick="PF('confLimp').hide();recarga()"/>
+
+                            <p:commandButton value="#{etiq.cancelar}"  styleClass="button" onclick="PF('confLimp').hide()" />
+                        </h:form>
+                        
+                        
+                    </p:confirmDialog>
+
+
+                    <p:confirmDialog message="¿¿#{etiq.preguntaLimpLista}??" style="background-color: lightblue"
+                                     showEffect="bounce" hideEffect="explode" 
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="Verificacion">
+                         <h:form>
+                             <p:commandButton value="#{etiq.aceptar}" actionListener="#{oSalidad.remueveInventario(1)}"
+                                             update=":materialesSalidad:tblSalidad"  
+                                             onclick="PF('Verificacion').hide()" >
+                                
+                            </p:commandButton>
+                             <p:commandButton value="#{etiq.cancelar}"  onclick="PF('Verificacion').hide()" actionListener="#{oSalidad.remueveInventario(0)}" />
+                        </h:form>
+
+                    </p:confirmDialog>
+
+
+
+
+
+
+
+
+
+
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

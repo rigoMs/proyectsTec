@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">
+          <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+          <h2 class="centrado_texto"><h:outputLabel value="#{etiq.estSolicitados}"/></h2>
+           <br/><br/>
+            <h:form id="resultados">
+                <div class="tabla_pacEnc">
+                    <p:dataTable id="tablaEstsEnc" var="oEstEnc" value="#{oBuscarPac.estudioReal.buscarEstudiosServPac()}" emptyMessage="El paciente no tiene solicitud de estudios pendientes para el &aacute;rea indicada.">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.estSolicitadosEnc}"/>
+                </f:facet>
+                
+                        <p:column width="10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.apPaterno}"/>
+                </p:column>
+                
+                <p:column width="10%"> 
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.apMaterno}"/>
+                </p:column>
+                
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.nombres}"/>
+                </p:column>             
+                
+                <p:column style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.episodio.paciente.expediente.numero}"/>
+                </p:column>
+
+                 <p:column style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.cveSegPop}"/>
+                    </f:facet>
+                     <h:outputText value="#{oEstEnc.episodio.paciente.seg.numero}"/>
+                </p:column>
+                        
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.descEstudios}"/>
+                    </f:facet>
+                    <h:outputText value="#{oEstEnc.estudioDescripcion}"/>
+                </p:column>
+                <p:column>
+                    <p:commandButton value="#{etiq.seleccionar}" action="RegistrarCitaServ" ajax="false">
+                        <f:setPropertyActionListener target="#{oRegCitaServ.estReal}" value="#{oEstEnc}" />
+                        <f:setPropertyActionListener target="${oRegCitaServ.servLab}" value="#{oBuscarPac.servLab}" /> 
+                    </p:commandButton>
+                </p:column>
+                </p:dataTable>      
+            </div>
+            
+               <br/><br/>  
+               <center>
+               <p:commandButton value="#{etiq.volver}" styleClass="centrar" action="BuscarCitasXServicio" icon="ui-icon-arrowreturnthick-1-w" ajax="false">
+                   <f:setPropertyActionListener target="#{oBuscarPac.servicio}" value="#{false}" />
+                   <f:setPropertyActionListener target="#{oBuscarPac.estudioReal.area.clave}" value="#{null}" />
+               </p:commandButton>
+               </center>
+               </h:form>
+          </ui:define> 
+        </ui:composition>
+</html>

@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.registrar} #{etiq.entrada} #{etiq.medicamento}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+           <div class="centrado_texto">
+            <center>
+                    <h:form id="formR" > 
+                        <p:growl id="msg" sticky="true" showDetail="true"/> 
+                        <p:dialog id="dlgMovEntrada" widgetVar="dlgME"  position="center" closable="false" dynamic="true" resizable="false"
+                                  appendTo="@(body)" modal="true">
+                            <center>
+                                <h3>#{etiq.entrada} #{etiq.medicamento}</h3>
+                                <h:form id="hola">
+                                    <p:panelGrid id="panelDatos">
+                                        <p:row>
+                                            <p:column >
+                                           <p:outputLabel value="#{etiq.clave} #{etiq.entrada}" />
+                                           </p:column>
+                                            <p:column colspan="3">
+                                                <p:inputText id ="txtClaveE">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                             <p:column>
+                                           <p:outputLabel value="Factura" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtFactura">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                             <p:column>
+                                           <p:outputLabel value="Pedido" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtPedido">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                            
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.proveedor}" />
+                                           </p:column>
+                                            <p:column>
+                                                 <h:selectOneMenu id="cmbPV" >
+                                                     <f:selectItem itemLabel="Seleccione" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Proveedor1" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Proveedor2" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Proveedor 3" itemValue="">
+                                                     </f:selectItem>
+                                                 </h:selectOneMenu>
+
+                                            </p:column>
+                                            
+                                           
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.adquisicion}" />
+                                           </p:column>
+                                            <p:column>
+                                                <h:selectOneMenu id="cmbAD" >
+                                                     <f:selectItem itemLabel="Seleccione" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Compra Directa" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Donacion" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Almacen A" itemValue="">
+                                                     </f:selectItem>
+                                                 </h:selectOneMenu>
+                                            </p:column>
+                                             
+                                            </p:row>
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.fecha} #{etiq.captura}" />
+                                           </p:column>
+                                            <p:column>
+                                                 <p:calendar  mode="popup" showOn="button" />
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.fecha} #{etiq.recepcion}" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:calendar  mode="popup" showOn="button" />
+                                            </p:column>
+                                            
+                                            </p:row>
+                                        <p:row>
+                                            <p:column colspan="4">
+                                                <center>
+                                                <p:commandButton value="#{etiq.nuevo}" />
+                                                &nbsp;&nbsp;
+                                            <p:commandButton value="#{etiq.eliminar}"/>
+                                                </center>
+                                            </p:column>
+                                        </p:row>
+                                        <br> </br>
+                                        <br> </br>
+                                    </p:panelGrid>
+                                    
+                                     <p:dataTable id="dtEntradaM" rows="5" editable="true" paginator="true" paginatorPosition="bottom" 
+                                      value=""  > 
+                                 <p:column width="20px;"/>
+                                 <p:column headerText= "#{etiq.clave} #{etiq.entrada}"  width="40px;" >
+                                           
+                                     <h:inputText id ="txtClave"  size="4" maxlength="4"  style="width: 40px;"></h:inputText>
+                                            </p:column >
+                                            
+                                            <p:column headerText="#{etiq.nombre}"   width="200px;">
+                                                 <h:selectOneMenu id="cmbNomb"   style="width: 195px;">
+                                                     <f:selectItem itemLabel="Seleccione" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Haloperidol" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Anfebutamona" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Sitagliptina Monohidratada, Fosfato de, Metformina, Clohidrato de" itemValue="">
+                                                     </f:selectItem>
+                                                 </h:selectOneMenu>
+                                            </p:column>
+                                            
+                                            <p:column headerText="#{etiq.cantidad}" width="40px;" >
+                                           
+                                                 <h:inputText id ="txtCant" style="width: 35px;"></h:inputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="#{etiq.unidad}" width="70px;" >
+                                           <h:selectOneMenu id="cmbUn" >
+                                                     <f:selectItem itemLabel="Seleccione" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="18 mg" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="500 mg" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="2 mg/ml" itemValue="">
+                                                     </f:selectItem>
+                                                 </h:selectOneMenu>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantidad} #{etiq.por} #{etiq.presentacion}" width="50px;">
+                                          
+                                                 <h:inputText id ="txtCAntP"  style="width: 50px;"></h:inputText>
+                                            </p:column>
+                                            
+                                            
+                                            
+                                            <p:column headerText="#{etiq.precio} #{etiq.uni}" width="50px;">
+                                          
+                                                 <h:inputText id ="txtPrecioU"  style="width: 50px;"></h:inputText>
+                                            </p:column>
+                                            
+                                            <p:column headerText="#{etiq.importe}" width="60px;">
+                                           
+                                                <h:outputLabel id ="txtImporte" value="34" style="width: 55px;"></h:outputLabel>
+                                            </p:column>
+                                            
+                                            <p:column headerText="#{etiq.subprograma}"  width="120px;">
+                                           
+                                                 <h:selectOneMenu id="cmSp"  style="width: 100px;">
+                                                     <f:selectItem itemLabel="Seleccione" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="SEGURO POPULAR" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="SUBSIDIO ESTATAL" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="FASSA RAMO 33" itemValue="">
+                                                     </f:selectItem>
+                                                 </h:selectOneMenu>
+                                            </p:column>
+                                            
+                                            <p:column headerText="#{etiq.lote}" width="60px;" >
+                                           
+                                                <h:inputText  id ="txtLote" style="width: 55px;"></h:inputText>
+                                            </p:column>
+                                            
+                                             <p:column headerText="#{etiq.fechaCad}" width="170px;">
+                                                <p:calendar  mode="popup" showOn="button" />
+                                                    
+                                            </p:column>
+                                            
+                                            <f:facet name="footer"> 
+                                             <p:outputLabel value="#{etiq.total}: " ></p:outputLabel>
+                                              <h:outputText value="1010"  />
+                                            </f:facet>
+
+                                 
+                                     </p:dataTable> 
+                                 
+                                        
+                                    
+                                    <br/><br/>
+                                    <p:commandButton value="#{etiq.guardar}" oncomplete="PF('dlgME').hide()"/> &nbsp;&nbsp;&nbsp;
+                                    <p:commandButton value="#{etiq.imprimir}" oncomplete="PF('dlgME').hide()"/>&nbsp;&nbsp;&nbsp;
+                                    <p:commandButton value="#{etiq.volver}" oncomplete="PF('dlgME').hide()"/>
+                              
+                                </h:form>
+                            </center>
+                        </p:dialog>
+                        <p:dataTable id="dtMovEntrada" rows="5" editable="true" paginator="true" paginatorPosition="bottom" 
+                                     style="width: 90%" value="">
+                            <p:ajax event="rowSelectRadio"/>
+                            <p:column/>
+                            
+                            <p:column headerText="#{etiq.clave} #{etiq.entrada}" >
+                                <h:outputText value="1010"  />
+                               
+                            </p:column >
+                            <p:column headerText="Pedido">
+                                <h:outputText value="23464"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.proveedor}">
+                                <h:outputText value="Flamingo S.A de C.V."/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.adquisicion}">
+                                <h:outputText value="Compra Directa"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.fecha}">
+                                <h:outputText  value="12-03-2016"/>
+                            </p:column>
+                            
+                           
+                            
+                            <f:facet name="footer">
+                                <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-pencil" oncomplete="PF('dlgME').show()">
+                                </p:commandButton> 
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil" oncomplete="PF('dlgME').show()">
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.consultar}" icon="ui-icon-pencil" oncomplete="PF('dlgME').show()">
+                                </p:commandButton>
+                                
+                                  
+                            </f:facet>
+                             <f:facet name="header">                              
+                                <p:outputLabel value="#{etiq.administrar} #{etiq.entrada} #{etiq.de} #{etiq.medicamentos}"></p:outputLabel>
+                            </f:facet>
+                        </p:dataTable> 
+                    </h:form></center>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

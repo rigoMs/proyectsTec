@@ -1,0 +1,376 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+  <ui:define name="cuerpo">
+   <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+   <h2 class="centrado_texto"><p:outputLabel id="titModPac" value="#{etiq.registrarCita}"/></h2>
+   <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+   <div class="centrado_texto">
+
+       <h:form>
+           <p:commandButton value="#{etiq.añadirCita}" icon="ui-icon-disk" type="button" onclick="PF('dlg1').show();" styleClass="#{oRegCita.muestraExtra()}"/>
+       
+            <p:dialog header="Confirmación" widgetVar="dlg1" closable="true" styleClass="centrado_texto">
+                <h:outputText value="Ya hay #{oRegCita.totalCitados} citados. ¿Seguro que desea añadir otro?" />
+                <br/>
+                <p:commandButton value="Si" icon="ui-icon-check"  validateClient="true" ajax="false" action="#{oRegCita.añadirExtra()}"/>
+            </p:dialog>
+       </h:form>
+       
+        <p:fieldset legend="#{etiq.citasPorServicio}" toggleable="true" toggleSpeed="500" collapsed="true">
+            <h:form id="frmDatos">
+               <p:panelGrid styleClass="frm_centrado centrado_texto">
+                  <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="4"><p:outputLabel id="titCitSer" value="#{etiq.citasPorServicio}" /></p:column>
+                    </p:row>
+                  </f:facet> 
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel class="requerido" value="*"/><p:outputLabel styleClass="textover mensaje" id="servicio" value="#{etiq.servicio}:" />                            
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:selectOneMenu id="tServicio" value="#{oCitasServicio.cita.areaServicio.clave}">
+                                    <f:selectItems value="#{oCitasServicio.listaAreasCE}" var="oArea"
+                                    itemLabel="#{oArea.descripcion}" itemValue="#{oArea.clave}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                     </p:row>
+                     <p:row>
+                        <p:column>
+                            <h:outputLabel class="requerido" value="*"/><p:outputLabel id="fecInicio" styleClass="textover mensaje" value="#{etiq.fechaInicial}:" />                            
+                        </p:column>
+                        <p:column>
+                            <p:calendar  id="tFecInicio" value="#{oCitasServicio.cita.fechaIni}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Inicial es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy">
+                                <p:ajax event="dateSelect" update="tFecFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel class="requerido" value="*"/><p:outputLabel id="fecFin" styleClass="textover mensaje" value="#{etiq.fechaFinal}:" />                            
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="tFecFin" value="#{oCitasServicio.cita.fechaFin}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Final es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oCitasServicio.cita.fechaIni}">
+                                <f:attribute name="finicial" value="#{oCitasServicio.cita.fechaIni}"/>
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4">
+                            <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" update="tablaConsulCitas"/>
+                        </p:column>
+                    </p:row>   
+                </p:panelGrid>
+		<br/><br/>
+              <p:dataTable id="tablaConsulCitas" styleClass="frm_centrado" var="oCitasSer" value="#{oCitasServicio.cita.buscarCitasPorServicio()}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.citasPorServicio}"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.fecha}" styleClass="centrado_texto columnamed mensaje">
+                    <h:outputText class="msjnormal" value="#{oCitasSer.fechaCita}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="#{etiq.turno}" styleClass="centrado_texto columnamed2 mensaje">
+                    <h:outputText value="#{oCitasSer.turno}" class="msjnormal"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.medico}" style="width: 30%" styleClass="textoIzq mensaje">
+                    <h:outputText value="#{oCitasSer.PH.apPaterno} #{oCitasSer.PH.apMaterno} #{oCitasSer.PH.nombres}" class="msjnormal"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.consultorio}" styleClass="centrado_texto columnamed mensaje">
+                    <h:outputText value="#{oCitasSer.noConsultorio}" class="msjnormal"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnadiez mensaje">
+                    <h:outputText value="#{oCitasSer.areaServicio.descripcion}" class="msjnormal"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.maximoDePacientes}" styleClass="centrado_texto columnamed mensaje">
+                    <h:outputText value="#{oCitasSer.maximo}" class="msjnormal"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.pacientesCitados}" styleClass="centrado_texto columnamed mensaje">
+                    <h:outputText value="#{oCitasSer.citados}" class="msjnormal"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.primVez}" styleClass="centrado_texto columnachica mensaje">
+                    <h:outputText value="#{oCitasSer.primEsp}" class="msjnormal"/>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.subs}" styleClass="centrado_texto columnachica mensaje">
+                    <h:outputText value="#{oCitasSer.primHos}" class="msjnormal"/>
+                </p:column>
+            </p:dataTable>
+              
+            </h:form>
+           </p:fieldset>
+           <br/><br/>    
+      <h:form id="formReg">
+          <p:tabView activeIndex="#{oRegCita.pestana}" id="tabprin">
+              <p:tab title="#{etiq.datosPersonal}" id="tab1">
+                  <p:panelGrid styleClass="frm_centrado" id="pg1">                 
+                    <f:facet name="header">
+                      <p:row>
+                          <p:column colspan="4" styleClass="encabezados" ><p:outputLabel id="titDatPer" value="#{etiq.datosPersonal}"/></p:column>
+                      </p:row>
+                      <p:row>
+                          <p:column><p:outputLabel id="expediente" value="#{etiq.noExp}:"/></p:column>
+                          <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="nomb" value="#{etiq.nombres}:"/></p:column>
+                          <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="app" value="#{etiq.appat}:"/></p:column>
+                          <p:column><p:outputLabel id="apm" value="#{etiq.apmat}:"/></p:column>
+                      </p:row>
+                     </f:facet>
+                     <p:row>
+                        <p:column><p:outputLabel id="tExpediente" value="#{oRegCita.cita.paciente.expediente.numero}"/></p:column>
+                        <p:column>
+                            <p:inputText id="tNomb"  value="#{oRegCita.cita.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el nombre">
+                                <f:ajax render=":formReg:mentNombre" execute="@this" event="keyup" />
+                                <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="tApp" value="#{oRegCita.cita.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Apellido Paterno">
+                                <f:ajax render=":formReg:mentPaterno" execute="@this" event="keyup" />
+                                <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="tApm" value="#{oRegCita.cita.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" required="false">
+                                <f:ajax render=":formReg:mentMaterno" execute="@this" event="keyup" />
+                                <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4"></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="sexo" value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="fechaNac" value="#{etiq.fechanac}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="edad" value="#{etiq.edad}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="telefono" value="#{etiq.tel}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneRadio id="orSexo" value="#{oRegCita.cita.paciente.sexoP}" required="true" requiredMessage="Falata el Sexo">
+                                <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                <f:selectItem itemLabel="Femenino" itemValue="F" />
+                            </p:selectOneRadio>
+                        </p:column>
+                        <p:column>
+                            <p:inputMask id="txtFecNac" mask="99/99/9999" value="#{oRegCita.cita.paciente.fechaNacTexto}" required="true" requiredMessage="Falta la Fecha de Nacimiento">
+                                
+                            </p:inputMask>        
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel id="Tedad" value="#{oRegCita.cita.paciente.calculaEdad()}"></p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="tTelefono" value="#{oRegCita.cita.paciente.telefono}" validatorMessage="El teléfono debe contener solo caracteres numéricos" maxlength="13">
+                                <f:validateLongRange minimum="0"/>
+                                <f:ajax render=":formReg:mentTel" execute="@this" event="valueChange" />
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4"></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="domicilio" value="#{etiq.domicilio}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="colonia" value="#{etiq.colonia}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="cp" value="#{etiq.cp}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2" ><p:inputText id="tDomicilio" value="#{oRegCita.cita.paciente.calleNum}" size="70" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Domicilio" onkeypress="return validaCaracter(event);"/></p:column>
+                        <p:column><p:inputText id="tColonia" value="#{oRegCita.cita.paciente.colonia}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/></p:column>
+                        <p:column>
+                            <p:inputMask id="tCp" mask="99999"  value="#{oRegCita.cita.paciente.codigoPos}" disabled="#{oRegCita.habilitaListas()}">
+                               
+                            </p:inputMask>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4" ></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="pais" value="#{etiq.pais}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="entidad" value="#{etiq.entidad}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="municipio" value="#{etiq.municipio}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="localidad" value="#{etiq.localidad}:"/></p:column> 
+                    </p:row>
+                    <p:row>            
+                        <p:column>
+                            <p:inputText id="tPais" value="#{oRegCita.cita.paciente.otroPais}" required="true" style="text-transform: uppercase" onkeypress="return validaCaracter(event);">
+                                <p:ajax update="tEntidad tMunicipio tLocalidad tCp" event="valueChange"/>
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column>
+                            <p:selectOneMenu id="tEntidad" value="#{oRegCita.cita.paciente.estado.claveEdo}" disabled="#{oRegCita.habilitaListas()}" required="true">
+                                <p:ajax update="tMunicipio"/>  
+                                <f:selectItems value="#{oRegCita.listaEstados}" var="oEdo" 
+                                               itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="tMunicipio" value="#{oRegCita.cita.paciente.municipio.claveMun}"  disabled="#{oRegCita.habilitaListas()}" required="true">
+                                <p:ajax update="tLocalidad"/>
+                                <f:selectItems value="#{oRegCita.listaMunicipios}" var="oMun" 
+                                               itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column >
+                            <p:selectOneMenu id="tLocalidad" value="#{oRegCita.cita.paciente.ciudad.claveCiu}"  disabled="#{oRegCita.habilitaListas()}">
+                                <f:selectItems value="#{oRegCita.listaCiudades}" var="oCiu" 
+                                               itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row> 
+                    <p:row>
+                        <p:column colspan="4" ></p:column>
+                    </p:row>           
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" ></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="segPop" value="#{etiq.segpop}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="vigSegPop" value="#{etiq.vigenciaSegPop}:"/></p:column>
+                        <p:column styleClass="ui-widget-header" ></p:column>
+                    </p:row>
+                   <p:row>
+                        <p:column></p:column>
+                        <p:column>
+                            <p:inputMask id="tSegpop" mask="9999999999-99"  value="#{oRegCita.cita.paciente.seg.numero}"/>
+                        </p:column>
+                        <p:column >
+                            <p:inputMask id="tVigSegPop" mask="99/99/9999" value="#{oRegCita.cita.paciente.vigenciaTexto}">
+                                
+                            </p:inputMask>
+                        </p:column>
+                        <p:column></p:column>
+                    </p:row>
+                  </p:panelGrid>
+              </p:tab>
+              <p:tab title="#{etiq.datosDeCita}">
+                  <p:panelGrid styleClass="frm_centrado centrado_texto">
+                      <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="4" styleClass="encabezados"><p:outputLabel id="titDatCita" value="#{etiq.datosDeCita}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel id="fecReg" value="#{etiq.fechaRegistro}:"/></p:column>
+                            <p:column><p:outputLabel id="horReg" value="#{etiq.horaRegistro}:"/></p:column>
+                            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="tipoSol" value="#{etiq.tipoSol}:"/></p:column>
+                            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="referencia" value="#{etiq.referencia}:"/></p:column>
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column><p:outputLabel value="#{oRegCita.cita.fecRegFmtFecha}"/></p:column>
+                        <p:column><p:outputLabel value="#{oRegCita.cita.fecRegFmtHora}"/></p:column>
+                        <p:column>
+                            <p:selectOneMenu id="omTipoSol" value="#{oRegCita.cita.paciente.tipoSol}" required="true" requiredMessage="Falta el tipo de Solicitud">
+                                <f:selectItems value="#{oRegCita.listaSolicitudes}" var="oSol"
+                                               itemLabel="#{oSol.valor}" itemValue="#{oSol.tipoParametro}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="omReferencia" value="#{oRegCita.cita.paciente.referencia}">
+                                <f:selectItems value="#{oRegCita.listaRefs}" var="oRef"
+                                               itemLabel="#{oRef.tipo}" itemValue="#{oRef.descripcion}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4"></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="medico" value="#{etiq.medico}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="tipoPacHos" value="#{etiq.tipoPacienteHosp}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="tipoPacEsp" value="#{etiq.tipoPacienteEsp}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                       <p:column colspan="2">
+                        <p:selectOneMenu id="tMedico" value="#{oRegCita.med.nombres}" required="true">
+                            <f:selectItems value="#{oRegCita.listaMedicos}" var="oMed" 
+                                           itemLabel="#{oMed.asigCon.turno.clave}- #{oMed.cons.noConsultorio} - #{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}-#{oMed.area.clave}-#{oMed.cons.noConsultorio}-#{oMed.asigCon.maximo}-#{oMed.asigCon.turno.clave}"></f:selectItems>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneRadio id="tTipoPacHos" value="#{oRegCita.EP.primeraVezHRRB}" required="true">
+                            <f:ajax render="tTipoPacEsp" execute="@this" event="valueChange"/>
+                            <f:selectItem itemLabel="1era vez" itemValue="#{true}" />
+                            <f:selectItem itemLabel="Subsecuente" itemValue="#{false}" />
+                        </p:selectOneRadio>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneRadio id="tTipoPacEsp" value="#{oRegCita.EP.primeraVezEsp}" required="true">
+                            <f:ajax render="tTipoPacHos" execute="@this" event="valueChange"/>
+                            <f:selectItem itemLabel="1era vez" itemValue="#{true}" />
+                            <f:selectItem itemLabel="Subsecuente" itemValue="#{false}" />
+                        </p:selectOneRadio>
+                    </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4"></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="diagnostico" value="#{etiq.diagnosticoIngreso}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4">
+                            <p:autoComplete id="tDiagnostico" queryDelay="1000" size="120" minQueryLength="3" required="true" styleClass="bordes"
+                                            value="#{oRegCita.diagcie10.descripcionDiag}" completeMethod="#{oRegCita.diagcie10.completar}" effect="fade"
+                                            onkeyup="this.value=this.value.toUpperCase();"> 
+                            <p:ajax update="tCie10 tCauses" event="itemSelect"/>
+                            </p:autoComplete>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4"></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="fecCita" value="#{etiq.fechaCita}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="causes" value="#{etiq.causes}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel id="cie10" value="#{etiq.cie10}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:calendar id="tFecCita" value="#{oRegCita.cita.fechaCita}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oRegCita.cita.fechaRegistro}" required="true"  readonlyInput="true"/>
+                        </p:column>
+                        <p:column></p:column>
+                        <p:column><p:inputText id="tCauses" value="#{oRegCita.diagcie10.clave2CE}" readonly="true"/></p:column>
+                        <p:column><p:inputText id="tCie10" value="#{oRegCita.diagcie10.clave1CE}" readonly="true"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="centrado_texto" colspan="4">
+                            <p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk"  action="#{oRegCita.registraCita()}" validateClient="true" ajax="false">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                  </p:panelGrid>
+              </p:tab>
+          </p:tabView>
+            
+      </h:form>
+     <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus> 
+   </div>
+  </ui:define>         
+</ui:composition>
+
+</html>

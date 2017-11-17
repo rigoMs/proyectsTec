@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+
+  <ui:define name="cuerpo">
+    <div>
+             
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+    <h3 class="centrado_texto"><p:outputLabel id="titCambCons" value="#{etiq.cambiarConsultorio}"/></h3>
+            
+            <h:form>
+                <h:panelGrid columns="3" class="frm_centrado">
+                    <h:outputLabel id="fecCambCons" value="#{etiq.fecha}:" class="mensaje"/>
+                    <p:calendar  id="tFecConsulta" value="#{oCamCons.asigCon.fechaConsulta}" effect="fold" locale="es" required="true"  requiredMessage="Error: Se requiere una fecha"  disabledWeekends="true" pattern="dd/MM/yy" readonlyInput="true" mindate="#{oCamCons.fechaHoy}">
+                    </p:calendar> 
+                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" action="CambiarPacientes">
+                    </p:commandButton>
+                </h:panelGrid>
+            </h:form>
+      <br/>
+   </div>
+      <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+      </p:ajaxStatus> 
+  </ui:define>      
+</ui:composition>
+</html>

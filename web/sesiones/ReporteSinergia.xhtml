@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <ui:composition template="./../WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq" />
+		<h:form>
+		    <h2 class="centrado_texto">
+			<p:outputLabel value="#{etiq.reporteSinergia}"/>
+		    </h2>
+		    <p:dialog id="dlgBuscaReporteSinergia" widgetVar="varDlgBuscaReporteSinergia" dynamic="true" modal="true" closable="true"
+			      draggable="true" resizable="false" header="Buscar Reporte de Sinergia" style="height: 80%; width: 80%;"
+			      position="center">
+			<p:scrollPanel style="height: 400px; width: 600px;" mode="native">
+			    <p:panelGrid styleClass="frm_centrado">
+				<f:facet name="header">
+				    <p:row>
+					<p:column>
+					    <h:outputLabel styleClass="requerido" value="*"/>
+					    <h:outputText value="#{etiq.fechaInicial}" />
+					</p:column>
+					<p:column>
+					    <h:outputText value="#{etiq.fechaFinal}" />
+					</p:column>
+					<p:column />
+				    </p:row>
+				</f:facet>
+				<p:row>
+				    <p:column>
+					<p:calendar id="tFecInicio" value="#{oRepSinergia.registroSinergia.fechaRegistroOld}" effect="fold"
+						    locale="es" disabledWeekends="false" pattern="dd/MM/yyyy"
+						    required="true" readonlyInput="true" navigator="true"
+						    yearRange="c-90:c+0" maxdate="#{oRepSinergia.fechaHoy}"
+						    requiredMessage="Falta una fecha de inicio"
+						    placeholder="DD/MM/AAAA">
+					    <p:ajax />
+					</p:calendar>
+				    </p:column>
+				    <p:column>
+					<p:calendar id="tFecFin" value="#{oRepSinergia.registroSinergia.fechaRegistro}" effect="fold"
+						    locale="es" disabledWeekends="false" pattern="dd/MM/yyyy"
+						    readonlyInput="true" navigator="true"
+						    yearRange="c-90:c+0" maxdate="#{oRepSinergia.fechaHoy}"
+						    requiredMessage="Falta una fecha de inicio"
+						    placeholder="DD/MM/AAAA">
+					    <p:ajax />
+					</p:calendar>
+				    </p:column>
+				    <p:column>
+					<p:commandButton id="btnBuscar" value="Buscar Reportes" icon="ui-icon-search"
+							 actionListener="#{oRepSinergia.crearListaReportes()}"
+							 update="dtReportes btnSelReporte :msgs" />
+				    </p:column>
+				</p:row>
+			    </p:panelGrid>
+			    <p:spacer />
+			    <p:dataTable id="dtReportes" value="#{oRepSinergia.listaReportes}" var="oRep"
+					 selection="#{oRepSinergia.regSinergiaSelect}" rowKey="#{oRep.fechaRegistro}" paginator="true"
+					 paginatorPosition="bottom" rows="10"
+					 emptyMessage="No se encontraron reportes de sinergia en las fechas especificadas."
+					 style="display: #{oRepSinergia.displaySinergia}">
+				<f:facet name="header">
+				    <p:row>
+					<p:column colspan="3">
+					    <h:outputText value="Reportes de Sinergia Encontrados" />
+					</p:column>
+				    </p:row>
+				</f:facet>
+				<p:columnGroup type="header">
+				    <p:row>
+					<p:column rowspan="2" style="width: 5%;" headerText="" />
+					<p:column rowspan="2" style="width: 50%;" headerText="Fecha Registrada" />
+					<p:column rowspan="2" style="width: 45%;" headerText="Registrado Por:" />/
+				    </p:row>
+				</p:columnGroup>
+				<p:ajax event="rowSelectRadio" />
+				<p:column selectionMode="single" />
+				<p:column>
+				    <h:outputText value="#{oRep.fechaRegistro}">
+					<f:convertDateTime locale="es" pattern="dd/MM/yyyy" />
+				    </h:outputText>
+				</p:column>
+				<p:column>
+				    <h:outputText value="#{oRep.idUsuarioReg}" />
+				</p:column>
+			    </p:dataTable>
+			    <p:spacer />
+			    <center>
+				<p:commandButton id="btnSelReporte" value="Seleccionar" icon="ui-icon-check"
+						 actionListener="#{oRepSinergia.abrirSinergia()}" style="display: #{oRepSinergia.displaySinergia}"
+						 update="dtSinergia dtSinergiaResumen btnExportaSinergia btnCerrarSinergia"
+						 oncomplete="PF('varDlgBuscaReporteSinergia').hide();"/>
+			    </center>
+			</p:scrollPanel>
+		    </p:dialog>
+		    <p:dataTable id="dtSinergia" value="#{oRepSinergia.sinergia}" var="oSin" paginator="true" paginatorPosition="top" rows="50"
+				 scrollable="true" scrollHeight="430" emptyMessage="No hay datos." dataLocale="es"
+				 paginatorTemplate="(P&aacute;gina {JumpToPageDropdown} {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				 currentPageReportTemplate="de {totalPages})" style="display: #{oRepSinergia.displaySinergia}"
+				 filteredValue="#{oRepSinergia.filtrado}" widgetVar="varDtSinergia" >
+			<p:columnGroup type="header">
+			    <p:row>
+				<p:column style="width: 20px; visibility: collapse;" />
+				<p:column style="width: 200px; visibility: collapse;" />
+				<p:column style="width: 200px; visibility: collapse;" />
+				<p:column style="width: 200px; visibility: collapse;" />
+				<p:column style="width: 200px; visibility: collapse;" />
+				<p:column style="width: 110px; visibility: collapse;" />
+				<p:column style="width: 110px; visibility: collapse;" />
+				<p:column style="width: 110px; visibility: collapse;" />
+				<p:column style="width: 110px; visibility: collapse;" />
+				<p:column style="visibility: collapse;" />
+				<p:column style="width: 110px; visibility: collapse;" />
+				<p:column style="width: 25px; visibility: collapse;" />
+				<p:column style="width: 25px; visibility: collapse;" />
+				<p:column style="width: 25px; visibility: collapse;" />
+				<p:column style="width: 25px; visibility: collapse;" />
+				<p:column style="width: 25px; visibility: collapse;" />
+				<p:column style="width: 25px; visibility: collapse;" />
+				<p:column style="width: 25px; visibility: collapse;" />
+			    </p:row>
+			    <p:row>
+				<p:column colspan="11" />
+				<p:column colspan="7" headerText="#{oRepSinergia.headerTextSinergia[0]}" />
+			    </p:row>
+			    <p:row>
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[1]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[2]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[3]}" filterBy="#{oSin.RFC}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[4]}" filterBy="#{oSin.funcionNombre}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[5]}" filterBy="#{oSin.categoria}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[6]}" filterBy="#{oSin.codigo}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[7]}" filterBy="#{oSin.tipoPlaza}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[8]}" filterBy="#{oSin.origenPlaza}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[9]}" filterBy="#{oSin.turno}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[10]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[11]}" filterBy="#{oSin.horario}"
+					  filterFunction="#{oRepSinergia.filterByUpperCase}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[12]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[13]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[14]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[15]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[16]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[17]}" />
+				<p:column rowspan="2" headerText="#{oRepSinergia.headerTextSinergia[18]}" />
+			    </p:row>
+			</p:columnGroup>
+			<p:column>
+			    <h:outputText value="#{oSin.noPersonal}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.noGrupo}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.RFC}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.funcionNombre}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.categoria}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.codigo}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.tipoPlaza}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.origenPlaza}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.turno}" />
+			</p:column>
+			<p:column />
+			<p:column>
+			    <h:outputText value="#{oSin.horario}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.arrDiasDescanso[0]}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.arrDiasDescanso[1]}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.arrDiasDescanso[2]}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.arrDiasDescanso[3]}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.arrDiasDescanso[4]}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.arrDiasDescanso[5]}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSin.arrDiasDescanso[6]}" />
+			</p:column>
+			<f:facet name="footer">
+			    <p:commandButton value="Borrar Filtrado" type="button" onclick="PF('varDtSinergia').clearFilters();" />
+			</f:facet>
+		    </p:dataTable>
+		    <p:spacer />
+		    <p:dataTable id="dtSinergiaResumen" value="#{oRepSinergia.sinergiaResumen}" var="oSinRes" scrollable="true" rows="100"
+				 scrollHeight="430" emptyMessage="No hay datos." dataLocale="es" style="display: #{oRepSinergia.displaySinergia}">
+			<f:facet name="header">
+			    <h:outputText value="Resumen Sinergia" />
+			</f:facet>
+			<p:columnGroup type="header">
+			    <p:row>
+				<p:column style="visibility: collapse;" />
+				<p:column style="visibility: collapse;" />
+				<p:column style="visibility: collapse;" />
+			    </p:row>
+			</p:columnGroup>
+			<p:column>
+			    <h:outputText value="#{oSinRes.categoria}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSinRes.funcionNombre}" />
+			</p:column>
+			<p:column>
+			    <h:outputText value="#{oSinRes.noPersonal}" />
+			</p:column>
+		    </p:dataTable>
+		    <p:dialog id="dlgCerrarSinergia" widgetVar="varDlgCerrarSinergia" dynamic="true" header="Cerrar Sinergia"
+			      closable="true" modal="true" position="center" resizable="false" showEffect="fade">
+			<h:outputLabel value="&iquest;Desea cerrar el reporte de sinergia?" style="font-weight: bold;" />
+			<p:spacer />
+			<p:panelGrid styleClass="centrado_texto frm_centrado">
+			    <p:row>
+				<p:column>
+				    <h:outputText value="#{etiq.usuario}" />
+				</p:column>
+				<p:column>
+				    <h:outputLabel value="#{oRepSinergia.registroSinergia.idUsuario}" />
+				</p:column>
+			    </p:row>
+			    <p:row>
+				<p:column>
+				    <h:outputLabel styleClass="requerido" value="*"/>
+				    <p:outputLabel value="#{etiq.password}" />
+				</p:column>
+				<p:column>
+				    <p:password id="pwd" value="#{oRepSinergia.password}" placeholder="#{etiq.contraseña}" required="true"
+						requiredMessage="Se requiere la contraseña del usuario" />
+				</p:column>
+			    </p:row>
+			</p:panelGrid>
+			<p:spacer />
+			<center>
+			    <p:commandButton value="#{etiq.cancelar}" type="button" icon="ui-icon-cancel"
+					     onclick="PF('varDlgCerrarSinergia').hide();" />
+			    <p:commandButton value="#{etiq.cerrar}" icon="ui-icon-check" update=":msgs btnCerrarSinergia"
+					     actionListener="#{oRepSinergia.cerrarSinergia()}" />
+			</center>
+		    </p:dialog>
+		    <center>
+			<br/>
+			<p:commandButton id="btnGenerarSinergia" value="Generar Reporte Sinergia" icon="ui-icon-wrench"
+					 actionListener="#{oRepSinergia.generaReporteSinergia()}"
+					 update="dtSinergia dtSinergiaResumen btnExportaSinergia btnCerrarSinergia" />
+			<p:commandButton id="btnBuscarSinergia" value="Abrir Reporte Sinergia" icon="ui-icon-folder-open"
+					 type="button" onclick="PF('varDlgBuscaReporteSinergia').show();" />
+			<br/>
+			<p:commandButton id="btnExportaSinergia" value="Exportar" icon="ui-icon-arrowthickstop-1-s" ajax="false" 
+					 actionListener="#{oRepSinergia.exportaSinergia()}" style="display: #{oRepSinergia.displaySinergia}"
+					 onclick="PrimeFaces.monitorDownload(null, stop);">
+			    <p:fileDownload value="#{oRepSinergia.downloadFile}" />
+			</p:commandButton>
+			<p:remoteCommand name="stop" action="#{oRepSinergia.postDownload()}" />
+			<br/>
+			<p:commandButton id="btnCerrarSinergia" value="Cerrar Sinergia" type="button" icon="ui-icon-disk"
+					 style="display: #{oRepSinergia.displaySinergia}" disabled="#{!oRepSinergia.cerrar}"
+					 onclick="PF('varDlgCerrarSinergia').show();" />
+		    </center>
+		</h:form>
+		<p:growl id="msgs" showDetail="true" />
+		<p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+		    <f:facet name="start">
+			<p:graphicImage value="/imgs/loading.gif" />
+		    </f:facet>
+		</p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

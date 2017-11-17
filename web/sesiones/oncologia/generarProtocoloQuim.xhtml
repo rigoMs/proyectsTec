@@ -1,0 +1,344 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.protocoloQuimio}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form>
+
+                        <p:accordionPanel id="apBusqPac">
+                            <p:tab title="#{etiq.buscarpacs}">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="4"><h:outputText value="#{etiq.buscarDatosBasicos}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.nombres}:"/></p:column>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.appat}:"/></p:column>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.apmat}:"/></p:column>
+                                        <p:column></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="nom" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oProtocolo.episodioMedico.paciente.nombres}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="app" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oProtocolo.episodioMedico.paciente.apPaterno}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="apm" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oProtocolo.episodioMedico.paciente.apMaterno}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update="tablaPac" listener="#{oProtocolo.buscaPacienteAtenMed()}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="3"><h:outputText value="#{etiq.buscarPorExpediente}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.noExp}:"/></p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="exp"
+                                                         value="#{oProtocolo.episodioMedico.expediente}"
+                                                         converterMessage="#{etiq.errCapturaCaractEsp}">
+                                                <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                                <f:ajax execute="@this" event="valueChange" />
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update="tablaPac" listener="#{oProtocolo.buscaPacienteAtenMed()}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <br/><br/>
+
+                                <div class="tabla_pacEnc2">
+                                    <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                                 paginatorPosition="both" rows="5" 
+                                                 value="#{oProtocolo.listaEpiMed}" 
+                                                 emptyMessage="#{etiq.noRegistro}" 
+                                                 style="visibility:#{oProtocolo.visibilidadTabla};"
+                                                 rowKey="#{oPacEnc.paciente.folioPaciente}"
+                                                 selection="#{oProtocolo.seleccionado}">
+                                        <p:ajax event="rowSelectRadio"></p:ajax>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{etiq.pacEncontrados}"/>
+                                        </f:facet>
+                                        <p:column selectionMode="single">
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.apPaterno}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.apMaterno}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.nombres}"/>
+                                        </p:column>
+                                        <p:column style="width: 9%">
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.fechaNac}"><f:convertDateTime pattern="dd-MM-yyyy"></f:convertDateTime></h:outputText>
+                                        </p:column>   
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.curp}"/>
+                                        </p:column>
+                                        <p:column style="width: 7%">
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.edadNumero}"/>
+                                        </p:column>               
+                                        <p:column style="width: 10%">
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.expediente.numero}"/>
+                                        </p:column>  
+                                        <f:facet name="footer">
+                                            <p:commandButton value="#{etiq.llenarProtocolo}">
+                                                <p:ajax listener="#{oProtocolo.llenadoDatosPersonales}" update=":tblControlP tablaPac"></p:ajax>
+                                            </p:commandButton>
+                                        </f:facet>
+                                    </p:dataTable>      
+                                </div>
+                            </p:tab> 
+                        </p:accordionPanel> 
+                        <br/>       
+                    </h:form>
+
+                    <!--*********************************************************************************-->
+
+                    <p:tabView id="tblControlP" style="visibility:#{oProtocolo.visible};">
+                        <p:tab title="Registro de Medicamentos">
+                            <h:form id="frmprt">
+                                <p:growl id="msg" showDetail="true"/>
+                                
+                                <p:outputPanel id="protocolo1">
+                                    <p:panelGrid>
+                                        <f:facet name="header">
+                                            <p:row>
+                                                <p:column colspan="8" rowspan="1">
+                                                    <p:outputLabel value="#{etiq.datosDelPaciente}" styleClass="mensaje" />
+                                                </p:column>
+                                            </p:row>    
+                                        </f:facet>
+                                        <p:row>
+                                            <p:column colspan="1" rowspan="1">
+                                                <p:outputLabel value="#{etiq.nombreCompleto}" styleClass="mensaje" />
+                                            </p:column>
+                                            <p:column colspan="1" rowspan="1">
+                                                <h:outputText value="#{oProtocolo.episodioMedico.paciente.nombreCompleto}" />
+                                            </p:column>
+                                            <p:column colspan="1" rowspan="1">
+                                                <p:outputLabel value="#{etiq.noExp}" styleClass="mensaje" />
+                                            </p:column>
+                                            <p:column colspan="1" rowspan="1">
+                                                <h:outputText value="#{oProtocolo.episodioMedico.paciente.expediente.numero}" />
+                                            </p:column>
+                                            <p:column colspan="1" rowspan="1">
+                                                <p:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                            </p:column>
+                                            <p:column colspan="1" rowspan="1">
+                                                <h:outputText value="#{oProtocolo.episodioMedico.paciente.edadNumero}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="1" rowspan="1">
+                                                <p:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                            </p:column>
+                                            <p:column colspan="1" rowspan="1">
+                                                <h:outputText value="#{oProtocolo.episodioMedico.cama.numero}" />
+                                            </p:column>
+                                            <p:column colspan="1" rowspan="1">
+                                                <p:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                            </p:column>
+                                            <p:column colspan="3" rowspan="1">
+                                                <h:outputText value="#{oProtocolo.episodioMedico.diagIngreso.descripcionDiag}" />
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+
+                                <br/>
+
+                                <p:panelGrid id="regDuracionProt">
+                                    <f:facet name="header">
+                                        <p:row>
+                                            <p:column colspan="5"><p:outputLabel value="Protocolo de Quimioterapia"/></p:column>
+                                        </p:row>
+                                    </f:facet>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.protocolo}" /></p:column>
+                                        <p:column>
+                                            <p:selectOneMenu styleClass="bordes textover" id="selectProtocolo" value="#{oProtocolo.protocolo.clave}" requiredMessage="Debe Seleccionar Un Protocolo">
+                                                <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                                                <f:selectItems value="#{oProtocolo.listaProtocoloQuimio}" var="Proto"
+                                                               itemLabel="#{Proto.descripcion}" itemValue="#{Proto.clave}"/>
+                                                <p:ajax listener="#{oProtocolo.buscaDuracionProto()}" update="duracion unidadDur" event="change"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.duracion}"/></p:column>
+                                        <p:column><p:inputText id="duracion" value="#{oProtocolo.protocolo.duracion}" size="10" readonly="true" ><p:ajax/></p:inputText></p:column>
+                                        <p:column><p:inputText id="unidadDur" value="#{oProtocolo.protocolo.unidadDur.valor}" size="10" readonly="true" ><p:ajax/></p:inputText></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="5">
+                                            <p:panelGrid id="regProtoQuim" styleClass="frm_centrado">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column><p:outputLabel value="#{etiq.farmaco}" /></p:column>
+                                                        <p:column><p:outputLabel value="#{etiq.clave}" /></p:column>
+                                                        <p:column><p:outputLabel value="#{etiq.presentacion}" /></p:column>
+                                                        <p:column><p:outputLabel value="#{etiq.cantidad}" /></p:column>
+                                                        <p:column><p:outputLabel value="#{etiq.dosis}" /></p:column>
+                                                        <p:column><p:outputLabel value="#{etiq.via}" /></p:column>
+                                                        <p:column></p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                                <p:row>
+                                                    <p:column>
+                                                        <p:selectOneMenu styleClass="bordes textover" id="txtNomMed" value="#{oProtocolo.medicamento.claveMedicamento}" requiredMessage="Debe Seleccionar Un Médicamento">
+                                                            <p:ajax update="txtCveMed txtPresent" listener="#{oProtocolo.buscaMedicamentoOnco()}"/>
+                                                            <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                                            <f:selectItems value="#{oProtocolo.listaMedicamentoOncologia}" var="Medicamento"
+                                                                           itemLabel="#{Medicamento.nombre}" itemValue="#{Medicamento.claveMedicamento}"/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                    <p:column><p:inputText id="txtCveMed" value="#{oProtocolo.medicamento.claveMedicamento}" size="12" readonly="true" ><p:ajax/></p:inputText></p:column>
+                                                    <p:column><p:inputText id="txtPresent" value="#{oProtocolo.medicamento.presentacion}" size="30" readonly="true" ><p:ajax/></p:inputText></p:column>
+                                                    <p:column><p:inputText id="txtCantidad" value="#{oProtocolo.detalle.cantSolicitada}" size="7"><p:ajax/></p:inputText></p:column>
+                                                    <p:column><p:inputText id="txtDosis" value="#{oProtocolo.detalle.dosis}" size="7"><p:ajax/></p:inputText><p:outputLabel value=" mg." styleClass="mensaje" /></p:column>
+                                                    <p:column>
+                                                        <p:selectOneMenu styleClass="bordes textover" id="viaMed" value="#{oProtocolo.detalle.tipoVia.valor}" requiredMessage="Debe Seleccionar Una Vía de Administración">
+                                                            <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                                            <f:selectItems value="#{oProtocolo.listaVia}" var="Via"
+                                                                           itemLabel="#{Via.valor}" itemValue="#{Via.valor}"/>
+                                                            <p:ajax/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:commandButton value="#{etiq.agregar}" icon="ui-icon-plus" >
+                                                            <p:ajax listener="#{oProtocolo.registrarQuimiOnco()}" update="tablaProtocolos regProtoQuim msg"/>
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="7">
+                                                        <p:dataTable id="tablaProtocolos" var="protoQuim" value="#{oProtocolo.regProtocolo}" style="visibility:#{oProtocolo.visibilidadProtocolo}" >
+                                                            <p:column headerText="#{etiq.farmaco}:" styleClass="columnachica centrado_texto">
+                                                                <h:outputText value="#{protoQuim.medicamento.nombre}"/>
+                                                            </p:column>
+                                                            <p:column headerText="#{etiq.clave}:" styleClass="columnachica centrado_texto">
+                                                                <h:outputText value="#{protoQuim.medicamento.claveMedicamento}"/>
+                                                            </p:column>
+                                                            <p:column headerText="#{etiq.presentacion}:" styleClass="columnachica centrado_texto">
+                                                                <h:outputText value="#{protoQuim.medicamento.presentacion}"/>
+                                                            </p:column>
+                                                            <p:column headerText="#{etiq.cantidad}:" styleClass="columnachica centrado_texto">
+                                                                <h:outputText value="#{protoQuim.cantSolicitada}"/>
+                                                            </p:column>
+                                                            <p:column headerText="#{etiq.dosis}:" styleClass="columnachica centrado_texto">
+                                                                <h:outputText value="#{protoQuim.dosis}"/>
+                                                            </p:column>
+                                                            <p:column headerText="#{etiq.via}:" styleClass="columnachica centrado_texto">
+                                                                <h:outputText value="#{protoQuim.tipoVia.valor}"/>
+                                                            </p:column>
+                                                            <p:column headerText="" styleClass="columnachica centrado_texto">
+                                                                <p:commandButton value="#{etiq.borrar}" id="btnBorrar" icon="ui-icon-trash">
+                                                                    <p:ajax listener="#{oProtocolo.borrarElemento(protoQuim)}" update="tablaProtocolos"></p:ajax>
+                                                                </p:commandButton>
+                                                            </p:column>
+                                                            <f:facet name="footer">
+                                                                <p:commandButton value="Guardar" icon="ui-icon-disk" id="btnGuardar">
+                                                                    <p:ajax listener="#{oProtocolo.guardarProtocolo()}" update="tablaProtocolos :tblControlP:frmprt:regDuracionProt :tblControlP:frmprt:msg"></p:ajax>
+                                                                </p:commandButton>
+                                                            </f:facet>
+                                                        </p:dataTable>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <br/>
+
+                            </h:form>
+                        </p:tab>
+                    </p:tabView>
+
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

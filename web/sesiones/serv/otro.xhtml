@@ -1,0 +1,2164 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.atencionMedica}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+    <h:form id="NotaMedicaEvolucion" class="centrar">
+        
+        <p:accordionPanel>
+            <p:tab title="#{etiq.pacientesPorMedico}">
+    
+        <h4 class="centrado_texto"><p:outputLabel id="titPacXMed" value="#{etiq.PacYaconfirmaronSuCita}"/></h4>
+            
+                <p:panelGrid styleClass="frm_centrado" columns="5">
+                    <p:outputLabel id="fecPacXMed" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar id="tFecCita" value="#{oConDat.cita.fechaAux}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                    <p:outputLabel id="medico" styleClass="mensaje" value="#{etiq.medico}:"/><p:outputLabel value="CARLOS HERNÁNDEZ ESCALANTE"/>
+                    <p:commandButton value="Buscar" icon="ui-icon-search"/>
+                </p:panelGrid>
+            </p:tab> 
+        </p:accordionPanel>
+    
+                <p:panelGrid>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="#{etiq.citas}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noFicha}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoSol}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoPacienteEsp}:"/></p:column>                         
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:selectOneRadio>
+                                <f:selectItem id="radSelect1"></f:selectItem>
+                            </p:selectOneRadio>
+                        </p:column>  
+                        <p:column><h:outputText value="1" /></p:column>
+                        <p:column><h:outputText  value="19" /></p:column> 
+                        <p:column><h:outputText  value="DAVID TURNER ALEXANDER" /></p:column>
+                        <p:column><h:outputText  value="REFERIDO" /></p:column>
+                        <p:column><h:outputText  value="9999999999-19" /></p:column>
+                        <p:column><h:outputText  value="PRIMERA VEZ" /></p:column>  
+                    </p:row>
+                </p:panelGrid>        
+<br/>
+                <p:commandButton value="#{etiq.llenarNotaMed}" onclick="PF('dlgNotaMedica').show();" type="button"/>
+        
+<br/><br/>       
+<p:dialog header="" widgetVar="dlgNotaMedica" height="600" width="1300" resizable="false">
+    <p:tabView effect="fade">
+        <p:tab title="#{etiq.datosDelPaciente}">
+        <p:panelGrid styleClass="frm_centrado">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="6"><h:outputText value="#{etiq.datosDelPaciente}"/></p:column>
+                </p:row>
+            </f:facet>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:" /></p:column>                    
+                </p:row>
+                <p:row>
+                    <p:column><h:outputText value="ALEXANDER"/></p:column>
+                    <p:column><h:outputText value="DAVID"/></p:column>
+                    <p:column><h:outputText value="TURNER"/></p:column>
+                    <p:column><h:outputText  value="29"/></p:column>
+                    <p:column>
+                        <p:selectOneRadio value="M" disabled="true">
+                          <f:selectItem itemLabel="Masculino" itemValue="M" />
+                          <f:selectItem itemLabel="Femenino" itemValue="F" />
+                        </p:selectOneRadio>
+                    </p:column>
+                    <p:column><h:outputText  value="06/01/1986" /></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.folioUrg}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>                    
+                </p:row>            
+                <p:row>
+                    <p:column><h:outputText value="19" /></p:column>
+                    <p:column><h:outputText  value="9999999999-19" /></p:column> 
+                    <p:column><h:outputText  value="" /></p:column>
+                    <p:column><h:outputText  value="DATA860106HSHNNF06" /></p:column>
+                    <p:column><h:outputText  value="CONSULTA EXTERNA" /></p:column>
+                    <p:column><h:outputText  value="" /></p:column>
+                </p:row>
+
+                <p:row>                    
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hora}:" /></p:column> 
+                    <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.signosVitales}:" class="mensaje"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputText  value="17/07/2015" /></p:column>
+                    <p:column><h:outputText  value="20:40:19" /></p:column>
+                    <p:column><h:outputText value="#{etiq.ta}:"/><br/><h:outputLabel value="15"/></p:column>
+                    <p:column><h:outputText value="#{etiq.fc}:"/><br/><h:outputLabel value="15"/></p:column>
+                    <p:column><h:outputText value="#{etiq.fr}:"/><br/><h:outputLabel value="15"/></p:column>
+                    <p:column><h:outputText value="#{etiq.temp}:"/><br/><h:outputLabel value="36°C"/></p:column> 
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.peso}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.talla}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.imc}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.alergias}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel  value="67.0"/><p:outputLabel value=" #{etiq.kg}"/></p:column>
+                    <p:column><h:outputLabel  value="172.0"/><p:outputLabel value=" #{etiq.cm}"/></p:column>
+                    <p:column><h:outputLabel  value="22.65"/></p:column>
+                    <p:column colspan="3"><h:outputLabel value="PENICILINA"/></p:column>
+                </p:row>
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel/><h:outputLabel value="#{etiq.diagnosticoClinico}"/></p:column> 
+                     <p:column styleClass="ui-widget-header"><h:outputLabel/><h:outputLabel value="#{etiq.cie10}"/></p:column> 
+                </p:row>            
+                <p:row>
+                    <p:column><p:outputLabel value="1.-"/></p:column>  
+                    <p:column colspan="4"><h:outputLabel  value="DIENTES IMPACTADOS" /></p:column>
+                    <p:column><p:outputLabel value="A00"/></p:column>     
+                </p:row>  
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel/><h:outputLabel value="#{etiq.procedimientos}"/></p:column>     
+                    <p:column styleClass="ui-widget-header"><h:outputLabel/><h:outputLabel value="#{etiq.cie9}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel value="1.-"/></p:column>  
+                    <p:column colspan="4"><h:outputLabel  value="EXTRACCIÓN QUIRURGICA DE DIENTE"/></p:column>
+                    <p:column><p:outputLabel value="23.1"/></p:column>
+                </p:row>                    
+            
+        </p:panelGrid>
+               
+                
+        </p:tab>
+         <!--*********************************************************************************-->           
+        <p:tab title="#{etiq.notasMedicas}">
+                        <p:panelGrid >
+                            <p:row>
+                                <p:column>
+                                <p:selectOneMenu value="Areas" >
+                                    <f:selectItem itemLabel="Seleccione una nota médica" itemValue="0"/>
+                                    <f:selectItem itemLabel="Nota de ingreso" itemValue="1"/>
+                                    <f:selectItem itemLabel="Nota de evolución" itemValue="2"/>
+                                    <f:selectItem itemLabel="Nota pre-operatoria" itemValue="3"/>
+                                    <f:selectItem itemLabel="Nota post-operatoria" itemValue="4"/>
+                                    <f:selectItem itemLabel="Nota de alta" itemValue="5"/>
+                                </p:selectOneMenu>                      
+                                </p:column>
+                                <p:column>
+                                <p:commandButton value="Seleccionar"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>                                   
+
+            <br/>
+        
+            
+        <p:panelGrid styleClass="frm_centrado">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="6"><h:outputText value="NOTA DE INGRESO"/></p:column>
+                </p:row>
+            </f:facet>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:" /></p:column>                    
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="ALEXANDER"/></p:column>
+                    <p:column><h:outputLabel value="DAVID"/></p:column>
+                    <p:column><h:outputLabel value="TURNER"/></p:column>
+                    <p:column><h:outputLabel  value="29"/></p:column>
+                    <p:column>
+                        <p:selectOneRadio  value="M" disabled="true">
+                          <f:selectItem itemLabel="Masculino" itemValue="M" />
+                          <f:selectItem itemLabel="Femenino" itemValue="F" />
+                        </p:selectOneRadio>
+                    </p:column>
+                    <p:column><h:outputLabel  value="06/01/1986" /></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.folioUrg}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>                    
+                </p:row>            
+                <p:row>
+                    <p:column><h:outputLabel value="19" /></p:column>
+                    <p:column><h:outputLabel  value="9999999999-19" /></p:column> 
+                    <p:column><h:outputLabel  value="" /></p:column>
+                    <p:column><h:outputLabel  value="DATA860106HSHNNF06" /></p:column>
+                    <p:column><h:outputLabel  value="CONSULTA EXTERNA" /></p:column>
+                    <p:column><h:outputLabel  value="" /></p:column>
+                </p:row>
+
+                <p:row>                    
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hora}:" /></p:column> 
+                    <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.signosVitales}:" class="mensaje"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel  value="17/07/2015" /></p:column>
+                    <p:column><h:outputLabel  value="20:40:19" /></p:column>
+                    
+                    <p:column><h:outputLabel value="#{etiq.ta}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.fc}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.fr}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.temp}:"/><br/>
+                        <p:inputText value="36°C" size="5"/>
+                    </p:column>                                       
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.peso}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.talla}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.imc}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.alergias}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:inputText  value="67.0" size="5"/><p:outputLabel value=" #{etiq.kg}"/></p:column>
+                    <p:column><p:inputText  value="172.0" size="5"/><p:outputLabel value=" #{etiq.cm}"/></p:column>
+                    <p:column><p:inputText  value="22.65" size="5" readonly="true"/></p:column>
+                    <p:column colspan="4"><p:inputTextarea  value="PENICILINA" rows="3" cols="60"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.resInterrogatorio}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.expFisica}"/></p:column>
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.resultEstudios}"/></p:column>
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.diagnosticoClinico}"/></p:column>              
+                </p:row>            
+                <p:row>
+                    <p:column colspan="4"><p:inputText  value="" required="true" size="80"></p:inputText></p:column>
+                    <p:column>
+                        <p:outputLabel  value="#{etiq.cie10}: "/>
+                        <p:inputText value="" size="5"  readonly="true" styleClass="bordes"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Agregar" onclick="" icon="ui-icon-plus"/>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="4"><h:outputLabel  value="DIENTES IMPACTADOS"/></p:column>
+                    <p:column>
+                        <h:outputLabel value="A00"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Borrar" icon="ui-icon-trash"/>
+                    </p:column>
+                </p:row>    
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.procedimientos}"/></p:column>        
+                </p:row>
+                <p:row>
+                    <p:column colspan="4"><p:inputText  value="" required="true" size="80"></p:inputText></p:column>
+                    <p:column>
+                        <p:outputLabel  value="#{etiq.cie9}: "/>
+                        <p:inputText value="" size="5"  readonly="true" styleClass="bordes"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Agregar" onclick="" icon="ui-icon-plus"/>
+                    </p:column>  
+                </p:row>                
+
+                <p:row>
+                    <p:column colspan="4"><h:outputLabel value="EXTRACCIÓN QUIRURGICA DE DIENTE" /></p:column>
+                    <p:column>
+                        <h:outputLabel value="23.1"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Borrar" onclick="" icon="ui-icon-trash"/>
+                    </p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.planTratamiento}"/></p:column>                
+                </p:row>            
+
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>               
+            
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.pronostico}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.indicacionTerap}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>      
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.medico}"/></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.firma}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2"><h:outputLabel value="CARLOS HERNÁNDEZ ESCALANTE"/></p:column>
+                    <p:column colspan="2"><h:outputLabel value=""/></p:column>
+                    <p:column colspan="2"><h:outputLabel value=""/></p:column>
+                </p:row>
+        </p:panelGrid>
+                <p:commandButton value="Guardar" onclick="" icon="ui-icon-disk"/>
+                
+                
+<br/><br/><br/><br/>
+<br/><br/>
+
+                <p:panelGrid styleClass="frm_centrado">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="6"><h:outputText value="NOTA DE EVOLUCIÓN"/></p:column>
+                </p:row>
+            </f:facet>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:" /></p:column>                    
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="ALEXANDER"/></p:column>
+                    <p:column><h:outputLabel value="DAVID"/></p:column>
+                    <p:column><h:outputLabel value="TURNER"/></p:column>
+                    <p:column><h:outputLabel  value="29"/></p:column>
+                    <p:column>
+                        <p:selectOneRadio  value="M" disabled="true">
+                          <f:selectItem itemLabel="Masculino" itemValue="M" />
+                          <f:selectItem itemLabel="Femenino" itemValue="F" />
+                        </p:selectOneRadio>
+                    </p:column>
+                    <p:column><h:outputLabel  value="06/01/1986" /></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.folioUrg}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>                    
+                </p:row>            
+                <p:row>
+                    <p:column><h:outputLabel value="19" /></p:column>
+                    <p:column><h:outputLabel  value="9999999999-19" /></p:column> 
+                    <p:column><h:outputLabel  value="" /></p:column>
+                    <p:column><h:outputLabel  value="DATA860106HSHNNF06" /></p:column>
+                    <p:column><h:outputLabel  value="CONSULTA EXTERNA" /></p:column>
+                    <p:column><h:outputLabel  value="" /></p:column>
+                </p:row>
+
+                <p:row>                    
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hora}:" /></p:column> 
+                    <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.signosVitales}:" class="mensaje"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel  value="17/07/2015" /></p:column>
+                    <p:column><h:outputLabel  value="20:40:19" /></p:column>
+                    
+                    <p:column><h:outputLabel value="#{etiq.ta}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.fc}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.fr}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.temp}:"/><br/>
+                        <p:inputText value="36°C" size="5"/>
+                    </p:column>                                       
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.peso}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.talla}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.imc}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.alergias}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:inputText  value="67.0" size="5"/><p:outputLabel value=" #{etiq.kg}"/></p:column>
+                    <p:column><p:inputText  value="172.0" size="5"/><p:outputLabel value=" #{etiq.cm}"/></p:column>
+                    <p:column><p:inputText  value="22.65" size="5" readonly="true"/></p:column>
+                    <p:column colspan="4"><p:inputTextarea  value="PENICILINA" rows="3" cols="60"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.resInterrogatorio}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.expFisica}"/></p:column>
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+                    
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.estMentalEmocional}"/></p:column>                
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>                     
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.resultEstudios}"/></p:column>
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.diagnosticoClinico}"/></p:column>              
+                </p:row>            
+                <p:row>
+                    <p:column colspan="4"><p:inputText  value="" required="true" size="80"></p:inputText></p:column>
+                    <p:column>
+                        <p:outputLabel  value="#{etiq.cie10}: "/>
+                        <p:inputText value="" size="5"  readonly="true" styleClass="bordes"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Agregar" onclick="" icon="ui-icon-plus"/>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="4"><h:outputLabel  value="DIENTES IMPACTADOS"/></p:column>
+                    <p:column>
+                        <h:outputLabel value="A00"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Borrar" icon="ui-icon-trash"/>
+                    </p:column>
+                </p:row>    
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.procedimientos}"/></p:column>        
+                </p:row>
+                <p:row>
+                    <p:column colspan="4"><p:inputText  value="" required="true" size="80"></p:inputText></p:column>
+                    <p:column>
+                        <p:outputLabel  value="#{etiq.cie9}: "/>
+                        <p:inputText value="" size="5"  readonly="true" styleClass="bordes"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Agregar" onclick="" icon="ui-icon-plus"/>
+                    </p:column>  
+                </p:row>                
+
+                <p:row>
+                    <p:column colspan="4"><h:outputLabel value="EXTRACCIÓN QUIRURGICA DE DIENTE" /></p:column>
+                    <p:column>
+                        <h:outputLabel value="23.1"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Borrar" onclick="" icon="ui-icon-trash"/>
+                    </p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.planTratamiento}"/></p:column>                
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>               
+            
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.pronostico}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.indicacionTerap}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>      
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.medico}"/></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.firma}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2"><h:outputLabel value="CARLOS HERNÁNDEZ ESCALANTE"/></p:column>
+                    <p:column colspan="2"><h:outputLabel value=""/></p:column>
+                    <p:column colspan="2"><h:outputLabel value=""/></p:column>
+                </p:row>
+        </p:panelGrid>
+                
+
+<br/><br/><br/><br/>
+<br/><br/>
+
+                <p:panelGrid styleClass="frm_centrado">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="6"><h:outputText value="NOTA PRE-OPERATORIA"/></p:column>
+                </p:row>
+            </f:facet>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:" /></p:column>                    
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="ALEXANDER"/></p:column>
+                    <p:column><h:outputLabel value="DAVID"/></p:column>
+                    <p:column><h:outputLabel value="TURNER"/></p:column>
+                    <p:column><h:outputLabel  value="29"/></p:column>
+                    <p:column>
+                        <p:selectOneRadio  value="M" disabled="true">
+                          <f:selectItem itemLabel="Masculino" itemValue="M" />
+                          <f:selectItem itemLabel="Femenino" itemValue="F" />
+                        </p:selectOneRadio>
+                    </p:column>
+                    <p:column><h:outputLabel  value="06/01/1986" /></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:" /></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.folioUrg}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>                    
+                </p:row>            
+                <p:row>
+                    <p:column><h:outputLabel value="19" /></p:column>
+                    <p:column><h:outputLabel  value="9999999999-19" /></p:column> 
+                    <p:column><h:outputLabel  value="" /></p:column>
+                    <p:column><h:outputLabel  value="DATA860106HSHNNF06" /></p:column>
+                    <p:column><h:outputLabel  value="CONSULTA EXTERNA" /></p:column>
+                    <p:column><h:outputLabel  value="" /></p:column>
+                </p:row>
+
+                <p:row>                    
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:" /></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hora}:" /></p:column> 
+                    <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.signosVitales}:" class="mensaje"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel  value="17/07/2015" /></p:column>
+                    <p:column><h:outputLabel  value="20:40:19" /></p:column>
+                    
+                    <p:column><h:outputLabel value="#{etiq.ta}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.fc}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.fr}:"/><br/>
+                        <p:inputText value="15" size="5"/>
+                    </p:column>
+
+                    <p:column><h:outputLabel value="#{etiq.temp}:"/><br/>
+                        <p:inputText value="36°C" size="5"/>
+                    </p:column>                                       
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.peso}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.talla}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.imc}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.alergias}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:inputText  value="67.0" size="5"/><p:outputLabel value=" #{etiq.kg}"/></p:column>
+                    <p:column><p:inputText  value="172.0" size="5"/><p:outputLabel value=" #{etiq.cm}"/></p:column>
+                    <p:column><p:inputText  value="22.65" size="5" readonly="true"/></p:column>
+                    <p:column colspan="4"><p:inputTextarea  value="PENICILINA" rows="3" cols="60"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.resInterrogatorio}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.expFisica}"/></p:column>
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>                  
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputText value="#{etiq.resultEstudios}"/></p:column>
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.diagnosticoClinico}"/></p:column>              
+                </p:row>            
+                <p:row>
+                    <p:column colspan="4"><p:inputText  value="" required="true" size="80"></p:inputText></p:column>
+                    <p:column>
+                        <p:outputLabel  value="#{etiq.cie10}: "/>
+                        <p:inputText value="" size="5"  readonly="true" styleClass="bordes"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Agregar" onclick="" icon="ui-icon-plus"/>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="4"><h:outputLabel  value="DIENTES IMPACTADOS"/></p:column>
+                    <p:column>
+                        <h:outputLabel value="A00"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Borrar" icon="ui-icon-trash"/>
+                    </p:column>
+                </p:row>    
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.procedimientos}"/></p:column>        
+                </p:row>
+                <p:row>
+                    <p:column colspan="4"><p:inputText  value="" required="true" size="80"></p:inputText></p:column>
+                    <p:column>
+                        <p:outputLabel  value="#{etiq.cie9}: "/>
+                        <p:inputText value="" size="5"  readonly="true" styleClass="bordes"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Agregar" onclick="" icon="ui-icon-plus"/>
+                    </p:column>  
+                </p:row>                
+
+                <p:row>
+                    <p:column colspan="4"><h:outputLabel value="EXTRACCIÓN QUIRURGICA DE DIENTE" /></p:column>
+                    <p:column>
+                        <h:outputLabel value="23.1"/>
+                    </p:column>     
+                    <p:column>
+                        <p:commandButton value="Borrar" onclick="" icon="ui-icon-trash"/>
+                    </p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.planTratamiento}"/></p:column>                
+                </p:row>            
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>               
+            
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.pronostico}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>    
+
+                <p:row>    
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.fechaCirugia}:"/></p:column>     
+                    <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.diagPreOpe}:"/></p:column>
+                </p:row>
+                <p:row>    
+                    <p:column colspan="2"><p:calendar id="fecSolPac" effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>
+                    <p:column colspan="3"><p:inputText  value="" required="true" size="70"></p:inputText></p:column>
+                    <p:column>
+                        <p:outputLabel  value="#{etiq.cie10}: "/>
+                        <p:inputText value="" size="5"  readonly="true" styleClass="bordes"/>
+                    </p:column>     
+                </p:row>   
+                    
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.planQuirurgico}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row> 
+                    
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.riesgoQuirurgico}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row> 
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel/><h:outputLabel value="#{etiq.cuidadosQuirurgico}"/></p:column>                
+                </p:row>                                       
+                <p:row>
+                    <p:column colspan="6"><p:inputTextarea value="" required="true" rows="5" cols="110"></p:inputTextarea></p:column>               
+                </p:row>
+                    
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.medico}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.firma}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2"><h:outputLabel value="CARLOS HERNÁNDEZ ESCALANTE"/></p:column>
+                    <p:column colspan="2"><h:outputLabel value=""/></p:column>
+                    <p:column colspan="2"><h:outputLabel value=""/></p:column>
+                </p:row>
+        </p:panelGrid>
+                        
+        </p:tab>
+        <!--*********************************************************************************-->
+        <p:tab title="#{etiq.solMed}">
+            
+        <p:panelGrid>
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="8"><h:outputText value="REGISTRAR RECETA MÉDICA"/></p:column>
+                </p:row>              
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombre}"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.presentacion}"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.dosis}"/></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.via}"/></p:column>                                       
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.frecuencia}"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.duracion}"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column><p:inputText value="ABC" readonly="true" size="5"/></p:column> 
+                    <p:column><p:inputText value="PARACETAMOL" required="true"></p:inputText></p:column>
+                    <p:column><p:inputText value="TABLETA" size="10"/></p:column>
+                    <p:column><p:inputText value="500mg" size="10"/></p:column>
+                    <p:column><p:inputText value="ORAL" size="10"/></p:column>                                       
+                    <p:column><p:inputText value="8 HORAS" /></p:column>
+                    <p:column><p:inputText value="1 SEMANA" /></p:column>
+                    <p:column><p:commandButton value="Agregar" icon="ui-icon-plus" type="button"/></p:column>
+                </p:row>                        
+        </p:panelGrid>
+<br/><br/>        
+        <p:panelGrid>
+            <f:facet name="header">
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>  
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fecha}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:"/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputLabel value="19"/></p:column>
+                <p:column colspan="2"><h:outputLabel value="DAVID TURNER ALEXANDER"/></p:column>
+                <p:column><h:outputLabel  value="29"/></p:column>
+                <p:column><h:outputLabel  value="19/07/2015" /></p:column>
+                <p:column><h:outputLabel  value="9999999999-19" /></p:column>
+                <p:column colspan="2"><h:outputText  value="MEDICINA INTERNA" /></p:column>
+            </p:row>
+            
+            <p:row>
+                <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="Receta del paciente"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombre}"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.presentacion}"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.dosis}"/></p:column> 
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.via}"/></p:column>                                   
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.frecuencia}"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.duracion}"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+            </p:row>
+            <p:row>
+                <p:column><h:outputLabel value="ABC"/></p:column>
+                <p:column><h:outputLabel value="PARACETAMOL"/></p:column>
+                <p:column><h:outputLabel value="TABLETA"/></p:column>
+                <p:column><h:outputLabel value="500mg"/></p:column>
+                <p:column><h:outputLabel value="ORAL"/></p:column>                
+                <p:column><h:outputLabel value="8 HORAS"/></p:column>
+                <p:column><h:outputLabel value="1 SEMANA"/></p:column>
+                <p:column><p:commandButton value="Borrar" icon="ui-icon-trash"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header" colspan="10"><h:outputLabel value="#{etiq.medico}"/></p:column> 
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>                         
+                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>                            
+            </p:row>
+            <p:row>
+                <p:column colspan="3"><h:outputText  value="CARLOS HERNÁNDEZ ESCALANTE" /></p:column>
+                <p:column colspan="2"><h:outputText  value="" /></p:column>
+                <p:column colspan="3"><h:outputText  value="DIENTES IMPACTADOS" /></p:column>
+            </p:row> 
+        </p:panelGrid>
+            <p:commandButton value="Guardar" onclick="" icon="ui-icon-disk"/>
+            <p:commandButton value="Imprimir" onclick="" icon="ui-icon-print"/>
+            
+        </p:tab>
+        <!--*********************************************************************************-->
+        <p:tab title="#{etiq.solicitarServ}">
+
+        <p:panelGrid>
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="3"><h:outputLabel value="REGISTRAR SOLICITUDES DE SERVICIO"/></p:column>                
+                </p:row>
+            </f:facet>
+
+                <p:row>
+                     <p:column styleClass="ui-widget-header"><h:outputLabel/><h:outputLabel value="#{etiq.servicio}"/></p:column>
+                     <p:column styleClass="ui-widget-header"><h:outputLabel/><h:outputLabel value="#{etiq.estProcedimientos}"/></p:column>
+                     <p:column styleClass="ui-widget-header"><h:outputLabel/><h:outputLabel value="#{etiq.accion}"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <p:selectOneMenu value="Servicios">
+                            <f:selectItem itemLabel="SELECCIONA UN SERVICIO" itemValue="0"/>
+                            <f:selectItem itemLabel="LABORATORIO" itemValue="1"/>
+                            <f:selectItem itemLabel="IMAGENOLOGÍA" itemValue="2"/>
+                            <f:selectItem itemLabel="ELECTROCARDIOGRAMA" itemValue="3"/>
+                            <f:selectItem itemLabel="BANCO DE SANGRE" itemValue="4"/>
+                            <f:selectItem itemLabel="PATOLOGÍA" itemValue="5"/>
+                            <f:selectItem itemLabel="ENDOSCOPÍA" itemValue="6"/>
+                            <f:selectItem itemLabel="PROCEDIMIENTO QUIRÚRGICO" itemValue="7"/>
+                        </p:selectOneMenu>
+                    </p:column>
+
+                    <p:column>
+                        <p:selectOneMenu value="Estudios">
+                            <f:selectItem itemLabel="SELECCIONA UN ESTUDIO" itemValue=""/>
+                            <f:selectItem itemLabel="ESTUDIOS DE LABORATORIO" itemValue="1"/>                            
+                            <f:selectItem itemLabel="GASOMETRÍA" itemValue="2"/>
+                            <f:selectItem itemLabel="B.A.A.R EN EXPECTORACIÓN" itemValue="3"/>
+                            <f:selectItem itemLabel="ESTUDIOS DE LABORATORIO PARA ENVÍO" itemValue="4"/>
+                            <f:selectItem itemLabel="********************" itemValue="5"/>
+                            <f:selectItem itemLabel="ESTUDIOS DE IMAGENOLOGÍA" itemValue="6"/>                            
+                            <f:selectItem itemLabel="TOMOGRAFÍA" itemValue="7"/>
+                            <f:selectItem itemLabel="********************" itemValue="8"/>
+                            <f:selectItem itemLabel="CITOLOGÍA CERVICO-VAGINAL" itemValue="9"/>
+                            <f:selectItem itemLabel="LÍQUIDOS CORPORALES NORMALES/PATOLÓGICOS DIVERSOS" itemValue="10"/>
+                            <f:selectItem itemLabel="ESTUDIO DE BIOPSIA/PIEZA QUIRÚRGICA" itemValue="11"/>
+                        </p:selectOneMenu>
+                    </p:column>
+
+                    <p:column><p:commandButton value="Agregar" onclick="" icon="ui-icon-plus"/></p:column>
+                </p:row>
+        </p:panelGrid>
+<br/><br/>            
+        <p:panelGrid>
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="4"><h:outputLabel value="SOLICITUDES DE SERVICIO PARA EL PACIENTE"/></p:column>
+                </p:row>
+            </f:facet>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.estProcedimientos}"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.accion}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="LABORATORIO"/></p:column>
+                    <p:column><h:outputLabel value=""/></p:column>
+                    <p:column><p:commandButton value="#{etiq.editDetalles}" onclick="PF('dlgOrdLab').show();" type="button" icon="ui-icon-pencil"/><p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash"/></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column><h:outputLabel value="IMAGENOLOGÍA"/></p:column>
+                    <p:column><h:outputLabel value=""/></p:column>
+                    <p:column><p:commandButton value="#{etiq.editDetalles}" onclick="PF('dlgOrdImag').show();" type="button" icon="ui-icon-pencil"/><p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column><h:outputLabel value="ELECTROCARDIOGRAMA"/></p:column>
+                    <p:column><h:outputLabel value=""/></p:column>
+                    <p:column><p:commandButton value="#{etiq.editDetalles}" onclick="PF('dlgOrdElectro').show();" type="button" icon="ui-icon-pencil"/><p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column><h:outputLabel value="BANCO DE SANGRE"/></p:column>
+                    <p:column><h:outputLabel value=""/></p:column>
+                    <p:column><p:commandButton value="#{etiq.editDetalles}" onclick="PF('dlgOrdBanco').show();" type="button" icon="ui-icon-pencil"/><p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash"/></p:column>
+                </p:row>            
+
+                <p:row>
+                    <p:column><h:outputLabel value="PATOLOGÍA"/></p:column>
+                    <p:column><h:outputLabel value=""/></p:column>
+                    <p:column><p:commandButton value="#{etiq.editDetalles}" onclick="PF('dlgOrdPato').show();" type="button" icon="ui-icon-pencil"/><p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash"/></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column><h:outputLabel value="ENDOSCOPÍA"/></p:column>
+                    <p:column><h:outputLabel value=""/></p:column>
+                    <p:column><p:commandButton value="#{etiq.editDetalles}" onclick="PF('dlgOrdEndo').show();" type="button" icon="ui-icon-pencil"/><p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash"/></p:column>
+                </p:row>
+            
+                <p:row>
+                    <p:column><h:outputLabel value="PROCEDIMIENTO QUIRÚRGICO"/></p:column>
+                    <p:column><h:outputLabel value=""/></p:column>
+                    <p:column><p:commandButton value="#{etiq.editDetalles}" onclick="PF('dlgOrdQui').show();" type="button" icon="ui-icon-pencil"/><p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash"/></p:column>
+                </p:row>
+        </p:panelGrid>
+            <p:commandButton value="Solicitar" onclick="" icon="ui-icon-disk"/>
+        
+        
+        <!--*********************************************************************************-->    
+         <p:dialog header="Laboratorio" widgetVar="dlgOrdLab" height="600" width="1300" resizable="false">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="10"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:"/></p:column> 
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>   
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoPaciente}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>   
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="DAVID TURNER ALEXANDER" /></p:column>
+                                <p:column><h:outputText value="999999999-19" /></p:column>  
+                                <p:column><h:outputText  value="29" /></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="M" disabled="true">
+                                        <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                        <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                    </p:selectOneRadio>
+                                </p:column>                                
+                                <p:column><h:outputText  value="06/01/1986" /></p:column>
+                                <p:column><h:outputText  value="19" /></p:column>
+                                <p:column><h:outputText  value="CONSULTA EXTERNA" /></p:column>
+                                <p:column><h:outputText  value="" /></p:column>
+                                <p:column><h:outputText  value="19/07/2015" /></p:column>
+                                <p:column><h:outputText  value="MEDICINA INTERNA" /></p:column>
+                            </p:row>    
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="10"><h:outputLabel value="#{etiq.medico}"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>                         
+                                <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>                            
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3"><h:outputText  value="CARLOS HERNÁNDEZ ESCALANTE" /></p:column>
+                                <p:column colspan="2"><h:outputText  value="" /></p:column>
+                                <p:column colspan="5"><h:outputText  value="DIENTES IMPACTADOS" /></p:column>
+                            </p:row>                         
+                    </p:panelGrid>                    
+<br/>
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="4"><h:outputLabel value="#{etiq.solEstudiosLab}"/></p:column>                                
+                            </p:row> 
+                        </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.concepto}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+                            </p:row>
+                        
+                            <p:row>                                
+                                <p:column><p:inputText value="" readonly="true" size="5"/></p:column> 
+                                <p:column><p:inputText value="" size="50"/></p:column>
+                                <p:column><p:commandButton value="Agregar" icon="ui-icon-plus"/></p:column> 
+                            </p:row>
+                   
+                            <p:row>
+                                <p:column><p:outputLabel value="201-12"/></p:column>
+                                <p:column><p:outputLabel value="BIOMETRÍA HEMÁTICA COMPLETA - SERIE ROJA"/></p:column>
+                                <p:column><p:commandButton value="Borrar" icon="ui-icon-trash"/></p:column> 
+                            </p:row>                            
+                    </p:panelGrid>
+<br/>
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="4"><h:outputLabel value="#{etiq.gasometria}"/></p:column>
+                            </p:row>
+                        </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tomaMuestra}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.temperatura}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hemoglobina}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoMuestra}:"/></p:column>
+                            </p:row>
+                        
+                            <p:row>                                
+                                <p:column><p:inputText value=""/></p:column> 
+                                <p:column><p:inputText value="" size="10"/> <p:outputLabel  value="°C F1 02"/></p:column>
+                                <p:column><p:inputText value="" size="10"/> <p:outputLabel  value="gr/dI"/></p:column>
+                                <p:column>
+                                    <h:selectOneRadio id="cbTipoMuestra">
+                                        <f:selectItem itemLabel="Arterial" itemValue="Art"/>
+                                        <f:selectItem itemLabel="Capilar" itemValue="Cap"/>
+                                        <f:selectItem itemLabel="Venosa" itemValue="Ven"/>
+                                    </h:selectOneRadio>
+                                </p:column>
+                            </p:row>                          
+                    </p:panelGrid>
+<br/>
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="5"><h:outputLabel value="#{etiq.solBAAR}"/></p:column>                                
+                            </p:row> 
+                        </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.observaciones}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaDiag}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tratAntifimico}:"/></p:column>
+                            </p:row>
+                        
+                            <p:row>                                
+                                <p:column colspan="3"><p:inputTextarea value="" cols="50"/></p:column> 
+                                <p:column><p:calendar id="fecDiag" effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="" layout="pageDirection">
+                                        <f:selectItem itemLabel="Sí" itemValue="S" />
+                                        <f:selectItem itemLabel="No" itemValue="N" />
+                                    </p:selectOneRadio>
+                                </p:column>    
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.concepto}"/></p:column>
+                            </p:row>                   
+                            <p:row>
+                                <p:column><p:outputLabel value="410-11"/></p:column>
+                                <p:column colspan="4"><p:outputLabel value="B.A.A.R. EN EXPECTORACIÓN"/> 
+                                    <h:selectManyCheckbox id="cbDiasToma">
+                                        <f:selectItem itemLabel="1" itemValue="d1"/>
+                                        <f:selectItem itemLabel="2" itemValue="d2"/>
+                                        <f:selectItem itemLabel="3" itemValue="d3"/>
+                                    </h:selectManyCheckbox></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value=""/></p:column>
+                                <p:column colspan="2"><p:outputLabel value="#{etiq.especimen}: "/> <p:inputText value=""/></p:column>
+                                <p:column colspan="2"><p:outputLabel value="#{etiq.observaciones}: "/> <p:inputText value=""/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value=""/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.domicilioPaciente}: "/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value=""/></p:column>                              
+                                <p:column colspan="2"><h:outputLabel value="Calle: "/> <h:outputLabel value="Norte 20"/></p:column>
+                                <p:column><h:outputLabel value="Número: "/> <h:outputLabel value="4"/></p:column>
+                                <p:column><h:outputLabel value="C.P: "/> <h:outputLabel value="94300"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value=""/></p:column>                              
+                                <p:column colspan="2"><h:outputLabel value="Unidad o fraccionamiento: "/> <h:outputLabel value=""/></p:column>
+                                <p:column><h:outputLabel value="Localidad: "/> <h:outputLabel value="Orizaba"/></p:column>
+                                <p:column><h:outputLabel value="Estado: "/> <h:outputLabel value="Veracruz"/></p:column>
+                            </p:row>                        
+                    </p:panelGrid>
+<br/>
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="4"><h:outputLabel value="#{etiq.solEstLabEnvio}"/></p:column>                                
+                            </p:row>
+                        </f:facet>                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.analisisSol}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.especimen}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaToma}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.horaToma}:"/></p:column>
+                            </p:row>
+                            <p:row>                                
+                                <p:column><p:inputText value="" size="40"/></p:column> 
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:calendar id="fecToma" effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>
+                                <p:column><p:inputText value="21:30:23"/></p:column>
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.observacionComen}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4"><p:inputTextarea value="" rows="5" cols="100"/></p:column>
+                            </p:row>
+                        
+                            <p:row>                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.temperatura}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.domicilioPaciente}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.muestraRemitida}:"/></p:column>
+                            </p:row>
+                            <p:row>                                
+                                <p:column><p:inputText value="" size="10"/> <p:outputLabel  value="°C"/></p:column>
+                                <p:column colspan="2"><h:outputText value="Norte 20 #4"/></p:column> 
+                                <p:column><p:inputText value=""/></p:column>
+                            </p:row>
+                    </p:panelGrid>
+
+                    <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+        </p:dialog>    
+        <!--*********************************************************************************--> 
+        <p:dialog header="Imagenología" widgetVar="dlgOrdImag" height="600" width="1300" resizable="false">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="8"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.alergias}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="DAVID TURNER ALEXANDER" /></p:column>
+                                <p:column><h:outputText value="CONSULTA EXTERNA" /></p:column>
+                                <p:column><h:outputText  value="29" /></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="M" disabled="true">
+                                        <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                        <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                    </p:selectOneRadio>
+                                </p:column>   
+                                <p:column><h:outputText  value="19" /></p:column>
+                                <p:column><h:outputText  value="" /></p:column>                                                
+                                <p:column><h:outputText  value="PENICILINA" /></p:column>
+                                <p:column><h:outputText  value="19/07/2015" /></p:column>
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.medico}"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>                         
+                                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>                            
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3"><h:outputText  value="CARLOS HERNÁNDEZ ESCALANTE" /></p:column>
+                                <p:column colspan="2"><h:outputText  value="" /></p:column>
+                                <p:column colspan="3"><h:outputText  value="DIENTES IMPACTADOS" /></p:column>
+                            </p:row>   
+                    </p:panelGrid>                    
+<br/>
+                    <p:panelGrid styleClass="frm_centrado">   
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="4"><h:outputLabel value="#{etiq.solImagen}"/></p:column>
+                            </p:row>
+                        </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.estudio}:"/></p:column>
+                                <p:column colspan="3"><p:inputText  value="" size="90"/></p:column>                               
+                            </p:row>  
+                        
+                            <p:row>                               
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.concepto}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cantidad}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+                            </p:row>
+                            <p:row>                                                                
+                                <p:column><p:inputText  value="" /></p:column>
+                                <p:column><p:inputText  value="" size="60"/></p:column>
+                                <p:column><p:inputText  value="" /></p:column>
+                                <p:column><p:commandButton value="Agregar" icon="ui-icon-plus"/></p:column>
+                            </p:row>
+                        
+                            <p:row>                                                           
+                                <p:column><h:outputLabel  value="20001" /></p:column>
+                                <p:column><h:outputLabel  value="PLACA 14 X 17" /></p:column>
+                                <p:column><h:outputLabel  value="2" /></p:column>
+                                <p:column><p:commandButton value="Borrar" icon="ui-icon-trash"/></p:column>
+                            </p:row>
+                            <p:row>                                                           
+                                <p:column><h:outputLabel  value="21000" /></p:column>
+                                <p:column><h:outputLabel  value="MEDIO DE CONTRASTE - HIDROSOLUBLE" /></p:column>
+                                <p:column><h:outputLabel  value="1" /></p:column>
+                                <p:column><p:commandButton value="Borrar" icon="ui-icon-trash"/></p:column>
+                            </p:row>
+                    </p:panelGrid>
+<br/>
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="2"><h:outputLabel value="#{etiq.solTomografia}"/></p:column>
+                            </p:row>
+                        </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.estSol}:"/></p:column>   
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.regionEstudiar}:"/></p:column>                                
+                            </p:row>                              
+                            <p:row>
+                                 <p:column>
+                                    <p:selectOneRadio  value="radTomoSol">
+                                        <f:selectItem itemLabel="305-01 TOMOGRAFIAS COMPUTADAS SIMPLE DE CUALQUIER REGION" itemValue="01" />
+                                        <f:selectItem itemLabel="305-02 TOMOGRAFIAS COMPUTADAS CON MEDIO DE CONTRASTE" itemValue="02" />
+                                    </p:selectOneRadio>
+                                </p:column>                           
+                                <p:column><p:inputText  value="" size="60"/></p:column>                               
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.resClinico}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2"><p:inputTextarea  value="" rows="5" cols="150"/></p:column>                               
+                            </p:row>
+                    </p:panelGrid>
+
+                    <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+        </p:dialog>    
+        <!--*********************************************************************************-->
+        <p:dialog header="Electrocardiograma" widgetVar="dlgOrdElectro" height="600" width="1300" resizable="false">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="8"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.medico}:"/></p:column>                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="DAVID TURNER ALEXANDER" /></p:column>
+                                <p:column><h:outputText  value="19" /></p:column>                                
+                                <p:column><h:outputText  value="29" /></p:column>
+                                <p:column><h:outputText value="CONSULTA EXTERNA" /></p:column>                            
+                                <p:column><h:outputText  value="CARLOS HERNÁNDEZ ESCALANTE" /></p:column>                                
+                                <p:column><h:outputText  value="19/07/2015" /></p:column>
+                            </p:row>
+                    </p:panelGrid>                    
+<br/>
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>   
+                                <p:column colspan="3"><h:outputLabel value="#{etiq.medicamentos}"/></p:column>
+                            </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column colspan="3"><h:outputLabel  value="PARACETAMOL;" /></p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tA}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tabaquismo}:"/></p:column>
+                            </p:row>                        
+                            <p:row>                                
+                                <p:column><h:outputText  value="DIENTES IMPACTADOS" /></p:column>                                
+                                <p:column><p:inputText  value="" /></p:column>
+                                <p:column><p:inputText  value="" /></p:column>
+                            </p:row>
+                    </p:panelGrid>  
+
+                    <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+        </p:dialog>    
+        <!--*********************************************************************************-->
+        <p:dialog header="Banco de sangre" widgetVar="dlgOrdBanco" height="600" width="1300" resizable="false">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="6"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>  
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>  
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="DAVID TURNER ALEXANDER" /></p:column>
+                                <p:column><h:outputText  value="19" /></p:column>
+                                <p:column><h:outputText  value="MEDICINA INTERNA" /></p:column>  
+                                <p:column><h:outputText  value="" /></p:column>  
+                                <p:column><h:outputText  value="29" /></p:column> 
+                                <p:column>
+                                    <p:selectOneRadio  value="M" disabled="true">
+                                        <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                        <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                    </p:selectOneRadio>
+                                </p:column>                          
+                            </p:row>
+
+                            <p:row>                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.transfPrevias}:"/></p:column>   
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaUltima}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.embarazosPrevios}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column> 
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hb}:"/></p:column>
+                                                                                           
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:selectOneRadio value="" layout="pageDirection">
+                                        <f:selectItem itemLabel="Si" itemValue="S" />
+                                        <f:selectItem itemLabel="No" itemValue="N" />
+                                    </p:selectOneRadio> 
+                                </p:column>                                     
+                                
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column colspan="2"><h:outputLabel value="DIENTES IMPACTADOS"/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.ho}:"/></p:column>                                                               
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.grupo}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.rh}:"/></p:column> 
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tp}:"/></p:column>   
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.ttp}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noPlaquetas}:"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                            </p:row> 
+                    </p:panelGrid>
+                    
+<br/>                 
+                    
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>                         
+                                <p:column><h:outputLabel value="#{etiq.productoSol}"/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.noUniVol}"/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.productoSol}"/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.noUniVol}"/></p:column>
+                            </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column><p:outputLabel value="Sangre total"/></p:column>
+                                <p:column><p:inputText value=""/></p:column> 
+                                <p:column><p:outputLabel value="Plasma rico en plaquetas"/></p:column>
+                                <p:column><p:inputText value=""/></p:column> 
+                            </p:row>
+                   
+                            <p:row>
+                                <p:column><p:outputLabel value="Concentrado de eritrocitos"/></p:column>
+                                <p:column><p:inputText value=""/></p:column>  
+                                <p:column><p:outputLabel value="Concentrado de plaquetas"/></p:column>
+                                <p:column><p:inputText value=""/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="Plasma"/></p:column>
+                                <p:column><p:inputText value=""/></p:column>  
+                                <p:column><p:outputLabel value="Crioprecipitados"/></p:column>
+                                <p:column><p:inputText value=""/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="Plasma fresco congelado"/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                                <p:column><p:outputLabel value="Otros: "/><p:inputText value=""/></p:column>
+                                <p:column><p:inputText value=""/></p:column>
+                            </p:row>
+                    </p:panelGrid>
+
+<br/>
+
+                    <p:panelGrid>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoDeUrgs}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.solicitante}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:"/></p:column>  
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hora}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:selectOneMenu styleClass="bordes textover" id="urgSangre" value="Selecciona">
+                                        <f:selectItem itemLabel="SELECCIONA" itemValue="0" />
+                                        <f:selectItem itemLabel="ORDINARIA" itemValue="1" />
+                                        <f:selectItem itemLabel="URGENTE" itemValue="2" />
+                                        <f:selectItem itemLabel="MUY URGENTE " itemValue="2" />
+                                    </p:selectOneMenu>                           
+                                </p:column>
+                                <p:column><h:outputText value="LORE CORY HERNÁNDEZ" /></p:column>
+                                <p:column><h:outputText  value="19/07/2015" /></p:column>
+                                <p:column><h:outputText  value="19:50:19" /></p:column>                          
+                            </p:row>
+
+                            <p:row>                               
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.recibioSolicitud}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:"/></p:column>  
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hora}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2"><h:outputText value="JAIME LÓPEZ CASTRO" /></p:column>
+                                <p:column><h:outputText  value="19/07/2015" /></p:column>
+                                <p:column><h:outputText  value="19:50:19" /></p:column>                          
+                            </p:row>                        
+                    </p:panelGrid>
+                    <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+        </p:dialog>
+        <!--*********************************************************************************-->
+        <p:dialog header="Patología" widgetVar="dlgOrdPato" resizable="false" height="600" width="1300">
+                    <p:panelGrid>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="#{etiq.medico}"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaProcedimiento}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.fr}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2"><h:outputText  value="CARLOS HERNÁNDEZ ESCALANTE" /></p:column>
+                                <p:column><h:outputText  value="" /></p:column>
+                                <p:column><p:calendar id="fecProc" effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>
+                                <p:column colspan="3"><p:inputText  value="" /></p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:"/></p:column>                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText  value="" /></p:column>
+                                <p:column><h:outputText value="" /></p:column>
+                                <p:column><h:outputText value="" /></p:column>
+                                <p:column><h:outputText value="" /></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  disabled="true">
+                                        <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                        <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                                <p:column><h:outputText  value="" /></p:column>
+                                <p:column><h:outputText  value="" /></p:column>
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.area}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.servicio}:"/></p:column>                                
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3">
+                                    <p:selectOneMenu styleClass="bordes textover" id="cmbArea">
+                                        <f:selectItem itemLabel="SELECCIONE UN ÁREA" itemValue="0" />
+                                        <f:selectItem itemLabel="HOSPITALIZACIÓN" itemValue="1" />
+                                        <f:selectItem itemLabel="CONSULTA EXTERNA" itemValue="2" />
+                                        <f:selectItem itemLabel="URGENCIAS" itemValue="3" />
+                                        <f:selectItem itemLabel="OTRAS INSTITUCIONES" itemValue="4" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column colspan="4">
+                                    <p:selectOneMenu styleClass="bordes textover" id="cmbServicio">
+                                        <f:selectItem itemLabel="SELECCIONE UN SERVICIO" itemValue="0" />
+                                        <f:selectItem itemLabel="MEDICINA INTERNA" itemValue="1" />
+                                        <f:selectItem itemLabel="CIRUGÍA GENERAL" itemValue="2" />
+                                        <f:selectItem itemLabel="GINECO-OBSTETRICIA" itemValue="3" />
+                                        <f:selectItem itemLabel="PEDIATRÍA" itemValue="4" />
+                                        <f:selectItem itemLabel="OTROS" itemValue="5" />
+                                    </p:selectOneMenu>
+                                </p:column>                                
+                            </p:row>
+                    </p:panelGrid>
+<br/>
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>                               
+                                <p:column colspan="4"><h:outputLabel value="#{etiq.solCervVag}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.sitioAnatomico}:"/></p:column>
+                            </p:row>
+                        </f:facet>
+                            <p:row>
+                                <p:column colspan="4"><p:inputText  value="" size="70"/></p:column>
+                            </p:row>
+                            <p:row>                               
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.anteceden}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" ><h:outputLabel value="#{etiq.citologia}:"/></p:column>                            
+                                <p:column colspan="3">
+                                    <p:selectOneMenu styleClass="bordes textover" id="cmbAntecedentes">
+                                        <f:selectItem itemLabel="SELECCIONE ANTECEDENTE" itemValue="0" />
+                                        <f:selectItem itemLabel="PRIMERA VEZ EN LA VIDA" itemValue="1" />
+                                        <f:selectItem itemLabel="PRIMERA VEZ DESPUÉS DE 3 AÑOS" itemValue="2" />
+                                        <f:selectItem itemLabel="SUBSECUENTE" itemValue="3" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.situacionGineco}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4">
+                                    <p:selectOneMenu styleClass="bordes textover" id="cmbSituaGineco">
+                                        <f:selectItem itemLabel="SELECCIONE UNA SITUACIÓN" itemValue="0" />
+                                        <f:selectItem itemLabel="PUERPERIO O POSTABORTO" itemValue="1" />
+                                        <f:selectItem itemLabel="POSTMENOPAUSIA" itemValue="2" />
+                                        <f:selectItem itemLabel="USO DE HORMONALES" itemValue="3" />
+                                        <f:selectItem itemLabel="DIU" itemValue="4" />
+                                        <f:selectItem itemLabel="HISTERECTOMÍA" itemValue="5" />
+                                        <f:selectItem itemLabel="TRATAMIENTO FARMACOLÓGICO" itemValue="6" />
+                                        <f:selectItem itemLabel="EMBARAZO ACTUAL" itemValue="7" />
+                                        <f:selectItem itemLabel="TRATAMIENTO COLPOSCÓPICO PREVIO" itemValue="8" />
+                                        <f:selectItem itemLabel="NINGUNO" itemValue="9" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.iniSexual}:"/></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="" layout="pageDirection">
+                                        <f:selectItem itemLabel="Sí" itemValue="S" />
+                                        <f:selectItem itemLabel="No" itemValue="N" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column><p:inputText value="" size="5"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.antVacVPH}:"/></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="" layout="pageDirection">
+                                        <f:selectItem itemLabel="Sí" itemValue="S" />
+                                        <f:selectItem itemLabel="No" itemValue="N" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column><p:inputText value="" size="5"/></p:column>
+                            </p:row>   
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel value="#{etiq.medAnato}"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2"><h:outputText  value="" /></p:column>
+                                <p:column><h:outputText  value="" /></p:column>
+                                <p:column><p:calendar effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>                                
+                            </p:row>
+                    </p:panelGrid>
+
+<br/>
+
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>                               
+                                <p:column colspan="2"><h:outputLabel value="#{etiq.solLiqPato}"/></p:column>
+                            </p:row>
+                        </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" ><h:outputLabel value="#{etiq.tipoCitologia}:"/></p:column>                            
+                                <p:column>
+                                    <p:selectOneMenu styleClass="bordes textover" id="cmbTipoCitologia">
+                                        <f:selectItem itemLabel="SELECCIONE UN TIPO" itemValue="0" />
+                                        <f:selectItem itemLabel="LÍQUIDOS" itemValue="1" />
+                                        <f:selectItem itemLabel="CEPILLADOS" itemValue="2" />
+                                        <f:selectItem itemLabel="ASPIRADOS" itemValue="3" />
+                                        <f:selectItem itemLabel="CEPILLADO EN MEDIO LIQUIDO" itemValue="4" />
+                                        <f:selectItem itemLabel="LAVADOS" itemValue="5" />
+                                        <f:selectItem itemLabel="FROTIS DIRECTO" itemValue="6" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.sitiosAnatomicos}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:selectManyCheckbox styleClass="bordes textover" id="cmbSitiosAnatom" layout="grid" columns="3">
+                                        <f:selectItem itemLabel="TIROIDES" itemValue="0" />
+                                        <f:selectItem itemLabel="ORINA" itemValue="1" />
+                                        <f:selectItem itemLabel="TUBO DIGESTIVO ESÓFAGO" itemValue="2" />
+                                        <f:selectItem itemLabel="ÁRBOL BRONQUIAL" itemValue="3" />
+                                        <f:selectItem itemLabel="ASCITIS" itemValue="4" />
+                                        <f:selectItem itemLabel="TUBO DIGESTIVO ESTOMAGO" itemValue="5" />
+                                        <f:selectItem itemLabel="TUBO DIGESTIVO COLON" itemValue="6" />
+                                        <f:selectItem itemLabel="DERRAME PLEURAL" itemValue="7" />
+                                        <f:selectItem itemLabel="ASPIRACIÓN DE GLÁNDULA MAMARIA" itemValue="8" />
+                                    </p:selectManyCheckbox>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.diagClinImpDiag}:"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2"><p:inputTextarea  value="" rows="5" cols="70"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.observaciones}:"/></p:column>
+                                <p:column><p:inputText  value="" size="70"/></p:column>
+                            </p:row>   
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.estPrevAnatoPato}:"/></p:column>
+                                <p:column><p:inputText  value="" size="70"/><br/><h:outputLabel value="(Biopsias y/o citologías)"/></p:column>
+                            </p:row>
+                    </p:panelGrid>
+                
+<br/>
+
+                    <p:panelGrid styleClass="frm_centrado">
+                        <f:facet name="header">
+                            <p:row>                               
+                                <p:column colspan="4"><h:outputLabel value="#{etiq.solBiopPzaQui}"/></p:column>
+                            </p:row>
+                        </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sitioAnatomico}:"/></p:column>
+                                <p:column colspan="3"><p:inputText  value="" size="100"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tejidoExtraido}:"/></p:column>
+                                <p:column colspan="3"><p:inputTextarea  value="" rows="3" cols="100"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.tiposBiopPzaQui}:"/></p:column>                                
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4"><p:inputText  value="" size="100"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.observaciones}:"/></p:column> 
+                                <p:column colspan="3"><p:inputTextarea  value="" rows="2" cols="100"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.diagPreOpe}:"/></p:column> 
+                                <p:column colspan="3"><p:inputText  value="" size="100"/></p:column>
+                            </p:row>
+                            <p:row>
+                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaProxCons}:"/></p:column>
+                                <p:column><p:calendar id="fecProxCons" effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>
+                            </p:row>  
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.infoClin}:"/></p:column>                                
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.antPerPato}:"/></p:column> 
+                                <p:column><p:inputText  value="" /></p:column>                           
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.antPerNoPato}:"/></p:column> 
+                                <p:column><p:inputText  value="" /></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.padecimientoAct}:"/></p:column> 
+                                <p:column colspan="3"><p:inputText  value="" size="100"/></p:column>   
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.expFisica}:"/></p:column> 
+                                <p:column colspan="3"><h:outputText  value=""/></p:column>
+                            </p:row>
+                           
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.otrosDx}:"/></p:column> 
+                                <p:column colspan="3"><p:inputText  value="" size="100"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.estPrevAnatoPato}:"/></p:column>
+                                <p:column colspan="3"><p:inputText  value="" size="100"/><br/><h:outputLabel value="(Biopsias y/o citologías)"/></p:column>
+                            </p:row>
+                    </p:panelGrid>
+                    <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+        </p:dialog>
+
+        <!--*********************************************************************************--> 
+        <p:dialog header="Endoscopía" widgetVar="dlgOrdEndo" height="600" width="1300" resizable="false">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="8"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaDeIngreso}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>                                                               
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="DAVID TURNER ALEXANDER" /></p:column>                                
+                                <p:column><h:outputText  value="29" /></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="M" disabled="true">
+                                        <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                        <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                    </p:selectOneRadio>
+                                </p:column>   
+                                <p:column><h:outputText  value="19" /></p:column>
+                                <p:column><h:outputText  value="" /></p:column>   
+                                <p:column><h:outputText value="CONSULTA EXTERNA" /></p:column>
+                                <p:column><h:outputText  value="19/07/2015" /></p:column>
+                                <p:column><h:outputText  value="DIENTES IMPACTADOS" /></p:column>                           
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.motivoInt}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="8"><p:inputTextarea  value="" rows="5" cols="150"/></p:column>                               
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.medSol}"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>                           
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4"><h:outputText  value="CARLOS HERNÁNDEZ ESCALANTE" /></p:column>
+                                <p:column colspan="4"><h:outputText  value="" /></p:column>
+                            </p:row>   
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.fecha}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.hora}:"/></p:column>                      
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4"><h:outputText  value="19/07/2015" /></p:column>
+                                <p:column colspan="4"><p:inputText  value="19:24:40" /></p:column>
+                            </p:row> 
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.medicoRecibe}"/></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>                           
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4"><h:outputText  value="" /></p:column>
+                                <p:column colspan="4"><h:outputText  value="" /></p:column>
+                            </p:row>
+                    </p:panelGrid>
+                    <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+        </p:dialog>
+
+        <!--*********************************************************************************--> 
+        <p:dialog header="" widgetVar="dlgOrdQui" height="600" width="1300" resizable="false">
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="5"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>                                
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>                                                               
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2"><h:outputText value="DAVID TURNER ALEXANDER" /></p:column>
+                                <p:column><h:outputText  value="19" /></p:column>                                
+                                <p:column><h:outputText  value="29" /></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="M" disabled="true">
+                                        <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                        <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                    </p:selectOneRadio>
+                                </p:column>                                                               
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fecha}:"/></p:column> 
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.hora}:"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.quirofano}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="CONSULTA EXTERNA" /></p:column>
+                                <p:column><h:outputText  value="" /></p:column>
+                                <p:column><p:calendar id="fecOpe" effect="fold" pattern="dd/MMM/yyyy" locale="es" required="true" readonlyInput="true"/></p:column>
+                                <p:column><p:inputText  value="14:00:00" /></p:column> 
+                                <p:column><p:inputText  value="" /></p:column>
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.opeProyectada}:"/></p:column>                                
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="5"><p:inputText  value=""  size="80"/></p:column>
+                            </p:row>    
+                            
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.duracionEst}:"/></p:column>
+                                <p:column><p:inputText  value="" /></p:column>
+                                <p:column><p:outputLabel  /></p:column>
+                                <p:column><p:outputLabel  /></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="radUrgElect">
+                                        <f:selectItem itemLabel="ELECTIVA" itemValue="E" />
+                                        <f:selectItem itemLabel="URGENTE" itemValue="U" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                            </p:row>
+                        
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.servEqEspSol}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.estTransPro}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4"><p:inputTextarea  value="" rows="3" cols="100"/></p:column>
+                                <p:column>
+                                    <p:selectOneRadio  value="radEstTransPro">
+                                        <f:selectItem itemLabel="Sí" itemValue="S" />
+                                        <f:selectItem itemLabel="No" itemValue="N" />
+                                    </p:selectOneRadio>
+                                </p:column>                                
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sangre}"/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.tipo}: "/><p:inputText  value=""/></p:column>
+                                <p:column><h:outputLabel value="#{etiq.grupo}: "/><p:inputText  value=""/></p:column>
+                                <p:column><h:outputLabel value="En #{etiq.quirofano}: "/><p:inputText  value="" size="5"/><h:outputLabel value=" ml"/></p:column>
+                                <p:column><h:outputLabel value="En #{etiq.reserva}: "/><p:inputText  value="" size="5"/><h:outputLabel value=" ml"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.medSol}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3"><h:outputText  value="CARLOS HERNÁNDEZ ESCALANTE" /></p:column>
+                                <p:column colspan="2"><h:outputText  value="" /></p:column>
+                            </p:row>   
+                    </p:panelGrid>
+<br/>                    
+            <p:accordionPanel>
+                <p:tab title="#{etiq.solMatOs}">
+
+            <h4 class="centrado_texto"><p:outputLabel id="titPacXMed" value="Material solicitado"/></h4>
+
+                    <p:panelGrid styleClass="frm_centrado" columns="5">
+                        <p:outputLabel id="fecPacXMed" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                        <p:calendar id="tFecCita" value="#{oConDat.cita.fechaAux}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                        <p:outputLabel id="medico" styleClass="mensaje" value="#{etiq.medico}:"/><p:outputLabel value="CARLOS HERNÁNDEZ ESCALANTE"/>
+                        <p:commandButton value="Buscar" icon="ui-icon-search"/>
+                    </p:panelGrid>
+                </p:tab> 
+            </p:accordionPanel>
+                    <p:panelGrid>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="8"><h:outputText value="#{etiq.solMatOs}"/></p:column>
+                            </p:row>              
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipo}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cantidad}"/></p:column>
+                                <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column><p:inputText value="XFG" readonly="true" size="5"/></p:column> 
+                                <p:column><p:inputText value="" required="true"></p:inputText></p:column>
+                                <p:column><p:inputText value="3" size="5"/></p:column>                                
+                                <p:column><p:commandButton value="Agregar" icon="ui-icon-plus" type="button"/></p:column>
+                            </p:row>
+                    </p:panelGrid>
+<br/><br/>
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="Material solicitado"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipo}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cantidad}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel value=""/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column><h:outputLabel value="XFG"/></p:column>
+                            <p:column><h:outputLabel value=""/></p:column>
+                            <p:column><h:outputLabel value="3"/></p:column>
+                            <p:column><p:commandButton value="Borrar" icon="ui-icon-trash"/></p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <p:commandButton value="Guardar" icon="ui-icon-disk"/>
+        </p:dialog>          
+        
+        </p:tab>
+        <!--*********************************************************************************-->
+        <p:tab title="#{etiq.reservarInter}">
+
+               <p:growl id="messages" showDetail="true"/>
+               <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+               <h2 class="centrado_texto"><h:outputLabel value="#{etiq.reservarInter}"/></h2>
+               <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+            <p:panelGrid styleClass="frm_centrado centrado_texto">
+              <f:facet name="header">
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.apmat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                </p:row>
+               </f:facet>
+                <p:row>
+                    <p:column><h:outputLabel value="19"/></p:column>
+                    <p:column><p:inputText id="nom" value="ALEXANDER" readonly="true"/></p:column>
+                    <p:column><p:inputText id="app" value="DAVID" readonly="true"/></p:column>
+                    <p:column><p:inputText id="apm" value="TURNER" readonly="true"/></p:column>
+                    <p:column><p:inputText id="fNac" value="06/01/1986" readonly="true"/></p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tel}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.vigenciaSegPop}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.pais}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:inputText id="sexo" value="M" readonly="true"/></p:column>                    
+                    <p:column><p:inputText id="tel" value="2721566821" size="15" readonly="true"/></p:column>
+                    <p:column><p:inputText id="segp" value="999999999-19" size="15" readonly="true"/></p:column>
+                    <p:column><p:inputText id="vsegp" value="19/07/2016" size="15" readonly="true"/></p:column>
+                    <p:column ><p:inputText id="pais" value="MÉXICO" readonly="true"/></p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.municipio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.localidad}:"/></p:column>                    
+                </p:row>
+                <p:row>
+                    <p:column><p:inputText id="estado" value="Veracruz" readonly="true"/></p:column>
+                    <p:column colspan="2"><p:inputText id="municipio" value="ORIZABA" readonly="true"/></p:column>
+                    <p:column colspan="2"><p:inputText id="localidad" value="ORIZABA" readonly="true"/></p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.datosDeCita}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.tiempoAproxCita}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:selectOneMenu styleClass="bordes textover" id="areaServicio" value="#{oCita.cita.areaServicio.clave}" required="true" requiredMessage="Debe Seleccionar Un Área">
+                            <f:selectItem itemLabel="SELECCIONA" itemValue="0" />
+                            <f:selectItem itemLabel="CLÍNICA DEL DOLOR" itemValue="1" />
+                            <f:selectItem itemLabel="ODONTOLOGÍA" itemValue="2" />
+                        </p:selectOneMenu>                           
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:inputMask styleClass="bordes textover" id="NumApro" mask="9?9" maxlength="2" size="2" value="#{oCita.cita.numAprox}" required="true" requiredMessage="Debe Ingresar Un Número"/>
+                        <p:selectOneMenu styleClass="bordes textover" id="tiempoAprox" value="#{oCita.cita.tiempoAproxP}" required="true" requiredMessage="Debe Seleccionar un Tiempo Aproximado">
+                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                            <f:selectItems value="#{oCita.listaTiempoAprox}" var="tiemAprox" 
+                                           itemLabel="#{tiemAprox.valor}" itemValue="#{tiemAprox.claveParametro}#{tiemAprox.tipoParametro}"/>
+                        </p:selectOneMenu>   
+                    </p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column colspan="3" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.diagnostico}: "/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.causes}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cie10}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:autoComplete id="diag" queryDelay="1000" size="70" minQueryLength="3" styleClass="bordes"
+                                        value="#{oCita.epiMed.diagIngreso.descripcionDiag}" completeMethod="#{oCita.epiMed.diagIngreso.completar}" effect="fade"
+                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" required="true" onkeypress="return validaCaracter(event);" requiredMessage="Debe Ingresar Un Diagnostico">
+                            <p:ajax update="cie10 causes" event="itemSelect"/>                                            
+                        </p:autoComplete>  
+                    </p:column>
+                    <p:column><p:inputText id="causes" value="#{oCita.epiMed.diagIngreso.clave2CE}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="cie10" value="#{oCita.epiMed.diagIngreso.clave1CE}" readonly="true" required="true"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="centrado_texto" colspan="5">
+                        <p:commandButton value="#{etiq.reservar}" action="#{oCita.guardar()}" icon="ui-icon-disk" ajax="false" validateClient="true">
+                            <f:setPropertyActionListener target="#{oHospCODE.estado}" value="#{true}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        
+        </p:tab>
+        <!--*********************************************************************************-->
+        <p:tab title="#{etiq.notaReferencia}">
+            
+        </p:tab>
+        <!--*********************************************************************************-->
+    </p:tabView>
+</p:dialog>             
+    </h:form>
+
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                 <f:facet name="start">
+                     <p:graphicImage value="/imgs/loading.gif" />
+                 </f:facet>
+            </p:ajaxStatus>
+        </div>
+    </ui:define>
+</ui:composition>
+
+</html>

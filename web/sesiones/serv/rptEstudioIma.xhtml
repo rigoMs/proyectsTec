@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporteEstudio} realizados en Imagenología"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            
+            <p:tabView id="repImg">
+                <p:tab title="Reporte Rayos X">
+                    <h:form id="frmreprx"> 
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni"  effect="fold" required="#{EstRealImagen.fechaInicial}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="Fecha final: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin"  effect="fold" required="#{EstRealImagen.fechaFinal}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.buscarDatosReporteRegiones(1)}" update=":repImg:frmreprx:tblReRx" />
+                        </p:panelGrid>
+                        <br/>
+                        <div class="buscar">
+                             <p:dataTable id="tblReRx"
+                                          value="#{EstRealImagen.repRx}"
+                                        var="oRx"
+                                        sortBy="region.valor"
+                                        emptyMessage="No se encontraron registros">
+                               <f:facet name="header">
+                                   <p:outputLabel value="Reporte de Regiones Rayos X" styleClass="mensaje"/>
+                               </f:facet>
+                                 <p:column colspan="1">
+                                   <f:facet name="header">
+                                       <p:outputLabel value="#{etiq.region}" styleClass="mensaje" />
+                                   </f:facet>
+                                     <h:outputText value="#{oRx.region.valor}" />
+                               </p:column>
+                                 <p:column colspan="1">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.cantidad}" styleClass="mensaje" />
+                                     </f:facet>
+                                     <h:outputText value="#{oRx.cantidad}" />
+                                 </p:column>
+                                 <p:columnGroup type="footer">
+                                     <p:row>
+                                         <p:column footerText="Total:" style="text-align:right" />
+                                         <p:column footerText="#{EstRealImagen.cantidadRegRx}" />
+                                     </p:row>
+                                 </p:columnGroup>
+                           </p:dataTable>
+                        </div>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Reporte Ultrasonido">
+                    <h:form id="frmrepusg"> 
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni2"  effect="fold" required="#{EstRealImagen.fechaInicial}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin2"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="Fecha final: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin2"  effect="fold" required="#{EstRealImagen.fechaFinal}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.buscarDatosReporteRegiones(3)}" update=":repImg:frmrepusg:tblReUsg" />
+                        </p:panelGrid>
+                        <br/>
+                        <div class="buscar">
+                             <p:dataTable id="tblReUsg"
+                                          value="#{EstRealImagen.repUsg}"
+                                        var="oUsg"
+                                        sortBy="region.valor"
+                                        emptyMessage="No se encontraron registros">
+                               <f:facet name="header">
+                                   <p:outputLabel value="Reporte de Regiones Rayos X" styleClass="mensaje"/>
+                               </f:facet>
+                                 <p:column colspan="1">
+                                   <f:facet name="header">
+                                       <p:outputLabel value="#{etiq.region}" styleClass="mensaje" />
+                                   </f:facet>
+                                     <h:outputText value="#{oUsg.region.valor}" />
+                               </p:column>
+                                 <p:column colspan="1">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.cantidad}" styleClass="mensaje" />
+                                     </f:facet>
+                                     <h:outputText value="#{oUsg.cantidad}" />
+                                 </p:column>
+                                 <p:columnGroup type="footer">
+                                     <p:row>
+                                         <p:column footerText="Total:" style="text-align:right"/>
+                                         <p:column footerText="#{EstRealImagen.cantidadRepUsg}" />
+                                     </p:row>
+                                 </p:columnGroup>
+                           </p:dataTable>
+                        </div>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Reporte Mastografia">
+                    <h:form id="frmrepmasto"> 
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni3"  effect="fold" required="#{EstRealImagen.fechaInicial}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin3"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="Fecha final: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin3"  effect="fold" required="#{EstRealImagen.fechaFinal}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.buscarDatosReporteRegiones(2)}" update=":repImg:frmrepmasto:tblReMasto" />
+                        </p:panelGrid>
+                        <br/>
+                        <div class="buscar">
+                             <p:dataTable id="tblReMasto"
+                                          value="#{EstRealImagen.repMasto}"
+                                        var="oMasto"
+                                        sortBy="region.valor"
+                                        emptyMessage="No se encontraron registros">
+                               <f:facet name="header">
+                                   <p:outputLabel value="Reporte de Regiones Rayos X" styleClass="mensaje"/>
+                               </f:facet>
+                                 <p:column colspan="1">
+                                   <f:facet name="header">
+                                       <p:outputLabel value="#{etiq.region}" styleClass="mensaje" />
+                                   </f:facet>
+                                     <h:outputText value="#{oMasto.region.valor}" />
+                               </p:column>
+                                 <p:column colspan="1">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.cantidad}" styleClass="mensaje" />
+                                     </f:facet>
+                                     <h:outputText value="#{oMasto.cantidad}" />
+                                 </p:column>
+                                 <p:columnGroup type="footer">
+                                     <p:row>
+                                         <p:column footerText="Total:" style="text-align:right"/>
+                                         <p:column footerText="#{EstRealImagen.cantidadRepMasto}" />
+                                     </p:row>
+                                 </p:columnGroup>
+                           </p:dataTable>
+                        </div>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Reporte Tomografía">
+                    <h:form id="frmreptomo"> 
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni4"  effect="fold" required="#{EstRealImagen.fechaInicial}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin4"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="Fecha final: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin4"  effect="fold" required="#{EstRealImagen.fechaFinal}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.buscarDatosReporteRegiones(4)}" update=":repImg:frmreptomo:tblReTomo" />
+                        </p:panelGrid>
+                        <br/>
+                        <div class="buscar">
+                             <p:dataTable id="tblReTomo"
+                                          value="#{EstRealImagen.repTomo}"
+                                        var="oTomo"
+                                        sortBy="region.valor"
+                                        emptyMessage="No se encontraron registros">
+                               <f:facet name="header">
+                                   <p:outputLabel value="Reporte de Regiones Rayos X" styleClass="mensaje"/>
+                               </f:facet>
+                                 <p:column colspan="1">
+                                   <f:facet name="header">
+                                       <p:outputLabel value="#{etiq.region}" styleClass="mensaje" />
+                                   </f:facet>
+                                     <h:outputText value="#{oTomo.region.valor}" />
+                               </p:column>
+                                 <p:column colspan="1">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.cantidad}" styleClass="mensaje" />
+                                     </f:facet>
+                                     <h:outputText value="#{oTomo.cantidad}" />
+                                 </p:column>
+                                 <p:columnGroup type="footer">
+                                     <p:row>
+                                         <p:column footerText="Total:" style="text-align:right"/>
+                                         <p:column footerText="#{EstRealImagen.cantidadRepTomo}" />
+                                     </p:row>
+                                 </p:columnGroup>
+                           </p:dataTable>
+                        </div>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+           <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+        
+    </ui:define>         
+</ui:composition>
+
+</html>

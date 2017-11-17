@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+       <h:form id="frmpsico">
+           <p:growl id="mensajes"  showDetail="true" />
+           <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+           <center><h2><h:outputLabel value="#{etiq.consPsicologia}"/></h2></center>
+ <p:panelGrid style="margin-top:30px" >
+    <f:facet name="header">
+       <p:row>
+            <p:column colspan="2"><h:outputLabel value="#{etiq.nombreCompleto}"/></p:column> 
+            <p:column><h:outputLabel value="#{etiq.vigenciaSegPop}"/></p:column>
+        </p:row> 
+    </f:facet>  
+            <p:row>
+                <p:column colspan="2"><h:outputLabel value="#{psicol.CPsico.pacienteCapa.nombreCompleto}"/></p:column> 
+                <p:column><h:outputLabel value="#{psicol.CPsico.pacienteCapa.seg.vigencia}"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="3" styleClass="ui-widget-header"><center><h:outputLabel value="#{etiq.actConsulta}"/> </center></p:column> 
+        </p:row>
+    <p:row><p:column>
+            <p:selectBooleanCheckbox id="apoyo" value="#{psicol.CPsico.apoyPsico}"/>
+            <h:outputLabel value=" #{etiq.apoyoPsicoemocional}"/></p:column> 
+        <p:column colspan="2"><p:selectBooleanCheckbox id="material" value="#{psicol.CPsico.mateEnt}"/>
+            <h:outputLabel value=" #{etiq.matEntregado}"/></p:column> 
+        </p:row>
+        <p:row>
+            <p:column><p:selectBooleanCheckbox id="estudio" value="#{psicol.CPsico.estudioPsico}"/>
+            <h:outputLabel value=" #{etiq.estudioPsicometrico}"/></p:column> 
+            <p:column colspan="2"><p:selectBooleanCheckbox id="psicoterapia" value="#{psicol.CPsico.psicoInd}"/>
+           <h:outputLabel value=" #{etiq.psicoterapiaInd}"/></p:column> 
+     </p:row>
+     <p:row> 
+         <p:column colspan="3" styleClass="ui-widget-header">
+           <center> <h:outputLabel value=" #{etiq.psicoAdictosA}"/></center></p:column>  
+    </p:row>
+    <p:row>
+        <p:column><p:selectBooleanCheckbox id="farmaco" value="#{psicol.CPsico.farma}"/>
+            <h:outputLabel value=" #{etiq.farmacos}"/></p:column>
+        <p:column><p:selectBooleanCheckbox id="alcohol" value="#{psicol.CPsico.alcoh}"/>
+            <h:outputLabel value=" #{etiq.alcohol}"/></p:column>
+        <p:column><p:selectBooleanCheckbox id="tabaco" value="#{psicol.CPsico.taba}"/>
+            <h:outputLabel value=" #{etiq.tabaco}"/></p:column>
+       </p:row>
+       <p:row>
+                 <p:column colspan="3" styleClass="ui-widget-header">
+                     <center><h:outputLabel value="#{etiq.diagnostico}"/> </center></p:column>  
+      </p:row>
+            <p:row><p:column colspan="3">
+                    <p:inputTextarea id="txtDiagnostico" value="#{psicol.CPsico.observaciones}" cols="60" rows="7" required="true" requiredMessage="Ingresar datos en el campo diagnostico" onkeyup="this.value=this.value.toUpperCase();"/></p:column> 
+            </p:row>
+     <p:row>
+                 <p:column colspan="3" styleClass="ui-widget-header">
+                     <center><h:outputLabel value="#{etiq.observaciones}"/> </center></p:column>  
+      </p:row>
+            <p:row><p:column colspan="3">
+                    <p:inputTextarea id="txtDiagnostico2" value="#{psicol.CPsico.observaciones2}" cols="60" rows="7" required="true" requiredMessage="Ingresar datos en el campo diagnostico" onkeyup="this.value=this.value.toUpperCase();"/></p:column> 
+            </p:row>
+     <p:row><p:column colspan="3"> 
+             <p:commandButton type="submit" value="#{etiq.registrar}" icon="ui-icon-disk"  action="#{psicol.almacena()}" update=":frmpsico:mensajes"/> 
+             <p:commandButton value="#{etiq.cancelar}" action="#{psicol.link()}" immediate="true"/>
+                </p:column>
+            </p:row>
+  </p:panelGrid>
+        </h:form>     
+    </ui:define>
+</ui:composition>
+</html>

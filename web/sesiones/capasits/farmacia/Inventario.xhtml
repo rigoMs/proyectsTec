@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/>    
+                <div class="centrado_texto">
+                    <h:form id="inventario">
+                        <p:dataTable     var="oMed"
+                                         editable="true"
+                                         value="#{oInvent.lista}"  
+                                         id="tblProxCaducados"
+                                         filteredValue="#{oInvent.medFiltrado}"
+                                         emptyMessage="#{etiq.noMedicamentosRegistrados}"
+                                         style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.informeExistenciasMed}"/>
+                            </f:facet>
+                            <p:column headerText="#{etiq.clave}" filterBy="#{oMed.claveMedicamento}" filterMatchMode="startsWith" width="15%">
+                                <p:commandButton icon="ui-icon-search" actionListener="#{oInvent.muestraInformacion(oMed)}" onclick="dlgInfo.show()" rendered="#{oInvent.verEdicion}"/>  
+                                &nbsp;&nbsp;<h:outputText value="#{oMed.claveMedicamento}"/>
+                            </p:column>                
+                            <p:column headerText="#{etiq.nombre}" filterBy="#{oMed.nombre}" filterMatchMode="startsWith" width="20%">                  
+                                <h:outputText value="#{oMed.nombre}"/>                      
+                            </p:column>
+                            <p:column headerText="#{etiq.desPres}"  filterBy="#{oMed.descripcionPresentacion}" filterMatchMode="contains" width="30%">
+                                <h:outputText value="#{oMed.descripcionPresentacion}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.invFisico}" width="10%">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{oMed.existencia}"/>  
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oMed.existencia}"/>
+                                    </f:facet> 
+                                </p:cellEditor>      
+                            </p:column>
+                            <p:column headerText="#{etiq.lote}" filterBy="#{oMed.lote}" filterMatchMode="startsWith" width="20%">
+                                <h:outputText value="#{oMed.lote}"/>        
+                            </p:column>
+                            <p:column headerText="#{etiq.caducidad}" width="30%">
+                                <h:outputText value="#{oMed.caducidad}"/>             
+                            </p:column>     
+                        </p:dataTable>
+                        <br/>    
+                        <p:growl id="messages" showDetail="true" />
+                    </h:form>
+
+                    <p:dialog visible="#{oInvent.muestraInfo}"  onHide="#{oInvent.cierraInfo()}" style="text-align: left;" modal="true" header="#{etiq.informacionMed}" widgetVar="dlgInfo" closable="true"  >
+                        <p:panelGrid>
+                            <p:row> 
+                                <p:column>    
+                                    <h:outputLabel value="#{etiq.clave}: " />
+                                </p:column>
+                                <p:column>    
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.claveMedicamento}"  style="font-weight: 700"/>
+                                </p:column>
+                            </p:row>
+                            <p:row> 
+                                <p:column>    
+                                    <h:outputLabel value="#{etiq.nombre}: "/>
+                                </p:column>
+                                <p:column>   
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.nombre}"  style="font-weight: 700"/>       
+                                </p:column>
+                            </p:row>
+                            <p:row> 
+                                <p:column>  
+                                    <h:outputLabel value="#{etiq.desPres}: "/>
+                                </p:column>
+                                <p:column>  
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.descripcionPresentacion}"  style="font-weight: 700"/>
+                                </p:column>
+                            </p:row>
+                            <p:row> 
+                                <p:column>  
+                                    <h:outputLabel value="#{etiq.sustActiva}: "/>
+                                </p:column>
+                                <p:column>  
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.sustanciaActiva}"  style="font-weight: 700"/>
+                                </p:column>
+                            </p:row>
+                            <p:row> 
+                                <p:column>  
+                                    <h:outputLabel value="#{etiq.lote}: "/>
+                                </p:column>
+                                <p:column>  
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.lote}"  style="font-weight: 700"/> 
+                                </p:column> 
+                            </p:row>
+                            <p:row> 
+                                <p:column> 
+                                    <h:outputLabel value="#{etiq.caducidad}: "/>
+                                </p:column> 
+                                <p:column> 
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.caducidad}"  style="font-weight: 700"/>   
+                                </p:column> 
+                            </p:row>
+                            <p:row> 
+                                <p:column> 
+                                    <h:outputLabel value="#{etiq.invFisico}: "/>
+                                </p:column> 
+                                <p:column> 
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.existencia}"  style="font-weight: 700"/>     
+                                </p:column> 
+                            </p:row>
+                            <p:row> 
+                                <p:column> 
+                                    <h:outputLabel value="#{etiq.precio}: "/>
+                                </p:column> 
+                                <p:column> 
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.precio}"  style="font-weight: 700"/>   
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column> 
+                                    <h:outputLabel value="#{etiq.codigoBarras}: "/>
+                                </p:column> 
+                                <p:column> 
+                                    <h:outputLabel value="#{oInvent.detalleMedicamento.codBarras}"  style="font-weight: 700"/> 
+                                </p:column> 
+                            </p:row>
+                        </p:panelGrid>
+                    </p:dialog>           
+
+                </div>     
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

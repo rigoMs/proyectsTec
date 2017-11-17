@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition>
+    <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+    <h:body>
+         <p:panelGrid id="pgImpNTS" style="width: 1000px;background-color:#ffffff;border-color:#ffffff;border-bottom-color:#000000;">
+            <p:row>
+                <p:column colspan="12" style="background-color:#ffffff;border-color:#ffffff;border-bottom-color:#000000;">
+                    <div id="top">
+                        <table width="98%" border="0">
+                            <tr>
+                                <td width="15%">
+                                    <div align="center">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" alt="SSAVER" align="middle"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div align="center">
+                                        <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>   
+                                        <b><h:outputText styleClass="ui-theme" value="#{etiq.secretariaSalud}" style="text-transform: uppercase"/><br/>
+                                        <h:outputText styleClass="ui-theme" value="#{etiq.servicioDeSalud}" style="text-transform: uppercase"/><br/>
+                                        <h:outputText styleClass="ui-theme" value="#{etiq.direccionAten}" style="text-transform: uppercase"/><br/>
+                                        <h:outputText style="text-transform: uppercase" styleClass="ui-theme" value="#{etiq.hrrb}"/></b>
+                                    </div>
+                                </td>
+                                <td width="15%">
+                                <div align="center">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" alt="SSAHRRB" align="middle" height="90" width="234"/>
+                                </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header" colspan="12" style="border-color:#000000; background-color:#ffffff; text-align: center;"> 
+                    <b> <h:outputText value="#{etiq.notadeTrabajoSocialM}"/>  </b>
+                </p:column>
+            </p:row>
+            <p:row> 
+                <p:column colspan="12"  style="border-color:#000000; background-color:#ffffff; border-left-color:#ffffff; border-right-color:#ffffff;  ">
+                    &zwnj;
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="8" style="border-color:#000000; background-color:#ffffff;">
+                    <b><h:outputText style="text-align: left" value="#{etiq.nombreDelPaciente}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{oExpJB.hojaTrabSoc.episodioMedico.paciente.nombreCompleto}"/>
+                </p:column>
+                <p:column colspan="2" style="border-color:#000000; background-color:#ffffff;">
+                    <b><h:outputText value="#{etiq.edad}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{oExpJB.hojaTrabSoc.episodioMedico.paciente.edadNumero}"/>
+                </p:column>
+                <p:column  colspan="2" style="border-color:#000000; background-color:#ffffff;">
+                   <b> <h:outputText value="#{etiq.sexo}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{oExpJB.hojaTrabSoc.episodioMedico.paciente.sexoP}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="4" style="border-color:#000000; background-color:#ffffff;">
+                    <b> <h:outputText value="#{etiq.nExp}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{oExpJB.hojaTrabSoc.episodioMedico.expediente.numero2}"/>
+                </p:column>
+                <p:column colspan="4" style="border-color:#000000; background-color:#ffffff;">
+                    <b><h:outputText value="#{etiq.segpop}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{oExpJB.hojaTrabSoc.episodioMedico.paciente.seg.numero}"/>
+                </p:column>
+                <p:column  colspan="2" style="border-color:#000000; background-color:#ffffff;">
+                   <b><h:outputText value="#{etiq.servicio}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{oExpJB.hojaTrabSoc.episodioMedico.area.descripcion}"/>
+                </p:column>
+                <p:column  colspan="2" style="border-color:#000000; background-color:#ffffff;">
+                    <b><h:outputText value="#{etiq.cama}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{oExpJB.hojaTrabSoc.episodioMedico.cama.numero}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="12" style="border-color:#ffffff; background-color:#ffffff;">                    
+                    <p:dataTable style="width:1000px; background-color:#ffffff;" id="NotasAnte" emptyMessage="#{etiq.noRegistros}" var="oNts"
+                                 value="#{oExpJB.observacionesPorNota}">
+                        <p:column style="width:100px; background-color:#ffffff;">
+                            <f:facet name="header">
+                               <b> <h:outputLabel class="negrita" value="#{etiq.fechaHora}" style="text-align:center; text-transform: uppercase;"/> </b>
+                            </f:facet>
+                            <h:outputText style="font-size: 12px" value="#{oNts.fechaRegistro}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column style="background-color:#ffffff;">
+                            <f:facet name="header">
+                                 <h:outputLabel class="negrita" value="#{etiq.notadeTrabajoSocialM}"/> <br/>
+                                <h:outputLabel value="#{etiq.debecontenernombrets}" style="font-size:10px;"/> 
+                            </f:facet>
+                             <h:outputText style="font-size: 12px" value="#{oNts.nota}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <br/>
+        <p:commandButton value="#{etiq.imprimir}" icon="ui-icon-print" style=" margin-bottom: 20px;">
+            <p:printer target="pgImpNTS" /> 
+        </p:commandButton>
+    </h:body>         
+    </ui:composition>
+</html>

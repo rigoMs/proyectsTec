@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        
+        <!--
+        <center>
+        <h3>            
+           #{etiq.serviciosDSDV} 
+        </h3>
+            <h3>            
+            #{etiq.hrrb}
+        </h3>
+        <h3>            
+            #{etiq.consumo} #{etiq.de} #{etiq.medicamentos}
+        </h3>
+        </center> -->
+       
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        
+        </div>
+        -->
+      
+        <div class="centrado_texto">
+            <center>
+               
+                    <h:form id="formR" > 
+                        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporte} #{etiq.de} #{etiq.medicamentos} #{etiq.pendientesdesurtir} "/>
+        </h2>
+                        
+                        <p:growl id="msg" sticky="true" showDetail="true"/> 
+                         <p:panelGrid id="panelDatos">
+                             <p:row>
+                                    <p:column>
+                                        <h:outputLabel  value="#{etiq.periodo}  " />
+                                   
+                                             <h:outputLabel  value="#{etiq.del} : "  />
+                                    </p:column>
+                                    <p:column>
+                                             <p:calendar  mode="popup" showOn="button" />
+                                    </p:column>
+                                    <p:column>
+                                             <h:outputLabel  value="#{etiq.al} : "  />
+                                    </p:column>
+                                    <p:column>
+                                             <p:calendar  mode="popup" showOn="button" />
+                                    </p:column>
+                                   
+                             </p:row>
+                             <p:row>
+                         <p:column>
+                             <h:outputLabel  value="#{etiq.fechaEmision} :" style="width: 15%; text-align: left;" />
+                             </p:column>
+                                 <p:column colspan="2">
+                             <p:calendar  mode="popup" />
+                         </p:column>
+                                  <p:column>
+
+                                             <p:commandButton value="#{etiq.generarReporte}" icon="ui-icon-pencil" oncomplete="PF('dlgCM').show()">
+                                           </p:commandButton>
+                                    </p:column>
+                             </p:row>
+                             <p:row>
+                                 <p:column>
+                                      <h:outputLabel value="#{etiq.selecioneporTdeMedicamento}" style="width: 15%;" />
+                                 </p:column>
+                                 <p:column colspan="3">
+                                   <h:selectOneMenu id="cmTM" >
+                                                     <f:selectItem itemLabel="Seleccione" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Todos" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="Controlados" itemValue="">
+                                                     </f:selectItem>
+                                                     <f:selectItem itemLabel="No Controlados" itemValue="">
+                                                     </f:selectItem>
+                                                 </h:selectOneMenu>
+                                 </p:column>
+                             </p:row>
+                            
+                    
+        
+                        </p:panelGrid>
+                         <br></br>
+        
+                                      
+                        <p:dataTable   id="dtrptConsumoMed" editable="true" paginatorPosition="bottom" 
+                                     style="width: 1200px" value="" >
+                          
+                            <p:column headerText="#{etiq.clave}" >
+                                <p:outputLabel value="1010" />
+                               
+                            </p:column >
+                            
+                            <p:column headerText="#{etiq.clave} #{etiq.cbcm}">
+                                  <p:outputLabel value="1010.1010.1010"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.nombre}">
+                                  <p:outputLabel value="Paracetamol"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.concentracion}">
+                                  <p:outputLabel  value="500"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.presentacion}">
+                                  <p:outputLabel value="pastillas"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.descripcion}">
+                                  <p:outputLabel value="cajas de 10 pastillas"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.recetaspendientes}">
+                                  <p:outputLabel value="23"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.cantidadpendiente}">
+                                  <p:outputLabel value="234"/>
+                            </p:column>
+                            
+                            <f:facet name="footer">
+                                 <p:commandButton value="#{etiq.exportarExcel}" icon="ui-icon-pencil" oncomplete="PF('dlgCM').show()">
+                                  
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.imprimir}" icon="ui-icon-pencil" oncomplete="PF('dlgCM').show()">
+                                    <p:printer target=":formR"></p:printer>
+                                
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.descargar} #{etiq.pdf}" icon="ui-icon-pencil" oncomplete="PF('dlgCM').show()">
+                                </p:commandButton>
+                                
+                                  
+                            </f:facet>
+                           
+                        </p:dataTable> 
+                    </h:form></center>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

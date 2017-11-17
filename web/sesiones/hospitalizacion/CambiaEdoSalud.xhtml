@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">
+           <h:form>
+               <p:growl id="messages" showDetail="true"/>
+               <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+               <h2 class="centrado_texto"><h:outputLabel value="#{etiq.modificar} #{etiq.edoSalud}"/></h2>
+               <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+            <p:panelGrid styleClass="frm_centrado centrado_texto">
+              <f:facet name="header">
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header encabezados"><h:outputLabel value="#{etiq.datosPaciente}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.apmat}:"/></p:column>    
+                    <p:column><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                </p:row>
+               </f:facet>
+                <p:row>
+                    <p:column><h:outputLabel value="#{oCEdoSalud.datos.paciente.expediente.numero}"/></p:column>
+                    <p:column><p:inputText id="nom" value="#{oCEdoSalud.datos.paciente.nombres}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="app" value="#{oCEdoSalud.datos.paciente.apPaterno}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="apm" value="#{oCEdoSalud.datos.paciente.apMaterno}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="fNac" value="#{oCEdoSalud.datos.paciente.edadNumero}" readonly="true"/></p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.diagnostico}: "/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.causes}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cie10}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.edoSalud}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:autoComplete id="diag" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                        value="#{oCEdoSalud.datos.episodioMedico.diagIngreso.descripcionDiag}" completeMethod="#{oCEdoSalud.datos.episodioMedico.diagIngreso.completar}" effect="fade"
+                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" required="true" requiredMessage="Debe Ingresar Un Diagnostico" onkeypress="return validaCaracter(event);">
+                            <p:ajax update="cie10 causes" event="itemSelect"/>                                            
+                        </p:autoComplete>  
+                    </p:column>
+                    <p:column><p:inputText id="causes" value="#{oCEdoSalud.datos.episodioMedico.diagIngreso.claveCAUSES}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="cie10" value="#{oCEdoSalud.datos.episodioMedico.diagIngreso.claveCIE10}" readonly="true" required="true"/></p:column>
+                    <p:column>                              
+                        <p:selectOneMenu id="rbSRN1" value="#{oCEdoSalud.datos.episodioMedico.edoSaludStr}">
+                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                            <f:selectItems value="#{oCEdoSalud.listaEdoSalud}" var="edoSalud" 
+                                           itemLabel="#{edoSalud.valor}" itemValue="#{edoSalud.claveParametro}#{edoSalud.tipoParametro}"/>
+                        </p:selectOneMenu>                                            
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column styleClass="centrado_texto" colspan="5">
+                        <p:commandButton value="#{etiq.guardar}" action="#{oCEdoSalud.guardar()}" icon="ui-icon-disk" ajax="false" validateClient="true" >
+                            <f:setPropertyActionListener target="#{oHospCODE.estado}" value="#{true}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>             
+            </h:form>
+
+            <br/>
+            <br/>
+
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>            
+           
+          </ui:define> 
+        </ui:composition>
+    
+</html>

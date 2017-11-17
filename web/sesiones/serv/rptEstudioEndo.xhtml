@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporte} #{etiq.deestudios}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="buscar">
+            <h:form>
+                <p:accordionPanel>
+                <p:ajax event="tabChange" listener="#{oBuscarPac.requerir}" update="@this, nom app exp" />
+                <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                    <p:panelGrid columns="4" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <h:outputLabel />
+                        <p:inputText styleClass="bordes" id="nom" value="#{EstRealEndos.nombre}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{EstRealEndos.apPaterno}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{EstRealEndos.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" actionListener="#{EstRealEndos.rebotesPacPend}" update=":frmrep:tblpacpenrep" >
+                             
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:tab>        
+                <p:tab title="#{etiq.buscarPorExpediente}"  id="tabE">
+                    <p:panelGrid columns="3" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                        <p:inputText styleClass="bordes" id="exp" value="#{EstRealEndos.numExpe}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" required="#{oBuscarPac.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                        </p:inputText>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" actionListener="#{EstRealEndos.rebotesPacPend}" update=":frmrep:tblpacpenrep" >
+                            <f:setPropertyActionListener target="#{EstRealEndos.nombre}" value=""/>
+                            <f:setPropertyActionListener target="#{EstRealEndos.apPaterno}" value=""/>
+                            <f:setPropertyActionListener target="#{EstRealEndos.apMaterno}" value=""/>
+                        </p:commandButton>
+                    </p:panelGrid>
+                    <p:message for="exp" id="mentExp"></p:message>
+                </p:tab>
+               </p:accordionPanel>  
+                
+             </h:form>
+        </div>
+        <br/>
+        
+        <div class="frm_centrado">
+            <h:form id="frmrep">
+            <p:growl id="msgs" showDetail="true" />
+            <p:dataTable id="tblpacpenrep" 
+                         value="#{EstRealEndos.ordenesEndos}"
+                         var="oEnd" 
+                         paginator="true"
+                         rows="5"
+                         emptyMessage="#{etiq.sinRegistros}"
+                         rowKey="#{oEnd.estReal.identificador}"
+                         selection="#{EstRealEndos.seleccionado}"
+                         >
+                <p:ajax event="rowSelectRadio"></p:ajax>
+                <f:facet name="header">
+                    <p:outputLabel value="#{etiq.datosEstudio}" styleClass="mensaje"/>
+                </f:facet>
+                <p:column width="5%" selectionMode="single">
+                </p:column>
+                <p:column width="20%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oEnd.episodio.paciente.nombres} #{oEnd.episodio.paciente.apPaterno} #{oEnd.episodio.paciente.apMaterno}"/>
+                </p:column>
+                <p:column width="15%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.numexpe}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oEnd.episodio.paciente.expediente.numero}"/>
+                </p:column>
+                    <p:column width="20%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje"/>
+                    </f:facet>
+                        <h:outputText value="#{oEnd.estReal.estudio.descripcion}"/>
+                </p:column>
+                <p:column width="20%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oEnd.episodio.medicoTratante.nombres} #{oEnd.episodio.medicoTratante.apPaterno} #{oEnd.episodio.medicoTratante.apMaterno}"/>
+                </p:column>
+                <f:facet name="footer">
+                    <p:commandButton value="#{etiq.agregarReporte}" icon="ui-icon-disk" id="btnAgRe" process="tblpacpenrep" update=":frmrep:datPacEnd" actionListener="#{EstRealEndos.detalleSolEndos}" oncomplete="PF('dlgAgRep').show()" />
+                    <p:commandButton value="Ver detalles" process="tblpacpenrep" icon="ui-icon-plus" update=":frmrep:pacEndos" actionListener="#{EstRealEndos.detalleSolEndos}" oncomplete="PF('dlgPacEndos').show()" />
+                </f:facet>
+            </p:dataTable>
+                <p:dialog header="Datos de la Solicitud" widgetVar="dlgPacEndos"
+                      height="60%" width="80%" resizable="false">
+                    <p:outputPanel id="pacEndos">
+                        <p:panelGrid styleClass="frm_centrado" rendered="#{not empty EstRealEndos.estEndos}">       
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.datosDelPaciente}" styleClass="mensaje"/>
+                            </f:facet>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.episodio.paciente.nombres} #{EstRealEndos.estEndos.episodio.paciente.apPaterno} #{EstRealEndos.estEndos.episodio.paciente.apMaterno}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.numexpe}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.episodio.paciente.expediente.numero}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.servicio}" styleClass="mensaje"/>
+                                </p:column>
+                                 <p:column colspan="1" rowspan="1">
+                                     <p:outputLabel value="#{EstRealEndos.estEndos.episodio.area.descripcion}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.cama}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.episodio.cama.numero}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.edad}" styleClass="mensaje"/>
+                                </p:column>
+                                 <p:column colspan="1" rowspan="1">
+                                     <p:outputLabel value="#{EstRealEndos.estEndos.episodio.paciente.edadNumero}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.sexo}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.episodio.paciente.sexoP}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="3" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.episodio.paciente.diagcie.descripcionDiag}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.fechaDeIngreso}" styleClass="mensaje"/>
+                                </p:column>
+                                 <p:column colspan="1" rowspan="1">
+                                     <p:outputLabel value="#{EstRealEndos.estEndos.episodio.fechaIngreso}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.motivo} #{etiq.deInterc}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.detalleDiagIni}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.episodio.medicoTratante.nombres} #{EstRealEndos.estEndos.episodio.medicoTratante.apPaterno} #{EstRealEndos.estEndos.episodio.medicoTratante.apMaterno}"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{etiq.fechaYhora} #{etiq.deSolicitud}" styleClass="mensaje"/>
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <p:outputLabel value="#{EstRealEndos.estEndos.fecSol}"/>
+                                </p:column>
+                            </p:row>
+
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+                <p:dialog header="#{etiq.infoReporte}" widgetVar="dlgAgRep"
+                  height="60%" width="60%" position="center" resizable="false">
+            <p:outputPanel id="datPacEnd">
+            <p:panelGrid styleClass="frm_centrado"> 
+                <f:facet name="header">
+                    <p:outputLabel value="#{etiq.datosDelPaciente}" styleClass="mensaje"/>
+                </f:facet>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                    </p:column>
+                     <p:column>
+                        <h:outputText value="#{EstRealEndos.estEndos.episodio.paciente.nombres} #{EstRealEndos.estEndos.episodio.paciente.apPaterno} #{EstRealEndos.estEndos.episodio.paciente.apMaterno}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.numexpe}" styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{EstRealEndos.estEndos.episodio.paciente.expediente.numero}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.servicio}" styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{EstRealEndos.estEndos.episodio.area.descripcion}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{EstRealEndos.estEndos.estReal.estudio.descripcion}"/> 
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="1" rowspan="1">
+                        <p:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje"/>
+                    </p:column>
+                    <p:column colspan="3" rowspan="1">
+                        <h:outputText value="#{EstRealEndos.estEndos.episodio.paciente.diagcie.descripcionDiag}"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+           </p:outputPanel>
+            <br/>       
+                <p:panelGrid styleClass="frm_centrado">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.datosEstudio}" styleClass="mensaje"/>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.agregarArchivo}" styleClass="mensaje"/>
+                        </p:column>
+                        <p:column>
+                            <p:fileUpload fileUploadListener="#{EstRealEndos.handleFileUpload}" 
+                                            allowTypes="/(\.|\/)(pdf|txt)$/"
+                                            sizeLimit="1024000" update=":frmrep:msgs" uploadLabel="Subir" cancelLabel="Cancelar" label="Seleccionar" fileLimit="1" 
+                                            mode="advanced" dragDropSupport="false"/>
+                        </p:column>
+                    </p:row>
+                 </p:panelGrid>
+            <h:panelGrid columns="2" styleClass="frm_centrado">
+                <p:commandButton value="#{etiq.cancelar}" icon="ui-icon-cancel" id="btnCancel2"/>
+            </h:panelGrid>
+        </p:dialog>
+        </h:form>
+        </div>
+           <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+    </ui:define>         
+</ui:composition>
+
+</html>

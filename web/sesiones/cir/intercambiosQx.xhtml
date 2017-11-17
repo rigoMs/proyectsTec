@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reprogramacionQx}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+         <br/>
+         <div class="centrado_texto">
+             <h:form id="busqueda_Datos">
+                  <p:panelGrid>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.medico}"/>
+                        </p:column>
+                        <p:column style="width: 20px">
+                            <p:selectOneMenu  id="selCirujanos" value="#{oReprogramaQx.cirujano.noTarjeta}" required="true">
+                                <f:selectItem itemLabel="Elegir Cirujano" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oReprogramaQx.lisCirujanos}" var="oCir" 
+                                               itemLabel="#{oCir.nombreCompleto}" itemValue="#{oCir.noTarjeta}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.fecha}"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaAct" 
+                                        value="#{oReprogramaQx.procedimientos.fechaProgramada}" 
+                                        required="true" mindate="#{oReprogramaQx.procedimientos.fechaActual()}"
+                                        locale="es" effect="explode" >
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton  id="btnBusCir" icon="ui-icon-search" 
+                                              value="#{etiq.buscar}"
+                                              actionListener="#{oReprogramaQx.buscaProcedimientos()}"
+                                              update="tablaProcedimientos btnDetalles btnReprograma"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                 <br/>
+                 <div class="ReprogramaciondeOperaciones">
+                     <p:dataTable  id="tablaProcedimientos" 
+                                   value="#{oReprogramaQx.listaProcedimientos}"
+                                   var="oRepro"
+                                   emptyMessage="#{etiq.noRegistro}"
+                                   style="width: 1400px; visibility: #{oReprogramaQx.visibilidad}"
+                                   rowKey="#{oRepro.episodioMedico.paciente.folioPaciente}"
+                                   selection="#{oReprogramaQx.seleccionado}"
+                                   styleClass="frm_centrado">
+                         <p:ajax event="rowSelectRadio"></p:ajax>
+                         <p:column selectionMode="single" style="width: 15px;"></p:column>
+                         <p:column style="width: 100px">
+                             <f:facet name="header">
+                                 <h:outputText value="#{etiq.fecha}"/>
+                             </f:facet>
+                             <h:outputText value="#{oRepro.fechaProgramada}">
+                                 <f:convertDateTime pattern="dd-MM-yyy"/>
+                         </h:outputText>
+                         </p:column>
+                         <p:column style="width: 180px">
+                             <f:facet name="header">
+                                 <h:outputText value="#{etiq.medCir}"/>
+                             </f:facet>
+                             <h:outputText value="#{oRepro.cirujano.nombreCompleto}"/>
+                         </p:column>
+                          <p:column style="width: 180px">
+                             <f:facet name="header">
+                                 <h:outputText value="#{etiq.medAnes}"/>
+                             </f:facet>
+                              <h:outputText value="#{oRepro.anestesio.nombreCompleto}"/>
+                         </p:column>
+                         <p:column style="width: 380px">
+                             <f:facet name="header">
+                                 <h:outputText value="#{etiq.proceQx}"/>
+                             </f:facet>
+                             <h:outputText value="#{oRepro.CIE9.descripcion}"/>
+                         </p:column>
+                         <p:column style="width: 200px">
+                             <f:facet name="header">
+                                 <h:outputText value="#{etiq.nombrePaciente}"/>
+                             </f:facet>
+                             <h:outputText value="#{oRepro.episodioMedico.paciente.nombreCompleto}"/>
+                         </p:column>
+                     </p:dataTable>
+                     <br/>
+                     <p:commandButton id="btnDetalles" icon="ui-icon-search" value="#{etiq.detalle}" 
+                                      onclick="PF('deProQx').show();" style=" visibility: #{oReprogramaQx.visibilidad}">
+                         <p:ajax listener="#{oReprogramaQx.llenaDatosProcedimiento()}" update=":detalles_Info:detalle_Proce"></p:ajax>
+                     </p:commandButton>
+                     &nbsp;&nbsp;
+                     <p:commandButton id="btnReprograma" icon="ui-icon-calendar" value="#{etiq.reprogramarQx}" 
+                                      onclick="PF('reproQx').show();" style=" visibility: #{oReprogramaQx.visibilidad}">
+                         <p:ajax listener="#{oReprogramaQx.llenaDatosProcedimiento()}" update=":edita_Informacion:modifica_Repro:"></p:ajax>
+                     </p:commandButton>
+                 </div>
+             </h:form>
+             <!-- Dialogo de detalles de operación -->
+             <p:dialog header="Detalles Programación" widgetVar="deProQx" showEffect="bounce" hideEffect="explode" resizable="false" style="width: 2700px">
+                 <h:form id="detalles_Info">
+                     <p:panelGrid id="detalle_Proce">
+                         <p:row>
+                             <p:column styleClass="ui-widget-header" style="width: 130px;">
+                                 <h:outputLabel value="#{etiq.nombreCompleto}"/>
+                             </p:column>
+                             <p:column style=" width: 250px">
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                 <h:outputLabel value="#{etiq.expediente}"/>
+                             </p:column>
+                             <p:column>
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                 <h:outputLabel value="#{etiq.segpop}"/>
+                             </p:column>
+                             <p:column style="width: 90px;">
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                             </p:column>
+                         </p:row>                         
+                         <p:row>
+                             <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                 <h:outputLabel value="#{etiq.proceQx}"/>
+                             </p:column>
+                             <p:column colspan="5">
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.CIE9.descripcion}"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <!-- Lista de Cirujanos-->
+                             <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                 <h:outputLabel value="#{etiq.medicoCirujano}"/>
+                             </p:column>
+                             <p:column style=" width: 220px;">
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.cirujano.nombreCompleto}"/>
+                             </p:column>
+                             <!-- Lista de Quirofanos-->
+                             <p:column styleClass="ui-widget-header" style="width: 90px">
+                                 <h:outputLabel value="#{etiq.qx}"/>
+                             </p:column>
+                             <p:column>
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.quirofanos.nombre}"/>
+                             </p:column>
+                             <!-- Lista de Residentes-->
+                             <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                 <h:outputLabel value="Residente"/>
+                             </p:column>
+                             <p:column>
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.residente.nombreCompleto}"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <!-- Lista de Anestesiologos-->
+                             <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                 <h:outputLabel value="#{etiq.anestesio}"/>
+                             </p:column>
+                             <p:column>
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.anestesio.nombreCompleto}"/>
+                             </p:column>
+                             <!--Anestesias-->
+                             <p:column styleClass="ui-widget-header" style="width: 90px">
+                                 <h:outputLabel value="#{etiq.anestesia}"/>
+                             </p:column>
+                             <p:column style="width: 90px">
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.anestEspecifica.descripcion}"/>
+                             </p:column>
+                             <!--Terminan Listas-->
+                             <p:column colspan="2" styleClass="ui-widget-header" />
+                         </p:row>
+                         <p:row>
+                             <p:column styleClass="ui-widget-header" style="width: 90px">
+                                 <h:outputLabel value="Fecha Hospitalización"/>
+                             </p:column>
+                             <p:column>
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.fechaPropInternacion}">
+                                     <f:convertDateTime pattern="dd-MM-yyy"/>
+                                 </h:outputText>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header" style="width: 90px">
+                                 <h:outputLabel value="Hora Hospitalización"/>
+                             </p:column>
+                             <p:column>
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.fechaInternacion}">
+                                     <f:convertDateTime pattern="HH:mm"/>
+                                 </h:outputText>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header" colspan="2"/>
+                         </p:row>
+                         <p:row>
+                             <p:column styleClass="ui-widget-header" style="width: 90px">
+                                 <h:outputLabel value="Fecha Intervención"/>
+                             </p:column>
+                             <p:column style="width: 90px;">
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.fechaProgramada}">
+                                     <f:convertDateTime pattern="dd-MM-yyy"/>
+                                 </h:outputText>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header" style="width: 90px">
+                                 <h:outputLabel value="Hora Intervención"/>
+                             </p:column>
+                             <p:column>
+                                 <h:outputText value="#{oReprogramaQx.procedimientos.valorHorarioQx.valor}" />
+                             </p:column>
+                             <p:column styleClass="ui-widget-header" colspan="2"/>
+                         </p:row>
+                     </p:panelGrid>
+                 </h:form>
+             </p:dialog>
+             <!-- Dialogo de Reprogramacion -->
+             <p:dialog header="#{etiq.intercambioFecha}" widgetVar="reproQx" showEffect="drop" hideEffect="drop" resizable="false" style="width: 400px">
+                 <h:form id="edita_Informacion">
+                     <p:panelGrid  id="modifica_Repro">
+                         <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.nombreCompleto}"/>
+                            </p:column>
+                            <p:column style="width: 150px;">
+                                <h:outputText value="#{oReprogramaQx.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.expediente}"/>
+                            </p:column>
+                            <p:column style="width: 90px;">
+                                <h:outputText value="#{oReprogramaQx.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.segpop}"/>
+                            </p:column>
+                            <p:column style="width: 90px;">
+                                <h:outputText value="#{oReprogramaQx.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.proceQx}"/>
+                            </p:column>
+                            <p:column style="width: 90px;" colspan="5">
+                                <p:outputLabel value="#{oReprogramaQx.procedimientos.CIE9.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <!-- Lista de Cirujanos-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.medicoCirujano}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu  id="selCirujanos" value="#{oReprogramaQx.procedimientos.cirujano.noTarjeta}">
+                                   <f:selectItem itemLabel="Elegir Cirujano" itemValue="" noSelectionOption="true" />
+                                   <f:selectItems value="#{oReprogramaQx.lisCirujanos}" var="oCirujanos" 
+                                                  itemLabel="#{oCirujanos.nombreCompleto}" itemValue="#{oCirujanos.noTarjeta}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <!-- Lista de Quirofanos-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="#{etiq.qx}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu  id="selQx" value="#{oReprogramaQx.procedimientos.quirofanos.clave}">
+                                    <f:selectItem itemLabel="Elegir Quirofano" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{oReprogramaQx.listaQx}" var="oPas" 
+                                                   itemLabel="#{oPas.nombre}" itemValue="#{oPas.clave}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                            
+                            <!-- Lista de Residentes-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="Residente"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:selectOneMenu id="selRes" value="#{oReprogramaQx.procedimientos.residente.noTarjeta}">
+                                    <f:selectItem itemLabel="Elegir Residente" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{oConsultaQx.listaResidentes}" var="oResid" 
+                                                   itemLabel="#{oResid.nombreCompleto}" itemValue="#{oResid.noTarjeta}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <!-- Lista de Anestesiologos-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px;">
+                                <h:outputLabel value="#{etiq.anestesio}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu  id="selAnestesio" value="#{oReprogramaQx.procedimientos.anestesio.noTarjeta}">
+                                   <f:selectItem itemLabel="Elegir Anestesiólogo" itemValue="" noSelectionOption="true"/>
+                                   <f:selectItems  value="#{oReprogramaQx.listaAnestesiologos}" var="anestesiologo" 
+                                                   itemLabel="#{anestesiologo.nombreCompleto}" itemValue="#{anestesiologo.noTarjeta}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <!--Anestesias-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="#{etiq.anestesia}"/>
+                            </p:column>
+                           <p:column style="width: 90px">
+                               <p:selectOneMenu  id="selAnes" style="width: 150px"  value="#{oReprogramaQx.procedimientos.anestEspecifica.clave}">
+                                   <f:selectItem itemLabel="Elegir Anestesia" itemValue="" noSelectionOption="true" />
+                                   <f:selectItems value="#{oReprogramaQx.listaAnestesias}" var="oAn" 
+                                                  itemLabel="#{oAn.descripcion}" itemValue="#{oAn.clave}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <!--Terminan Listas-->
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Ambulatoria"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:selectOneRadio id="rdAmbula" value="#{oReprogramaQx.tipoCir}">
+                                    <f:selectItem itemLabel="Si" itemValue="1"/>
+                                    <f:selectItem itemLabel="No" itemValue="0"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Fecha Hospitalización"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:calendar value="#{oReprogramaQx.procedimientos.fechaPropInternacion}" locale="es" >
+                                </p:calendar>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Hora Hospitalización"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:inputMask id="txtHorah"  mask="99:99" value="#{oReprogramaQx.procedimientos.fechaInternacion}">
+                                </p:inputMask>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" colspan="2"/>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Fecha Intervención"/>
+                            </p:column>
+                            <p:column style="width: 90px;">
+                                <p:calendar value="#{oReprogramaQx.procedimientos.fechaProgramada}" 
+                                            locale="es" required="true">
+                                </p:calendar>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 90px">
+                                <h:outputLabel value="Hora Intervención"/>
+                            </p:column>
+                            <p:column style="width: 90px">
+                                <p:selectOneMenu  id="elgHorario" style="width: 150px" value="#{oReprogramaQx.procedimientos.valorHorarioQx.claveParametro}" >
+                                   <f:selectItem itemLabel="Elegir Horario" itemValue="" />
+                                   <f:selectItems var="oHora" 
+                                                  itemLabel="#{oHora.valor}" itemValue="#{oHora.claveParametro}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" colspan="2"/>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.areaServicio}"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu effect="explode">
+                                    <f:selectItem itemLabel="Pedriatría" itemValue="1"/>
+                                    <f:selectItem itemLabel="Medicina Interna" itemValue="2"/>
+                                    <f:selectItem itemLabel="Cirugia General" itemValue="3"/>
+                                    <f:selectItem itemLabel="Gineco Obstetricia" itemValue="4"/>
+                                    <f:selectItem itemLabel="Clinica del Dolor" itemValue="5"/>
+                                    <f:selectItem itemLabel="Gastroenterología" itemValue="6"/>
+                                    <f:selectItem itemLabel="Oncopediatría" itemValue="7"/>
+                                    <f:selectItem itemLabel="Dermatología" itemValue="8"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.observaciones}"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <h:outputText value="#{oReprogramaQx.procedimientos.episodioMedico.paciente.sexoP} #{oReprogramaQx.procedimientos.episodioMedico.paciente.edadNumero}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" styleClass="ui-widget-header">
+                                <p:commandButton value="#{etiq.reprogramarQx}" icon="ui-icon-disk" >
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                 </h:form>
+             </p:dialog>
+             <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+         </div>
+    </ui:define>
+</ui:composition>
+</h:body>
+</html>

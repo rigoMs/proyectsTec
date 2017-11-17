@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>   
+    </h:head>
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <h:form id="formR" style=" position: absolute; margin-top:30px; float: left;" > 
+                    <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+                        <br/>
+                        <div style="min-height:100vh; text-align: center;">            
+                                <p:panelGrid>
+                                    <f:facet name="header">
+                                        <p:row>
+                                            <p:column colspan="3"> <h:outputLabel value="Busquedad de Medicamento"/></p:column>
+                                        </p:row> 
+                                    </f:facet>
+                                    <p:row>
+                                        <p:column style="font-weight: bold;">
+                                            <h:outputLabel value="Nombre: "/>
+                                            <p:inputText value="#{consulMed.nombre}" onkeyup="this.value = this.value.toUpperCase();" required="true" requiredMessage="agregue datos"/>
+                                            <p:commandButton value="#{etiq.buscar}" update="messages" actionListener="#{consulMed.buscaMedicamento()}" onclick="location.replace()" />
+                                            <p:growl id="messages" showDetail="true" />
+                                        </p:column>
+                                    </p:row>   
+                                </p:panelGrid> 
+                            </div>
+                            </h:form>
+                        <h:form id="busquedaNom">               
+                            <p:dialog header="#{etiq.medicamentos}" widgetVar="dlg2" minHeight="60" width="900" height="200" modal="true"  visible="#{consulMed.nombreEncontrado}" closable="false" >
+                                <p:dataTable var="oMed" id="tblNom" 
+                                             value="#{consulMed.medBusNom}"
+                                             emptyMessage="#{etiq.noMedicamentosRegistrados}">
+                                    <f:facet name="header"><h:outputLabel value="#{etiq.medCoincid}"/><h:outputLabel value="  ''#{consulMed.nombre}'' "/></f:facet>
+                                    <p:column headerText="#{etiq.nombre}" width="15">
+                                        <h:outputLabel value="#{oMed.nombre}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.lote}" width="15">
+                                        <h:outputLabel value="#{oMed.lote}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.presentacion}" width="15">
+                                        <h:outputLabel value="#{oMed.presentacion}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.descripcion}" width="15">
+                                        <h:outputLabel value="#{oMed.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.codigoBarras}" width="15">
+                                        <h:outputLabel value="#{oMed.codBarras}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.caducidad}" width="30">
+                                        <h:outputLabel value="#{oMed.caducidad}"/>                                             
+                                    </p:column>
+                                    <p:column headerText="#{etiq.existencia}" width="30">
+                                        <h:outputLabel value="#{oMed.existencia}"/>                                             
+                                    </p:column>
+                                </p:dataTable>
+                                <br/>
+                                <div style="text-align: center;">
+                                    <p:commandButton value="#{etiq.cerrar}"  styleClass="button" update=":busmedic:tblMed" actionListener="#{consulMed.borraNom()}"
+                                                     onclick="PF('dlg2').hide()"  onsuccess="location.reload();" ajax="false"/>
+                                </div>
+                            </p:dialog> 
+                        </h:form>
+           </ui:define>             
+        </ui:composition> 
+    
+</html>

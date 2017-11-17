@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"      
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div id="Toco">
+                    <h:form id="busca">
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.consultarToco}"/></h3>
+                        <p:accordionPanel styleClass="centrar" style=" width: 25%; font-weight: bold;">
+                            <p:tab title="#{etiq.buscarXfecha}" >
+                                <p:outputPanel styleClass="centrar" style="width: 100%;">
+                                    <p:panelGrid columns="2" style="width: 100%;" styleClass="ui-widget-header">                                    
+                                        <p:outputLabel for="fecPorServ" value="#{etiq.fecha}:"/>
+                                        <p:outputLabel/>                                    
+                                        <p:calendar value="#{oBToco.hojaToco.fechaSupervicion}" size="9" id="fecPorServ" effect="puff" pattern="dd/MM/yyyy" locale="es" required="true"
+                                                    readonlyInput="true" showOn="button" requiredMessage="Selecciona una fecha"/>
+                                        <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBToco.buscaHojaSupervisioTococirugia}" 
+                                                         update=":toco2 :toco2:tococirugia :toco2:msgs">
+                                        </p:commandButton>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                    </h:form>
+                    <h:form id="toco2">                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>                        
+                        <p:outputPanel id="tococirugia" rendered="#{oBToco.arrHjToco!=null}">
+                            <p:panelGrid style="width: 100%;">
+                                <p:row>
+                                    <p:column style=" width: 70%; border-color: #ffffff; text-align: center; font-size: 18px;">
+                                        <b><p:outputLabel value="#{etiq.tocoInfo}"/></b>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; font-size: 18px;">
+                                        <b><p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;<p:outputLabel value="#{oBToco.hojaToco.fechaString2}"/>
+                                    </p:column>
+                                </p:row> 
+                                <p:row>
+                                    <p:column style="border-color: #ffffff; padding: 0px;" colspan="2" >
+                                        <p:dataTable id="tblToco" value="#{oBToco.arrHjToco}" var="oT" emptyMessage="#{etiq.msjRegVacios}" styleClass="tblStyle" >
+                                            <p:column headerText="#{etiq.camaM}" style="width: 3%; font-size: 12px; text-align: center;"  >
+                                                <p:outputLabel value="#{oT.episodio.cama.numero}" style="font-size: 11px;"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.noExpediente}" style="width: 4.5%; font-size: 12px; text-align: center;">
+                                                <h:outputText style="font-size: 11px;" value="#{oT.episodio.paciente.expediente.numero}" />
+                                            </p:column>
+                                            <p:column style="width: 17%;font-size: 12px;text-align: center;" headerText="#{etiq.nombreM}">
+                                                <p:outputLabel value="#{oT.episodio.paciente.nombreCompleto}" style="font-size: 11px;"/>
+                                            </p:column>
+                                            <p:column style="width: 16%;font-size: 12px;text-align: center; text-transform: uppercase"  
+                                                      headerText="#{etiq.diagnosticoIngreso}">
+                                                <p:outputLabel value="#{oT.episodio.diagIngreso.descripcionDiag}" style="font-size: 11px;"/>
+                                            </p:column>
+                                            <p:column style="width: 15%;font-size: 12px;text-align: center;" headerText="#{etiq.proceRealizado}">
+                                                <p:outputLabel value="#{oT.procedimiento.CIE9.descripcion}" style="font-size: 11px;"/>
+                                            </p:column>
+                                            <p:column style="width: 4%;font-size: 12px;text-align: center;" headerText="#{etiq.induccion}">
+                                                <div class="centrar">
+                                                    <p:selectBooleanCheckbox value="#{oT.induccion}" disabled="true" />
+                                                </div>                                           
+                                            </p:column>
+                                            <p:column style="width: 1.5%;font-size: 12px;text-align: center;" headerText="#{etiq.us}">
+                                                <p:selectBooleanCheckbox value="#{oT.us}" disabled="true" />
+                                            </p:column>
+                                            <p:column style="width:  1.5%;font-size: 12px;text-align: center;" headerText="#{etiq.rct}">
+                                                <p:selectBooleanCheckbox value="#{oT.rct}" disabled="true" />
+                                            </p:column>
+                                            <p:column style="width: 13%;font-size: 12px; text-align: center;" headerText="#{etiq.observaa}">
+                                                <p:outputLabel value="#{oT.observacion}" style="font-size: 11px;"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header centrar">
+                                        <p:commandButton icon="ui-icon-folder-open" value="Abrir Para Imprimir" 
+                                                         onclick="PF('tocoImpresion').show()" update=":tocoImp"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </h:form> 
+                </div>
+                <p:dialog widgetVar="tocoImpresion" modal="true" resizable="false" header="#{etiq.hojaTocoImp}" showEffect="puff" hideEffect="puff" height="600" style="width: 100%;">
+                     <h:form id="tocoImp">
+                        <p:panelGrid style="width:100%; margin-bottom: 0px;">
+                            <p:row>
+                                <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="40" align="right"/>
+                                </p:column>
+                                <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; font-size: 13px; ">
+                                    <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                    <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                    <b><p:outputLabel value="#{etiq.tocoInfo}"/></b>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>  <p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oBToco.hojaToco.fechaString2}"/>
+                                </p:column>
+                                <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120"  style=" height: 100%;" align="left"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3" style="border-color: transparent; background-color: white;"/>
+                            </p:row>                             
+                        </p:panelGrid>                        
+                        <p:outputPanel style="width: 100%; background-color: white; ">
+                            <p:dataTable value="#{oBToco.arrHjToco}" var="oPacToco" >
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column headerText="#{etiq.camaM}" style=" width: 3%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                        <p:column headerText="#{etiq.noEXPM}" style=" width: 5%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                        <p:column headerText="#{etiq.nombreM}" style=" width: 20%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                        <p:column headerText="#{etiq.diagnosticoIngreso}" style=" width: 20%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;text-transform: uppercase"/>
+                                        <p:column headerText="#{etiq.proceRealizado}" style=" width: 19%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                        <p:column headerText="#{etiq.induccion}" style=" width: 5.5%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                        <p:column headerText="#{etiq.us}" style=" width: 1.7%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                        <p:column headerText="#{etiq.rct}" style=" width: 1.5%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                        <p:column headerText="#{etiq.observaa}" style=" width: 20%; font-size: 12px; font-family: monospace; color: black; font-weight: bold;"/>
+                                    </p:row>                                    
+                                </p:columnGroup>
+                                <p:column style="background-color: white; font-size: 10px; text-align: center; border-color: black; ">
+                                    <p:outputLabel value="#{oPacToco.episodio.cama.numero}" />
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; text-align: center; border-color: black;">
+                                    <p:outputLabel value="#{oPacToco.episodio.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; text-align: center; border-color: black;">
+                                    <p:outputLabel value="#{oPacToco.episodio.paciente.nombreCompleto}" style="font-size: 9px;"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; text-align: center; border-color: black;">
+                                    <p:outputLabel value="#{oPacToco.episodio.diagIngreso.descripcionDiag}" style="font-size: 9px;"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;text-align: center;">
+                                    <p:outputLabel value="#{oPacToco.procedimiento.CIE9.descripcion}" style="font-size: 9px;"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;text-align: center;">        
+                                    <p:outputLabel value="#{oPacToco.induccionS}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;text-align: center;">     
+                                    <p:outputLabel value="#{oPacToco.US}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black;text-align: center;">   
+                                    <p:outputLabel value="#{oPacToco.RCT}"/>
+                                </p:column>
+                                <p:column style="background-color: white; font-size: 10px; border-color: black; text-align: center;">  
+                                    <p:outputLabel value="#{oPacToco.observacion}" style="font-size: 9px;"/>
+                                </p:column>                                
+                            </p:dataTable>
+                        </p:outputPanel>                         
+                     </h:form>
+                     <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":tocoImp"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('tocoImpresion').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                 </p:dialog>
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus> 
+            </ui:define>
+        </ui:composition>
+</html>
+

@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.informacionResid}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="busquedas_Datos">
+                <p:commandButton id="btnConRes" icon="ui-icon-search" value="#{etiq.buscaResid}"
+                                 actionListener="#{oInfoResidentes.consultaResidentes()}" update="tabla_Residentes btnNuFechas">
+                </p:commandButton>
+                &nbsp; &nbsp;
+                <p:commandButton id="btnRegRes" icon="ui-icon-plus" value="#{etiq.regResid}" 
+                                 onclick="PF('RegResid').show();">
+                </p:commandButton>
+                <br/>
+                <br/>
+                <p:dataTable id="tabla_Residentes" 
+                             value="#{oInfoResidentes.listaResidentes}" 
+                             var="oResid" rows="6"         
+                             emptyMessage="#{etiq.noResid}"
+                             style="visibility: #{oInfoResidentes.visibilidad}; width:1400px" 
+                             styleClass="frm_centrado"
+                             rowKey="#{oResid.noTarjeta}"
+                             selection="#{oInfoResidentes.seleccionado}">
+                    <p:ajax event="rowSelectRadio"></p:ajax>
+                    <p:column selectionMode="single" style=" width: 15px;"></p:column>
+                    <p:column style=" width: 60px;">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.cvRes}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.nivelResid.valor}"/>
+                    </p:column>
+                    <p:column style="width: 280px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.nombre}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="width: 70px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.fechaInicial}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.inicio}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column style="width: 70px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.fechaFinal}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.fin}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column style="width: 70px">
+                        <f:facet name="header">
+                            <h:outputLabel value="Periodo 2"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.inicio2}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column style="width: 70px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.fechaFinal}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.fin2}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column style="width: 70px">
+                        <f:facet name="header">
+                            <h:outputLabel value="Periodo 3"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.inicio3}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column style="width: 70px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.fechaFinal}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oResid.fin3}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="btnNuFechas" icon="ui-icon-note" value="#{etiq.nufecResid}"  
+                                 onclick="PF('regNuevaFecha').show();" 
+                                 style=" visibility: #{oInfoResidentes.visibilidad}"
+                                 >
+                    
+                </p:commandButton>
+                <!-- Registro de un nueva fecha de residente -->
+                <p:dialog header="Registro de Nuevo Inicio de Residencia" widgetVar="regNuevaFecha"
+                          resizable="false" style="width: 200px;" >
+                    <p:panelGrid id="registroNuevaFecha">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.nombre}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oInfoResidentes.residentes.nombreCompleto}" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.fechaInicial}" />
+                            </p:column>
+                            <p:column>
+                                <p:calendar locale="es" disabledWeekends="True"></p:calendar>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.fechaFinal}" />
+                            </p:column>
+                            <p:column>
+                                <p:calendar locale="es" disabledWeekends="True"></p:calendar>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    
+                </p:dialog>
+                <!-- Registro de un nuevo residente -->
+                <p:dialog header="Registro Residente" widgetVar="RegResid" 
+                          resizable="false" style=" width: 500px;">
+                     <p:panelGrid id="RegistroResid">
+                         <p:row>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.appat}" />
+                             </p:column>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.apmat}" />
+                             </p:column>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.nombre}" />
+                             </p:column>
+                             <p:column styleClass="ui-widget-header" />
+                         </p:row>
+                         <p:row>
+                             <p:column styleClass="ui-widget-header">
+                                 <p:inputText value="#{oInfoResidentes.residentes.apPaterno}" ></p:inputText>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header">
+                                 <p:inputText value="#{oInfoResidentes.residentes.apMaterno}" ></p:inputText>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header">
+                                 <p:inputText value="#{oInfoResidentes.residentes.nombres}" ></p:inputText>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header"/>
+                         </p:row>
+                         <p:row>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.fechanac}" />
+                             </p:column>
+                             <p:column>
+                                 <p:inputMask mask="9999-99-99" value="#{oInfoResidentes.fechaNac}" />
+                             </p:column>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.sexo}"/>
+                             </p:column>
+                             <p:column>
+                                 <p:selectOneRadio id="elgSexo" value="#{oInfoResidentes.residentes.sexoP}" >
+                                     <f:selectItem itemLabel="M" itemValue="M"/>
+                                     <f:selectItem itemLabel="F" itemValue="F"/>
+                                 </p:selectOneRadio>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.curp}"/>
+                             </p:column>
+                             <p:column>
+                                 <p:inputText value="#{oInfoResidentes.residentes.curp}"/>
+                             </p:column>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputLabel value="#{etiq.tel}" />
+                             </p:column>
+                             <p:column>
+                                 <p:inputText value="#{oInfoResidentes.residentes.telefono}"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column colspan="4" styleClass="ui-widget-header">
+                                 <h:outputLabel value="PERIODO 1"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.fechaInicial}" />
+                             </p:column>
+                             <p:column>
+                                 <p:calendar value="#{oInfoResidentes.residentes.inicio}" locale="es" />
+                             </p:column>
+                              <p:column styleClass="ui-widget-header">
+                                 <h:outputText value="#{etiq.fechaFinal}" />
+                              </p:column>
+                             <p:column>
+                                 <p:calendar value="#{oInfoResidentes.residentes.fin}" locale="es" />
+                             </p:column>
+                         </p:row>
+                         <f:facet name="footer" class="">
+                             <p:row>
+                                 <p:column colspan="4">
+                                     <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}"
+                                                      actionListener="#{oInfoResidentes.registraNuevoResidente()}">
+                                     </p:commandButton>
+                                 </p:column>
+                             </p:row>
+                         </f:facet>
+                     </p:panelGrid>
+                    <br/>
+                    
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

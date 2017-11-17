@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+<h:form class="centrar" id="frmBusqueda" >
+    <p:growl id="msgs" showDetail="true"/>
+    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+    <br/>
+    <h3 class="centrado_texto"><h:outputLabel value="#{etiq.generarHojaInd}"/></h3>
+    <br/>
+    <!--Componente de busqueda del paciente -->
+    <p:accordionPanel styleClass="centrar" id="apBusca" style="width: 700px">
+        <p:ajax event="tabChange" listener="#{oIndPacHosp.requerir}" update="@this, nom app exp" />
+        <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+            <p:panelGrid columns="4">
+                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                    <p:column></p:column>
+                    <p:inputText styleClass="bordes" id="nom" value="#{oIndPacHosp.pac.nombres}" onkeyup="this.value=this.value.toUpperCase();" required="#{oIndPacHosp.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>
+                    <p:inputText styleClass="bordes" id="app" value="#{oIndPacHosp.pac.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" required="#{oIndPacHosp.nom}" requiredMessage="Debe Ingresar Primer Apellido" onkeypress="return validaCaracter(event);"/>
+                    <p:inputText styleClass="bordes" id="apm" value="#{oIndPacHosp.pac.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" 
+                                     actionListener="#{oIndPacHosp.buscarPacientes(0)}" update=":frmBusqueda :frmBusqueda:dtDatos"/>
+            </p:panelGrid>
+        </p:tab>
+        <p:tab title="#{etiq.buscarPorExpediente}" id="tabE">
+            <p:panelGrid columns="3" styleClass="frmlogin">
+                <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                <p:inputText styleClass="bordes" id="exp" value="#{oIndPacHosp.pac.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" required="#{oIndPacHosp.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                    <f:validateLongRange minimum="0" maximum="9999999999"/>
+                </p:inputText>
+                <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" 
+                                 actionListener="#{oIndPacHosp.buscarPacientes(1)}" update=":frmBusqueda :frmBusqueda:dtDatos"/>
+            </p:panelGrid>
+        </p:tab>
+    </p:accordionPanel>
+    <br/>
+    <p:dataTable id="dtDatos"
+               var="oPacNew" paginator="true" rows="10"
+               value="#{oIndPacHosp.listaPac}"
+               emptyMessage="#{etiq.noRegistro}"
+               rendered="#{not empty oIndPacHosp.listaPac}" styleClass="centrar">
+        <p:column style="width: 100px" >
+            <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.noExp}"/> </f:facet>
+            <p:outputLabel value="#{oPacNew.expediente.numero}"/>
+        </p:column>
+        <p:column style="width: 180px" >
+            <f:facet name="header" > <h:outputText  style="font-weight: bold; " value="#{etiq.nombre}"/> </f:facet>
+            <p:outputLabel value="#{oPacNew.nombreCompleto}"/>
+        </p:column> 
+        <p:column style="width: 100px" >
+            <f:facet name="header" > <h:outputText style="font-weight: bold" value="#{etiq.fechanac}"/> </f:facet>
+            <p:outputLabel value="#{oPacNew.fechaNac}">
+                <f:convertDateTime pattern="dd/MM/yyyy" type="Date" timeZone="America/Mexico_City"/>
+            </p:outputLabel>
+        </p:column>
+        <p:column style="width: 90px">
+            <f:facet name="header" > <h:outputText style="font-weight: bold" value="#{etiq.edad}"/> </f:facet>
+            <p:outputLabel value="#{oPacNew.edadNumero}"/>
+        </p:column>
+        <p:column style="width: 50px" >
+            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.sexo}"/> </f:facet>
+            <p:outputLabel value="#{oPacNew.sexoP}"/>
+        </p:column>
+        <p:column style="width: 110px" >
+            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.curp}"/> </f:facet>
+            <p:outputLabel value="#{oPacNew.curp}"/>
+        </p:column>
+        <p:column style="width: 200px" >
+            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.municipio}"/> </f:facet>
+            <p:outputLabel value="#{oPacNew.municipio.descripcionMun}"/>
+        </p:column>
+        <p:column style="width: 100px" >
+            <f:facet name="header" > <h:outputText style="font-weight: bold;" value=""/> </f:facet>
+            <p:commandButton value="#{etiq.seleccionar}" icon="ui-icon-check" update=":frmIngDatos :frmIngDatos:pgInicio :frmBusqueda:msgs" 
+                             actionListener="#{oIndPacHosp.buscaIndicaciones(oPacNew.folioPaciente)}">
+            </p:commandButton>
+        </p:column>
+    </p:dataTable>
+</h:form>
+<p:dialog header="" widgetVar="dlgIngDatos" showEffect="bounce" hideEffect="puff"
+          resizable="false" modal="true" height="550" width="1100" style="text-align: center">
+    <h:form id="frmIngDatos">
+        <p:panelGrid style="width:1000px; background-color: #ffffff;" id="pgInicio" >
+                <p:row >
+                    <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                        <h:graphicImage  value="/imgs/logo-salud.jpg" style="width: 100%;"/>
+                    </p:column>
+                    <p:column colspan="4" style="background-color: #ffffff; text-align: center;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                        <h1><h:outputText value="#{etiq.hrrb}"/></h1>  
+                        <h2><h:outputText value="#{etiq.siece}"/></h2>
+                    </p:column>
+                    <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                        <h:graphicImage  value="/imgs/logo-hrrb.jpg" style="width: 100%"/>
+                    </p:column>
+                </p:row>  
+            <p:row>
+                <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;"><h:outputLabel value="#{etiq.indicacionPacHosp}"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="1" style="text-align: left;background-color: #ffffff"><p:outputLabel style="font-weight: bold; " value="#{etiq.pacien}:"/></p:column>
+                <p:column colspan="1" style="width: 220px;background-color: #ffffff" ><p:outputLabel  value="#{oIndPacHosp.procedimiento.episodioMedico.paciente.nombreCompleto}"/></p:column>
+                <p:column colspan="1" style="text-align: left; width: 115px;background-color: #ffffff"><p:outputLabel style="font-weight: bold; "  value="#{etiq.noExp}:"/></p:column>
+                <p:column colspan="1" style="background-color: #ffffff"><p:outputLabel value="#{oIndPacHosp.procedimiento.episodioMedico.paciente.expediente.numero}"/></p:column>
+                <p:column colspan="1" style="text-align: left;background-color: #ffffff"><p:outputLabel style="font-weight: bold; " value="#{etiq.nombCirugia}:"/></p:column>
+                <p:column colspan="1" style="background-color: #ffffff"><p:outputLabel value="#{oIndPacHosp.procedimiento.CIE9.clave} - #{oIndPacHosp.procedimiento.CIE9.descripcion}"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="1" style="text-align: left;background-color: #ffffff"><p:outputLabel style="font-weight: bold;"  value="#{etiq.fechaIngreso}:"/></p:column>
+                <p:column colspan="1" style="background-color: #ffffff">
+                    <p:outputLabel value="#{oIndPacHosp.procedimiento.fechaPropInternacion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column colspan="1" style="text-align: left; width: 115px;background-color: #ffffff" ><p:outputLabel  style="font-weight: bold; " value="#{etiq.tipoCirugia}:"/></p:column>
+                <p:column colspan="1" style="background-color: #ffffff"><p:outputLabel value="#{oIndPacHosp.procedimiento.tipoCir}"/></p:column>
+                <p:column colspan="1" style="text-align: left;background-color: #ffffff"><p:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.servicio}: "/></p:column>
+                <p:column colspan="1" style="background-color: #ffffff"><p:outputLabel value="#{oIndPacHosp.procedimiento.episodioMedico.area.descripcion}"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="1" style="text-align: left;background-color: #ffffff"><p:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.fechValoPres}: "/></p:column>
+                <p:column colspan="2" style="background-color: #ffffff">
+                    <p:outputLabel value="#{oIndPacHosp.procedimiento.fechaValAnestesica}">
+                        <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column colspan="1" style="text-align: left;background-color: #ffffff">
+                    <p:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.fechaHoraCirugia}: "/>
+                </p:column>
+                <p:column colspan="2" style="background-color: #ffffff">
+                    <p:outputLabel value="#{oIndPacHosp.procedimiento.fechaProgramada}">
+                        <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="6" styleClass="centrar" style="background-color: #ffffff;border-color: #ffffff;border-top-color: #ffffff;border-left-color: #ffffff;">
+                    <iframe style="width: 1000px; height: 900px; border-style: none; background-color: #ffffff;" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/indicaciones.html"/>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print">
+                <p:printer target="pgInicio"/>
+        </p:commandButton>
+    </h:form> 
+</p:dialog>
+<div>
+    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px">
+        <f:facet name="start">
+            <p:graphicImage value="/imgs/loading.gif"/>
+        </f:facet>
+    </p:ajaxStatus>
+</div>
+</ui:define>
+</ui:composition>
+</html>

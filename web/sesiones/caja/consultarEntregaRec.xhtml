@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.consultarEntregaRec}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+
+        <div class="centrado_texto">
+            <center>
+            <h:form>
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.tipoRec}:"></p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{oConsultarEntRec.rec.tipoParametro}" required="true" requiredMessage="Seleccione un tipo de recibo." >
+                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                <f:selectItems value="#{oConsultarEntRec.tiposRecibo}" var="oRec" itemLabel="#{oRec.valor}" itemValue="#{oRec.tipoParametro}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.entregadosDel}:"></p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaIni" value="#{oConsultarEntRec.fechai}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha inicial.">
+                                <p:ajax event="dateSelect" update="fechaFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.al}:"></p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaFin" value="#{oConsultarEntRec.fechaf}" 
+                                        mindate="#{oConsultarEntRec.fechai}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha final.">
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" actionListener="#{oConsultarEntRec.preBusqueda}"
+                                             icon="ui-icon-search"  styleClass="frm_login" 
+                                             update="dtEntregaRec mensajes">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:dataTable id="dtEntregaRec"  rows="5" value="#{oConsultarEntRec.foliosCaja}" var="oER"
+                             styleClass="centrado_texto" style="#{oConsultarEntRec.activaTabla}" 
+                             emptyMessage="#{etiq.emptydataTable}">
+                    <f:facet name="header">
+                        <h:outputText value="#{oConsultarEntRec.rec.valor}"></h:outputText>
+                    </f:facet>
+                    <p:column width="20%" headerText="#{etiq.fechaEntrega}">
+                        <h:outputText value="#{oER.fechaAsignacion}">
+                            <f:convertDateTime pattern="dd-MM-yyyy HH:mm"></f:convertDateTime>
+                        </h:outputText>
+                    </p:column>
+                    <p:column width="10%%" headerText="#{etiq.folioi}">
+                        <h:outputText value="#{oER.folioInicial}" />
+                    </p:column>
+                    <p:column width="10%" headerText="#{etiq.foliof}">
+                        <h:outputText value="#{oER.folioFinal}" />
+                    </p:column>
+                    <p:column width="10%" headerText="#{etiq.cantidad}">
+                        <h:outputText value="#{oER.cantidad}" />
+                    </p:column>
+                    <p:column width="30%" headerText="#{etiq.cajero}">
+                       <h:outputText value="#{oER.recibe.nombreCompleto}"></h:outputText>
+                    </p:column>
+                    <p:column width="20%" headerText="#{etiq.caja}">
+                        <h:outputText value="#{oER.caja.tipoCaja.valor}"></h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+            </center>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.solCeye}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="form">
+                <h:panelGrid id="panelBusqueda" class="frm_centrado" columns="5">
+                    <p:outputLabel value="#{etiq.fecha}:" styleClass="mensaje"/>    
+                    <p:calendar id="fechaSolicitudVale"  value="#{oSolicitudesCEYE.vale.fechaEmision}"
+                                locale="es"  required="true" requiredMessage="Ingresa una Fecha" >
+                        <p:ajax event="dateSelect" ></p:ajax>
+                    </p:calendar>
+                    <p:commandButton id="btnBusFecha" icon="ui-icon-search" 
+                                     value="#{etiq.buscar}" 
+                                     actionListener="#{oSolicitudesCEYE.buscaSolicitudes}"
+                                     update="tablaSolicitudes btnConsultar">
+                    </p:commandButton>
+                </h:panelGrid>
+                <br/>
+                 <p:dataTable id="tablaSolicitudes"
+                              value="#{oSolicitudesCEYE.listaSolicitudesCEYE}"
+                              var="oSolicitudes"
+                              emptyMessage="#{etiq.noDatos}" 
+                              style="width: 1000px; visibility: #{oSolicitudesCEYE.visibilidad}" 
+                              styleClass="frm_centrado" 
+                              rowKey="#{oSolicitudes.idHoja}" 
+                              selection="#{oSolicitudesCEYE.seleccionado}">
+                     <p:ajax event="rowSelectRadio"></p:ajax>
+                    <p:column selectionMode="single" style=" width: 20px"></p:column>
+                     <p:column style="width: 80px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.servicio}"/>
+                        </f:facet>
+                         <h:outputText value="#{oSolicitudes.areaSolicita.descripcion}"/>
+                    </p:column>
+                    <p:column style="width: 180px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.enfSol}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oSolicitudes.personal.nombreCompleto}"/>
+                    </p:column>     
+                    <p:column style="width: 100px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.fecha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.fechaEmision}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="btnConsultar"  value="#{etiq.consultar}" icon="ui-icon-search"
+                                         onclick="PF('conVales').show();" type="button" 
+                                         style=" visibility: #{oSolicitudesCEYE.visibilidad}">
+                    <p:ajax listener="#{oSolicitudesCEYE.llenaDatos()}"
+                            update="panel_Solicitud tabla_Material"></p:ajax>
+                </p:commandButton>
+                <!--Consulta Solicitud de material a CEYE -->
+                <p:dialog header="#{etiq.solicitudCeye}" widgetVar="conVales" 
+                          style="width: 900px" resizable="false" modal="true">
+                    <p:panelGrid id="panel_Solicitud" styleClass="frm_centrado" style=" width: 850px">
+                        <f:facet name="header">
+                            <p:row>                         
+                                <p:column>
+                                    <h:outputLabel value="#{etiq.servicio}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel value="#{etiq.enfSol}"/>  
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{etiq.fecha} Emision"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{etiq.fecha} Surtido"/>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="#{oSolicitudesCEYE.vale.areaSolicita.descripcion}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{oSolicitudesCEYE.vale.personal.nombreCompleto}"/>  
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{oSolicitudesCEYE.vale.fechaEmision}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{oSolicitudesCEYE.fechaHoy}" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:dataTable id="tabla_Material" 
+                                 value="#{oSolicitudesCEYE.vale.arrDetalle}"                                            
+                                 var="oDetalles"
+                                 emptyMessage="No Hay Datos" 
+                                 style=" width: 850px" 
+                                 class="frm_centrado" 
+                                 editable="true" editMode="cell">
+                        <p:ajax event="cellEdit" listener="#{oSolicitudesCEYE.editaCantidad}" 
+                        update=":form:messages" />
+                        <p:ajax event="rowSelect" update=":form:messages" />
+                        <p:column headerText="Clave"> 
+                            <h:outputText value="#{oDetalles.idDetValeColectivo}"/>
+                        </p:column>
+                        <p:column headerText="Clave Material"> 
+                            <h:outputText value="#{oDetalles.material.claveMat}"/>
+                        </p:column>
+                        <p:column headerText="#{etiq.material}">
+                            <h:outputText  value="#{oDetalles.material.nombre}"/>
+                        </p:column>
+                        <p:column headerText="#{etiq.cantidadSol}">
+                            <h:outputText value="#{oDetalles.cantSolicitada}"/>
+                        </p:column>
+                        <p:column headerText="#{etiq.cantidadSur}"> 
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{oDetalles.cantSurArea}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{oDetalles.cantSurArea}" label="cantSurtida"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="btnGuardar" icon="ui-icon-disk" value="#{etiq.guardar}">
+                                <p:ajax listener="#{oSolicitudesCEYE.almacena()}" process="@this"
+                                        update=":form:tabla_Material :form:messages" />
+                            </p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                    <p:growl id="messages" showDetail="true" />
+                    <br/>
+                </p:dialog> 
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

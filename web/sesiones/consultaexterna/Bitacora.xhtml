@@ -1,0 +1,2378 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+
+  <ui:define name="cuerpo">
+    <div>
+             
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+    <h3 class="centrado_texto"><p:outputLabel id="titCambCons" value="#{etiq.consultarBitacora}"/></h3>
+            
+    <p:tabView styleClass="centrado_texto">
+        <p:tab title="#{etiq.bitacoraDiaria}">
+            <h:form>
+                <h:panelGrid columns="3" class="frm_centrado">
+                    <h:outputLabel id="fecCambCons" value="#{etiq.fecha}" class="mensaje"/>
+                    <p:calendar  id="tFecConsulta" value="#{oCamCons.asigCon.fechaConsulta}" effect="fold" locale="es" required="true"  requiredMessage="Error: Se requiere una fecha"  disabledWeekends="true" pattern="dd/MM/yy"  readonlyInput="true">
+                    </p:calendar> 
+                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" update="tablaConsul titCambCons">
+                    </p:commandButton>
+                </h:panelGrid>
+
+                <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+                <h3 class="centrado_texto"><p:outputLabel id="titCambCons" value="#{oCamCons.asigCon.fechaConsulTexto}"/></h3>
+        
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasPorMedico()}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.bitacoraDiaria}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="DetalleBitacora" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+              
+       </h:form>
+       </p:tab>
+          
+        <p:tab title="#{etiq.bitacoraMensual}">
+            <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('01')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(1)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--**************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('02')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(2)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('03')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(3)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('04')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(4)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('05')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(5)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('06')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(6)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('07')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(7)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('08')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(8)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('09')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(9)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('10')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(10)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('11')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(11)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('12')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(12)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('13')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(13)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('14')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(14)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('15')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(15)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('16')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(16)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('17')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(17)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('18')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(18)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('19')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(19)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('20')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(20)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('21')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(21)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('22')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(22)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('23')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(23)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('24')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(24)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('25')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(25)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('26')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(26)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('27')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(27)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('28')}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(28)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('29')}" styleClass="#{oCamCons.asigCon.muestraDia(29)}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(29)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+                <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('30')}" styleClass="#{oCamCons.asigCon.muestraDia(30)}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(30)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+         <!--*********************************************************************************************************-->
+         <h:form>
+             <p:dataTable id="tablaConsul" var="oCamVar" value="#{oCamCons.asigCon.buscaCitasMensuales('31')}" styleClass="#{oCamCons.asigCon.muestraDia(31)}" emptyMessage="#{etiq.noDatos}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{oCamCons.asigCon.fechaMensual}"/>
+                    </f:facet>
+             
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="#{etiq.medico}" styleClass="mensaje centrado_texto" style="width: 30%">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.consultorio}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.turno}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.servicio}" styleClass="mensaje centrado_texto">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.maximoDePacientes}" styleClass="mensaje centrado_texto columnamed">
+                        </p:column>
+                        <p:column colspan="3" headerText="#{etiq.pacientesCitados}" styleClass="mensaje">
+                        </p:column>
+                        <p:column rowspan="2" headerText="#{etiq.accion}" styleClass="mensaje columnamed3">
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="#{etiq.primVez}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.subs}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                        <p:column headerText="#{etiq.total}" styleClass="mensaje centrado_texto columnamed2">
+                        </p:column>
+                    </p:row>
+                </p:columnGroup>
+                
+                    <p:column styleClass="textoIzq">
+                        <h:outputText value="#{oCamVar.PH.apPaterno} #{oCamVar.PH.apMaterno} #{oCamVar.PH.nombres}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.cons.noConsultorio}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.turno.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{oCamVar.areaServicio.descripcion}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.maximo}" />
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citas1eraVez}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasSubs}"/>
+                    </p:column>
+                    <p:column styleClass="centrado_texto">
+                        <h:outputText value="#{oCamVar.citasTotales}" />
+                    </p:column>
+                    <p:column  styleClass="centrado_texto">
+                        <p:commandButton value="#{etiq.ver}" icon="ui-icon-search" action="#{oCamCons.asigCon.DaFormatoNuevaFecha(31)}" ajax="false">
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.noTarjeta}" value="#{oCamVar.PH.noTarjeta}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apPaterno}" value="#{oCamVar.PH.apPaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.apMaterno}" value="#{oCamVar.PH.apMaterno}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.PH.nombres}" value="#{oCamVar.PH.nombres}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.cons.noConsultorio}" value="#{oCamVar.cons.noConsultorio}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.clave}" value="#{oCamVar.areaServicio.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.maximo}" value="#{oCamVar.maximo}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.turno.clave}" value="#{oCamVar.turno.clave}" />
+                        <f:setPropertyActionListener target="#{oCamCons.asigCon.areaServicio.descripcion}" value="#{oCamVar.areaServicio.descripcion}" />
+                        </p:commandButton>
+                    </p:column>
+         </p:dataTable>
+         </h:form>
+        </p:tab>
+    </p:tabView>
+   </div>
+      <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+     </p:ajaxStatus> 
+  </ui:define>      
+</ui:composition>
+</html>

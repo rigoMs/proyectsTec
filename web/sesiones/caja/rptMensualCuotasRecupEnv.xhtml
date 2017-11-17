@@ -1,0 +1,450 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.rptCuotasEnviadas}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{etiq.cuotasRecEnv}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaIni" value="#{rptCuotasEnv.rpt.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha inicial.">
+                                <p:ajax event="dateSelect" update="fechaFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{etiq.al}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaFin" value="#{rptCuotasEnv.rpt.fechaF}" 
+                                        mindate="#{rptCuotasEnv.rpt.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha final.">                              
+                                <p:ajax></p:ajax>
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" actionListener="#{rptCuotasEnv.preBusqueda}"
+                                             update="mensajes panel print" icon="ui-icon-search"  styleClass="frm_login" >
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:panel id="panel" style="border: none;#{rptCuotasEnv.activaTabla}">
+                    <p:panelGrid style="width: 800px;">
+                        <p:row>
+                            <p:column style="width: 150px; border-color: #FFFFFF;">
+                                <img src="#{facesContext.externalContext.requestContextPath}/imgs/ss.jpg"
+                                          align="middle"/> 
+                            </p:column>
+                            <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                <h:outputText value="#{etiq.servSalud}"></h:outputText><br/>
+                                <h:outputText value="#{etiq.dirAdmon}"></h:outputText><br/>
+                                <h:outputText value="#{etiq.subRecFinancieros}"></h:outputText><br/>
+                                <h:outputText value="#{etiq.departamentoConta}"></h:outputText><br/>
+                            </p:column>
+                            <p:column style="width: 150px;border-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-left-color: #FFFFFF;border-right-color: #FFFFFF;" colspan="3" styleClass="centrado_texto_negritas">
+                                <h:outputText value="#{etiq.jurisdiccionHRRB}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <h:outputText value="#{etiq.importeCuotasRecup}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-left-color: #FFFFFF;border-right-color: #FFFFFF; border-bottom-color: #FFFFFF;" colspan="3">
+                                <h:outputText value="Fecha: Marzo de 2015"></h:outputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panelGrid styleClass="centrado_texto_negritas" style="width: 800px; font-size: smaller;">
+                        <p:row>
+                            <p:column style="width: 24%;" colspan="3">
+                                <h:outputText value="#{etiq.clave}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;" colspan="4"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="width: 8%;border-right-color: #FFFFFF;">
+                                <h:outputText value="CTA."></h:outputText>
+                            </p:column>
+                            <p:column style="width: 8%;border-left-color: #FFFFFF;border-right-color: #FFFFFF;">
+                                <h:outputText value="S.C."></h:outputText>
+                            </p:column>
+                            <p:column style="width: 8%;">
+                                <h:outputText value="S.S.C"></h:outputText>
+                            </p:column>
+                            <p:column style="border-top-color: #FFFFFF;border-right-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.tituloCtaConcep}"></h:outputText>
+                            </p:column>
+                            <p:column style="width: 15%;border-top-color: #FFFFFF;border-right-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.parcial}"></h:outputText>
+                            </p:column>
+                            <p:column style=" width: 15%;border-top-color: #FFFFFF;border-right-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.debe}"></h:outputText>
+                            </p:column>
+                            <p:column style=" width: 15%;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.haber}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panelGrid style="width: 800px;font-size: smaller;">
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="11203"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align:  left;">
+                                <h:outputText value="#{etiq.bancos}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="width: 8%;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="width: 8%;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00001"></h:outputText>
+                            </p:column>
+                            <p:column style="width: 8%;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.bitalSA}"></h:outputText>
+                            </p:column>
+                            <p:column style=" width: 15%;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style=" width: 15%;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style=" width: 15%;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00003"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.ctaCuotasRecup}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="21205"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.acreedoresDiv}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.por15}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00003"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.entero10Est}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00030"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.subRRB}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.entero10}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00004"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.entero5Fed}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00030"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.subRRB}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.entero5}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="51101"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.resultIngresos}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.por85}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00003"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.cuotasRecup}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00003"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.subRRB}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.por85}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="61112"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.cuotasRecupxIngresar}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="21206"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.hospGral}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00030"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.subRRB}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="61113"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.cuotasRecupIngresadas}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="00102"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="text-align:  left;border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.hospitales}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-top-color: #FFFFFF;">
+                                <h:outputText value="00030"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align:  left;border-top-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.subRRB}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-top-color: #FFFFFF;text-align: right;">
+                                <h:outputText value="#{rptCuotasEnv.rpt.total}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="border-top-color: #FFFFFF;"></p:column>
+                            <p:column style="border-top-color: #FFFFFF;"></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="text-align: right;font-weight: bold;" colspan="5">
+                                <h:outputText value="#{etiq.sumasIguales}"></h:outputText>
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <h:outputText value="$ #{rptCuotasEnv.rpt.debe}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                            <p:column style="text-align: right;">
+                                <h:outputText value="$ #{rptCuotasEnv.rpt.haber}">
+                                    <f:convertNumber locale="MXN" minFractionDigits="2" maxFractionDigits="2"></f:convertNumber>
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                    <br/><br/><br/><br/><br/>
+                    <p:panelGrid style="width: 800px; font-size: small;">
+                        <p:row>
+                            <p:column style="border-bottom-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.hechox}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.departamentoCtrlPresupuestal}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.subRecFinancieros}"></h:outputText>
+                            </p:column>
+                            <p:column style="border-bottom-color: #FFFFFF;">
+                                <h:outputText value="#{etiq.polizaNo}"></h:outputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="border-top: #FFFFFF;"></p:column>
+                            <p:column style="border-top: #FFFFFF;">
+                                <h:outputText value="C.P. Carlos Gonzales Cruz"></h:outputText>
+                            </p:column>
+                            <p:column style="border-top: #FFFFFF;">
+                                <h:outputText value="C.P. Rafael Mendez Escobar"></h:outputText>
+                            </p:column>
+                            <p:column style="border-top: #FFFFFF;"></p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+                <p:commandButton id="print" style="#{rptCuotasEnv.activaTabla}" value="#{etiq.imprimir}">
+                    <p:printer target="panel"></p:printer>
+                </p:commandButton>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

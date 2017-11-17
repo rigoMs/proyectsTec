@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/> 
+                <div style="text-align: left;">
+                    <h:form>
+                        <p:outputLabel for="date" value="#{etiq.año}: " />
+                        <p:inputMask id="date" value="#{oTemps.anio}" mask="2099" style="width: 35px;" onkeypress="#{oTemps.cargaLista()}">
+                            <p:ajax update=":form:tblTem"/>
+                        </p:inputMask>
+                    </h:form>
+                </div>          
+                <div class="centrado_texto">
+                    <h:form id="frmselect" style=" margin-top: -27px;">
+                        <p:growl id="msgs" showDetail="true" /> 
+                        <p:outputLabel value="#{etiq.mes}: " />
+                        <p:selectOneMenu id="meses" value="#{oTemps.mesBusqueda}">
+                            <f:selectItem itemLabel="Enero" itemValue="01" />
+                            <f:selectItem itemLabel="Febrero" itemValue="02" />
+                            <f:selectItem itemLabel="Marzo" itemValue="03" />
+                            <f:selectItem itemLabel="Abril" itemValue="04" />
+                            <f:selectItem itemLabel="Mayo" itemValue="05" />
+                            <f:selectItem itemLabel="Junio" itemValue="06" />
+                            <f:selectItem itemLabel="Julio" itemValue="07" />
+                            <f:selectItem itemLabel="Agosto" itemValue="08" />
+                            <f:selectItem itemLabel="Septiembre" itemValue="09" />
+                            <f:selectItem itemLabel="Octubre" itemValue="10" />
+                            <f:selectItem itemLabel="Noviembre" itemValue="11" />
+                            <f:selectItem itemLabel="Diciembre" itemValue="12" />
+                            <p:ajax update=":form:tblTem msgs" listener="#{oTemps.cargaLista()}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="     #{etiq.turno}: " /> 
+                        <p:selectOneMenu id="turno" value="#{oTemps.turno}">
+                            <f:selectItem itemLabel="Matutino" itemValue="1" />
+                            <f:selectItem itemLabel="Vespertino" itemValue="2" />
+                            <f:selectItem itemLabel="Nocturno" itemValue="3" />
+                            <p:ajax update=":form:tblTem msgs" listener="#{oTemps.cargaLista()}"/>
+                        </p:selectOneMenu>  
+                    </h:form> 
+
+                    <br/>
+                    <div class="table">
+                        <h:form id="form" >
+                            <p:dataTable 
+                                var="oTem"                         
+                                id="tblTem"
+                                value="#{oTemps.lista}"  
+                                editable="true" 
+                                style="text-align: center;"
+                                emptyMessage="#{etiq.noMedicamentosRegistrados}">
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.regTem} #{etiq.de} "/>
+                                    <h:outputText value="#{oTemps.mes}"/>
+                                    <h:outputText value=" #{etiq.turno} "/>
+                                    <h:outputText value="#{oTemps.nomTurno}"/>
+                                </f:facet>       
+                                <p:ajax event="rowEdit" listener="#{oTemps.onEdit}" update=":form:messages"/>
+                                <p:ajax event="rowEditCancel" listener="#{oTemps.onCancel}" update=":form:messages" />
+
+                                <p:column headerText="#{etiq.dia}"> 
+                                    <h:outputText value="#{oTem.registro.date}"/>    
+
+                                </p:column>
+                                <p:column headerText="#{etiq.tempAmbiental}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">    
+                                            <h:outputText value="#{oTem.temAmb}"/>
+                                        </f:facet>
+                                        <f:facet name="input">    
+                                            <p:inputText value="#{oTem.temAmb}" title="#{etiq.tempAmbiental}" required="true" requiredMessage="Ingrese Temperatura Ambiental" converterMessage="Temp. Ambiental, Solo ingresar números"/>                      
+                                        </f:facet>
+                                    </p:cellEditor>    
+                                </p:column>     
+                                <p:column headerText="#{etiq.humAmbiental}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">    
+                                            <h:outputText value="#{oTem.humAmb}"/>
+                                        </f:facet>
+                                        <f:facet name="input">    
+                                            <p:inputText value="#{oTem.humAmb}" title="#{etiq.humAmbiental}" required="true" requiredMessage="Ingrese Humedad Ambiental" converterMessage="Hum. Ambiental, Solo ingresar números"/>                      
+                                        </f:facet>
+                                    </p:cellEditor>    
+                                </p:column> 
+                                <p:column headerText="#{etiq.tempRefri}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">    
+                                            <h:outputText value="#{oTem.temRef}"/>
+                                        </f:facet>
+                                        <f:facet name="input">    
+                                            <p:inputText value="#{oTem.temRef}" title="#{etiq.tempRefri}" required="true" requiredMessage="Ingrese Temperatura Refrigerador" converterMessage="Temp. Refrigerador, Solo ingresar números"/>                      
+                                        </f:facet>
+                                    </p:cellEditor>  
+                                </p:column> 
+                                <p:column headerText="#{etiq.edicion}" style="width:7%; text-align: center;">                    
+                                    <p:rowEditor>
+                                    </p:rowEditor>                                  
+                                </p:column>
+                            </p:dataTable>                    
+                            <p:growl id="messages" showDetail="true" />             
+                        </h:form>
+                    </div>        
+                </div>     
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

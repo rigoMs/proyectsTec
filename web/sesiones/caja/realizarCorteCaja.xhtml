@@ -1,0 +1,633 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.realizarCorteCaja}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <center>
+                <p:commandButton value="#{etiq.realizarCorte}"></p:commandButton>
+            </center>
+            <br/>
+            <p:tabView effect="fade" id="tabView1">
+                <p:tab title="#{etiq.informeIngrCoutasRec}" id="tab1" >
+                    <h:form>
+                        <p:panel id="panel" style="border: none;">
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column style="width: 150px; border-color: #FFFFFF;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/ss.jpg"
+                                          align="middle"/>  
+                                    </p:column>
+                                    <p:column styleClass="centrado_texto_negritas" style="width: 400px;border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.servSaludVer}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.hrrb}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 150px;border-color: #FFFFFF;"></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.informeIngrCoutasRec}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.cajaAuxde}:"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column>
+                                    </p:column>
+                                    <p:column styleClass="centrado_texto_negritas">
+                                        <h:outputText  value="#{etiq.concepto}" ></h:outputText>
+                                    </p:column>
+                                    <p:column styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.importe}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column styleClass="negrita">
+                                        <h:outputText value="#{etiq.totalGlobasServInsumos}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.totalGlobalServ}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.menos}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.subsidioPac}s"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.subsidio}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.exencionPac}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.exencion}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.exencionPacProgGratuitos}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.exencionProg}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column styleClass="negrita">
+                                        <h:outputText value="#{etiq.totalNetoServInsumos}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.totalNetoServ}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.mas}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.cxc} #{etiq.recuperadas}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.cxCRecuperadas}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.menos}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.cxc}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.cxC}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.reintegros}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.reintegro}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.totalRec}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infCR.totalRecuperado}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br></br>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column colspan="2" styleClass="centrado_texto">
+                                        <h:outputText value="#{etiq.recCRAnexos}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.recibos} #{etiq.utilizados}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="4832722 AL 4832736"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.recibos} #{etiq.cancelados}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRealizarCorte.infCR.recCanceladosCuotas}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.recibos} #{etiq.existentes}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="4832737 AL 4832850"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br></br>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column colspan="2" styleClass="centrado_texto">
+                                        <h:outputText value="#{etiq.comprobantesExencAnexos}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.comprobantes} #{etiq.utilizados}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value=""></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.comprobantes} #{etiq.cancelados}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRealizarCorte.infCR.recCanceladosExencion}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.comprobantes} #{etiq.existentes}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="4426219 AL 4426300"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br></br>
+                            <h:outputText value="#{etiq.rioBcoVer} 8 #{etiq.de} JULIO #{etiq.de} 2015"></h:outputText>
+                            <br/><br/><br/><br/>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.entregoEfectivo}"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="#{oRealizarCorte.infCR.cajeroAux}" style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.cajeroAux}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.nombreFirma}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;"></p:column>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.recibiEfectivo}"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="#{oRealizarCorte.infCR.cajeroGral}" style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.cajeroGral}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.nombreFirma}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:commandButton value="#{etiq.imprimir}">
+                            <p:printer target="panel" />
+                        </p:commandButton>
+                    </h:form>
+                    <br/>
+                </p:tab>
+                <p:tab id="tab2" title="#{etiq.informede} #{etiq.seguro} #{etiq.popular}">
+                    <h:form>
+                        <p:panel id="panel2" style="border: none;">
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column style="width: 150px; border-color: #FFFFFF;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/ss.jpg"
+                                          align="middle"/>  
+                                    </p:column>
+                                    <p:column styleClass="centrado_texto_negritas" style="width: 400px;border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.servSaludVer}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.hrrb}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 150px;border-color: #FFFFFF;"></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.informeServMedPropPac}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.sistProteccionSS}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.cajaAuxde}: #{oRealizarCorte.infSP.caja}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column style="width: 80px;"></p:column>
+                                    <p:column styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.concepto}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 150px;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.importe}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column></p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.total} #{etiq.de}  #{etiq.servicios} #{etiq.proporcionados}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{oRealizarCorte.infSP.total}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br></br>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column colspan="2" styleClass="centrado_texto">
+                                        <h:outputText value="#{etiq.comprobantesSegPopAnexos}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.comprobantes} #{etiq.utilizados}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value=""></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.comprobantes} #{etiq.cancelados}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRealizarCorte.infSP.recCancelados}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.comprobantes} #{etiq.existentes}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="4426219 AL 4426300"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br></br>
+                            <h:outputText value="#{etiq.rioBcoVer} 8 #{etiq.de} JULIO #{etiq.de} 2015"></h:outputText>
+                            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.entregoEfectivo}"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="#{oRealizarCorte.infCR.cajeroAux}" style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.cajeroAux}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.nombreFirma}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;"></p:column>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.recibiEfectivo}"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="#{oRealizarCorte.infCR.cajeroGral}" style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.cajeroGral}"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.nombreFirma}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:commandButton value="#{etiq.imprimir}">
+                            <p:printer target="panel2"></p:printer>
+                        </p:commandButton>
+                    </h:form>
+                </p:tab>
+                <p:tab id="tab3" title="#{etiq.registroGratuidadSinRec}">
+                    <h:form>
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.programa}:"></p:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu>
+                                        <f:selectItem itemValue="0"></f:selectItem>
+                                        <f:selectItem itemValue="1"></f:selectItem>
+                                        <f:selectItem itemValue="2"></f:selectItem>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                    <br/><br/>
+                    <h:form>
+                        <p:panel id="panel3" style="border: none;">
+                            <center>
+                                <p:outputLabel value="#{etiq.servSaludVer}"></p:outputLabel>
+                                <br/>
+                                <p:outputLabel value="#{etiq.hrrb}"></p:outputLabel>
+                                <br/>
+                                <p:outputLabel value="#{etiq.coordinacionRecFin}"></p:outputLabel>
+                                <br/>
+                                <p:outputLabel value="#{etiq.registroServMedGratuidadSRec}"></p:outputLabel>
+                            </center>
+                            <p:panelGrid style="width: 900px;">
+                                <p:row>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.clave}:"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <h:outputText value="32"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.nombre}:"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <h:outputText value="SERVICIO MEDICO A PERSONAL DE CONTRATO"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.fecha}:"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <h:outputText value="10/Julio/15"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 1100px;">
+                                <p:row>
+                                    <p:column style="border-bottom-color: #FFFFFF;">
+                                        <p:outputLabel value="#{etiq.num}."></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: #FFFFFF;">
+                                        <p:outputLabel value=""></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: #FFFFFF;">
+                                        <p:outputLabel value="#{etiq.numero} #{etiq.de}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: #FFFFFF; width: 80px;">
+                                        <p:outputLabel value="#{etiq.consulta} #{etiq.sub}."></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: #FFFFFF; width: 80px;">
+                                        <p:outputLabel value="#{etiq.laboratorio}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: #FFFFFF; width: 80px;">
+                                        <p:outputLabel value="#{etiq.radiologia}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: #FFFFFF; width: 80px;">
+                                        <p:outputLabel value="#{etiq.colpos}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column colspan="2" style="width: 160px;">
+                                        <p:outputLabel value="#{etiq.servicios} #{etiq.varios}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-bottom-color: #FFFFFF;">
+                                        <p:outputLabel value="#{etiq.total} #{etiq.por}"></p:outputLabel>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-top: #FFFFFF; width: 35px;" >
+                                        <p:outputLabel value="#{etiq.prog}." ></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF; width: 160px;">
+                                        <p:outputLabel value="#{etiq.nombrePaciente}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF;width: 80px;">
+                                        <p:outputLabel value="#{etiq.expediente}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF;">
+                                        <p:outputLabel value="010-03"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF;">
+                                        <p:outputLabel value="202-00"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF;">
+                                        <p:outputLabel value="302-00"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF;">
+                                        <p:outputLabel value="430-05"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF; width: 80px;">
+                                        <p:outputLabel value="#{etiq.clave}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF; width: 80px;">
+                                        <p:outputLabel value="#{etiq.costo}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column style="border-top: #FFFFFF;">
+                                        <p:outputLabel value="#{etiq.pacien}"></p:outputLabel>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <center>
+                                <p:dataTable value="#{oRealizarCorte.pacientesProg}" var="oPac" style="width: 1100px;">
+                                    <p:column style="width: 35px;">
+                                        <h:outputText value="#{oPac.numProg}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 160px;">
+                                        <h:outputText value="#{oPac.paciente.nombreCompleto}"></h:outputText>
+                                    </p:column> 
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="#{oPac.paciente.expediente.numero}"></h:outputText>
+                                    </p:column> 
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="#{oPac.consultaSub}"></h:outputText>
+                                    </p:column> 
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="#{oPac.laboratorio}"></h:outputText>
+                                    </p:column> 
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="#{oPac.radiologia}"></h:outputText>
+                                    </p:column> 
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="#{oPac.colposcopia}"></h:outputText>
+                                    </p:column> 
+                                    <p:column style="width: 180px;">
+                                        <p:dataTable value="#{oPac.servVarios}" var="oSerV">
+                                            <p:column>
+                                                <h:outputText value="#{oSerV.clave}"></h:outputText>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{oSerV.costoHospital}"></h:outputText>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column> 
+                                    <p:column>
+                                        <h:outputText value="#{oPac.total}"></h:outputText>
+                                    </p:column> 
+                                </p:dataTable>
+                            </center>
+                        </p:panel>
+                        <p:commandButton value="#{etiq.imprimir}">
+                            <p:printer target="panel3"></p:printer>
+                        </p:commandButton>                     
+                    </h:form>
+                </p:tab>
+                <p:tab id="tab4" title="#{etiq.reporteIncidencias}">
+                    <h:form>
+                        <p:panel id="panel4" style="border: none;">
+                            <center>
+                                <p:panelGrid style="width: 700px;">
+                                    <p:row>
+                                        <p:column style="width: 150px; border-color: #FFFFFF;">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/ss.jpg"
+                                              align="middle"/>  
+                                        </p:column>
+                                        <p:column styleClass="centrado_texto_negritas" style="width: 400px;border-color: #FFFFFF;">
+                                            <h:outputText value="#{etiq.servSaludVer}"></h:outputText>
+                                            <br/>
+                                            <h:outputText value="#{etiq.hrrb}"></h:outputText>
+                                        </p:column>
+                                        <p:column style="width: 150px;border-color: #FFFFFF;"></p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:panelGrid style="width: 700px;">
+                                    <p:row>
+                                        <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                            <h:outputText value="#{etiq.coordinacionRecFin}"></h:outputText>
+                                            <br/>
+                                            <h:outputText value="#{etiq.caja} #{etiq.general}"></h:outputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="3" style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                            <h:outputText value="#{etiq.rptIncidencias}"></h:outputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: #FFFFFF;">
+                                            <p:outputLabel value="#{etiq.cajaAuxServ}:"></p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:panelGrid style="width: 700px;">
+                                    <p:row>
+                                        <p:column style="width: 40px; border-color: #FFFFFF;">
+                                            <p:outputLabel value="#{etiq.turno}:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column style="border-color: #FFFFFF;">
+                                            <h:outputText></h:outputText>
+                                        </p:column>
+                                        <p:column style="width: 40px; border-color: #FFFFFF;">
+                                            <p:outputLabel value="#{etiq.fecha}:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column style="border-color: #FFFFFF;">
+                                            <h:outputText></h:outputText>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:dataTable  style="width: 700px;" value="">
+                                    <p:column width="40" headerText="#{etiq.num}.">
+                                        <h:outputText></h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.motivo}">
+                                        <h:outputText></h:outputText>
+                                    </p:column>
+                                </p:dataTable>
+                                <br/>
+                                <p:outputLabel value="#{etiq.copiasAnexasDoc}"></p:outputLabel>
+                            </center>
+                            <br/><br/>
+                            <p:panelGrid style="width: 700px;">
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.elaboro}:"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="#{oRealizarCorte.infCR.cajeroAux}" style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.responsableCajaAux}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;"></p:column>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.enterado}:"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="#{oRealizarCorte.infCR.cajeroGral}" style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.jefeCajaGral}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:commandButton value="#{etiq.imprimir}">
+                            <p:printer target="panel4" />
+                        </p:commandButton>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

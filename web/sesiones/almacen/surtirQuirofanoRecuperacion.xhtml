@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.QuirRec}"/>
+                </h2>
+
+                <div  class="centrado_texto">     
+                    <h:form id="quirofano"> 
+                        <p:outputLabel value="FECHA SURTIDO:" styleClass="mensaje"/>&nbsp;&nbsp;
+                        <p:outputLabel value="#{oQuirofano.detVale.fechaSurtidoRealizacion}" style="font-size: 17px;color: black; border-bottom: 2px  solid  black;" />  
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <p:outputLabel value="BUSCA POR FECHA:" styleClass="mensaje"/>&nbsp;
+                        <p:calendar  value="#{oQuirofano.vaColectivo.fechaEmision}" locale="es" mode="popup"  effect="fold" showOn="button"
+                                     placeholder="dd/mm/aa"  readonlyInput="true" id="fechaRecep"  pattern="dd/MM/yyyy" navigator="true"  
+                                     required="true"  requiredMessage="Ingrese Fecha de Recepcion" onkeypress="return validaCaracter(event)"
+                                     maxdate="#{oQuirofano.inven.fechaActual()}" >
+                        </p:calendar>  
+                        <p:commandButton value="buscar" actionListener="#{oQuirofano.rebotes}" update=":inicio:tblQuiro "  icon="ui-icon-search"/>                        
+                    </h:form>
+                </div>
+
+
+                <br/><br/> 
+
+
+
+
+                <div class="centrado_texto">
+                    <h:form id="inicio">
+                        <p:growl id="m" showDetail="true"/>
+
+                        <br/><br/>
+                        <p:dataTable var="quiro" value="#{oQuirofano.lista}" 
+                                     id="tblQuiro" emptyMessage="No Registrados"
+                                      editable="true"   
+                                      rowKey="#{quiro.vale.idHoja}#{quiro.material.claveMaterial}" 
+                                     selection="#{oQuirofano.selecion}"  >
+                            <p:ajax event="rowSelectRadio"></p:ajax>                   
+                            <p:column selectionMode="single" style=" width: 5px"></p:column>
+                            <f:facet name="header">
+                                LISTA DE SURTIDO
+                            </f:facet>
+
+
+
+                            <p:column headerText="CLAVE HOJA" width="5">                          
+                                <h:outputText value="#{quiro.vale.idHoja}"/>
+                            </p:column>
+
+                            <p:column headerText="CLAVE" width="20" >                                                          
+                                <h:outputText value="#{quiro.material.claveMaterial}"/>                              
+                            </p:column>  
+                            <p:column headerText="NOMBRE" width="10" >                                                          
+                                <h:outputText value="#{quiro.material.nombre}"/>                              
+                            </p:column>               
+                            <p:column headerText="PRESENTACION" width="10" >                                                          
+                                <h:outputText value="#{quiro.material.presentacion.valor}"/>                              
+                            </p:column>
+                            <p:column headerText="CANT.SOL." width="5">                                   
+                                <h:outputText value="#{quiro.cantSolicitada}" />                               
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="btnProQx" icon="ui-icon-note" value="ver detalles"
+                                                 process="tblQuiro"  onclick="PF('ProQx').show()"                                    
+                                                 update=":surtir:panel_Programa :surtir:pa :surtir:txtcve :surtir:txtcve  :surtir:tblE:btnGuardar" 
+                                                 actionListener="#{oQuirofano.llenaDatosProgramacion}"  rendered="#{oQuirofano.lista.size()>0}"> 
+                                </p:commandButton> 
+                            </f:facet>
+
+
+                        </p:dataTable >                       
+                    </h:form>
+                    <h:form id="surtir">     
+
+                        <p:dialog header="Surtir Materiales" widgetVar="ProQx"
+                                  showEffect="blind" hideEffect="blind" 
+                                  resizable="false" style="width: 600px" draggable="false" >
+                            <p:growl id="mm" showDetail="true"/>
+                            <p:panelGrid id="panel_Programa" style="width: 500px;"  columns="2" >  
+                                <p:outputLabel  value="CLAVE MATERIAL"/> 
+                                <h:outputText id="txtcve" 
+                                              value="#{oQuirofano.detVale.material.claveMaterial}-#{oQuirofano.detVale.material.nombre}" />    
+                                <p:outputLabel  value="CANTIDAD SOLICITADA"/>                                    
+                                <h:outputText id="txtcant" value="#{oQuirofano.detVale.cantSolicitada}"  />                                          
+                            </p:panelGrid>                                
+                            <p:panelGrid id="pa" style="width: 500px;">
+                                <p:row>
+                                    <p:column width="20">
+                                        <p:remoteCommand name="refreshFooter" update=":surtir:tblE:outputTotal"/>
+                                        <p:dataTable value="#{oQuirofano.listaLotesInven}" var="lis" editable="true" id="tblE"  >                                          
+                                            <p:ajax event="rowEdit" listener="#{oQuirofano.editaExistencia}" update=":surtir:mm :surtir:tblE:outputTotal :surtir:tblE:canSu"   />
+                                            <p:ajax event="rowEditCancel" listener="#{oQuirofano.onRowCancel}" update=":surtir:mm"  />
+                                            <p:column width="30" headerText="Lista de Lotes">
+                                                <h:outputLabel value="#{lis.lote}"/>
+                                            </p:column>
+                                            <p:column width="30" headerText="Existencia">
+                                                <h:outputLabel value="#{lis.existencia}"/>
+                                            </p:column>
+                                            <p:column headerText="CANTIDAD SURT." width="30" >                                         
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <h:outputText value="#{lis.cantSurtida}" />
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{lis.cantSurtida}" size="10" maxlength="5" id="canSu"
+                                                                     required="true" requiredMessage="Ingrese cantidad a solicitar"  label="cantidad surtidad" >
+                                                            <poue:keyFilter  regEx="/[0-9_]/i"/> 
+                                                            <p:ajax event="change" oncomplete="refreshFooter();"/>
+                                                            <p:ajax update=":surtir:tblE:canSu"/>
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor> 
+                                            </p:column>
+                                            <p:column  width="10"  >
+                                                <p:rowEditor />
+                                            </p:column>
+                                            <f:facet name="footer" >
+                                                <h:outputLabel    value="#{etiq.total}   "/> 
+                                                <h:outputLabel value="#{oQuirofano.total}" id="outputTotal"/> <br/>  
+                                                <p:commandButton  id="btnGuardar" value="#{etiq.guardar}" icon="ui-icon-disk" onclick="PF('guarda').show()" disabled="#{oQuirofano.showButton}" />                                    
+                                            </f:facet>
+                                        </p:dataTable>  
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:dialog>
+                    </h:form>
+
+ 
+
+
+
+
+
+
+
+
+
+                    <div align="center">
+                        <p:confirmDialog message="¿¿#{etiq.preguntaGuarda}??" style="background-color: lightblue"
+                                         showEffect="fold" hideEffect="fold"   
+                                         header="#{etiq.confirmar}" severity="alert" widgetVar="guarda">
+                            <h:form>
+                                <p:commandButton value="#{etiq.aceptar}" 
+                                                onclick="PF('guarda').hide()"  
+                                                update=":surtir :inicio:tblQuiro"  
+                                                actionListener="#{oQuirofano.eventoGuardar}"
+                                                icon="ui-icon-check" 
+                                                styleClass="ui-confirmdialog-yes" >
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.cancelar}"   onclick="PF('guarda').hide()"      icon="ui-icon-close" styleClass="ui-confirmdialog-no"/>
+                            </h:form>
+                        </p:confirmDialog>
+                    </div>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

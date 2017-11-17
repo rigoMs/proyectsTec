@@ -1,0 +1,728 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+                <h:form class="centrar">
+                    <br/><br/>
+                    <p:growl id="msgs" showDetail="true" />
+                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+
+                    <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1400px">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="border-color: transparent">
+                                <p:panelGrid styleClass="frm_centrado" style="width: 1380px" >
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                            <h:outputLabel class="negrita" value="#{etiq.fecha}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" rowspan="5" colspan="6" style="width: 480px">
+                                            <h:outputLabel value="#{etiq.cuadcompadq}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                            <h:outputLabel value="#{etiq.nodepe}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <p:outputLabel value="#{etiq.solicitud}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <h:outputLabel value="#{etiq.nodereq}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <h:outputLabel value="#{etiq.depsol}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" rowspan="3" colspan="2" style="text-align: left;">
+                                            <p:outputLabel value="#{etiq.justfgasto}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" rowspan="3" colspan="2" style="text-align: left;">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <p:outputLabel value="#{etiq.partidapr}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <p:outputLabel value="#{etiq.nombpartid}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                            <h:outputText value="" />
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1400px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="14" style="border-color: transparent">
+                                <p:dataTable id="dtCuadComp" value="" editable="true" var="oCuadComp"
+                                             style="width: 1380px" selection="" rowKey="">
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.partida}"  style="width: 4%"/>
+                                            <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.clve}" />
+                                            <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.desdet}" />
+                                            <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.presentacion}" style="width: 7%"/>
+                                            <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.fondofijo}" />
+                                            <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.existactual}" />
+                                            <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.cantapedir}" />
+                                            <p:column styleClass="ui-widget-header" colspan="9" headerText="#{etiq.cotizaciones}"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.pu}" />
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.proveedoruno}" />
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.totl} #{etiq.iva}1" />
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.pu}" />
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.proveedordos}" /> 
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.totl} #{etiq.iva}2" />
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.pu}" />
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.proveedortres}" />
+                                            <p:column styleClass="ui-widget-header" headerText="#{etiq.totl} #{etiq.iva}3" />
+                                        </p:row>
+                                    </p:columnGroup>
+
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="" />
+                                    </p:column>
+
+                                    <p:columnGroup type="footer">
+                                        <p:row>
+                                            <p:column footerText="Total Iva: " style="text-align: right;" colspan="7"/>
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                        </p:row>
+                                        <p:row>
+                                            <p:column footerText="Total: " style="text-align: right;" colspan="8"/>
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                            <p:column footerText="" style="text-align: center;" />
+                                        </p:row>
+                                    </p:columnGroup>
+
+
+                                </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1400px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="border-color: transparent">
+                                <p:panelGrid styleClass="frm_centrado" style="text-align: center;  width: 1380px;">
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <h:outputText value="" /><br/><br/>
+                                            <h:outputText value="" /><br/>
+                                            <h:outputLabel value="#{etiq.jefadquisiciones}" style="font-size: 10pt"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                            <h:outputText value="" /><br/><br/>
+                                            <h:outputText value="" /><br/>
+                                            <h:outputLabel value="#{etiq.coordrecmat}" style="font-size: 10pt"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                            <h:outputText value="" /><br/><br/>
+                                            <h:outputText value="" /><br/>
+                                            <h:outputLabel value="#{etiq.subdadm}" style="font-size: 10pt"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style=" width: 400px" >
+                                            <h:outputLabel value="#{etiq.proveedores}" style="text-align: center;"/><br/>
+                                            <h:outputLabel value="1.- " style="text-align: left"/><h:outputText  value="" /><br/><br/>
+                                            <h:outputLabel value="2.- " style="text-align: left"/><h:outputText value="" /><br/><br/>
+                                            <h:outputLabel value="3.- " style="text-align: left"/><h:outputText value="" /><br/><br/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1402px; ">
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-color: transparent">
+                                <p:commandButton value="#{etiq.agreg}" icon="ui-icon-folder-open" onclick="PF('dlgCuadComp').show()"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="1" styleClass="ui-widget-header" style="text-align: center; border-color: transparent">
+                                <p:commandButton value="#{etiq.imprimir}" icon="ui-icon-print" onclick="PF('dlgImpCuadComp').show()"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <p:dialog id="dlgCuadroComp" widgetVar="dlgCuadComp"  position="center" closable="true" dynamic="true" resizable="false"
+                              appendTo="@(body)" modal="true" showEffect="explode" hideEffect="slide" height="500px" width="1200px">
+
+                        <h:form id="pedido" class="centrar">
+                            <p:growl id="msgs" showDetail="true" />
+                            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                            <p:growl id="message" showDetail="true" />
+
+                            <p:panelGrid id="dtCuadCmp" style="width: 1650px; border-style: solid" >
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.registrocuadro}" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="text-align: left; width: 25%;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.solicitud}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <p:selectOneRadio id="solicitud" style="text-align: left; margin: 0px">
+                                            <f:selectItem itemLabel="NORMAL" itemValue="normal" />
+                                            <f:selectItem itemLabel="ESPECIAL" itemValue="especial" />
+                                        </p:selectOneRadio>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: left;" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.nodereq}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <p:autoComplete value=""  dropdown="true" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column  style="text-align: left;" styleClass="ui-widget-header">
+                                        <h:outputLabel class="negrita" value="#{etiq.depsol}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <h:outputText value="" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: left;" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.justfgasto}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <!--<p:inputText size="20" />-->
+                                        <h:outputText value="" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: left;" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.partidapr}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <h:outputText value="" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: left;" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.nombpartid}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <p:autoComplete value=""  dropdown="true" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="text-align: left; margin: 0px" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.descproveedoruno}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <p:selectOneMenu id="proveedoruno">
+                                            <f:selectItem itemLabel="Farmacia Siena, sa de cv" itemValue="Siena" />
+                                            <f:selectItem itemLabel="Luis A Alamillo Basquet" itemValue="Alamillo" />
+                                            <f:selectItem itemLabel="Instrumentos y Equipos sa de cv" itemValue="Instrumentos" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: left; margin: 0px" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.descproveedordos}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <p:selectOneMenu id="proveedordos">
+                                            <f:selectItem itemLabel="Farmacia Siena, sa de cv" itemValue="Siena" />
+                                            <f:selectItem itemLabel="Luis A Alamillo Basquet" itemValue="Alamillo" />
+                                            <f:selectItem itemLabel="Instrumentos y Equipos sa de cv" itemValue="Instrumentos" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: left; margin: 0px" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.descproveedortres}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px">
+                                        <p:selectOneMenu id="proveedortres">
+                                            <f:selectItem itemLabel="Farmacia Siena, sa de cv" itemValue="Siena" />
+                                            <f:selectItem itemLabel="Luis A Alamillo Basquet" itemValue="Alamillo" />
+                                            <f:selectItem itemLabel="Instrumentos y Equipos sa de cv" itemValue="Instrumentos" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <p:dataTable id="cuadComp" var="cuadC" value="" editable="true">
+
+                                            <p:column headerText="#{etiq.partida}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.clve}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.desdet}">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="" size="8"/></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.presentacion}">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="" size="8"/></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.fondofijo}">
+                                                <h:outputText value="......." />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.existactual}">
+                                                <h:outputText value="......." />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cantapedir}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="">
+                                                <p:rowEditor />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.pu}">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.proveedoruno}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.iva} % P1">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.totl} #{etiq.iva}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.pu}">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.proveedordos}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.iva} % P2">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.totl} #{etiq.iva}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.pu}">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.proveedortres}">
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column headerText="#{etiq.iva} % P3">
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="" /></f:facet>
+                                                    <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.totl} #{etiq.iva}">
+                                                <h:outputText value="" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="text-align: left; margin: 0px" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.nombre} #{etiq.jefadquisiciones}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px" >
+                                        <h:outputText value="" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="text-align: left; margin: 0px" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.nombre} #{etiq.coordrecmat}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px" >
+                                        <h:outputText value="" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="text-align: left; margin: 0px" styleClass="ui-widget-header">
+                                        <h:outputLabel value="#{etiq.nombre} #{etiq.subdadm}" />
+                                    </p:column>
+                                    <p:column style="text-align: left; margin: 0px" >
+                                        <h:outputText value="" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="text-align: center; border-right-color: transparent" colspan="2" styleClass="ui-widget-header">
+                                        <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" oncomplete="PF('dlgCuadComp').hide()" >
+                                            <p:ajax event="click" />
+                                        </p:commandButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <p:commandButton style="margin-left: 255px" value="#{etiq.volver}"  icon="ui-icon-arrowreturn-1-w" onclick="PF('dlgCuadComp').hide()" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="dlgImprimeCuadComp" widgetVar="dlgImpCuadComp"  position="center" closable="true" dynamic="true" resizable="false"
+                              appendTo="@(body)" modal="true" showEffect="explode" hideEffect="slide" height="520px" width="980px">
+                        <h:form id="imprequisicion" class="centrar">
+
+                            <p:growl id="msgs" showDetail="true" />
+                            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                            <p:growl id="message" showDetail="true" />
+
+                            <p:outputPanel id="cuadrocomp" >
+                                <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1400px" >
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: transparent">
+                                            <p:panelGrid style="text-align: center; width: 1380px">
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" style="border-right-color: transparent">
+                                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-gob-estado.jpg" style=" height: 60px; width: 100px"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-right-color: transparent">
+                                                        <h:outputLabel value="#{etiq.secsalud}" style="font-size: 12pt"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-right-color: transparent">
+                                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/hospital.png" style=" height: 60px; width: 100px"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-right-color: transparent; width: 600px">
+                                                        <h:outputLabel value="#{etiq.servcsal}" style="font-size: 14pt"/><br/>
+                                                        <h:outputLabel value="#{etiq.hrrbm}" style="font-size: 12pt"/><br/>
+                                                        <h:outputLabel value="#{etiq.coordinacionrecmat}" style="font-size: 10pt"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style="width: 400px">
+                                                        <h:outputLabel value="#{etiq.folio}:  " style="font-size: 14pt;"/> <h:outputLabel value="#{etiq.sf}" style="font-size: 14pt;" />
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1400px">
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: transparent">
+                                            <p:panelGrid styleClass="frm_centrado" style="width: 1380px" >
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                                        <h:outputLabel class="negrita" value="#{etiq.fecha}"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" rowspan="5" colspan="6" style="width: 480px">
+                                                        <h:outputLabel value="#{etiq.cuadcompadq}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                                        <h:outputLabel value="#{etiq.nodepe}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; width: 250px">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <p:outputLabel value="#{etiq.solicitud}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <h:outputLabel value="#{etiq.nodereq}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <h:outputLabel value="#{etiq.depsol}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" rowspan="3" colspan="2" style="text-align: left;">
+                                                        <p:outputLabel value="#{etiq.justfgasto}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" rowspan="3" colspan="2" style="text-align: left;">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <p:outputLabel value="#{etiq.partidapr}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <p:outputLabel value="#{etiq.nombpartid}" />
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left;">
+                                                        <h:outputText value="" />
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1400px;">
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="14" style="border-color: transparent">
+                                            <p:dataTable id="dtCuadComp" value="" editable="true" var="oCuadComp"
+                                                         style="width: 1380px" selection="" rowKey="">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.partida}" />
+                                                        <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.clve}" />
+                                                        <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.desdet}" />
+                                                        <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.presentacion}" />
+                                                        <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.fondofijo}" />
+                                                        <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.existactual}" />
+                                                        <p:column styleClass="ui-widget-header" rowspan="2" headerText="#{etiq.cantapedir}" />
+                                                        <p:column styleClass="ui-widget-header" colspan="6" headerText="#{etiq.cotizaciones}"/>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column styleClass="ui-widget-header" headerText="#{etiq.pu}" />
+                                                        <p:column styleClass="ui-widget-header" headerText="#{etiq.proveedoruno}" />
+                                                        <p:column styleClass="ui-widget-header" headerText="#{etiq.pu}" />
+                                                        <p:column styleClass="ui-widget-header" headerText="#{etiq.proveedordos}" /> 
+                                                        <p:column styleClass="ui-widget-header" headerText="#{etiq.pu}" />
+                                                        <p:column styleClass="ui-widget-header" headerText="#{etiq.proveedortres}" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+
+                                                <p:columnGroup type="footer">
+                                                    <p:row>
+                                                        <p:column footerText="Total Iva: " style="text-align: right;" colspan="7"/>
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column footerText="Total: " style="text-align: right;" colspan="8"/>
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                        <p:column footerText="" style="text-align: center;" />
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <p:panelGrid styleClass="frm_centrado" style="text-align: center; width: 1400px;">
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: transparent">
+                                            <p:panelGrid styleClass="frm_centrado" style="text-align: center;  width: 1380px;">
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header">
+                                                        <h:outputText value="" /><br/><br/>
+                                                        <h:outputText value="" /><br/>
+                                                        <h:outputLabel value="#{etiq.jefadquisiciones}" style="font-size: 10pt"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header">
+                                                        <h:outputText value="" /><br/><br/>
+                                                        <h:outputText value="" /><br/>
+                                                        <h:outputLabel value="#{etiq.coordrecmat}" style="font-size: 10pt"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header">
+                                                        <h:outputText value="" /><br/><br/>
+                                                        <h:outputText value="" /><br/>
+                                                        <h:outputLabel value="#{etiq.subdadm}" style="font-size: 10pt"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style=" width: 400px" >
+                                                        <h:outputLabel value="#{etiq.proveedores}" style="text-align: center;"/><br/>
+                                                        <h:outputLabel value="1.- " style="text-align: left"/><h:outputText  value="" /><br/><br/>
+                                                        <h:outputLabel value="2.- " style="text-align: left"/><h:outputText value="" /><br/><br/>
+                                                        <h:outputLabel value="3.- " style="text-align: left"/><h:outputText value="" /><br/><br/>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:outputPanel>
+                            <p:panelGrid id="dtImprCuadComp" style="width: 1400px;">
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-right-color: transparent">
+                                        <p:commandButton value="#{etiq.imprimir}" icon="ui-icon-print" oncomplete="PF('dlgImpCuadComp').hide()">
+                                            <p:printer target="cuadrocomp" />
+                                        </p:commandButton>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:commandButton value="#{etiq.volver}" icon="ui-icon-arrowreturn-1-w" oncomplete="PF('dlgImpCuadComp').hide()" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+    
+</html>

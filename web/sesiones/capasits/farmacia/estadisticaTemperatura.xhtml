@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <script type="text/javascript">
+                    function exportChart(grafica) {
+                        //export image
+                        if (grafica == 1) {
+                            $('#output').empty().append(PF('chartTemAmb').exportAsImage());
+                        }
+                        if (grafica == 2) {
+                            $('#output').empty().append(PF('chartTemRef').exportAsImage());
+                        }
+                        if (grafica == 3) {
+                            $('#output').empty().append(PF('chartHumAmb').exportAsImage());
+                        }
+                        //show the dialog
+                        PF('dlg').show();
+                    }
+                </script> 
+                <br/> 
+                <div style="text-align: left;">
+                    <h:form>
+                        <p:outputLabel for="date" value="Año: " />
+                        <p:inputMask id="date" value="#{estadistica.anio}" mask="2099" style="width: 35px;" onkeypress="#{estadistica.cargaListasYDatos()}">
+                            <p:ajax update=":grafica :frmfecha"/>
+                        </p:inputMask>
+                    </h:form>
+                </div>          
+                <div class="centrado_texto">
+                    <h:form id="frmselect" style=" margin-top: -27px;">
+                        <p:growl id="msgs" showDetail="true" /> 
+                        <p:outputLabel value="Mes: " />
+                        <p:selectOneMenu id="meses" value="#{estadistica.mesBusqueda}">
+                            <f:selectItem itemLabel="Enero" itemValue="01" />
+                            <f:selectItem itemLabel="Febrero" itemValue="02" />
+                            <f:selectItem itemLabel="Marzo" itemValue="03" />
+                            <f:selectItem itemLabel="Abril" itemValue="04" />
+                            <f:selectItem itemLabel="Mayo" itemValue="05" />
+                            <f:selectItem itemLabel="Junio" itemValue="06" />
+                            <f:selectItem itemLabel="Julio" itemValue="07" />
+                            <f:selectItem itemLabel="Agosto" itemValue="08" />
+                            <f:selectItem itemLabel="Septiembre" itemValue="09" />
+                            <f:selectItem itemLabel="Octubre" itemValue="10" />
+                            <f:selectItem itemLabel="Noviembre" itemValue="11" />
+                            <f:selectItem itemLabel="Diciembre" itemValue="12" />
+                            <p:ajax update=":grafica :frmfecha" listener="#{estadistica.cargaListasYDatos()}" onsuccess="location.reload();"/>
+                        </p:selectOneMenu>
+                    </h:form>
+
+                    <H2><h:form id="frmfecha">
+                            <h:outputLabel value="#{etiq.regTempde} "/>
+                            <h:outputLabel value="#{estadistica.mes}"/>
+                            <h:outputLabel value=" #{etiq.del} "/> 
+                            <h:outputLabel value="#{estadistica.anio}"/> 
+                        </h:form></H2>
+
+                    <h:form id="grafica" rendered="#{estadistica.verBotonesGrafica}">
+                        <br/>
+                        <p:chart type="line" model="#{estadistica.graficaTemAmb}" style="height:400px;" widgetVar="chartTemAmb"/>
+                        <p:commandButton type="button" value="#{etiq.restaurar}" icon="ui-icon-cancel" onclick="PF('chartTemAmb').resetZoom()"/>
+                        <p:commandButton type="button" value="#{etiq.exportar}" icon="ui-icon-extlink" onclick="exportChart(1)"/>
+                        <br/>
+                        <br/>            
+                        <p:chart type="line" model="#{estadistica.graficaTemRef}" style="height:400px;" widgetVar="chartTemRef"/>
+                        <p:commandButton type="button" value="#{etiq.restaurar}" icon="ui-icon-cancel" onclick="PF('chartTemRef').resetZoom()"/>
+                        <p:commandButton type="button" value="#{etiq.exportar}" icon="ui-icon-extlink" onclick="exportChart(2)"/>
+                        <br/>
+                        <br/>            
+                        <p:chart type="line" model="#{estadistica.graficaHumAmb}" style="height:400px;" widgetVar="chartHumAmb"/>
+                        <p:commandButton type="button" value="#{etiq.restaurar}" icon="ui-icon-cancel" onclick="PF('chartHumAmb').resetZoom()"/>
+                        <p:commandButton type="button" value="#{etiq.exportar}" icon="ui-icon-extlink" onclick="exportChart(3)"/>
+                    </h:form> 
+
+                    <p:dialog widgetVar="dlg" showEffect="fade" modal="true" header="#{etiq.graficaExp}" resizable="false">
+                        <p:outputPanel id="output" layout="block" style="width:1200px;height:400px"/>
+                    </p:dialog>
+                </div>      
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

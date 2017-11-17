@@ -1,0 +1,934 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.estSocioeco}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+               <p:growl id="growl" showDetail="true" /> 
+                  <!--Componenete de busqueda :P-->
+                <p:commandButton id="BuscarPacineT"  value="#{etiq.buscarPac}" icon="ui-icon-search"
+                                 onclick="PF('BuscPacie').show(); "> 
+                </p:commandButton>  
+                <p:dialog widgetVar="BuscPacie" id="BuscPacie"  width="1050" height="550">   
+                    <p:panelGrid >
+                        <p:row>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <h:outputText value="#{etiq.buscarDatosBasicos}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="nom" style="text-transform:uppercase;"
+                                             maxlength="50" size="39"
+                                             value="#{oBusqPacComunJB.paciente.nombres}" 
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="app" style="text-transform:uppercase;"
+                                             maxlength="50" size="39"
+                                             value="#{oBusqPacComunJB.paciente.apPaterno}" 
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="apm" style="text-transform:uppercase;"
+                                             maxlength="50" size="39"
+                                             value="#{oBusqPacComunJB.paciente.apMaterno}"  
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                        </p:row>                
+                        <p:row>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <h:outputText value="#{etiq.buscarPorExpediente}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.noExp}:"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:inputText styleClass="bordes" id="exp" 
+                                             value="#{oBusqPacComunJB.paciente.expediente.numero}" 
+                                             converterMessage="#{etiq.errCapturaCaractEsp}">
+                                    <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                    <f:ajax render="mentExp" execute="@this" 
+                                            event="valueChange" />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <center>
+                        <p:commandButton styleClass="bordes" 
+                                         value="#{etiq.buscar}" 
+                                         icon="ui-icon-search">
+                            <p:ajax update="tablaPac selecc cancel" listener="#{oBusqPacComunJB.buscaTodoslosPaciente()}"/>
+                        </p:commandButton>
+                    </center>
+                    <p:message for="exp" id="mentExp"/>
+                    <br/><br/>
+                    <div class="tabla_pacEnc">
+                        <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                     paginatorPosition="both" rows="5" 
+
+                                     value="#{oBusqPacComunJB.listaPac}" 
+                                     emptyMessage="#{etiq.noRegistro}" 
+                                     style="visibility:#{oBusqPacComunJB.visibilidadTabla};"
+                                     rowKey="#{oPacEnc.apMaterno}"
+                                     selection="#{oBusqPacComunJB.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.pacEncontrados}"/>
+                            </f:facet>
+                            <p:column selectionMode="single">
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.nombres}"/>
+                            </p:column>
+                            <p:column style="width: 9%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.edadNumero}"/>
+                            </p:column>   
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.curp}"/>
+                            </p:column>
+                            <p:column style="width: 7%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.folioPaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                            </p:column>  
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                            </p:column>     
+                        </p:dataTable>
+                    </div>  
+
+                    <p:commandButton value="#{etiq.seleccionar}" style="visibility:#{oBusqPacComunJB.boton};" id="selecc"  icon="ui-icon-search">
+                        <p:ajax listener="#{oRegistrarEstudiosocioEconomi.llenar()}" update="BuscPacie DatosPaciente Datosdelpaciente EstudioSocioEcono Tabladatos2   dialogo1 tablaNivelSocioeco boton1"/> 
+                    </p:commandButton>
+                    
+                    <p:commandButton value="#{etiq.cancelar}" id="cancel" icon="ui-icon-circle-close" style="visibility:#{oBusqPacComunJB.boton2};">
+                        <p:ajax listener="#{oRegistrarEstudiosocioEconomi.limpiaboton()}"  update="BuscPacie DatosPaciente Datosdelpaciente EstudioSocioEcono Tabladatos2  dialogo1 tablaNivelSocioeco boton1"/>
+                    </p:commandButton>
+                </p:dialog>
+
+                <br/> <br/>
+                <!--Componenete de busqueda :P-->
+                
+                
+                <p:panelGrid id="DatosPaciente" style="visibility:#{oRegistrarEstudiosocioEconomi.visible}">
+                    <p:row>
+                       <p:column colspan="8" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.datosDelPaciente}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.atencionprioritaria}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                          <p:column>
+                              <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.nombres}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.apPaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.apMaterno}"/>
+                        </p:column> 
+                        <p:column>  
+                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.atenPrio}" required="true" requiredMessage="Debe indicar la atencion prioritaria del paciente"> 
+                                  <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                   <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listAtencionPrio}" var="oVar" 
+                                               itemLabel="#{oVar.valor}" itemValue="#{oVar.tipoParametro}"/> 
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.Ocupacion}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.fechaNacTexto}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.edadNumero}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.sexoP}"/>
+                        </p:column> 
+                        <p:column>
+                            <p:inputText   size="30" value="#{oRegistrarEstudiosocioEconomi.ocupac}"
+                                         onkeyup="this.value=this.value.toUpperCase();"></p:inputText>   
+                        </p:column>
+                    </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.religion}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.derechohabiente}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.sPop}"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.estadocivil}:"/></p:column>
+                    </p:row>
+                       <p:row>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.antecNoPatologicos.religion}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.seguro.derechohabiente.valor}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.seguro.numeroP}"/>
+                        </p:column> 
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.estadoCivil.valor}"/>    
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.lugardenaci}:"/></p:column>
+                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.escolaridad}:"/></p:column>  
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:inputText id="txtlugdenac" size="30" value="#{oRegistrarEstudiosocioEconomi.lugarDenaci}" onkeyup="this.value=this.value.toUpperCase();"></p:inputText>
+                        </p:column>
+                        <p:column> 
+                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.escolaridadcla}" required="true" requiredMessage="Debe indicar la escolaridad"> 
+                                  <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                   <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.lisEscolaridad}" var="oVar"
+                                               itemLabel="#{oVar.valor}" itemValue="#{oVar.tipoParametro}"/> 
+                            </p:selectOneMenu> 
+                        </p:column>
+                        <p:column> 
+                            <h:selectOneRadio id="termino" value="#{oRegistrarEstudiosocioEconomi.termin}">
+                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                <f:selectItem itemLabel="Terminada" itemValue="1"/>
+                                <f:selectItem itemLabel="No terminada" itemValue="0"/>  
+                            </h:selectOneRadio> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3" styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.casoLegal}:"/>
+                        </p:column>
+                        <p:column colspan="3">
+                            <h:selectOneRadio id="casoleg" value="#{oRegistrarEstudiosocioEconomi.casoleg}" >
+                                <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                <f:selectItem itemLabel="Si" itemValue="1"/>
+                                <f:selectItem itemLabel="No" itemValue="0"/>  
+                            </h:selectOneRadio> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> <br/>
+                <p:panelGrid id="Tabladatos2" style="visibility:#{oRegistrarEstudiosocioEconomi.visible}">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6" ><p:outputLabel value="#{etiq.domicilio} #{etiq.permanente}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                             <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.calleNum}" /> <br/><p:outputLabel value="#{etiq.calle}:"/>
+                        </p:column> 
+                        <p:column colspan="2">
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.colonia}" /> <br/> <p:outputLabel value="#{etiq.colonia}:"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                              <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.estado.descripcionEdo}" /> <br/> <p:outputLabel value="#{etiq.estado}:"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.municipio.descripcionMun}" /> <br/> <p:outputLabel value="#{etiq.municipio}:"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.ciudad.descripcionCiu}" /> <br/> <p:outputLabel value="#{etiq.ciudad}:"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.cp}" /> <br/><p:outputLabel value="#{etiq.cp}:"/>
+                        </p:column> 
+                         <p:column>
+                             <h:outputText value="#{oRegistrarEstudiosocioEconomi.paciente.telefono}" />
+                             <br/> <p:outputLabel value="#{etiq.telefonolada}:"/>
+                        </p:column> 
+                    </p:row> 
+                     <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6" ><p:outputLabel value="#{etiq.domicilio} #{etiq.temporal}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column>
+                             <p:inputText id="calletemp" size="20" value="#{oRegistrarEstudiosocioEconomi.calletemp}" onkeyup="this.value=this.value.toUpperCase();" />  <br/> <p:outputLabel value="#{etiq.calle}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="Noexttemp" size="20" value="#{oRegistrarEstudiosocioEconomi.numexternTemp}" onkeyup="this.value=this.value.toUpperCase();"/> <br/>  <p:outputLabel value="#{etiq.numeroexter}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="Nointtemp" size="20" value="#{oRegistrarEstudiosocioEconomi.numinternTemp}" onkeyup="this.value=this.value.toUpperCase();"/>  <br/> <p:outputLabel value="#{etiq.numerointer}:"/>
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:inputText id="colonitemp" size="20" value="#{oRegistrarEstudiosocioEconomi.coloniTemp}" onkeyup="this.value=this.value.toUpperCase();"/>  <br/> <p:outputLabel value="#{etiq.colonia}:"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu id="enttem" value="#{oRegistrarEstudiosocioEconomi.estadoTemp.claveEdo}"> 
+                                <p:ajax update="muntem" event="change"/>
+                                <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaEstados1}" var="oEdo" 
+                                               itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                            </p:selectOneMenu> 
+                            <br/> <p:outputLabel value="#{etiq.estado}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="muntem" value="#{oRegistrarEstudiosocioEconomi.municipioTemp.claveMun}"> 
+                                 <p:ajax update="ciudadtem" event="valueChange"/>
+                                 <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                                 <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaMunicipios1}" var="oMun" 
+                                               itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                            </p:selectOneMenu> 
+                            <br/> <p:outputLabel value="#{etiq.municipio}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="ciudadtem" value="#{oRegistrarEstudiosocioEconomi.ciudadTemp.claveCiu}">  
+                                <p:ajax update="cptem" event="valueChange"/>
+                                <f:selectItem itemLabel="CIUDAD" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaCiudades1}" var="oCiu"
+                                               itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                            </p:selectOneMenu> 
+                            
+                            <br/><p:outputLabel value="#{etiq.ciudad}:"/>
+                             
+                        </p:column> 
+                        <p:column>
+                            <p:selectOneMenu id="cptem" value="#{oRegistrarEstudiosocioEconomi.ciudadCPTemp.cp}">
+                                <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaCP1}" var="oCP" 
+                                               itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                            </p:selectOneMenu> 
+                            <br/><p:outputLabel value="#{etiq.cp}:"/>
+                             
+                        </p:column> 
+                         <p:column>
+                             <p:inputText id="txtteletemp" size="30" value="#{oRegistrarEstudiosocioEconomi.telefTemp}">
+                                <f:validateLength minimum="4" maximum="254"/> 
+                            </p:inputText> <br/>  <p:outputLabel value="#{etiq.telefonolada}:"/>
+                        </p:column>
+                        
+                    </p:row> 
+                </p:panelGrid> <br/>
+                <br/>
+                <p:panelGrid id="Datosdelpaciente" style="visibility:#{oRegistrarEstudiosocioEconomi.visible}" >
+                    <p:row>
+                       <p:column styleClass="ui-widget-header" colspan="6" ><p:outputLabel value="#{etiq.familiarResp}:"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombre}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.parentesco}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                          <p:column>
+                              <p:inputText id="nomfamiRes" value="#{oRegistrarEstudiosocioEconomi.nombrefamiResp}" onkeyup="this.value=this.value.toUpperCase();" size="20"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="apellipafamiRes" value="#{oRegistrarEstudiosocioEconomi.apellipafamiResp}" onkeyup="this.value=this.value.toUpperCase();"  size="20"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="apellimafamiRes" value="#{oRegistrarEstudiosocioEconomi.apellimafamiResp}" onkeyup="this.value=this.value.toUpperCase();" size="20"/> 
+                        </p:column> 
+                        <p:column colspan="2"> 
+                            <p:selectOneMenu id="parentesco" value="#{oRegistrarEstudiosocioEconomi.parentesResp}" required="true" requiredMessage="Debe seleccionar el parentesco del familiar">
+                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.familiarCercano.listaParentescos}" var="oVar"
+                                               itemLabel="#{oVar.valor}" itemValue="#{oVar.tipoParametro}"/>
+                            </p:selectOneMenu>
+
+
+                        </p:column>
+                    </p:row>
+                      <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6" ><p:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column>
+                             <p:inputText id="callefares" size="20" value="#{oRegistrarEstudiosocioEconomi.calleResp}" onkeyup="this.value=this.value.toUpperCase();"/> <br/> <p:outputLabel value="#{etiq.calle}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="numfares" size="20" value="#{oRegistrarEstudiosocioEconomi.numexternResp}" onkeyup="this.value=this.value.toUpperCase();"/> <br/> <p:outputLabel value="#{etiq.numeroexter}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="num2fares" size="20" value="#{oRegistrarEstudiosocioEconomi.numinternResp}" onkeyup="this.value=this.value.toUpperCase();"/>  <br/> <p:outputLabel value="#{etiq.numerointer}:"/>
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:inputText id="colonifares" size="20" value="#{oRegistrarEstudiosocioEconomi.coloniResp}" onkeyup="this.value=this.value.toUpperCase();"/> <br/> <p:outputLabel value="#{etiq.colonia}:"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu id="ent" value="#{oRegistrarEstudiosocioEconomi.estadoResp.claveEdo}"> 
+                                <p:ajax update="mun" event="change"/>
+                                <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaEstados}" var="oEdo" 
+                                               itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                            </p:selectOneMenu>
+                            <br/> <p:outputLabel value="#{etiq.estado}:"/>  
+                            </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="mun" value="#{oRegistrarEstudiosocioEconomi.municipioResp.claveMun}"> 
+                                 <p:ajax update="ciudad" event="valueChange"/>
+                                 <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaMunicipios}" var="oMun" 
+                                               itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                            </p:selectOneMenu> 
+                           
+                           <br/> <p:outputLabel value="#{etiq.municipio}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="ciudad" value="#{oRegistrarEstudiosocioEconomi.ciudadResp.claveCiu}">  
+                                <p:ajax update="cp" event="valueChange"/>
+                                <f:selectItem itemLabel="CIUDAD" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaCiudades}" var="oCiu"
+                                               itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                            </p:selectOneMenu>  
+                            <br/>  <p:outputLabel value="#{etiq.ciudad}:"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="cp" value="#{oRegistrarEstudiosocioEconomi.ciudadCPResp.cp}">
+                                <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listaCP}" var="oCP" 
+                                               itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                            </p:selectOneMenu>
+
+                            <br/>  <p:outputLabel value="#{etiq.cp}:"/>
+                        </p:column>
+                            <p:column>
+                                <p:inputText id="txttelefamires" size="30" value="#{oRegistrarEstudiosocioEconomi.telefResp}" onkeyup="this.value=this.value.toUpperCase();"> 
+                            </p:inputText> <br/>  <p:outputLabel value="#{etiq.telefonolada}:"/>
+                        </p:column>
+                    </p:row> 
+                    
+                </p:panelGrid> <br/> <br/>
+                 
+                <!--Estudio SocioEconomico-->
+                <p:panelGrid id="EstudioSocioEcono" style="visibility:#{oRegistrarEstudiosocioEconomi.visible}">
+                    <p:row>
+                        <p:column colspan="8" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.asignaciondeNivelSE}" /></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.numero}" /></p:column>  
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.variables}" /></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.valormaximo}"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.consultar}"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.puntacionobte}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputText value="#{etiq.i}"/></p:column>
+                       <p:column><h:outputText value="#{etiq.ingresofamili}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.n55}"/></p:column>
+                        <p:column>
+                            <p:commandButton id="btningrfami" icon="ui-icon-search"
+                                             onclick="PF('ingrefami').show();" type="button"/>
+                            <p:dialog header="#{etiq.ingresofamili}" widgetVar="ingrefami" 
+                                      showEffect="bounce" resizable="false" >  
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="7" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.ingresofamiliarpunt}"/></p:column>
+                                    </p:row>
+                                    <p:row> 
+                                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.ingresomensual}"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.dependienteseconomicos}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> 
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.ingresoM}"> 
+                                                <p:ajax  listener="#{oRegistrarEstudiosocioEconomi.calcularpuntajeIngreMensual()}"/> 
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                  <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPregIngre}" var="oIng"
+                                                                 itemLabel="#{oIng.txtSalario}" itemValue="#{oIng.orden}"/> 
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                        <p:column>
+                                           <p:selectOneMenu id="Dependientes" value="#{oRegistrarEstudiosocioEconomi.dependi}" >
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                 <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItem itemValue="1" itemLabel="1 ó 2 dependientes económicos"/>
+                                                <f:selectItem itemValue="2" itemLabel="3 ó 4 dependientes económicos"/>
+                                                <f:selectItem itemValue="3" itemLabel="5 ó 6 dependientes económicos"/>
+                                                <f:selectItem itemValue="4" itemLabel="7 ó 8 dependientes económicos"/>
+                                                <f:selectItem itemValue="5" itemLabel="9 ó más dependientes"/>
+                                                 
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:commandButton value="#{etiq.calcular}" oncomplete="PF('ingrefami').hide();" process="@this">
+                                    <p:ajax listener="#{oRegistrarEstudiosocioEconomi.calcularIngreFamiMensu()}" update="res1"></p:ajax>
+                                </p:commandButton>
+                            </p:dialog> 
+                        </p:column>
+                        <p:column><h:outputText value="#{oRegistrarEstudiosocioEconomi.ingreFamiMensu}" id="res1"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputText value="#{etiq.ii}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.egresofamili}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.n10}"/></p:column>
+                        <p:column>
+                            <p:commandButton id="EgresosFamil" icon="ui-icon-search"
+                                             onclick="PF('EgresoFami').show();" type="button"/>
+                            <p:dialog header="#{etiq.egresofamili}" widgetVar="EgresoFami" 
+                                showEffect="bounce" resizable="false" >
+                                <p:panelGrid>
+                                    <p:row> 
+                                        <p:column colspan="4" styleClass="ui-widget-header">#{etiq.egresofamiliarpunt}</p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.egresofamili}"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.gastomensual}"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.porcentajede}"/></p:column>
+                                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.puntuacion}"/></p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> <h:outputLabel value="#{etiq.alimentacion}"/> </p:column>
+                                        <p:column>
+                                            <p:inputText id="costalimen"  size="30" value="#{oRegistrarEstudiosocioEconomi.alimentacion}"
+                                                onkeyup="this.value=this.value.toUpperCase();">
+                                               <p:ajax/>
+                                                 <f:validateDoubleRange minimum="0.00" maximum="100000.00"/> 
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column><h:outputLabel value="#{etiq.egresofamiliar70omas}"/></p:column>
+                                        <p:column> <h:outputLabel value="0"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> <h:outputLabel value="#{etiq.renta}"/> </p:column>
+                                        <p:column><p:inputText id="costrent"  size="30" value="#{oRegistrarEstudiosocioEconomi.renta}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column><h:outputLabel value="#{etiq.egresofamialiar61o70}"/></p:column>
+                                        <p:column> <h:outputLabel value="1"/> </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> <h:outputLabel value="#{etiq.agua}"/></p:column>
+                                        <p:column><p:inputText id="costagua"   size="30" value="#{oRegistrarEstudiosocioEconomi.agua}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column><h:outputLabel value="#{etiq.egresofamialiar51o60}"/></p:column>
+                                        <p:column> <h:outputLabel value="4"/> </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="#{etiq.luz}"/></p:column>
+                                        <p:column><p:inputText id="costluz"   size="30" value="#{oRegistrarEstudiosocioEconomi.luz}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column><h:outputLabel value="#{etiq.egresofamialiar41o50}"/></p:column>
+                                        <p:column> <h:outputLabel value="6"/> </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="#{etiq.telefono}"/> </p:column>
+                                        <p:column><p:inputText id="costtel"   size="30" value="#{oRegistrarEstudiosocioEconomi.telefono}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/> 
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column><h:outputLabel value="#{etiq.egresofamialiar31o40}"/></p:column>
+                                        <p:column> <h:outputLabel value="8"/> </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> <h:outputLabel value="#{etiq.combustible}"/> </p:column>
+                                        <p:column><p:inputText id="costcomb"  size="30" value="#{oRegistrarEstudiosocioEconomi.combustible}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column><h:outputLabel value="#{etiq.egresofamialiar0o30}"/></p:column>
+                                        <p:column> <h:outputLabel value="10"/> </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> <h:outputLabel value="#{etiq.trasporte}"/> </p:column>
+                                        <p:column><p:inputText id="costtrasp"  size="30" value="#{oRegistrarEstudiosocioEconomi.trasporte}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column>
+                                         <p:column> <h:outputLabel value="#{etiq.ingresofamili}"/> </p:column>
+                                         <p:column><p:inputText id="costingrefami"  size="30" value="#{oRegistrarEstudiosocioEconomi.ingresoF}"
+                                                                onkeyup="this.value=this.value.toUpperCase();">
+                                                 <p:ajax/>
+                                                 <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                             </p:inputText>
+                                         </p:column> 
+                                    </p:row>
+                                    <p:row>
+                                         <p:column> <h:outputLabel value="#{etiq.educacion}"/> </p:column>
+                                         <p:column><p:inputText   size="30" value="#{oRegistrarEstudiosocioEconomi.educacion}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column> 
+                                    </p:row>
+                                    <p:row>
+                                         <p:column> <h:outputLabel value="#{etiq.consumosAdicionales}"/> </p:column>
+                                         <p:column><p:inputText   size="30" value="#{oRegistrarEstudiosocioEconomi.consumosAdici}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column> 
+                                    </p:row>
+                                     <p:row>
+                                         <p:column><h:outputLabel value="#{etiq.otros}"/> </p:column>
+                                         <p:column><p:inputText   size="30" value="#{oRegistrarEstudiosocioEconomi.otros}"
+                                                               onkeyup="this.value=this.value.toUpperCase();">
+                                                <p:ajax/>
+                                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/>
+                                            </p:inputText>
+                                        </p:column> 
+                                    </p:row>
+
+                                </p:panelGrid>   <br/>
+                                <p:commandButton value="#{etiq.calcular}" oncomplete="PF('EgresoFami').hide();" process="@this">
+                                    <p:ajax listener="#{oRegistrarEstudiosocioEconomi.calcularEgreFamiMensual()}" update="res2"></p:ajax>
+                                </p:commandButton>
+                            </p:dialog>
+                        </p:column>
+                        <p:column><h:outputText value="#{oRegistrarEstudiosocioEconomi.puntajeTotalEF}" id="res2"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputText value="#{etiq.iii}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.vivienda}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.n20}"/></p:column>
+                        <p:column>
+                            <p:commandButton id="btnvivien" icon="ui-icon-search"
+                                             onclick="PF('viviend').show();" type="button"/>
+                            <p:dialog header="#{etiq.viviendafanili}" widgetVar="viviend" 
+                                      showEffect="bounce" resizable="false"> 
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.viviendafamierpunt}"/></p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="#{etiq.derechousogoce}"/></p:column>
+                                        <p:column>
+                                            <p:selectOneMenu  value="#{oRegistrarEstudiosocioEconomi.derechReale}">
+                                                <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg1}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="#{etiq.tipodeviviendafami}"/> </p:column>
+                                        <p:column> 
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.tipoVivien}"> 
+                                                <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg2}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputLabel value="#{etiq.serviciospublicos}"/>
+                                        </p:column>
+                                        <p:column> 
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.serviciosPublicos}"> 
+                                                <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg3}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                           <h:outputLabel value="#{etiq.serviciosintradodomiciliarios}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.serviciosIntradomicilia}"> 
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg4}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>   
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                             <h:outputLabel value="#{etiq.materialCostruccion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.materialCostruccion}"> 
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg5}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>   
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputLabel value="#{etiq.numeroDedormi}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.numeroMonitoriados}">
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg6}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/>
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                            </p:selectOneMenu>     
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputLabel value="#{etiq.numerodepersonasendormi}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.numerosDepersonasDormi}">
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg7}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/>
+                                                 <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:commandButton value="#{etiq.calcular}" oncomplete="PF('viviend').hide();" process="@this">
+                                    <p:ajax listener="#{oRegistrarEstudiosocioEconomi.calcularViviendaFamiliar()}" update="res3"></p:ajax>
+                                </p:commandButton>
+                            </p:dialog> 
+                            
+                        </p:column>
+                        <p:column><h:outputText value="#{oRegistrarEstudiosocioEconomi.totalViviendaFamiliar}" id="res3"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputText value="#{etiq.iv}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.ocupacion}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.n10}"/></p:column>
+                        <p:column>
+                            <p:commandButton id="btncupac" icon="ui-icon-search"
+                                             onclick="PF('ocupacion').show();" type="button"/>
+                            <p:dialog header="#{etiq.ocupacion}" widgetVar="ocupacion" 
+                                      showEffect="bounce" 
+                                      resizable="false" >
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.ocupacionfamilipunt}"/></p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="#{etiq.descripcion}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> 
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.ocupacion}" > 
+                                                <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg8}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                   <p:commandButton value="#{etiq.calcular}"  oncomplete="PF('ocupacion').hide();" process="@this">
+                                       <p:ajax listener="#{oRegistrarEstudiosocioEconomi.calcularOcupacion()}" update="res4"></p:ajax>
+                                   </p:commandButton>
+                            </p:dialog> 
+
+                        </p:column>
+                        <p:column><h:outputText value="#{oRegistrarEstudiosocioEconomi.totalOcuap}" id="res4"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column><h:outputText value="#{etiq.v}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.salud}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.n5}"/></p:column>
+                        <p:column>
+                            <p:commandButton id="btnsaludFam" icon="ui-icon-search"
+                                             onclick="PF('saludfam').show();" type="button"/>
+                            <p:dialog header="#{etiq.saludFami}" widgetVar="saludfam" 
+                                      showEffect="bounce"  
+                                      resizable="false" >  
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="3" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.saludfamilipunt}"/></p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel value="#{etiq.tipodeTratamientodelPaciente}"/></p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.tiempoDeTratamiento}"> 
+                                                <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg9}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>   
+                                        </p:column>
+                                    </p:row>
+                                      <p:row>
+                                          <p:column><h:outputLabel value="#{etiq.existenciaDeProblemaDeSalud}"/></p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.existenciaDeproblemasSalud}">
+                                                <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg10}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                       <p:column><h:outputLabel value="#{etiq.estadosaludfami}"/></p:column>
+                                        <p:column> 
+                                            <p:selectOneMenu value="#{oRegistrarEstudiosocioEconomi.estadoDesalud}">
+                                                    <p:ajax event="valueChange" immediate="true" process="@this"/>
+                                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true" />
+                                                <f:selectItems value="#{oRegistrarEstudiosocioEconomi.listPreg11}" var="oVar"
+                                                               itemLabel="#{oVar.descripcion}" itemValue="#{oVar.idPregunta}"/> 
+                                            </p:selectOneMenu>
+                                        </p:column> 
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:commandButton value="#{etiq.calcular}" oncomplete="PF('saludfam').hide();" process="@this">
+                                    <p:ajax listener="#{oRegistrarEstudiosocioEconomi.calcularSaludFamiliar()}" update="res5"></p:ajax>
+                                </p:commandButton>
+                            </p:dialog>
+                        </p:column>
+                        <p:column><h:outputText value="#{oRegistrarEstudiosocioEconomi.totalSaludFamiliar}" id="res5"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column></p:column>
+                        <p:column><h:outputText value="#{etiq.total}"/></p:column>
+                        <p:column><h:outputText value="#{etiq.n100}"/></p:column>
+                        <p:column><p:commandButton value="#{etiq.total}" >
+                                <p:ajax listener="#{oRegistrarEstudiosocioEconomi.calcularNivelSocioEconomico()}" update="totalPuntaje nivel"></p:ajax>   
+                            </p:commandButton>
+                        </p:column>
+                        <p:column><h:outputText value="#{oRegistrarEstudiosocioEconomi.totalPuntaje}" id="totalPuntaje"/></p:column>
+                      
+                    </p:row>
+                    
+                </p:panelGrid> <br/> 
+                <h3> 
+                    <div align="center"> 
+                     <p:dataTable id="tablaNivelSocioeco" var="oNivSoico" style="visibility:#{oRegistrarEstudiosocioEconomi.visible};  text-align: center;  width:600px;"
+                                  emptyMessage="NO HAY REGISTROS" value="#{oRegistrarEstudiosocioEconomi.listNivelesSocioEconmico}">
+                       <f:facet name="header">
+                                <h:outputText value="#{etiq.nivelsocioeconomico}"/>
+                       </f:facet>
+                      <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nivel}"/>
+                                </f:facet>
+                          <h:outputText value="#{oNivSoico.claveParametro}"/>
+                      </p:column>     
+                       <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.puntaje}"/>
+                                </f:facet>
+                           <h:outputText value="#{oNivSoico.valor}"/>
+                      </p:column>  
+                </p:dataTable> 
+                       </div> 
+                    <br/> <br/>
+                    <h:outputText value="#{etiq.calificaobtenianivelsocioeconomi}" styleClass="ui-widget-header" id="dialogo1" style="visibility:#{oRegistrarEstudiosocioEconomi.visible}"/>
+                    <h:outputText value=" #{oRegistrarEstudiosocioEconomi.nivelSocioEconomico} " id="nivel" style="visibility:#{oRegistrarEstudiosocioEconomi.visible}"/> </h3>  <br/> 
+               <!-- Recalificasion del nivel socio economico y botones--> 
+               
+                <p:commandButton value="#{etiq.guardar}" action="#{oRegistrarEstudiosocioEconomi.registrarNivelsocio()}" id="boton1" style="visibility:#{oRegistrarEstudiosocioEconomi.visible}" validateClient="true" ajax="false"
+                                 update="growl" icon="ui-icon-disk"> 
+                    </p:commandButton>
+               
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

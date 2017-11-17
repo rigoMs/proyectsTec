@@ -1,0 +1,487 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">              
+                <div id="actEnferM">
+                    <h:form id="busca">
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.actMensEnfe}"/></h3>                         
+                        <p:accordionPanel  id="ac" styleClass="centrar" style=" width: 800px; font-weight: bold;">
+                            <p:tab title="#{etiq.bus}" >
+                                <p:outputPanel styleClass="centrar">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel for="cmbAreas" value="#{etiq.servicio}:"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel  value="#{etiq.fechaInicio}:"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel  value="#{etiq.fechaFin}:"/>
+                                        </p:column>
+                                        <p:column>
+                                           <p:outputLabel/> 
+                                        </p:column>                            
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:selectOneMenu effect="puff" id="cmbAreas" value="#{oBActEnf.reporteMensual.servicio.clave}"
+                                                    required="true" requiredMessage="ERROR, Debes Seleccionar un Servicio">
+                                                <f:selectItem itemLabel="Elegir servicio" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems value="#{oBActEnf.arrServicios}" var="oS" itemLabel="#{oS.areaServicio.descripcion}" itemValue="#{oS.areaServicio.clave}"/>
+                                                <p:ajax event="change"/>
+                                            </p:selectOneMenu>
+                                        </p:column>   
+                                        <p:column  style=" padding: 0px;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column>
+                                                        <p:selectOneMenu effect="puff" id="cmMes" value="#{oBActEnf.mes}">
+                                                            <f:selectItem itemLabel="Ene" itemValue="01"/>
+                                                            <f:selectItem itemLabel="Feb" itemValue="02"/>
+                                                            <f:selectItem itemLabel="Mar" itemValue="01"/>
+                                                            <f:selectItem itemLabel="Abr" itemValue="04"/>
+                                                            <f:selectItem itemLabel="May" itemValue="05"/>
+                                                            <f:selectItem itemLabel="Jun" itemValue="06"/>
+                                                            <f:selectItem itemLabel="Jul" itemValue="07"/>
+                                                            <f:selectItem itemLabel="Ago" itemValue="08"/>
+                                                            <f:selectItem itemLabel="Sep" itemValue="09"/>
+                                                            <f:selectItem itemLabel="Oct" itemValue="10"/>
+                                                            <f:selectItem itemLabel="Nov" itemValue="11"/>
+                                                            <f:selectItem itemLabel="Dic" itemValue="12"/>
+                                                            <p:ajax event="change" listener="#{oBActEnf.validaFecha}" update=":busca:ac:ff"/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:inputText id="año" value="#{oBActEnf.anho}" size="6" 
+                                                                    converterMessage="Error: El año debe ser mayor a 2015 y menor al año actual">
+                                                           <f:validateLongRange minimum="2014" maximum="#{oBActEnf.maxAnho}"/>
+                                                           <p:ajax  update=":busca:msgs" process="@this" event="keyup"/>
+                                                           <p:ajax event="keyup" listener="#{oBActEnf.validaFecha}" update=":busca:ac:ff"/>
+                                                       </p:inputText>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>                                            
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="ff" value="#{oBActEnf.reporteMensual.fechaFinStr2}" disabled="true" size="8"/>                                            
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBActEnf.buscaReporteMensualActividadesEnfermeria}" 
+                                                    update=":enferActM :enferActM:acv :enferActM:msgs">                                                                        
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>                         
+                                </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                    </h:form>
+                    <h:form id="enferActM">                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>                        
+                        <p:outputPanel id="acv" style="margin: 0 auto; width: 1300px;"  rendered="#{oBActEnf.rendering}">
+                            <p:panelGrid id="red" style="width: 1300px; border-style:  solid; border-width: 2px;">
+                                <p:row>
+                                    <p:column style="width: 3%" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.ser}:"/>
+                                    </p:column>
+                                    <p:column style="width: 50%;">
+                                        <p:outputLabel value="#{oBActEnf.nombreServicio}"/>
+                                    </p:column>
+                                    <p:column style="width: 3.5%;" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.mes}:"/>
+                                    </p:column>
+                                    <p:column style="width: 25%;">
+                                        <p:outputLabel value="DEL"/>&nbsp;
+                                        <p:outputLabel value="#{oBActEnf.reporteMensual.fechaInicioStr2}"/>&nbsp;
+                                        <p:outputLabel value="A"/>&nbsp;
+                                        <p:outputLabel value="#{oBActEnf.reporteMensual.fechaFinStr2}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 3px;"/>
+                            <p:dataTable value="#{oBActEnf.arrMensual}" var="oR" emptyMessage="">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="2" style="width: 19%; color: black; padding: 0px;" headerText="#{etiq.actd}"/>
+                                        <p:column  colspan="31" style="width: 78%;font-size: 10px; color: black; padding: 0px;" headerText="#{etiq.diasmes}"/>
+                                        <p:column rowspan="2" style="width: 3%; color: black; padding: 0px;" headerText="#{etiq.total}"/>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="26"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="27"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="28"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="29"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="30"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="31"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="1"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="2"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="3"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="4"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="5"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="6"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="7"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="8"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="9"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="10"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="11"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="12"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="13"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="14"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="15"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="16"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="17"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="18"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="19"/>
+                                        <p:column style="font-size: 10px; padding: 1px;" headerText="20"/>
+                                        <p:column style="font-size: 10px; padding: 1px;" headerText="21"/>
+                                        <p:column style="font-size: 10px; padding: 1px;" headerText="22"/>
+                                        <p:column style="font-size: 10px; padding: 1px;" headerText="23"/>
+                                        <p:column style="font-size: 10px;padding: 1px;" headerText="24"/>
+                                        <p:column style="font-size: 10px; padding: 1px;" headerText="25"/>                                       
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:subTable value="#{oR.arrActividadMensual}" var="oT">
+                                    <p:columnGroup type="header">
+                                        <p:row>                                       
+                                            <p:column colspan="33" headerText="#{oR.actividad}" 
+                                                      style="font-size: 12px; color: black; font-weight: bold; text-align: left; border-color: black;"/>                                                        
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px; border-color: black;">
+                                        <p:outputLabel value="#{oT.tipActividad.valor}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px; border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia26}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia27}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia28}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia28}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia29}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia30}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia31}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia1}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia2}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black; ">
+                                        <p:outputLabel value="#{oT.dia3}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia4}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia5}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia7}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia8}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia9}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia10}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia11}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia12}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia13}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia14}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia15}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia16}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia17}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia18}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia19}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia20}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia21}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia22}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia23}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia24}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.dia25}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; padding-top: 1px; padding-bottom: 1px;border-bottom-color: black;">
+                                        <p:outputLabel value="#{oT.total}"/>
+                                    </p:column>
+                                </p:subTable>
+                            </p:dataTable>
+                        </p:outputPanel>
+                        <p:panelGrid rendered="#{oBActEnf.rendering}" style="margin-top: 6px;">
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton value="ABRIR PARA IMPRIMIR" icon="ui-icon-folder-open" 
+                                                     oncomplete="PF('imprimirInformeActividades').show()" update=":ActImprime">                                        
+                                    </p:commandButton> 
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+                <p:dialog modal="true" widgetVar="imprimirInformeActividades" showEffect="puff" hideEffect="puff" resizable="false" header="" height="600" width="1300">
+                    <h:form id="ActImprime">
+                        <p:outputPanel style=" width: 100%; background-color: white;">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="45" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; ">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}" style="font-size: 13px;"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}" style="font-size: 13px;"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.actMensEnfe}" style="font-size: 13px;"/></b>                                    
+                                    </p:column>
+                                    <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120" height="45"  align="left"/>
+                                    </p:column>
+                                </p:row>                                          
+                            </p:panelGrid>   
+                             <p:panelGrid id="red" style="width: 100%;">
+                                <p:row>
+                                    <p:column style="width: 3%; background: white; border-color: transparent; font-size: 11px;" >
+                                        <p:outputLabel value="#{etiq.ser}:"/>
+                                    </p:column>
+                                    <p:column style="width: 50%;background: white; border-color: transparent;font-size: 11px;">
+                                        <p:outputLabel value="#{oBActEnf.nombreServicio}"/>
+                                    </p:column>
+                                    <p:column style="width: 3.5%;background: white; border-color: transparent;font-size: 11px;">
+                                        <p:outputLabel value="#{etiq.mes}:"/>
+                                    </p:column>
+                                    <p:column style="width: 25%;background: white; border-color: transparent;font-size: 11px;">
+                                        <p:outputLabel value="DEL"/>&nbsp;
+                                        <p:outputLabel value="#{oBActEnf.reporteMensual.fechaInicioStr2}"/>&nbsp;
+                                        <p:outputLabel value="A"/>&nbsp;
+                                        <p:outputLabel value="#{oBActEnf.reporteMensual.fechaFinStr2}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 3px;"/>
+                            <p:dataTable value="#{oBActEnf.arrMensual}" var="oR" emptyMessage="">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="2" style="width: 27%; color: black; font-size: 11px; padding: 0px; font-weight: bold;" headerText="#{etiq.actd}"/>
+                                        <p:column  colspan="31" style="width: 70%;font-size: 10px; color: black; padding: 0px;" headerText="#{etiq.diasmes}"/>
+                                        <p:column rowspan="2" style="width: 3%; color: black; font-size: 11px; padding: 1px;" headerText="#{etiq.total}"/>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="font-size: 10px;padding: 1px; color: black;" headerText="26"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="27"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="28"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="29"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="30"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="31"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="1"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="2"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="3"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="4"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="5"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="6"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="7"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="8"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="9"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="10"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="11"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="12"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="13"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="14"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="15"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="16"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="17"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="18"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="19"/>
+                                        <p:column style="font-size: 10px; padding: 1px;color: black;" headerText="20"/>
+                                        <p:column style="font-size: 10px; padding: 1px;color: black;" headerText="21"/>
+                                        <p:column style="font-size: 10px; padding: 1px;color: black;" headerText="22"/>
+                                        <p:column style="font-size: 10px; padding: 1px;color: black;" headerText="23"/>
+                                        <p:column style="font-size: 10px;padding: 1px;color: black;" headerText="24"/>
+                                        <p:column style="font-size: 10px; padding: 1px;color: black;" headerText="25"/>                                            
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:subTable value="#{oR.arrActividadMensual}" var="oT">
+                                    <p:columnGroup type="header">
+                                        <p:row>                                       
+                                            <p:column colspan="33" headerText="#{oR.actividad}" 
+                                                style="font-size: 10px; color: black; font-weight: bold; text-align: left; border-color: black; padding-top: 0px; padding-bottom: 0px;"/>                                                        
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="font-size: 8px;  border-color: black; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.tipActividad.valor}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia26}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia27}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia28}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia28}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia29}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia30}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia31}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia1}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia2}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia3}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia4}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia5}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia7}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia8}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia9}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia10}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia11}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia12}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia13}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia14}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia15}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia16}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia17}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia18}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia19}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia20}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia21}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia22}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black; padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia23}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia24}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px;border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.dia25}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; border-color: black;padding-left: 1px; padding-bottom: 0px; padding-top: 0px;">
+                                        <p:outputLabel value="#{oT.total}"/>
+                                    </p:column>
+                                </p:subTable>
+                            </p:dataTable>
+                        </p:outputPanel>                        
+                    </h:form>
+                    <div style=" margin-bottom: 4px;"/>
+                    <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":ActImprime"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}"
+                                                    onclick="PF('imprimirInformeActividades').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                </p:dialog>
+    
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+   
+</html>
+

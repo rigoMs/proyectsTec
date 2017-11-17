@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+  <ui:define name="cuerpo">
+   <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+   <h2 class="centrado_texto"><p:outputLabel id="titModPac" value="#{etiq.confirmarCita}"/></h2>
+   <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+   <div class="centrado_texto">
+             
+     <h:form id="formReg">
+     <p:tabView id="tabprin">    
+      <p:tab title="#{etiq.datosPersonal}">
+      <p:panelGrid styleClass="frm_centrado">
+      <f:facet name="header">
+        <p:row>
+            <p:column colspan="4" styleClass="encabezados" ><p:outputLabel id="titDatPer" value="#{etiq.datosPersonal}"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column><p:outputLabel id="expediente" value="#{etiq.noExp}:"/></p:column>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="nomb" value="#{etiq.nombres}:"/></p:column>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="app" value="#{etiq.appat}:"/></p:column>
+            <p:column><p:outputLabel id="apm" value="#{etiq.apmat}:"/></p:column>
+        </p:row>
+       </f:facet>
+        <p:row>
+            <p:column><p:outputLabel id="tExpediente" value="#{oConfirmaCita.cita.paciente.expediente.numero}"/></p:column>
+            <p:column>
+                <p:inputText id="tNomb"  value="#{oConfirmaCita.cita.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el nombre">
+                    <f:ajax render=":formReg:mentNombre" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:inputText id="tApp" value="#{oConfirmaCita.cita.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Apellido Paterno">
+                    <f:ajax render=":formReg:mentPaterno" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:inputText id="tApm" value="#{oConfirmaCita.cita.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" required="false">
+                    <f:ajax render=":formReg:mentMaterno" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="4"></p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="sexo" value="#{etiq.sexo}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="fechaNac" value="#{etiq.fechanac}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="edad" value="#{etiq.edad}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="telefono" value="#{etiq.tel}:"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column>
+                <p:selectOneRadio id="tSexo" value="#{oConfirmaCita.cita.paciente.sexoP}" required="true" requiredMessage="Falta el Sexo">
+                    <f:selectItem itemLabel="Masculino" itemValue="M" />
+                    <f:selectItem itemLabel="Femenino" itemValue="F" />
+                </p:selectOneRadio>
+            </p:column>
+            <p:column>
+                <p:inputMask id="tFechaNac" mask="99/99/9999"  value="#{oConfirmaCita.cita.paciente.fechaNacTexto}" required="true" requiredMessage="Se necesita fecha de nacimiento">
+                    <p:ajax update="Tedad :formReg:mentFechaNac" event="valueChange"/>
+                    <f:validator validatorId="mx.gob.hrrb.validadores.FechasNacValidator"/>
+                </p:inputMask>          
+            </p:column>
+            <p:column>
+                <p:outputLabel id="Tedad" value="#{oConfirmaCita.cita.paciente.calculaEdad()}"></p:outputLabel>
+            </p:column>
+            <p:column>
+                <p:inputText id="tTelefono" value="#{oConfirmaCita.cita.paciente.telefono}" validatorMessage="El teléfono debe contener solo caracteres numéricos" maxlength="13">
+                    <f:validateLongRange minimum="0"/>
+                    <f:ajax render=":formReg:mentTel" execute="@this" event="valueChange" />
+                </p:inputText>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="4"></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="domicilio" value="#{etiq.domicilio}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="colonia" value="#{etiq.colonia}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="cp" value="#{etiq.cp}:"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="2" ><p:inputText id="tDomicilio" value="#{oConfirmaCita.cita.paciente.calleNum}" size="70" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Domicilio" onkeypress="return validaCaracter(event);"/></p:column>
+            <p:column><p:inputText id="tColonia" value="#{oConfirmaCita.cita.paciente.colonia}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/></p:column>
+            <p:column>
+                <p:inputMask id="tCp" mask="99999"  value="#{oConfirmaCita.cita.paciente.codigoPos}" disabled="#{oConfirmaCita.habilitaListas()}">
+                    <p:ajax update="tEntidad tMunicipio tLocalidad" event="valueChange"/>
+                </p:inputMask>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="4" ></p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="pais" value="#{etiq.pais}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="entidad" value="#{etiq.entidad}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="municipio" value="#{etiq.municipio}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="localidad" value="#{etiq.localidad}:"/></p:column> 
+        </p:row>
+        <p:row>            
+            <p:column>
+                <p:inputText id="tPais" value="#{oConfirmaCita.cita.paciente.otroPais}" required="true" style="text-transform: uppercase" onkeypress="return validaCaracter(event);">
+                    <p:ajax update="tEntidad tMunicipio tLocalidad tCp" event="valueChange"/>
+                </p:inputText>
+            </p:column>
+                        
+            <p:column>
+                <p:selectOneMenu id="tEntidad" value="#{oConfirmaCita.cita.paciente.estado.claveEdo}" disabled="#{oConfirmaCita.habilitaListas()}" required="true">
+                    <p:ajax update="tMunicipio"/>  
+                    <f:selectItems value="#{oConfirmaCita.listaEstados}" var="oEdo" 
+                                   itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column>
+                <p:selectOneMenu id="tMunicipio" value="#{oConfirmaCita.cita.paciente.municipio.claveMun}"  disabled="#{oConfirmaCita.habilitaListas()}" required="true">
+                    <p:ajax update="tLocalidad"/>  
+                    <f:selectItems value="#{oConfirmaCita.listaMunicipios}" var="oMun" 
+                                   itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column >
+                <p:selectOneMenu id="tLocalidad" value="#{oConfirmaCita.cita.paciente.ciudad.claveCiu}"  disabled="#{oConfirmaCita.habilitaListas()}">
+                    <f:selectItems value="#{oConfirmaCita.listaCiudades}" var="oCiu" 
+                                   itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+        </p:row>    
+        <p:row>
+            <p:column colspan="4" ></p:column>
+        </p:row>           
+        <p:row>
+            <p:column styleClass="ui-widget-header" ></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="segPop" value="#{etiq.segpop}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="vigSegPop" value="#{etiq.vigenciaSegPop}:"/></p:column>
+            <p:column styleClass="ui-widget-header" ></p:column>
+        </p:row>
+        <p:row>
+            <p:column></p:column>
+            <p:column>
+                <p:inputMask id="tSegpop" mask="9999999999-99"  value="#{oConfirmaCita.cita.paciente.seg.numero}"/>
+            </p:column>
+            <p:column >
+                <p:inputMask id="tVigSegPop" mask="99/99/9999" value="#{oConfirmaCita.cita.paciente.vigenciaTexto}">
+                    <p:ajax update=":formReg:mentVig" event="valueChange"/>
+                    <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopValidator"/>
+                </p:inputMask>
+            </p:column>
+            <p:column></p:column>
+        </p:row>
+     </p:panelGrid>
+      </p:tab>
+
+      <!--*********************************************************************************-->   
+         
+      <p:tab title="#{etiq.datosDeCita}">
+         <p:panelGrid styleClass="frm_centrado centrado_texto">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="4" styleClass="encabezados"><p:outputLabel id="titDatCita" value="#{etiq.datosDeCita}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:outputLabel id="fecReg" value="#{etiq.fechaRegistro}:"/></p:column>
+                        <p:column><p:outputLabel id="horReg" value="#{etiq.horaRegistro}:"/></p:column>
+                        <p:column><p:outputLabel id="tipoSol" value="#{etiq.tipoSol}:"/></p:column>
+                        <p:column><p:outputLabel id="referencia" value="#{etiq.referencia}:"/></p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.fechaRegistro}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.fechaRegistro}">
+                            <f:convertDateTime pattern="HH:mm"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.paciente.tipoSol.valor}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.paciente.referencia.descripcion}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4"></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel id="medico" value="#{etiq.medico}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel id="tipoPacHos" value="#{etiq.tipoPacienteHosp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel id="tipoPacEsp" value="#{etiq.tipoPacienteEsp}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:outputLabel value="#{oConfirmaCita.cita.noConsultorio} - #{oConfirmaCita.cita.PH.apPaterno} #{oConfirmaCita.cita.PH.apMaterno} #{oConfirmaCita.cita.PH.nombres}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.primHos}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.primEsp}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4"></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel id="diagnostico" value="#{etiq.diagnosticoIngreso}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel id="cie10" value="#{etiq.cie10}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:autoComplete id="tDiagnostico" queryDelay="1000" size="120" minQueryLength="3" required="true" styleClass="bordes"
+                                        value="#{oConfirmaCita.cita.diag.descripcionDiag}" completeMethod="#{oConfirmaCita.cita.diag.completar}" effect="fade"
+                                      onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" onkeypress="return validaCaracter(event);">
+                          <p:ajax update="tCie10 tCauses" event="itemSelect"/>
+                      </p:autoComplete>
+                    </p:column>
+                    <p:column>
+                        <p:inputText id="tCie10" 
+                                    value="#{oConfirmaCita.cita.diag.clave}" readonly="true"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4"></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel id="fecCita" value="#{etiq.fechaCita}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel id="horCita" value="#{etiq.horaCita}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel id="causes" value="#{etiq.causes}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel id="folioPago" value="#{etiq.folioPago}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.fechaCita}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{oConfirmaCita.cita.fechaCita}">
+                            <f:convertDateTime pattern="HH:mm"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column><p:inputText id="tCauses" value="#{oConfirmaCita.cita.diag.causes.clave}" readonly="true"/></p:column>
+                    <p:column>
+                        <p:inputText id="tFolioPago" value="#{oConfirmaCita.cita.folioPago}" maxlength="8" validatorMessage="Solo se admiten números">
+                            <f:validateLongRange minimum="0" maximum="99999999"/>
+                            <f:ajax render=":formReg:mentfolioPago" execute="@this" event="valueChange" />
+                        </p:inputText>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="centrado_texto" colspan="4">
+                        <p:commandButton value="#{etiq.confirmar}" 
+                                         icon="ui-icon-disk"  
+                                         action="#{oConfirmaCita.confirmaCita}" 
+                                         validateClient="true" ajax="false">
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+      </p:tab>
+     </p:tabView>
+         <p:message for=":formReg:tabprin:tFechaNac" id="mentFechaNac"></p:message>
+         <p:message for=":formReg:tabprin:tVigSegPop" id="mentVig"></p:message>
+         <p:message for=":formReg:tabprin:tTelefono" id="mentTel"></p:message>
+         <p:message for=":formReg:tabprin:tNomb" id="mentNombre"></p:message> 
+         <p:message for=":formReg:tabprin:tApp" id="mentPaterno"></p:message> 
+         <p:message for=":formReg:tabprin:tApm" id="mentMaterno"></p:message>
+         <p:message for=":formReg:tabprin:tFolioPago" id="mentfolioPago"></p:message>
+     </h:form>
+       <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus> 
+   </div>
+  </ui:define>         
+</ui:composition>
+</html>

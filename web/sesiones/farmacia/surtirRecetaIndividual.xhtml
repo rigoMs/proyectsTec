@@ -1,0 +1,217 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.surtirReceta} #{etiq.individual}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+       
+           <div class="centrado_texto">
+            <center>
+                    <h:form id="formR" > 
+                        <p:growl id="msg" sticky="true" showDetail="true"/> 
+                        <p:dialog id="dlgRecetaInd" widgetVar="dlgRI"  position="center" closable="false" dynamic="true" resizable="false"
+                                  appendTo="@(body)" modal="true">
+                            <center>
+                                <h3>#{etiq.receta} #{etiq.individual}</h3>
+                              <h:form id="hola">
+                                    <p:panelGrid id="panelDatos">
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.clave} #{etiq.receta}:" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText ></p:inputText>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.segpop}:" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText ></p:inputText>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.pacien}:" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText ></p:inputText>
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText ></p:inputText>
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText ></p:inputText>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.servicio}:" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText ></p:inputText>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.fecha} #{etiq.hora}:" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:calendar   showOn="button"   pattern="MM/dd/yyyy HH:mm" />
+                                            </p:column>
+                                           
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="6">
+                                                <center>
+                                                <p:commandButton value="#{etiq.nuevo}" />
+                                                &nbsp;&nbsp;
+                                            <p:commandButton value="#{etiq.eliminar}"/>
+                                                </center>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    
+                          <p:dataTable id="dtEntradaM" rows="5" editable="true" paginator="true" paginatorPosition="bottom" 
+                                      value=""  > 
+                              <p:column  width="20px;"/>
+                              
+                                 <p:column  headerText="#{etiq.clave}" >
+                                   
+                                                <p:inputText id ="txtClave">
+                                                </p:inputText>
+                                 </p:column>
+                                 <p:column headerText="#{etiq.descripcion}" >
+                                        
+                                                <p:inputText id="txtDescrio" >
+                                                </p:inputText>
+                                 </p:column>
+                                 <p:column headerText="#{etiq.presentacion}" >
+                                        
+                                                <p:inputText id ="txtPresentacion">
+                                                </p:inputText>
+                                 </p:column>
+                                 <p:column headerText="#{etiq.lote}" >
+                                     
+                                                <p:inputText id ="txtLote">
+                                                </p:inputText>
+                                      <p:commandButton value="#{etiq.agregar} #{etiq.lote}" >
+                                    </p:commandButton>
+                                 </p:column>
+                                 <p:column headerText="#{etiq.cantidad} #{etiq.solicitada}" >
+                                        
+                                                <p:inputText id ="txtCantS">
+                                                </p:inputText>
+                                 </p:column>
+                                 <p:column headerText="#{etiq.cantidad} #{etiq.surtida}" >
+                                        
+                                                <p:inputText id ="txtCantSu">
+                                                </p:inputText>
+                                 </p:column>
+                                            
+                          </p:dataTable>
+                                    
+                                    
+                                    <br/><br/>
+                                   <p:commandButton value="#{etiq.guardar}" oncomplete="PF('dlgRI').hide()">
+                                    </p:commandButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <p:commandButton value="#{etiq.imprimir}" oncomplete="PF('dlgRI').hide()">
+                                    </p:commandButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <p:commandButton value="Regresar" oncomplete="PF('dlgRI').hide()">
+                                    </p:commandButton>
+                              
+                                </h:form>
+                            </center>
+                        </p:dialog>
+                         <h:panelGroup  >
+                            <h4  >
+                                  <h:outputLabel  value="Selecciona por  tipo de Receta" style="width: 15%; text-align: left;" />
+                                  <h:selectOneRadio value="#{surtirRJB.surtido}" style="display: inline-table; verticle-align: top; font-size: 95%;  text-align: left;">    
+                                    <f:selectItem itemValue="#{true}" itemLabel="SURTIDAS" />    
+                                    <f:selectItem itemValue="#{false}" itemLabel="POR SURTIR"/> 
+                                </h:selectOneRadio> </h4>
+                            <h4>
+                                <h:outputLabel value="Seleciona Por tipo de Medicamento" style="width: 15%;" />
+                                <h:selectOneRadio  value="#{surtirRJB.controlados}" style="display: inline-table; verticle-align: top; font-size: 95%; ">    
+                                    <f:selectItem itemValue="#{true}" itemLabel="CONTROLADOS"/>    
+                                    <f:selectItem itemValue="#{false}" itemLabel="NO CONTROLADOS"/> 
+                                </h:selectOneRadio> 
+                            </h4>
+                             <br></br>
+                             <p:commandButton value="Buscar">
+                                 <p:ajax update="dtRecetaIndividual" listener="#{surtirRJB.actualiza()}"></p:ajax>
+                             </p:commandButton>
+                             <br></br>
+                              <br></br>
+                        </h:panelGroup>
+                        <p:dataTable id="dtRecetaIndividual" value="#{surtirRJB.listaReceta}" rows="5" editable="true" paginator="true" paginatorPosition="bottom" 
+                                     style="width: 1200px" selection="#{surtirRJB.selectedReceta}" var="oR" rowKey="#{oR.consecReceta}" >
+                            <p:ajax event="rowSelectRadio"/>
+                            <p:column selectionMode="single"/>
+                            <p:column headerText="#{etiq.clave} #{etiq.receta}" >
+                                <p:outputLabel value="#{oR.folioReceta}"/>
+                               
+                            </p:column >
+                            
+                            <p:column headerText="#{etiq.expediente}">
+                                <p:outputLabel value="#{oR.folioPaciente}"/>
+                            </p:column>
+                            
+                             <p:column headerText="Seguro Popular">
+                                 <p:outputLabel value="#{oR.episodioMedico.paciente.seguro.numero}"/>
+                             </p:column>
+                           
+                             <p:column headerText="Paciente">
+                                 <p:outputLabel value="#{oR.episodioMedico.paciente.persona.nombres}  #{oR.episodioMedico.paciente.persona.apPaterno}  #{oR.episodioMedico.paciente.persona.apMaterno}"
+                                                    />
+                            </p:column>
+                             <p:column headerText="Fecha Emision">
+                                 <p:outputLabel value="#{oR.fechaEmision}"/>
+                             </p:column>
+                             <p:column headerText="Fecha Surtido">
+                                 <p:outputLabel value="#{oR.fechaSurtido}"/>
+                             </p:column>
+                            
+                           <f:facet name="footer">
+                                <p:commandButton value="#{etiq.surtir}" icon="ui-icon-pencil" oncomplete="PF('dlgRI').show()">
+                                </p:commandButton>
+                                
+                                <p:commandButton value="#{etiq.consultar}" icon="ui-icon-pencil" oncomplete="PF('dlgRI').show()">
+                                </p:commandButton>
+                                  
+                            </f:facet>
+                             <f:facet name="header">                              
+                                <p:outputLabel value="#{etiq.administrar} #{etiq.receta} #{etiq.individual}"></p:outputLabel>
+                            </f:facet>
+                        </p:dataTable> 
+                    </h:form></center>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

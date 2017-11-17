@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+    <div class="centrar">
+    <h:form class="centrar" id="frmInicio" > 
+        <c:choose>
+        <c:when test="${oExp.ope=='a' || oExp.folioPac gt 0 }">   
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+            <p:growl id="messages" showDetail="true"/>
+            <h2><p:outputLabel value="#{etiq.abrirExpediente}"/></h2>
+            <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+            <p:panelGrid styleClass="frm_centrado"> 
+               <f:facet name="header"><p:row><p:column colspan="5"><p:outputLabel value="#{etiq.abrirExpediente}"/></p:column></p:row></f:facet>                      
+               <p:row>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.tel}:"/></p:column>
+               </p:row>
+
+               <p:row>
+                   <p:column>
+                       <h:outputLabel  id="nombre" value="#{oExp.exp.nombres}" styleClass="bordes" ></h:outputLabel>
+                       <p:message for="nombre" id="ment3" />
+                   </p:column>
+                   <p:column><h:outputLabel  id="appat" value="#{oExp.exp.apPaterno}" styleClass="bordes" ></h:outputLabel></p:column>
+                   <p:column><h:outputLabel  id="apmat" value="#{oExp.exp.apMaterno}" styleClass="bordes" ></h:outputLabel></p:column>
+                   <p:column>
+                       <p:selectOneRadio id="sexo" value="#{oExp.exp.sexoP}" required="true" disabled="true">
+                           <f:selectItem itemLabel="Masculino" itemValue="M" />
+                           <f:selectItem itemLabel="Femenino" itemValue="F" />
+                       </p:selectOneRadio>
+                    </p:column>
+                   <p:column>
+                        <p:inputText id="tTelefono" onkeypress="return validaCaracter(event);" value="#{oExp.exp.telefono}" validatorMessage="El teléfono debe contener solo caracteres numéricos" maxlength="13" required="true" requiredMessage="Falta Numero de Teléfono">
+                            <f:validateLongRange minimum="0"/>
+                            <f:ajax render="mentTel" execute="@this" event="valueChange" />
+                        </p:inputText>
+                    </p:column>
+               </p:row>
+
+               <p:row>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}:"/><br></br></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.colonia}:"/></p:column>
+               </p:row>
+
+               <p:row>
+                   <p:column><h:outputLabel  id="fdia" value="#{oExp.exp.fechaNacTexto}" styleClass="bordes"></h:outputLabel></p:column>
+                   <p:column><h:outputLabel  id="edad" value="#{oExp.exp.calculaEdad()}" styleClass="bordes"/></p:column>
+                   <p:column colspan="2"><h:outputLabel id="dom" value="#{oExp.exp.calleNum}" styleClass="bordes"/></p:column>
+                   <p:column><h:outputLabel id="col" value="#{oExp.exp.colonia}" styleClass="bordes"/></p:column> 
+               </p:row>      
+
+               <p:row>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.pais}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.entidad}:"/><br></br></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.municipio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.localidad}:"/></p:column>
+               </p:row> 
+
+               <p:row>
+                   <p:column><h:outputLabel id="pais" value="#{oExp.exp.pais}" styleClass="bordes"/></p:column>
+                   <p:column>
+                       <p:selectOneMenu disabled="true" id="enti" value="#{oExp.exp.estado.claveEdo}"  >
+                            <p:ajax update="muni" event="valueChange"/>
+                            <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oExp.listaEstados}" var="oEdo" 
+                                           itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                       </p:selectOneMenu>
+                   </p:column>
+                   <p:column colspan="2">
+                       <p:selectOneMenu disabled="true" id="muni" value="#{oExp.exp.municipio.claveMun}" >
+                            <p:ajax update="loc" event="valueChange"/>
+                            <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oExp.listaMunicipios}" var="oMun" 
+                                           itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                       </p:selectOneMenu>
+                   </p:column>
+                   <p:column>
+                          <p:selectOneMenu disabled="true" id="loc" value="#{oExp.exp.ciudad.claveCiu}" >
+                            <p:ajax update="codp" event="valueChange"/>
+                            <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oExp.listaCiudades}" var="oCiu"
+                                           itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                           </p:selectOneMenu>
+                   </p:column>
+               </p:row>
+
+               <p:row>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.cp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.seguro}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.seguro}:"/><br></br></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechaApertura}:"/></p:column>
+               </p:row>
+
+               <p:row>
+                   <p:column>
+                       <p:selectOneMenu disabled="true" id="codp" value="#{oExp.exp.ciudadCP.cp}" >
+                        <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oExp.listaCP}" var="oCP"
+                                       itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                       </p:selectOneMenu>
+                   </p:column>
+                   <p:column><h:outputLabel value="#{oExp.exp.seg.derechohabienteP}" styleClass="bordes"/></p:column>
+                   <p:column><h:outputLabel value="#{oExp.exp.seg.numero}"/></p:column>
+                   
+                   <p:column rendered="#{oExp.renArch}" > 
+                        <p:inputText value="#{oExp.exp.expediente.numero}" id="numExp" converterMessage="El numero no puede ser superior a 2147483647" requiredMessage="Debe ingresar un numero de Expediente Válido" required="true" styleClass="bordes">
+                            <f:ajax event="valueChange" render="men numExp" execute="@this" resetValues="true"/>
+                            <f:validateLongRange maximum="2147483647" minimum="0"/>
+                        </p:inputText>
+                        <p:message for="numExp" id="men"/>
+                   </p:column>
+                   <p:column rendered="#{oExp.renUrg}">
+                       <p:selectOneMenu value="#{oExp.exp.expediente.numero2}" requiredMessage="Debe indicar un número de expediente" required="true" >
+                           <f:selectItem itemLabel="SELECCIONA NUMERO DE EXPEDIENTE" itemValue="" noSelectionOption="true" />
+                           <f:selectItems value="#{oExp.listaExpPendientesPorAbrir}" var="oExpPen"
+                                          itemLabel="#{oExpPen.numero}" itemValue="#{oExpPen.numero}"/>
+                           <p:ajax/>
+                       </p:selectOneMenu>
+                   </p:column>
+                   <p:column><h:outputLabel value="#{oExp.exp.fechaSistema}" styleClass="bordes"/></p:column>                                
+               </p:row>
+
+               <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.servicio}:"/><br></br></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.programa}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="1"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+               </p:row>
+
+                <p:row>
+                   <p:column colspan="2">
+                       <p:selectOneMenu id="areas" value="#{oExp.exp.expediente.servicioIngreso.clave}" requiredMessage="Debe indicar un area de servicio" required="true">
+                           <f:selectItem itemLabel="SERVICIO" itemValue="" noSelectionOption="true" />
+                           <f:selectItems value="#{oExp.exp.expediente.servicioIngreso.listaAreasExp}" var="oAE"
+                                          itemLabel="#{oAE.descripcion}" itemValue="#{oAE.clave}"/>
+                       </p:selectOneMenu>
+                   </p:column>
+                   <p:column colspan="2">
+                       <p:selectOneMenu value="#{oExp.exp.expediente.programa.clave}">
+                           <f:selectItem itemLabel="PROGRAMA" itemValue="" noSelectionOption="true" />
+                           <f:selectItems value="#{oExp.listaProgramas}" var="oProg"
+                                          itemLabel="#{oProg.descripcion}" itemValue="#{oProg.clave}"/>
+                       </p:selectOneMenu>
+                   </p:column>
+                    <p:column colspan="1"><p:inputMask value="#{oExp.exp.curp}" mask="aaaa999999aaaaaa99" required="false" style="text-transform: uppercase" /></p:column>
+                </p:row>
+
+               <p:row rendered="#{oExp.renArch}">
+                  <p:column styleClass="ui-widget-header" colspan="5"></p:column>
+               </p:row>
+               <p:row rendered="#{oExp.renArch}">
+                   <!--
+                   <p:column colspan="3" >
+                       <p:selectOneMenu value="#{oExp.exp.expediente.lugarApertura.tipoParametro}" requiredMessage="Debe indicar el lugar de apertura" required="true">
+                           <f:selectItem itemLabel="LUGAR DE APERTURA" itemValue="" noSelectionOption="true" />
+                           <f:selectItems value="#{oExp.listaLugarAperturaExp}" var="oLugAper"
+                                itemLabel="#{oLugAper.valor}" itemValue="#{oLugAper.tipoParametro}#{oLugAper.claveParametro}"/>
+                       </p:selectOneMenu>
+                   </p:column>
+                   -->
+                   <p:column colspan="5">
+                       <p:commandButton value="#{etiq.subirArch}" icon="ui-icon-circle-arrow-n" onclick="PF('dlgArch').show()"/>
+                   </p:column>
+               </p:row>
+               <f:facet name="footer">
+                   <p:row>
+                       <p:column colspan="5">
+                           <div class="centrar">
+                               <p:commandButton value="#{etiq.generarExpediente}"  action="#{oExp.insertaExpediente()}" 
+                                                validateClient="true" icon="ui-icon-disk" ajax="false">
+                               </p:commandButton>
+                           </div>
+                       </p:column>
+                   </p:row>
+                   
+               </f:facet>
+           </p:panelGrid>
+           <p:message for="tTelefono" id="mentTel"></p:message>
+        </c:when>
+        </c:choose>
+    </h:form>
+    <p:dialog header="#{etiq.subirArch}" widgetVar="dlgArch" showEffect="puff" hideEffect="bounce"
+              resizable="false" closable="true" modal="true" height="150" width="1000" style="text-align: center">
+        <h:form id="frmArch" enctype="multipart/form-data">
+            <p:panelGrid>
+                <p:row>
+                    <p:column rendered="#{oExp.renderizaPolizaSP}" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.polElec}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.credINE}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column rendered="#{oExp.renderizaPolizaSP}">
+                       <p:fileUpload
+                         fileUploadListener="#{oExp.cargaPDFpoliza}"
+                         allowTypes="/(\.|\/)(pdf)$/"
+                         mode="advanced"
+                         fileLimit="1"
+                         sizeLimit="1232896" update=":frmInicio:messages" >
+                       </p:fileUpload>
+                   </p:column>
+                    <!-- update=" -->
+                   <p:column>
+                       <p:fileUpload
+                         fileUploadListener="#{oExp.cargaPDFine}"
+                         allowTypes="/(\.|\/)(pdf)$/"
+                         mode="advanced"
+                         fileLimit="1"
+                         sizeLimit="1232896" update=":frmInicio:messages">
+                       </p:fileUpload>
+                   </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+        <f:facet name="start">
+            <p:graphicImage value="/imgs/loading.gif" />
+        </f:facet>
+    </p:ajaxStatus>
+    </div>
+    </ui:define>
+    </ui:composition>
+</html>

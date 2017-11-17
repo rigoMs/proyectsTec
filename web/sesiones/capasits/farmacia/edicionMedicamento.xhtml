@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/>
+                <div id="page-wrap" style="min-height:100vh;"> 
+
+                    <h:form id="formR" style=" position: absolute; margin-top:30px; float: left;" >            
+                        <p:panelGrid>
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3"> <h:outputLabel value="#{etiq.edicMed}"/></p:column>
+                                </p:row> 
+                            </f:facet>
+                            <p:row>
+                                <p:column style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.codigoBarras}: "/>
+                                    <p:inputText value="#{oEdicMed.codBarras}" required="true" requiredMessage="Ingrese código de barras" converterMessage="Código de Barras, Solo ingresar números"/>                                    
+                                    <p:commandButton value="#{etiq.buscar}" ajax="false" actionListener="#{oEdicMed.buscaMedicamento}" update=":forms:datos"/> 
+                                </p:column>
+                            </p:row>           
+                        </p:panelGrid>    
+                    </h:form>
+
+                    <h:form id="forms" style=" position: absolute; margin-top:100px; float: left;">
+                        <p:panelGrid  id="datos"  rendered="#{oEdicMed.encontrado}" style="width: 410px">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3"><h:outputLabel value="#{etiq.edicMed}"/></p:column>
+                                </p:row> 
+                            </f:facet>
+                            <p:row>
+                                <p:column colspan="3" style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.clave}: "/>
+                                    <p:inputText value="#{oEdicMed.med.claveMedicamento}" readonly="true" required="true" requiredMessage="Inserte Codigo de Barras"/>                 
+                                </p:column>  
+                            </p:row>   
+                            <p:row>
+                                <p:column colspan="3" style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.nombre}: "/>
+                                    <p:inputText value="#{oEdicMed.med.nombre}" required="true" onkeyup="this.value = this.value.toUpperCase();" requiredMessage="Inserte Nombre"/>                 
+                                </p:column>  
+                            </p:row>                          
+                            <p:row>
+                                <p:column colspan="3" style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.sustActiva}: "/>
+                                    <p:inputText value="#{oEdicMed.med.sustanciaActiva}"  onkeyup="this.value = this.value.toUpperCase();" required="true" requiredMessage="Inserte Sustancia Activa"/>                 
+                                </p:column>  
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3" style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.descripcion}: "/>
+                                    <p:inputText value="#{oEdicMed.med.descripcion}"  onkeyup="this.value = this.value.toUpperCase();" required="true" requiredMessage="Inserte Descripcion"/>                 
+                                </p:column>  
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3" style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.presentacion}: "/>
+                                    <p:inputText value="#{oEdicMed.med.presentacion}" readonly="true" required="true" requiredMessage="Inserte Presentacion"/>                 
+                                </p:column>  
+                            </p:row>    
+                            <p:row>
+                                <p:column colspan="3" style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.codigoBarras}: "/>
+                                    <p:inputText value="#{oEdicMed.med.codBarras}" readonly="true" required="true" requiredMessage="Inserte Codigo de Barras"/>                 
+                                </p:column>  
+                            </p:row>     
+                        </p:panelGrid>  
+                        <p:growl id="messages" showDetail="true" />
+                        <br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <p:commandButton id="edi" type="submit"  value="#{etiq.actualizar}" action="#{oEdicMed.actualiza}" onclick="location.replace()" rendered="#{oEdicMed.encontrado}"/>
+                        <p:growl id="msgs" showDetail="true" /> 
+                    </h:form>   
+                </div>   
+            </ui:define>    
+        </ui:composition>
+    
+</html>  

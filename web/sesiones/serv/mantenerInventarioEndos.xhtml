@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.estMatMed}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:tabView id="tabEstEndos">
+                <p:tab title="#{etiq.matPorEst}">
+                    <div class="buscar">
+                    <h:form id="frmmat">
+                        <p:dataTable id="tblMatEst"
+                                     value="#{EstRealEndos.listaMatEst}"
+                                     var="oMat"
+                                    emptyMessage="Sin Registros">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.matPorEst}" styleClass="mensaje" />
+                            </f:facet>
+                            <p:column width="30%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.estudios}" styleClass="mensaje" />
+                                </f:facet>
+                                <h:outputText value="#{oMat.estReal.estudio.descripcion}" />
+                            </p:column>
+                            <p:column width="30%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.materialUtil}" styleClass="mensaje" />
+                                </f:facet>
+                                <h:outputText value="#{oMat.material.nombre}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    </div>
+                </p:tab>
+                <p:tab title="Medicamento por Estudio">
+                    <h:form id="frmmed">
+                        <p:dataTable id="tblMedEst"
+                                     value="#{EstRealEndos.listaMedEst}"
+                                     var="oMed"
+                                    emptyMessage="Sin Registros">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.medPorEst}" styleClass="mensaje" />
+                            </f:facet>
+                            <p:column width="20%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.estudios}" styleClass="mensaje" />
+                                </f:facet>
+                                <h:outputText value="#{oMed.estReal.estudio.descripcion}" />
+                            </p:column>
+                            <p:column width="45%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.medicamentoUtil}" styleClass="mensaje" />
+                                </f:facet>
+                                <h:outputText value="#{oMed.medicamento.nombre}" />
+                            </p:column>
+                            <p:column width="35%">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.presentacion}" styleClass="mensaje" />
+                                </f:facet>
+                                <h:outputText value="#{oMed.medicamento.presentacion}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

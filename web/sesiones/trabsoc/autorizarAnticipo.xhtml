@@ -1,0 +1,447 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.autorazacion} #{etiq.anticipo}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:growl id="growl" showDetail="true" /> 
+                  <!--Componenete de busqueda :P-->
+                <p:commandButton id="BuscarPacineT"  value="#{etiq.buscarPac}" icon="ui-icon-search" 
+                                 onclick="PF('BuscPacie').show(); "> 
+                </p:commandButton>  
+                <p:dialog widgetVar="BuscPacie" id="BuscPacie" width="1050" height="550">   
+                    <p:panelGrid >
+                        <p:row>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <h:outputText value="#{etiq.buscarDatosBasicos}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="nom"  style="text-transform:uppercase;"
+                                             maxlength="50" size="39"
+                                             value="#{oBusqPacComunJB.paciente.nombres}" 
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="app" style="text-transform:uppercase;"
+                                             maxlength="50" size="39"
+                                             value="#{oBusqPacComunJB.paciente.apPaterno}" 
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="apm" style="text-transform:uppercase;"
+                                             maxlength="50" size="39"
+                                             value="#{oBusqPacComunJB.paciente.apMaterno}"  
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                        </p:row>                
+                        <p:row>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <h:outputText value="#{etiq.buscarPorExpediente}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.noExp}:"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:inputText styleClass="bordes" id="exp" 
+                                             value="#{oBusqPacComunJB.paciente.expediente.numero}" 
+                                             converterMessage="#{etiq.errCapturaCaractEsp}">
+                                    <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                    <f:ajax render="mentExp" execute="@this" 
+                                            event="valueChange" />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <center>
+                        <p:commandButton styleClass="bordes" 
+                                         value="#{etiq.buscar}" 
+                                         icon="ui-icon-search">
+                            <p:ajax update="tablaPac selecc cancel" listener="#{oBusqPacComunJB.buscaPaciente()}"/>
+                        </p:commandButton>
+                    </center>
+                    <p:message for="exp" id="mentExp"/>
+                    <br/><br/>
+                    <div class="tabla_pacEnc">
+                       <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                     paginatorPosition="both" rows="5" 
+
+                                     value="#{oBusqPacComunJB.listaPac}" 
+                                     emptyMessage="#{etiq.noRegistro}" 
+                                     style="visibility:#{oBusqPacComunJB.visibilidadTabla};"
+                                     rowKey="#{oPacEnc.apMaterno}"
+                                     selection="#{oBusqPacComunJB.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.pacEncontrados}"/>
+                            </f:facet>
+                            <p:column selectionMode="single">
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.nombres}"/>
+                            </p:column>
+                            <p:column style="width: 9%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.edadNumero}"/>
+                            </p:column>   
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.curp}"/>
+                            </p:column>
+                            <p:column style="width: 7%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.folioPaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                            </p:column>  
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                            </p:column>     
+                        </p:dataTable>
+                    </div>  
+
+                    <p:commandButton value="#{etiq.seleccionar}" id="selecc" style="visibility:#{oBusqPacComunJB.visibilidadTabla};" icon="ui-icon-search" >
+                        <p:ajax listener="#{AutorizaAnticip.llenar}" update="BuscPacie tabladeDatos tablaSelecc"/> 
+                    </p:commandButton>   
+                    
+                    <p:commandButton value="#{etiq.cancelar}" id="cancel" icon="ui-icon-circle-close" style="visibility:#{oBusqPacComunJB.boton2};">
+                        <p:ajax listener="#{AutorizaAnticip.limpiaboton()}" update="BuscPacie tabladeDatos tablaSelecc"/>
+                    </p:commandButton>
+                </p:dialog>
+
+                <br/> <br/> 
+                <!--Componenete de busqueda :P-->
+                
+                
+                <p:panelGrid styleClass="frm_centrado" id="tabladeDatos" style="visibility:#{AutorizaAnticip.visible};">
+                    <p:row>
+                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.datosDelPaciente}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tipohospitalizacionurgencia}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}:"/></p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.nombres}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.apPaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.apMaterno}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.sexoP}"/>    
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.tipopac}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.edadNumero}"/>
+                        </p:column>
+
+                    </p:row>
+
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.servicios}:"/></p:column>  
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.causes}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.sPop}"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nivSE}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.noCam}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nExp}:"/><br></br></p:column>  
+                    </p:row>
+
+                    <p:row>
+                         <p:column>
+                             <h:outputText value="#{AutorizaAnticip.episodioMedico.area.descripcion}"/>
+                        </p:column>
+                         <p:column>
+                             <h:outputText value="#{AutorizaAnticip.episodioMedico.diagIngreso.causes.clave}"/>
+                        </p:column> 
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.seg.numero}"/>
+                        </p:column>  
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.nivelSocio}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.episodioMedico.cama.numero}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.paciente.expediente.numero}"/>
+                        </p:column>
+
+                    </p:row>
+                    <p:row>
+                        
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechaDeIngreso}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.horaDeIngreso}:"/></p:column>
+                        <p:column colspan="4" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombrede} #{etiq.trabajadorasocial}:"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{AutorizaAnticip.episodioMedico.FIngreso}"/>
+                        </p:column>
+                         <p:column>
+                             <h:outputText value="#{AutorizaAnticip.episodioMedico.fechaIngreso}">
+                                 <f:convertDateTime type="time" pattern="HH:mm:ss"/> 
+                             </h:outputText>
+                        </p:column> 
+                        <p:column colspan="4">
+                            <h:outputText value="#{AutorizaAnticip.personalFirmado.nombreCompleto}"/>
+                        </p:column> 
+
+                    </p:row>
+                   </p:panelGrid> <br/> 
+
+                  <p:panelGrid id="tablaSelecc" style="visibility:#{AutorizaAnticip.visible};">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"> <h3><p:outputLabel value="Forma a Pagar:"/></h3> </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="Seleccion2" value="#{AutorizaAnticip.selecciona}">
+                                <f:selectItem itemLabel="Selecciona" itemValue="0"/> 
+                                <f:selectItem itemLabel="Anticipo" itemValue="1"/>
+                                <f:selectItem itemLabel="Finiquito" itemValue="2"/>  
+                             <p:ajax update="seleccion" listener="#{AutorizaAnticip.Muestra()}"></p:ajax>
+                            </p:selectOneMenu>  
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> <br/> 
+                
+                 <p:tabView effect="fade" effectDuration="slow" class="tamaño2" id="seleccion" style="visibility:#{AutorizaAnticip.visible};"> 
+                    <p:tab title="seleccione" titleStyle="background-color:#81230D;" id="pantall0" rendered="#{AutorizaAnticip.pant0}" > 
+                        <p:outputLabel value="#{etiq.seleccionar}"/>
+                        
+                    </p:tab>
+                      
+                    <p:tab title="Anticipo" titleStyle="background-color:#81230D;" id="pantall2" rendered="#{AutorizaAnticip.pant1}"> 
+                        <p:panelGrid>
+                        <p:row>
+                           <p:column colspan="4" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.costos} y #{etiq.autorizaciones}"/></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3"> 
+                                <p:dataTable id="tablaPac" value="#{AutorizaAnticip.servicioRealizadoT}" var="Serv" paginator="true" rows="6"
+                                             emptyMessage="NO HAY REGISTROS" selection="#{AutorizaAnticip.seleccionadoSerRea}" rowKey="#{Serv.identificador} #{Serv.costoUnitACobrar}" >
+                               <f:facet name="header">
+                                <h:outputText value="#{etiq.servicio}"/>
+                               </f:facet> 
+                              <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                              <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.descripcion}"/>
+                                </f:facet>
+                                  <h:outputText value="#{Serv.descripcion}"/>
+                              </p:column>
+                              <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.costo}"/>
+                                </f:facet>
+                                  <h:outputText value="#{Serv.costoUnitACobrar}"/>
+                              </p:column>               
+                         </p:dataTable>
+                                </p:column>
+                        </p:row> 
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.anticipo}:"/></p:column>
+                            <p:column colspan="3"> 
+                                <p:inputText value="#{AutorizaAnticip.autorizacionPago.montoSubsidio}" size="30">
+                                    <f:validateLongRange minimum="10" maximum="9999999999"/>
+                                    <p:ajax />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                         <p:row>
+                               <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.autorizado} #{etiq.por}"/></p:column>
+                               <p:column colspan="3"> 
+                                   <p:selectOneMenu required="true" id="autoriza" value="#{AutorizaAnticip.personalAuto.clavpeus}">
+                                       <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                       <f:selectItems value="#{AutorizaAnticip.listAutorizacion}" var="oVar"
+                                                      itemLabel="#{oVar.puesto}" itemValue="#{oVar.clavpeus}"/> 
+                                       <p:ajax></p:ajax>
+                                   </p:selectOneMenu> 
+                               </p:column> 
+                           </p:row>
+                             <p:row>
+                                 <p:column colspan="4">  
+                                     <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{AutorizaAnticip.registrarAnticipo()}" ajax="false" validateClient="true" update="growl"/> 
+                                 </p:column>
+                           </p:row> 
+                    </p:panelGrid> <br/>  
+                    </p:tab>
+                     <p:tab title="Finiquito" titleStyle="background-color:#81230D;" id="pantall3" rendered="#{AutorizaAnticip.pant2}"> 
+                         <p:panelGrid>
+                        <p:row>
+                           <p:column colspan="4" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.costos} y #{etiq.autorizaciones}"/></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3"> 
+                                <p:dataTable id="tablaPac2" var="oSerAnti" value="#{AutorizaAnticip.servicioAnticipa}" paginator="true" rows="6"
+                                             emptyMessage="NO HAY REGISTROS"  selection="#{AutorizaAnticip.seleccionadoSerReaAnti}" rowKey="#{oSerAnti.identificador} #{oSerAnti.autorizacionPago.monto} #{oSerAnti.autorizacionPago.montoSubsidio}" >
+                               <f:facet name="header">
+                                <h:outputText value="Servicios"/>
+                               </f:facet>
+                              <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                              <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.descripcion}"/>
+                                </f:facet>
+                                  <h:outputText value="#{oSerAnti.descripcion}"/>
+                              </p:column>
+                              <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.costo}"/>
+                                </f:facet>
+                                  <h:outputText value="#{oSerAnti.autorizacionPago.monto}"/>
+                              </p:column>  
+                               <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="Anticipo"/>
+                                </f:facet>
+                                   <h:outputText value="#{oSerAnti.autorizacionPago.montoSubsidio}"/>
+                              </p:column>   
+                         </p:dataTable>
+                                </p:column>
+                        </p:row> 
+                             <p:row>
+                                  <p:column styleClass="ui-widget-header"><p:outputLabel value="Seleccion:"/></p:column>
+                                 <p:column>
+                                     <p:selectOneMenu id="Selecci" value="#{AutorizaAnticip.selccFini}" required="true">
+                                         <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/> 
+                                         <f:selectItem itemLabel="Otro Anticipo" itemValue="1"/>
+                                         <f:selectItem itemLabel="Finiquito" itemValue="2"/> 
+                                         <p:ajax listener="#{AutorizaAnticip.muestraselecci()}" update="Seleccion3 autoriz txtanticip2"></p:ajax>
+                                     </p:selectOneMenu> 
+                                 </p:column>
+                             </p:row> 
+                                                        <p:row>
+                                  <p:column styleClass="ui-widget-header"><p:outputLabel value="Finiquito Forma a Pagar:"/></p:column>
+                                 <p:column>
+                                     <p:selectOneMenu id="Seleccion3" value="#{AutorizaAnticip.selccTermPag}" required="true" disabled="#{AutorizaAnticip.seleccisubsi}">
+                                         <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/> 
+                                         <f:selectItem itemLabel="Cubierto por el Paciente" itemValue="1"/>
+                                         <f:selectItem itemLabel="subsidiado" itemValue="2"/>
+                                         <p:ajax listener="#{AutorizaAnticip.muestraselecci2()}" update="autoriz txtanticip2"></p:ajax>
+                                     </p:selectOneMenu> 
+                                 </p:column>
+                             </p:row>  
+                             
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.anticipo}:"/></p:column>
+                            <p:column colspan="3"> 
+                                <p:inputText id="txtanticip2"  value="#{AutorizaAnticip.autorizacionPago.montoSubsidio}" size="30" disabled="#{AutorizaAnticip.canti}">
+                                 <f:validateLongRange minimum="10" maximum="9999999999"/>
+                                    <p:ajax />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                         <p:row>
+                               <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.autorizado} #{etiq.por}" /></p:column>
+                               <p:column colspan="3"> 
+                                   <p:selectOneMenu id="autoriz" value="#{AutorizaAnticip.personalAuto.clavpeus}" disabled="#{AutorizaAnticip.seleccAut}">
+                                       <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                       <f:selectItems value="#{AutorizaAnticip.listAutorizacion}" var="oVar"
+                                                      itemLabel="#{oVar.puesto}" itemValue="#{oVar.clavpeus}"/>
+                                       <p:ajax></p:ajax>
+                                   </p:selectOneMenu>  
+                               </p:column> 
+                           </p:row>
+                             
+                           <p:row>
+                               <p:column colspan="4"> <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" action="#{AutorizaAnticip.registrarTipo()}" ajax="false" validateClient="true" update="growl"/>  </p:column>
+                           </p:row> 
+                    </p:panelGrid> 
+                    </p:tab> 
+                  </p:tabView>
+                 
+            </h:form>  
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

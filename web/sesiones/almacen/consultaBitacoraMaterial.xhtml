@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.BitacoraDeMateriales}"/>
+                </h2>
+                <br/>
+                    <div class="centrado_texto">
+                        <p:tabView id="bitmaterial"  effect="scale" effectDuration="fast" dynamic="true" > 
+                            <p:ajax event="tabChange" />
+                            <p:tab  id="tabEntradas" title="ENTRADAS"  >
+                                <h:form id="formEntradas">                                    
+                                        <h3><p:outputLabel value="REPORTE DE ENTRADAS DE MATERIALES" class="centrado_texto" /></h3>
+                                    <div class="centrado_texto"> 
+                                        <p:panelGrid class="frm_centrado" columns="5" >
+                                        <h:outputLabel value="Fecha:" id="fechaIni1"  styleClass="mensaje"/>
+                                        <p:calendar id="fechaIni"     required="true" placeholder="dd/mm/aa" showOn="button" effect="fold"   
+                                                    requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)"
+                                                    value="#{oBitacora.fechaIn}" maxdate="#{oBitacora.inventario.fechaActual()}" locale="es"  readonlyInput="true">
+                                            <p:ajax event="dateSelect" update="fechaFin"/>
+                                        </p:calendar>
+                                        <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                                        <p:calendar id="fechaFin"   required="true" placeholder="dd/mm/aa"  showOn="button" effect="fold"
+                                                    requiredMessage="Debe seleccionar una fecha final" value="#{oBitacora.fechaFi}"
+                                                    onkeypress="return validaCaracter(event)" mindate="#{oBitacora.fechaIn}" maxdate="#{oBitacora.inventario.fechaActual()}" locale="es" readonlyInput="true">
+                                            <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                                        </p:calendar>   
+                                        <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBitacora.rebotes}"
+                                                         update=":bitmaterial:formEntradas:tblEntradas 
+                                                         :bitmaterial:formEntradas:fechaIni 
+                                                         :bitmaterial:formEntradas:fechaFin"/>
+                                        </p:panelGrid>
+                                    </div>
+                                        <br/>
+                                    <p:dataTable var="oEntrada" value="#{oBitacora.arrBitacora}" id="tblEntradas"  paginator="true" rows="10" 
+                                                 emptyMessage="Sin Reporte De Materiales" >
+
+                                        <p:column headerText="#{etiq.clave}" width="10"  >
+                                            <h:outputText value="#{oEntrada.claveMaterial}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nombre}" width="50">                
+                                            <h:outputText value="#{oEntrada.nombre}"/>                              
+                                        </p:column>
+                                        <p:column headerText="#{etiq.presentacion}" width="10">
+                                            <h:outputText value="#{oEntrada.presentacion}"/>      
+                                        </p:column>                                     
+                                        <p:column headerText="#{etiq.proveedor}" width="20">
+                                            <h:outputText value="#{oEntrada.proveedor.nombre}"/>                             
+                                        </p:column>  
+                                        <p:column headerText="T.Compra" width="20">
+                                            <h:outputText value="#{oEntrada.parametrizacion.valor}"/>                             
+                                        </p:column>  
+                                        <p:column headerText="#{etiq.FechaRecepcion}" width="20">
+                                            <h:outputText value="#{oEntrada.cabecera.fechaRecepcion}">
+                                                <f:convertDateTime locale="es" type="date"/>
+                                            </h:outputText>
+                                        </p:column>  
+                                        <p:column headerText="#{etiq.lote}" width="15" >
+                                            <h:outputText value="#{oEntrada.inventario.lote}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.cantidad}" width="10">
+                                            <h:outputText value="#{oEntrada.inventario.cant}"/>
+                                        </p:column>
+                                        <p:column headerText="Precio U." width="10">
+                                            <h:outputText value="#{oEntrada.inventario.precio}"/>
+                                        </p:column> 
+                                       
+                                    </p:dataTable>  
+                                    <div align="center">                                         
+                                                                            
+                                        <h:commandLink    immediate="true" value="Exportar" styleClass="mensaje"  >
+                                            <p:graphicImage value="/imgs/pdf.jpg" width="30" />
+                                            <poue:exporter type="pdf" target="tblEntradas" fileName="Reporte  De Entradas  De Materiales"
+                                                           orientation="center"  cellFontColor="#090908" cellFontStyle="oblique" facetBackground="#85F8FC" 
+                                                           tableTitle="#{etiq.ReporteEntradas}"  cellFontSize="8" fontName="Verdana" 
+                                                           facetFontSize="10"  facetFontStyle="italic"     />  
+                                        </h:commandLink>
+                                    </div>                                     
+                                </h:form>                              
+                         
+                            </p:tab>
+                            <p:tab title="#{etiq.Salidas}"  id="salidas">
+                                <h:form id="formSalidas">
+                                      <h3><p:outputLabel value="REPORTE DE SALIDAS DE MATERIALES" class="centrado_texto" /></h3>
+                                    <p:panelGrid class="frm_centrado" columns="5">
+                                      
+                                        <h:outputLabel value="Fecha:" id="fechaIni2"  styleClass="mensaje"/>
+                                        <p:calendar id="fechaInicial"     required="true" placeholder="dd/mm/aa"  showOn="button" effect="fold"
+                                                    requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)"
+                                                    value="#{oBitacora.fechaIn}" maxdate="#{oBitacora.inventario.fechaActual()}" locale="es"
+                                                    readonlyInput="true" mode="popup">
+                                            <p:ajax event="dateSelect" update="fechaFinal"/>
+                                        </p:calendar>
+                                        <p:outputLabel id="fechaFin2" value="A: " styleClass="mensaje"/>
+                                        <p:calendar id="fechaFinal"    required="true" placeholder="dd/mm/aa"  showOn="button" effect="fold"
+                                                    requiredMessage="Debe seleccionar una fecha final" value="#{oBitacora.fechaFi}"
+                                                    onkeypress="return validaCaracter(event)" mindate="#{oBitacora.fechaIn}" maxdate="#{oBitacora.inventario.fechaActual()}" locale="es" readonlyInput="true">
+                                            <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                                        </p:calendar>   
+                                        <p:commandButton value="Buscar" icon="ui-icon-search"  actionListener="#{oBitacora.eventoSalidas}"  
+                                                         update=":bitmaterial:formSalidas:tblSalidas
+                                                         :bitmaterial:formSalidas:fechaInicial
+                                                         :bitmaterial:formSalidas:fechaFinal"/>
+                                        
+                                     </p:panelGrid>
+                                        <br/>
+                                    <p:dataTable var="oSalida"  value="#{oBitacora.arrBitacoraSalidas}" resizableColumns="true" id="tblSalidas"  paginator="true" rows="10" 
+                                                 emptyMessage="Sin Reporte De Materiales">
+
+                                        <p:column headerText="#{etiq.Servicio}" width="16" >
+                                            <h:outputText value="#{oSalida.area.descripcion}"/>                             
+                                        </p:column> 
+                                        <p:column headerText="#{etiq.clave}" width="10"  >
+                                            <h:outputText value="#{oSalida.claveMaterial}"/>
+                                        </p:column>                                        
+                                        <p:column headerText="#{etiq.nombre}" width="30" >                
+                                            <h:outputText value="#{oSalida.nombre}"/>                              
+                                        </p:column>                                        
+                                        <p:column headerText="#{etiq.Concentrado}" width="10" >
+                                            <h:outputText value="#{oSalida.concentrado}"/>        
+                                        </p:column >                                        
+                                        <p:column headerText="#{etiq.FechaSalida}" width="25" >
+                                            <h:outputText value="#{oSalida.cabecera.fechaRecepcion}">
+                                                <f:convertDateTime locale="es" type="date"/>
+                                            </h:outputText>
+                                        </p:column>                                          
+                                        <p:column headerText="#{etiq.lote}" width="10" >
+                                            <h:outputText value="#{oSalida.inventario.lote}"/>
+                                        </p:column>                                        
+                                        <p:column headerText="#{etiq.cantidad}" width="15" >
+                                            <h:outputText value="#{oSalida.inventario.cant}"/>
+                                        </p:column>
+                                    </p:dataTable> 
+                                         <div align="center">                                         
+                                                                            
+                                        <h:commandLink    immediate="true" value="Exportar" styleClass="mensaje"  >
+                                            <p:graphicImage value="/imgs/pdf.jpg" width="30" />
+                                            <poue:exporter type="pdf" target="tblSalidas" fileName="Reporte  De Salidas Materiales"
+                                                           orientation="center"  cellFontColor="#090908" cellFontStyle="oblique" facetBackground="#85F8FC" 
+                                                           tableTitle="#{etiq.ReporteSalidas}"  cellFontSize="8" fontName="Verdana" 
+                                                           facetFontSize="10"  facetFontStyle="italic"     />  
+                                        </h:commandLink>
+                                    </div> 
+                                </h:form>
+                            </p:tab>
+                               
+                        </p:tabView>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                 </div>  
+            </ui:define>         
+        </ui:composition>
+</html>

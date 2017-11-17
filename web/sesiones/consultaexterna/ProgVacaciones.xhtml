@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+    
+  <ui:define name="cuerpo">
+   <div class="buscar">
+             
+    <p:growl id="msgs" showDetail="true" />
+    <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+    <h3 class="centrado_texto"><p:outputLabel id="titProgVac" value="#{etiq.programacionPermisos}" /></h3>
+    
+    <p:tabView styleClass="centrado_texto" id="tabPermisos" activeIndex="#{oProgVac.index}">
+        <p:tab title="#{etiq.dias}">
+            <h:form>
+                <p:panelGrid styleClass="frm_centrado">
+                  <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="4"><p:outputLabel id="titVacDias" value="#{etiq.programarPermisosDias}" /></p:column>
+                    </p:row>
+                  </f:facet> 
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="textover mensaje" id="medico" value="#{etiq.medico}:" />                            
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:selectOneMenu id="tMedico" styleClass="textover" value="#{oProgVac.medico.noTarjeta}">
+                                <f:selectItems value="#{oProgVac.listaMedicos}" var="oMed" 
+                                   itemLabel="#{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                     </p:row>
+                     <p:row>
+                        <p:column>
+                            <p:outputLabel id="fecInicio" styleClass="textover mensaje" value="#{etiq.fechaInicial}:" />                            
+                        </p:column>
+                        <p:column>
+                            <p:calendar  id="tFecInicio" value="#{oProgVac.fechaIni.fechaIni}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Inicial es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oProgVac.fecActual}" readonlyInput="true">
+                                <p:ajax event="dateSelect" update="tFecFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel id="fecFin" styleClass="textover mensaje" value="#{etiq.fechaFinal}:" />                            
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="tFecFin" value="#{oProgVac.fechaIni.fechaFin}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Final es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oProgVac.fechaIni.fechaIni}" readonlyInput="true">
+                                <f:attribute name="finicial" value="#{oProgVac.fechaIni.fechaIni}"/>
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4"> <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" actionListener="#{oProgVac.reseteaDias()}" validateClient="true" ajax="false">
+                                <f:setPropertyActionListener target="#{oProgVac.index}" value="#{0}" />
+                            </p:commandButton></p:column>
+                    </p:row>   
+                </p:panelGrid>
+                 <p:message for="tFecInicio" id="mentFecha"/>
+                 <p:message for="tFecFin" id="mentFecha2"/>
+            </h:form> 
+        </p:tab>
+        
+        <p:tab title="#{etiq.horas}">
+            <h:form>
+                <p:panelGrid styleClass="frm_centrado">
+                  <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="4"><p:outputLabel id="titVacHora" value="#{etiq.programarPermisosHoras}" /></p:column>
+                    </p:row>
+                  </f:facet> 
+                    
+                    <p:row>
+                        <p:column colspan="3" styleClass="ui-widget-header">
+                            <p:outputLabel id="medico" styleClass="textover mensaje" value="#{etiq.medico}: " />                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:selectOneMenu id="tMedico" styleClass="textover" value="#{oProgVac.medico2.noTarjeta}">
+                                <f:selectItems value="#{oProgVac.listaMedicos}" var="oMed" 
+                                   itemLabel="#{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}"></f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                     </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel id="fecInicio" styleClass="textover mensaje" value="#{etiq.fechaInicial}: " />                            
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel id="fecFin" styleClass="textover mensaje" value="#{etiq.fechaFinal}: " />                            
+                        </p:column>
+                         <p:column styleClass="ui-widget-header">
+                            <p:outputLabel id="hora" styleClass="textover mensaje" value="#{etiq.hora}: " />                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:calendar  id="tFecInicio" value="#{oProgVac.fechaIni2.fechaIni}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Inicial es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oProgVac.fecActual}" readonlyInput="true">
+                                <p:ajax event="dateSelect" update="tFecFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="tFecFin" value="#{oProgVac.fechaIni2.fechaFin}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Final es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oProgVac.fechaIni2.fechaIni}" maxdate="#{oProgVac.fechaIni2.fechaIni}" readonlyInput="true">
+                                <f:attribute name="finicial" value="#{oProgVac.fechaIni2.fechaIni}"/>
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:inputMask id="tHora" mask="99:00  -  99:00" size="20" required="true" value="#{oProgVac.horas}" requiredMessage="Se necesita el horario">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.HorasValidator"/>
+                                <f:ajax render="mentHora" execute="@this" event="valueChange"/>
+                            </p:inputMask>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="4"> 
+                            <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" actionListener="#{oProgVac.reseteaHoras()}" validateClient="true" ajax="false">
+                                <f:setPropertyActionListener target="#{oProgVac.index}" value="#{1}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>   
+                </p:panelGrid>
+                <p:message for="tHora" id="mentHora"/>
+            </h:form> 
+        </p:tab>
+    </p:tabView>
+
+   </div>
+  </ui:define>      
+</ui:composition>
+</html>

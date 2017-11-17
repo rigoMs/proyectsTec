@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+                <p:growl id="grunuidos" showDetail="true"/>
+                <p:panel>
+                    <h:form id="formPasswd">
+                        <h2 class="centrado_texto"><h:outputLabel value="#{etiq.modificar} #{etiq.password} #{etiq.de} #{etiq.administrador}"/></h2>
+                        
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel value="#{etiq.password} " />
+                                    <h:outputLabel value="#{etiq.anterior}" />
+                                </p:column>
+                                <p:column>
+                                    <p:password value="#{edicPassRoot.usuario.password2}" onkeypress="return validaCaracter(event);" 
+                                                style="text-transform: initial;" required="true" requiredMessage="Falta el password anterior" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel class="negrita" value="#{etiq.nuevo} "/>
+                                    <h:outputLabel class="negrita" value="#{etiq.password}: "/>
+                                </p:column>
+                                <p:column>
+                                    <p:password id="password1" value="#{edicPassRoot.usuario.password}" feedback="true" required="true"
+                                                promptLabel="#{etiq.introduzcaPassword}" weakLabel="#{etiq.passwordDebil}" requiredMessage="#{etiq.introduzcaPassword}"
+                                                goodLabel="#{etiq.passwordNivelMedio}" strongLabel="#{etiq.passwordFuerte}" match="password2" 
+                                                maxlength="10" onkeypress="return validaCaracter(event);" style="text-transform: initial;" validatorMessage="algo"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel class="negrita" value="#{etiq.confirmar} "/>
+                                    <h:outputLabel class="negrita" value="#{etiq.nuevo} "/>
+                                    <h:outputLabel class="negrita" value="#{etiq.password}:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:password value="#{edicPassRoot.usuario.password}" id="password2" maxlength="10" required="true"
+                                                onkeypress="return validaCaracter(event);" style="text-transform: initial;"
+                                                requiredMessage="Confirme el password"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:commandButton value="#{etiq.guardar}" action="#{edicPassRoot.cambiarPassword()}" update=":grunuidos" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:panel>
+            </div>
+        </ui:define>
+    </ui:composition>
+
+</html>
+

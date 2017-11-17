@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco</title>
+    </h:head>
+    	
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="menu"> </ui:define>
+            <ui:define name="cuerpo">
+                <hr/>
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                <h2 class="centrado_texto"><h:outputLabel value="#{etiq.bienvenidoAlSistema}"/></h2>
+                <div class="ini">
+                    <table class="tabla_inicial" border="1" id="">
+                     <tr>
+                         <td class="franja_izq" >
+                             <img src="#{facesContext.externalContext.requestContextPath}/imgs/login.png" alt="HRRB" align="middle"/>
+                             <p:outputLabel value="#{etiq.login}"/>
+                         </td>
+                         <td class="login"  style="border-right: hidden;">
+                             <p:growl id="mensajes" showDetail="true" life="2000" /> 
+                             
+                             <h:form>                                
+                                <h:panelGrid id="tabla" columns="2" border="0" frame="below" class="frmlogin">    
+                                    <h:outputLabel value="#{etiq.usuario} :" for="user"/>
+                                    <p:inputText id="user" value="#{oLogin.cve}" required="true" placeholder="Usuario" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);" requiredMessage="Se necesita un Usuario"></p:inputText>
+                                    <h:outputLabel value="#{etiq.password} :" for="pwd"/>
+                                    <p:password id="pwd" value="#{oLogin.pwd}" required="true" placeholder="Contraseña" requiredMessage="Se necesita una Contraseña"/>
+                                <div>
+                                    <p:commandButton value="#{etiq.accesar}" icon="ui-icon-locked" action="#{oLogin.login}" update=":mensajes"/>
+                                    <!--<p:button value="#{etiq.accesar}"  icon="ui-icon-locked" styleClass="bordes" outcome="/sesiones/Inicio"/>-->
+                                </div>
+                                </h:panelGrid>
+                            </h:form>
+                         </td>
+                     </tr>
+              </table>
+              </div>
+            </ui:define> 
+
+        </ui:composition>
+    
+   <!--<script type="text/javascript">
+        //<![CDATA[
+        function manejarLogin(xhr, status, args) {
+            setTimeout(function() {
+              window.location = args.view;
+            }, 500);
+          
+        }
+      //]]>
+      </script>-->
+</html>

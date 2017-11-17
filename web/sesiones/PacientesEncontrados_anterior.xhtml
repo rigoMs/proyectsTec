@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">     
+           <br/><br/>
+            <h:form id="resultados">
+                <div class="tabla_pacEnc">
+               <p:dataTable id="tablaPac" var="oPacEnc" value="#{oBuscarPac.paciente.buscarPac()}" emptyMessage="#{etiq.noRegistro}">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.pacEncontrados}"/>
+                </f:facet>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.apPaterno}"/>
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.apMaterno}"/>
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.nombres}"/>
+                </p:column>
+                
+                <p:column style="width: 9%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.fechaNac}"/>
+                </p:column>                 
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.curp}"/>
+                </p:column>
+                        
+                <p:column style="width: 7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.edadNumero}"/>
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                </p:column>                
+                
+                <p:column style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                </p:column>     
+
+                   <p:column>
+                     <p:commandButton value="#{etiq.seleccionar}" action="#{oModPac.pac.buscarPacCE(0)}" ajax="false" styleClass="#{oBuscarPac.mostrarBotonCE()}">
+                        <f:setPropertyActionListener target="#{oModPac.pac.folioPaciente}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oModPac.pac.expediente.numero}" value="#{oPacEnc.expediente.numero}" />
+                     </p:commandButton>
+                       <p:commandButton value="#{etiq.seleccionar}" action="#{oRegPac.redirAdmision()}" ajax="false" style="#{oBuscarPac.mostrarBotonRegistroPaciente()}">
+                        <f:setPropertyActionListener target="#{oRegPac.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oRegPac.numeroExpediente}" value="#{oPacEnc.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oRegPac.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oRegPac.buscado}" value="#{false}" />
+                    </p:commandButton>
+                      
+                       <p:commandButton value="Consultar/Modificar" action="#{oConsModPac.pacCMUrg.buscarPacienteCMUrg()}" ajax="false" style="#{oBuscarPac.mostrarBotonConsultarModificar()}">
+                        <f:setPropertyActionListener target="#{oConsModPac.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oConsModPac.numeroExpediente}" value="#{oPacEnc.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oConsModPac.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oConsModPac.buscado}" value="#{false}" />
+                    </p:commandButton>
+                       
+                       <p:commandButton value="#{etiq.abrirExpediente}" action="AbrirExpediente.xhtml" rendered="#{oPacEnc.expediente.numero==0}" ajax="false" style="#{oBuscarPac.mostrarBotonAbrirExpediente()}">
+                        <f:setPropertyActionListener target="#{oExp.ope}" value="a" />
+                        <f:setPropertyActionListener target="#{oExp.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oExp.buscado}" value="#{false}" />
+                    </p:commandButton>
+                       
+                    <p:commandButton value="#{etiq.seleccionar}" action="urgencias/IngresosDelPaciente.xhtml" ajax="false" style="#{oBuscarPac.mostrarBotonVerIngresos()}">
+                        <f:setPropertyActionListener target="#{oIngresos.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oIngresos.numeroExpediente}" value="#{oPacEnc.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oIngresos.buscado}" value="#{false}" />
+                    </p:commandButton>
+                     
+                       <p:commandButton value="#{etiq.seleccionar}" action="#{oHospitalizar.hospiPac.buscarBasicosHospitalizar()}" ajax="false" style="#{oBuscarPac.mostrarBotonHospitalizar()}">
+                        <f:setPropertyActionListener target="#{oHospitalizar.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oHospitalizar.ope}" value="a" />
+                        <f:setPropertyActionListener target="#{oHospitalizar.buscado}" value="#{false}" />
+                    </p:commandButton>
+     
+                       <p:commandButton value="#{etiq.seleccionar}" action="#{oAlta.altaHosp.buscarPacienteAlta()}" ajax="false" style="#{oBuscarPac.mostrarBotonAltaPaciente()}">
+                         <f:setPropertyActionListener target="#{oAlta.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oAlta.ope}" value="a" />
+                        <f:setPropertyActionListener target="#{oAlta.buscado}" value="#{false}" />
+                    </p:commandButton>  
+                     
+                       <p:commandButton value="#{etiq.llenarNotaMed}" action="#{oNotaAdulto.notaAdulto.buscarPacienteNotaAdultos()}" ajax="false" style="#{oBuscarPac.mostrarBotonLlenarNotaMedica()}">
+                         <f:setPropertyActionListener target="#{oNotaAdulto.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oNotaAdulto.ope}" value="a" />
+                        <f:setPropertyActionListener target="#{oNotaAdulto.buscado}" value="#{false}" />
+                    </p:commandButton>
+                       
+                       <p:commandButton value="#{etiq.seleccionar}" action="#{oModExp.pac.buscarPacExp()}" ajax="false" style="#{oBuscarPac.mostrarBotonModExpediente()}">
+                           <f:setPropertyActionListener target="#{oModExp.pac.folioPaciente}" value="#{oPacEnc.folioPaciente}" />
+                           <f:setPropertyActionListener target="#{oModExp.pac.expediente.numero}" value="#{oPacEnc.expediente.numero}"/>
+                     </p:commandButton>
+					 
+                       <p:commandButton value="#{etiq.seleccionar}" action="#{oHojaLesion.paciente.buscarPacLesionNueva()}" ajax="false" style="#{oBuscarPac.mostrarBotonLlenarHojaLesiones()}">
+                           <f:setPropertyActionListener target="#{oHojaLesion.paciente.folioPaciente}" value="#{oPacEnc.folioPaciente}" />
+                           <f:setPropertyActionListener target="#{oHojaLesion.folioPac}" value="#{oPacEnc.folioPaciente}" />
+                           <f:setPropertyActionListener target="#{oHojaLesion.numExp}" value="#{oPacEnc.expediente.numero}"/>
+                     </p:commandButton>
+                       
+                   </p:column>
+                   
+                </p:dataTable>      
+            </div>
+            
+               <br/><br/>  
+               <center>
+                <p:commandButton value="#{etiq.pacienteNuevo}" action="urgencias/RegPacAdm" ajax="false" style
+                                 ="#{oBuscarPac.mostrarBotonRegistroPaciente()}">
+                    <f:setPropertyActionListener target="#{oRegPac.ope}" value="a" />
+                    <f:setPropertyActionListener target="#{oRegPac.folioPac}" value="0" />
+                    <f:setPropertyActionListener target="#{oRegPac.buscado}" value="#{false}" />
+                    <f:setPropertyActionListener target="#{oRegPac.pacUrg.paciente.nombres}" value="#{oBuscarPac.paciente.nombres}" />
+                    <f:setPropertyActionListener target="#{oRegPac.pacUrg.paciente.apPaterno}" value="#{oBuscarPac.paciente.apPaterno}" />
+                    <f:setPropertyActionListener target="#{oRegPac.pacUrg.paciente.apMaterno}" value="#{oBuscarPac.paciente.apMaterno}" />
+                </p:commandButton> 
+                <p:commandButton value="#{etiq.volver}" styleClass="centrar" action="BuscarPaciente" icon="ui-icon-arrowreturnthick-1-w" ajax="false"/>            
+               </center>
+               </h:form>
+                       <!--<h:form class="centrado_texto"><p:button value="#{etiq.iraInicio}" outcome="Inicio" icon=" ui-icon-arrowreturnthick-1-w"></p:button></h:form>-->
+           
+        </ui:define> 
+    </ui:composition>
+</html>

@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/>
+                <div style="text-align: left;">
+                    <h:form>
+                        <p:outputLabel for="multi" value="#{etiq.fecha}"/>
+                        <p:calendar value="#{recSurDet.fechaDia1}" id="multi"  pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="Inserte Fecha" />             
+                        <p:commandButton type="submit" update="msgs :productos :totalRec" value="#{etiq.buscar}" action="#{recSurDet.buscar()}"/>
+                        <p:growl id="msgs" showDetail="true" />   
+                    </h:form>
+                </div>
+                <div style="text-align: right;">
+                    <h:form id="totalRec">
+                        <h:outputLabel value="#{etiq.totalRecetas} = "/>
+                        <h:outputLabel value="#{recSurDet.totalRecetas}"/>&nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;&nbsp; 
+                    </h:form>
+                </div>        
+                <br/>
+
+                <div class="centrado_texto">
+                    <h:form id="productos">
+                        <p:dataTable var="oDet"
+                                     value="#{recSurDet.listaXDia}"  
+                                     id="tblRepDiaRec"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}"
+                                     style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.informMedSurtDia} "/>
+                                <h:outputLabel value="#{recSurDet.dianumero}"/>
+                                <h:outputLabel value=" #{etiq.de} "/>
+                                <h:outputLabel value="#{recSurDet.mes}"/>
+                                <h:outputLabel value=" #{etiq.de} "/>
+                                <h:outputLabel value="#{recSurDet.anio}"/> 
+                            </f:facet>
+                            <p:column headerText="#{etiq.clave}" width="15%">
+                                <h:outputLabel value="#{oDet.calleNum}"/>
+                            </p:column>                
+                            <p:column headerText="#{etiq.nombre}" width="20%">                  
+                                <h:outputLabel value="#{oDet.claveEdadP}"/>                      
+                            </p:column>
+                            <p:column headerText="#{etiq.presentacion}" width="20%">
+                                <h:outputLabel value="#{oDet.codigoPos}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.descripcion}" width="20%">
+                                <h:outputLabel value="#{oDet.colonia}"/>                        
+                            </p:column>  
+                            <p:column headerText="#{etiq.lote}" width="20%">
+                                <h:outputLabel value="#{oDet.cp}"/>                        
+                            </p:column>
+                            <p:column headerText="#{etiq.cantidad}" width="10%">
+                                <h:outputLabel value="#{oDet.codigoBarras}"/>                        
+                            </p:column> 
+                            <p:column headerText="#{etiq.idSalvar}" width="10%">
+                                <h:outputLabel value="#{oDet.idNacional}"/>                        
+                            </p:column> 
+                            <p:column headerText="#{etiq.nombres}" width="20%">
+                                <h:outputLabel value="#{oDet.nombres}"/>                        
+                            </p:column> 
+                            <p:column headerText="#{etiq.appat}" width="20%">
+                                <h:outputLabel value="#{oDet.apPaterno}"/>                        
+                            </p:column> 
+                            <p:column headerText="#{etiq.apmat}" width="20%">
+                                <h:outputLabel value="#{oDet.apMaterno}"/>                        
+                            </p:column> 
+                            <p:column headerText="#{etiq.folioReceta}" width="10%">
+                                <h:outputLabel value="#{oDet.hospitalizado}"/>                        
+                            </p:column> 
+
+                            <f:facet name="footer">                    
+                                <h:outputLabel  value="#{etiq.totalMesSurt}  :"/>  <h:outputLabel value="#{recSurDet.totalMedicSurtidos}"/>   
+                            </f:facet>    
+                        </p:dataTable>
+                        <br/>
+                        <div style="text-align: center"> 
+
+                        </div>   
+                    </h:form>
+                </div>     
+
+
+            </ui:define>    
+        </ui:composition>
+    
+</html>  

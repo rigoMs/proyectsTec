@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+  <ui:define name="cuerpo">
+   <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+   <h2 class="centrado_texto"><p:outputLabel id="titModPac" value="#{etiq.registrarMedico}"/></h2>
+   <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+   <div class="centrado_texto">
+     <h:form>
+      <p:panelGrid styleClass="frm_centrado centrado_texto">
+      <f:facet name="header">
+        <p:row>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="noTarjeta" value="#{etiq.noTarjeta}:"/></p:column>
+            <p:column><p:outputLabel id="curp" value="#{etiq.curp}:"/></p:column>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="nomb" value="#{etiq.nombres}:"/></p:column>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="app" value="#{etiq.appat}:"/></p:column>
+            <p:column><p:outputLabel id="apm" value="#{etiq.apmat}:"/></p:column>
+        </p:row>
+       </f:facet>
+        <p:row>
+            <p:column>
+                <p:inputMask id="tNoTarjeta" mask="9?99999" value="#{oAddMed.med.noTarjeta}" required="true" requiredMessage="Se necesita el número de Tarjeta">
+                    <p:ajax update="oculto tCurp tNomb tApp tApm tSexo tFechaNac tTelefono tEspecialidad tTipoPersonal tTipoContrato tTipoMedico tEdoCivil tServicio tActividad tCedProf tCedEsp tCedImss tTurno tPuesto" event="valueChange"/>
+                </p:inputMask>
+                <h:outputLabel id="oculto" value="#{oAddMed.med.buscarDatosMedico()}" styleClass="mostrarbtn"/>
+            </p:column>
+            <p:column><p:inputMask id="tCurp" mask="aaaa999999aaaaaa99" required="false" value="#{oAddMed.med.curp}" style="text-transform: uppercase;"/></p:column>
+            <p:column>
+                <p:inputText id="tNomb" value="#{oAddMed.med.nombres}"  required="true" requiredMessage="Se necesita el nombre del Medico"  onkeyup="this.value=this.value.toUpperCase();">
+                    <f:ajax render="mentNombre" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:inputText id="tApp" value="#{oAddMed.med.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Se necesita el apellido paterno">
+                    <f:ajax render="mentPaterno" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:inputText id="tApm" value="#{oAddMed.med.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" required="false">
+                    <f:ajax render="mentMaterno" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:inputText>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="sexo" value="#{etiq.sexo}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="fechaNac" value="#{etiq.fechanac}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="telefono" value="#{etiq.tel}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="especialidad" value="#{etiq.especialidad}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="tipoPersonal" value="#{etiq.tipoPersonal}:"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column>
+                <p:selectOneRadio id="tSexo" value="#{oAddMed.med.sexoP}" required="true" requiredMessage="Falta el Sexo">
+                    <f:selectItem itemLabel="Masculino" itemValue="M" />
+                    <f:selectItem itemLabel="Femenino" itemValue="F" />
+                </p:selectOneRadio>
+            </p:column>
+            <p:column>
+                <p:inputMask id="tFechaNac" mask="99/99/9999"  value="#{oAddMed.med.fechaNacTexto}" required="true" requiredMessage="Se necesita la fecha de nacimiento">
+                    <p:ajax update="mentFechaNac" event="valueChange"/>
+                    <f:validator validatorId="mx.gob.hrrb.validadores.FechasNacValidator"/>
+                </p:inputMask>   
+            </p:column>
+            <p:column>
+                <p:inputText id="tTelefono" value="#{oAddMed.med.telefono}" validatorMessage="El teléfono debe contener solo caracteres numéricos" maxlength="13">
+                    <f:validateLongRange minimum="0"/>
+                    <f:ajax render="mentTel" execute="@this" event="valueChange" />
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:selectOneMenu id="tEspecialidad" value="#{oAddMed.med.especialidad}" required="true"> 
+                    <f:selectItems value="#{oAddMed.listaEspecialidad}" var="oEsp" 
+                                   itemLabel="#{oEsp.descripcion}" 
+                                   itemValue="#{oEsp.claveEsp}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column>
+                <p:selectOneMenu id="tTipoPersonal" value="#{oAddMed.med.tipoPersonal.tipoParametro}" required="true"> 
+                    <f:selectItems value="#{oAddMed.listaTipoPersonal}" var="oTipoPer" 
+                                   itemLabel="#{oTipoPer.valor}" itemValue="#{oTipoPer.tipoParametro}#{oTipoPer.claveParametro}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>    
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="tipoContrato" value="#{etiq.tipoDeContrato}:"/></p:column>            
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="tipoHorario" value="#{etiq.edoCivil}:"/></p:column>
+            <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="tipoMedico" value="#{etiq.tipoMedico}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="servicio" value="#{etiq.servicio}:"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column>
+                <p:selectOneMenu id="tTipoContrato" value="#{oAddMed.med.tipoContrato.tipoParametro}" required="true"> 
+                    <f:selectItems value="#{oAddMed.listaTipoContrato}" var="oTipoCon" 
+                                   itemLabel="#{oTipoCon.valor}" itemValue="#{oTipoCon.tipoParametro}#{oTipoCon.claveParametro}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column>
+                <p:selectOneMenu id="tEdoCivil" value="#{oAddMed.med.estadoCivil.tipoParametro}" required="true"> 
+                    <f:selectItems value="#{oAddMed.listaEdoCiviles}" var="oEdo" 
+                                   itemLabel="#{oEdo.valor}" itemValue="#{oEdo.claveParametro}#{oEdo.tipoParametro}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column colspan="2">
+                <p:autoComplete id="tTipoMedico" queryDelay="1000" size="60" minQueryLength="3" required="true" styleClass="bordes"
+                                value="#{oAddMed.tipoMedico}" completeMethod="#{oAddMed.completar}" effect="fade"
+                                onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" requiredMessage="Se necesita el tipo de Médico" onkeypress="return validaCaracter(event);">
+                    <f:ajax render="mentTipo" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:autoComplete>
+            </p:column>
+            <p:column>
+                <p:selectOneMenu id="tServicio" value="#{oAddMed.med.area.clave}" required="true"> 
+                    <f:selectItems value="#{oAddMed.listaServicios}" var="oArea" 
+                                   itemLabel="#{oArea.descripcion}" itemValue="#{oArea.clave}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+        </p:row>
+          
+        <p:row>
+            <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="actividad" value="#{etiq.actividad}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="cedProf" value="#{etiq.cedulaProf}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="cedEsp" value="#{etiq.cedulaEsp}:"/></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="cedImss" value="#{etiq.cedulaIMSS}:"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="2">
+                <p:autoComplete id="tActividad" queryDelay="1000" size="60" minQueryLength="3" required="true" styleClass="bordes"
+                                value="#{oAddMed.actividad}" completeMethod="#{oAddMed.completar2}" effect="fade"
+                                onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" requiredMessage="Se necesita la actividad del médico" onkeypress="return validaCaracter(event);">
+                    <f:ajax render="mentActividad" execute="@this" event="keyup" />
+                    <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                </p:autoComplete>
+            </p:column>
+            <p:column><p:inputMask id="tCedProf" mask="9?999999999"  value="#{oAddMed.med.cedProf}" required="true" requiredMessage="Se necesita la cédula profesional"/></p:column>
+            <p:column><p:inputText id="tCedEsp"  value="#{oAddMed.med.cedEsp}" maxlength="10" onkeyup="this.value=this.value.toUpperCase();"/></p:column>
+            <p:column><p:inputMask id="tCedImss" mask="9?999999999"  value="#{oAddMed.med.cedIMSS}"/></p:column>
+        </p:row>
+        
+        <p:row>
+            <p:column styleClass="ui-widget-header"></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="turno" value="#{etiq.turno}:"/></p:column>
+            <p:column styleClass="ui-widget-header"></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="puesto" value="#{etiq.puesto}:"/></p:column>
+            <p:column styleClass="ui-widget-header"></p:column>
+        </p:row>
+          
+        <p:row>
+            <p:column></p:column>
+            <p:column>
+                <p:selectOneMenu id="tTurno" value="#{oAddMed.turno.clave}" required="true"> 
+                    <f:selectItems value="#{oAddMed.listaTurno}" var="oTur" 
+                                   itemLabel="#{oTur.descripcion}" itemValue="#{oTur.clave}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column></p:column>
+            <p:column>
+                <p:selectOneMenu id="tPuesto" value="#{oAddMed.puesto.clave}" required="true"> 
+                    <f:selectItems value="#{oAddMed.listaPuesto}" var="oPues" 
+                                   itemLabel="#{oPues.descripcion}" itemValue="#{oPues.clave}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column></p:column>
+        </p:row>
+          
+        <p:row>
+            <p:column styleClass="centrado_texto" colspan="5">
+                <p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk" ajax="false" action="#{oAddMed.ingresaMedico()}"/>
+            </p:column>
+        </p:row>
+      </p:panelGrid>
+         <p:message for="tFechaNac" id="mentFechaNac"></p:message>
+         <p:message for="tTelefono" id="mentTel"></p:message>    
+         <p:message for="tNomb" id="mentNombre"></p:message> 
+         <p:message for="tApp" id="mentPaterno"></p:message> 
+         <p:message for="tApm" id="mentMaterno"></p:message> 
+         <p:message for="tTipoMedico" id="mentTipo"></p:message> 
+         <p:message for="tActividad" id="mentActividad"></p:message> 
+     </h:form>
+       <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+     </p:ajaxStatus> 
+   </div>
+  </ui:define>         
+</ui:composition>
+</html>

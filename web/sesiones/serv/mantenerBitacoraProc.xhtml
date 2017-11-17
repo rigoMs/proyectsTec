@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.mantener} #{etiq.bitacoraProce}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <h:panelGrid columns="10" styleClass="frm_centrado">
+                    <p:outputLabel styleClass="mensaje" value="Seleccione Fecha de Recepción: " />
+                    <p:calendar id="tFecCita2"  effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true"/>
+                    <br/>
+                    <p:commandButton id="btnBuscar" value="Buscar" icon="ui-icon-search"/>
+                </h:panelGrid>
+            </h:form>
+            <br/>
+            <p:dataTable value="" var="" emptyMessage="No se encontraron registros">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.bitacoraProce}" styleClass="mensaje"/>
+                </f:facet>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="No. Progresivo"/>
+                    </f:facet>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.nompac}"/>
+                    </f:facet>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.tipoEspecimen}"/>
+                    </f:facet>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.tipoPieza}"/>
+                    </f:facet>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{etiq.fechaRecepcion}"/>
+                    </f:facet>
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <h:panelGrid columns="3" styleClass="frm_centrado">
+                <p:commandButton value="Ver Detalles" icon="ui-icon-search" onclick="PF('dlgDet').show();" type="button"/>
+            </h:panelGrid>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+        <p:dialog header="Detalles de Procedimiento" widgetVar="dlgDet"
+                  height="500" width="400" resizable="false">
+            <p:panelGrid columns="2" styleClass="frm_centrado">
+                <f:facet name="header">
+                    <p:outputLabel value="Datos del Paciente" styleClass="mensaje"/>
+                </f:facet>
+                <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                <p:outputLabel value="Pablo Llarena"/>
+                <p:outputLabel value="#{etiq.numexpe}" styleClass="mensaje"/>
+                <p:outputLabel value="1234567890"/>
+                <p:outputLabel value="#{etiq.edad}" styleClass="mensaje"/>
+                <p:outputLabel value="23 años"/>
+            </p:panelGrid>  
+            <br/>
+            <p:panelGrid columns="2" styleClass="frm_centrado">
+                <f:facet name="header">
+                    <p:outputLabel value="Datos del Procedimiento" styleClass="mensaje"/>
+                </f:facet>
+                <p:outputLabel value="#{etiq.noProgresivo}" styleClass="mensaje"/>
+                <p:outputLabel value="abc-123-12"/>
+                <p:outputLabel value="#{etiq.fecPro}o" styleClass="mensaje"/>
+                <p:outputLabel value="15-09-2015"/>
+                <p:outputLabel value="#{etiq.fechaRecepcion}" styleClass="mensaje"/>
+                <p:outputLabel value="15-09-2015"/>
+                <p:outputLabel value="#{etiq.fechaInc}" styleClass="mensaje"/>
+                <p:outputLabel value="15-09-2015"/>
+                <p:outputLabel value="#{etiq.fecha} #{etiq.descMacros}" styleClass="mensaje"/>
+                <p:outputLabel value="15-09-2015"/>
+                <p:outputLabel value="#{etiq.tipoEspecimen}" styleClass="mensaje"/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value="#{etiq.elaboracionReporte}" styleClass="mensaje"/>
+                <p:outputLabel value="Dr. José Antonio Palet Guzmán"/>
+                <p:outputLabel value="#{etiq.fechaEntArh}" styleClass="mensaje"/>
+                <p:outputLabel value="15-09-2015"/>
+            </p:panelGrid>
+            <h:panelGrid columns="3" styleClass="frm_centrado">
+                <p:commandButton value="Aceptar" icon="ui-icon-accept"/>
+                <p:commandButton value="Cancelar" icon="ui-icon-cancel"/>
+            </h:panelGrid>
+        </p:dialog>
+    </ui:define>         
+</ui:composition>
+
+</html>

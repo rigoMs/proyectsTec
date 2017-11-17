@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>   
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <br/>
+                <div id="page-wrap" style="min-height:100vh;"> 
+
+                    <h:form id="formR" style=" position: inherit; margin-top:30px; text-align: center; " > 
+                        <p:growl id="mensajes" showDetail="true"/>
+                        <p:panelGrid>
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3"> <h:outputLabel value="#{etiq.ediRec}"/></p:column>
+                                </p:row> 
+                            </f:facet>
+                            <p:row>
+                                <p:column style="font-weight: bold;">
+                                    <h:outputLabel value="#{etiq.folioReceta}: "/>
+                                    <p:inputText value="#{ediRece.receta.folioReceta}" required="true" requiredMessage="Inserte Folio de Receta" converterMessage="Folio Receta, Solo ingresar números"/>
+                                    <br/>
+                                    <h:outputLabel value="#{etiq.idSalvar}: "/>
+                                    <p:inputText value="#{ediRece.receta.folioPaciente}" required="true" requiredMessage="Inserte Folio de Paciente" converterMessage="Folio Paciente, Solo ingresar números"/>
+                                    <br/>
+                                    <p:commandButton value="#{etiq.buscar}" action="#{ediRece.buscar()}" update="mensajes :lismed:panels" onclick="location.replace()"/>
+                                </p:column>
+                            </p:row>           
+                        </p:panelGrid>    
+                    </h:form>
+
+                    <h:form id="lismed">    
+                        <p:panelGrid style="margin-top:20px; width: 1300px" id="panels">                          
+                            <p:row>
+                                <p:column colspan="30">
+                                    <p:dataTable var="oMed" id="tblMed" editable="true" value="#{ediRece.detalleMeds}"
+                                                 emptyMessage="#{etiq.noMedicamentosRegistrados}">
+                                        <f:facet name="header"><h:outputLabel value="#{etiq.listaSurtido}"/></f:facet>
+
+                                        <p:ajax event="rowEdit" listener="#{ediRece.onEdit}" update=":formR:mensajes" />
+                                        <p:ajax event="rowEditCancel" listener="#{ediRece.onCancel}" update=":formR:mensajes" /> 
+
+                                        <p:column headerText="#{etiq.clave}" width="15">
+                                            <h:outputLabel value="#{oMed.claveMedicamento}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.nombre}" width="30">
+                                            <h:outputLabel value="#{oMed.nombre}"/>                                             
+                                        </p:column>
+                                        <p:column headerText="#{etiq.presentacion}" width="30">
+                                            <h:outputLabel value="#{oMed.presentacion}"/>                    
+                                        </p:column>
+                                        <p:column headerText="#{etiq.descripcion}" width="30">
+                                            <h:outputLabel value="#{oMed.descripcion}"/>                  
+                                        </p:column>                
+                                        <p:column headerText="#{etiq.lote}" width="30">
+                                            <h:outputLabel value="#{oMed.lote}"/>                     
+                                        </p:column>                 
+                                        <p:column headerText="#{etiq.caducidad}" width="30">
+                                            <h:outputLabel value="#{oMed.caducidad}"/>                     
+                                        </p:column> 
+                                        <p:column headerText="#{etiq.cantidad}" width="15">
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputLabel value="#{oMed.existencia}"/>   
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:inputText value="#{oMed.existencia}" size="3"  disabled="#{oMed.surtido}" required="true" requiredMessage="Ingresar Cantidad" converterMessage="Cantidad,Solo ingresar números"/>
+                                                </f:facet>   
+                                            </p:cellEditor>                                         
+                                        </p:column>
+                                        <p:column headerText="#{etiq.surtido}" width="10">                                        
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <p:selectBooleanCheckbox value="#{oMed.surtido}" disabled="true"/>   
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:selectBooleanCheckbox value="#{oMed.surtido}" disabled="#{oMed.surtido}"/> 
+                                                </f:facet>
+                                            </p:cellEditor>
+                                        </p:column> 
+                                        <p:column width="15" headerText="#{etiq.edicion}">                                         
+                                            <p:rowEditor>
+                                            </p:rowEditor>
+                                        </p:column>
+                                    </p:dataTable>                           
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="30" >    
+                                    <p:commandButton id="btnSurt"  value="#{etiq.limpiar}" action="#{ediRece.limpiar()}" onclick="location.replace()"/>                                  
+                                </p:column>
+                            </p:row> 
+                        </p:panelGrid>  
+                    </h:form>                   
+                </div>
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

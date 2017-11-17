@@ -1,0 +1,464 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="Cita Para Consulta"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+               <p:growl id="growl" showDetail="true" />  
+                 <!--Componenete de busqueda :P-->
+                <p:commandButton id="BuscarPacineT"  value="#{etiq.buscarPac}" 
+                    onclick="PF('BuscPacie').show(); "> 
+                </p:commandButton>  
+                <p:dialog widgetVar="BuscPacie" id="BuscPacie" width="1050" height="550">   
+        <p:panelGrid >
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarDatosBasicos}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="nom" style="text-transform:uppercase;"
+                                 maxlength="50" size="39"
+                                 value="#{oBusqPacComunJB.paciente.nombres}" 
+                                 onkeypress="return validaCaracter(event);"
+                                 >
+                        <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="app" style="text-transform:uppercase;"
+                                 maxlength="50" size="39"
+                                 value="#{oBusqPacComunJB.paciente.apPaterno}"  
+                                 onkeypress="return validaCaracter(event);"
+                                 >
+                        <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="apm" style="text-transform:uppercase;"
+                                 maxlength="50" size="39"
+                                 value="#{oBusqPacComunJB.paciente.apMaterno}"  
+                                 onkeypress="return validaCaracter(event);"
+                                 >
+                        <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+            </p:row>                
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarPorExpediente}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.noExp}:"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:inputText styleClass="bordes" id="exp" 
+                                 value="#{oBusqPacComunJB.paciente.expediente.numero}" 
+                                 converterMessage="#{etiq.errCapturaCaractEsp}">
+                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                        <f:ajax render="mentExp" execute="@this" 
+                                event="valueChange" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <center>
+            <p:commandButton styleClass="bordes" 
+                            value="#{etiq.buscar}" 
+                            icon="ui-icon-search">
+                <p:ajax update="tablaPac selecc cancel" listener="#{oBusqPacComunJB.buscaTodoslosPaciente()}"/>
+            </p:commandButton> 
+        </center>
+        <p:message for="exp" id="mentExp"/>
+        <br/><br/>
+        <div class="tabla_pacEnc">
+           <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                     paginatorPosition="both" rows="5" 
+
+                                     value="#{oBusqPacComunJB.listaPac}" 
+                                     emptyMessage="#{etiq.noRegistro}" 
+                                     style="visibility:#{oBusqPacComunJB.visibilidadTabla};"
+                                     rowKey="#{oPacEnc.apMaterno}"
+                                     selection="#{oBusqPacComunJB.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.pacEncontrados}"/>
+                            </f:facet>
+                            <p:column selectionMode="single">
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.nombres}"/>
+                            </p:column>
+                            <p:column style="width: 9%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.edadNumero}"/>
+                            </p:column>   
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.curp}"/>
+                            </p:column>
+                            <p:column style="width: 7%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.folioPaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                            </p:column>  
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                            </p:column>     
+                        </p:dataTable>
+        </div>  
+        
+        <p:commandButton value="#{etiq.seleccionar}" id="selecc" icon="ui-icon-search" style="visibility:#{oBusqPacComunJB.boton};">
+            <p:ajax listener="#{oSolicitCita.llenar()}" update="BuscPacie tablaDatos boton1 boton2"/> 
+        </p:commandButton>  
+        
+         <p:commandButton value="#{etiq.cancelar}" id="cancel" icon="ui-icon-circle-close" style="visibility:#{oBusqPacComunJB.boton2};">
+                        <p:ajax listener="#{oSolicitCita.limpiaboton()}"  update="BuscPacie tablaDatos boton1 boton2"/>
+                    </p:commandButton>
+                </p:dialog>
+                
+             <br/> <br/>
+                <!--Componenete de busqueda :P-->
+                
+                <p:panelGrid id="tablaDatos" style="visibility:#{oSolicitCita.visible};">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="4" ><p:outputLabel value="#{etiq.datosparasolicitarcitaREF}"/></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.hospitalqueloREF}"/><br/>
+                            <h:outputText value="#{etiq.hrrb}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.tienederechoaSP}"/><br/>
+                            <h:outputText value="#{oSolicitCita.tieneDerecho}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.numAfilicación}"/><br/>
+                            <h:outputText value="#{oSolicitCita.noFiliacion}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                           <p:outputLabel value="#{etiq.TrabajadoraRealizoLaGestion}:"/><br/>
+                           <h:outputText value="#{oSolicitCita.personalFirmado.nombreCompleto}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                             <p:outputLabel value="#{etiq.NombreDelPaciente}:"/><br/> 
+                             <h:outputText value="#{oSolicitCita.paciente.apPaterno}" /> &nbsp;&nbsp;
+                             <h:outputText value="#{oSolicitCita.paciente.apMaterno}" /> &nbsp;&nbsp; 
+                             <h:outputText value="#{oSolicitCita.paciente.nombres}" />&nbsp;&nbsp;
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                                <p:outputLabel value="#{etiq.fechaDeNacimiento}:"/><br/>
+                                <h:outputText value="#{oSolicitCita.paciente.fechaNacTexto}" />
+                        </p:column>
+                         <p:column>
+                              <p:outputLabel value="#{etiq.edadREF}:"/><br/>
+                              <h:outputText value="#{oSolicitCita.paciente.edadNumero}" />
+                        </p:column>
+                         <p:column>
+                            <p:outputLabel value="#{etiq.lugarDeNaciminetoREF}:"/><br/>
+                            <h:outputText value="#{oSolicitCita.paciente.lugarNacimiento}" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column>
+                             <p:outputLabel value="#{etiq.curp}:"/> <br/>
+                             <h:outputText value="#{oSolicitCita.paciente.curp}" />
+                        </p:column>
+                         <p:column>
+                              <p:outputLabel value="#{etiq.ocupacionREF}:"/>  <br/>
+                              <h:outputText value="#{oSolicitCita.ocupacion}" />
+                        </p:column>
+                         <p:column>
+                             <p:outputLabel value="#{etiq.estadoCivilREF}:"/><br/>
+                             <h:outputText value="#{oSolicitCita.paciente.estadoCivil.valor}" />
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                         <p:column>
+                            <p:outputLabel value="#{etiq.domicilioCompleto}:"/><br/>
+                            <h:outputText value="#{oSolicitCita.paciente.calleNum}" />
+                            <h:outputText value="#{oSolicitCita.paciente.colonia}" />
+                        </p:column>
+                         <p:column>
+                          <p:outputLabel value="#{etiq.CPREF}"/><br/>
+                          <h:outputText value="#{oSolicitCita.paciente.cp}" />
+                        </p:column>
+                         <p:column>
+                              <p:outputLabel value="#{etiq.telefonoREF}:"/><br/>
+                              <h:outputText value="#{oSolicitCita.paciente.telefono}" />
+                        </p:column>
+                    </p:row>
+                    <p:row> 
+                     <p:column>
+                               <p:outputLabel value="#{etiq.localidadREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.paciente.ciudad.descripcionCiu}" />
+                     </p:column>
+                     <p:column>
+                               <p:outputLabel value="#{etiq.municipioREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.paciente.municipio.descripcionMun}" />
+                     </p:column>
+                     <p:column>
+                             <p:outputLabel value="#{etiq.estadoREF}:"/><br/>
+                             <h:outputText value="#{oSolicitCita.paciente.estado.descripcionEdo}" />
+                      </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                               <p:outputLabel value="#{etiq.nombreDeLaMadre}:"/> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                               <p:outputLabel value="#{etiq.nombreCompleto}:"/><br/>
+                               <p:inputText id="nombredemadre" size="20" value="#{oSolicitCita.nombreMadre}" disabled="#{oSolicitCita.captura}" required="true" requiredMessage="REQUIERE EL NOMBRE DE LA MADRE"/>
+                        </p:column>
+                        <p:column>
+                               <p:outputLabel value="#{etiq.appat}:"/><br/>
+                               <p:inputText id="apellidopa" size="20" value="#{oSolicitCita.apellPa}" disabled="#{oSolicitCita.captura}" required="true" requiredMessage="REQUIERE EL APELLIDO PATERNO"/>
+                        </p:column>
+                        <p:column>
+                               <p:outputLabel value="#{etiq.apmat}:"/><br/>
+                               <p:inputText id="apellima" size="20" value="#{oSolicitCita.apellMa}" disabled="#{oSolicitCita.captura}" required="true"  requiredMessage="REQUIERE EL APELLIDO MATERNO"/>
+                        </p:column>
+                    </p:row>
+                     <p:row>
+                        <p:column colspan="3">
+                               <p:outputLabel value="#{etiq.diagnosticoREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.episodioMedico.diagIngreso.descripcionDiag}" />
+                        </p:column>
+                    </p:row>
+                        <p:row>
+                        <p:column colspan="3">
+                               <p:outputLabel value="#{etiq.servicioREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.episodioMedico.area.descripcion}" />
+                        </p:column> 
+                    </p:row>
+                </p:panelGrid> 
+                <p:commandButton value="#{etiq.guardar}" id="boton1" action="#{oSolicitCita.guardarNombreDeMadre()}" disabled="#{oSolicitCita.captura}" icon="ui-icon-disk" style=" margin-bottom: 20px; visibility:#{oSolicitCita.visible}" update="growl" validateClient="true" ajax="false"> 
+                </p:commandButton> 
+                <p:commandButton  oncomplete="PF('ImpDocument').show()" disabled="#{oSolicitCita.imp}" value="#{etiq.ducemtM}" id="boton2" icon="ui-icon-search" style=" margin-bottom: 20px; visibility:#{oSolicitCita.visible}">
+                    <p:ajax update=":ImpDocument"></p:ajax>
+                </p:commandButton>
+                 
+            </h:form>
+            
+              <p:dialog widgetVar="ImpDocument" id="ImpDocument"  
+                          showEffect="bounce" resizable="false" >
+                <h:form> 
+                    <p:panelGrid id="tablaDatosimp" style="visibility:#{oSolicitCita.visible};">
+                        <p:row>
+                            <p:column colspan="2" style=" background-color:#ffffff; text-align: left;  border-color:#ffffff;">
+                                <h:graphicImage value="/imgs/logoSev.JPG" style="width: 100px;" /> <br/>
+                                <p:outputLabel value="#{etiq.HospitalREgionalDAlta}" style="font-size:11px;"/> <br/>
+                                <p:outputLabel value="#{etiq.direccionMedica}" style="font-size:11px;"/> <br/>
+                                <p:outputLabel value="#{etiq.departamentoDeTS}" style="font-size:11px;"/> <br/>
+                            </p:column>
+                            <p:column  style=" background-color:#ffffff; border-color:#ffffff;">
+                                <h:graphicImage value="/imgs/Estado_Prospero.png" style="width: 100px;" />
+                                <h:graphicImage value="/imgs/veracruz.png" style="width: 100px;" />
+                                
+                            </p:column>
+                        </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="4" style="text-align:center; background-color:#ffffff;" ><p:outputLabel value="#{etiq.datosparasolicitarcitaREF}" /></p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color:#ffffff;">
+                            <p:outputLabel value="#{etiq.hospitalqueloREF}"/><br/>
+                            <h:outputText value="#{etiq.hrrb}"/>
+                        </p:column>
+                        <p:column style="background-color:#ffffff;">
+                            <p:outputLabel value="#{etiq.tienederechoaSP}"/><br/>
+                            <h:outputText value="#{oSolicitCita.tieneDerecho}"/>
+                        </p:column>
+                        <p:column style="background-color:#ffffff;">
+                            <p:outputLabel value="#{etiq.numAfilicación}"/><br/>
+                            <h:outputText value="#{oSolicitCita.noFiliacion}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3" style="background-color:#ffffff;">
+                           <p:outputLabel value="#{etiq.TrabajadoraRealizoLaGestion}:"/><br/>
+                           <h:outputText value="#{oSolicitCita.personalFirmado.nombreCompleto}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3" style="background-color:#ffffff;">
+                             <p:outputLabel value="#{etiq.NombreDelPaciente}:"/><br/> 
+                             <h:outputText value="#{oSolicitCita.paciente.apPaterno}" /> &nbsp;&nbsp;
+                             <h:outputText value="#{oSolicitCita.paciente.apMaterno}" /> &nbsp;&nbsp; 
+                             <h:outputText value="#{oSolicitCita.paciente.nombres}" />&nbsp;&nbsp;
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="background-color:#ffffff;">
+                                <p:outputLabel value="#{etiq.fechaDeNacimiento}:"/><br/>
+                                <h:outputText value="#{oSolicitCita.paciente.fechaNacTexto}" />
+                        </p:column>
+                         <p:column style="background-color:#ffffff;">
+                              <p:outputLabel value="#{etiq.edadREF}:"/><br/>
+                              <h:outputText value="#{oSolicitCita.paciente.edadNumero}" />
+                        </p:column>
+                         <p:column style="background-color:#ffffff;">
+                            <p:outputLabel value="#{etiq.lugarDeNaciminetoREF}:"/><br/>
+                            <h:outputText value="#{oSolicitCita.paciente.lugarNacimiento}" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column style="background-color:#ffffff;">
+                             <p:outputLabel value="#{etiq.curp}:"/> <br/>
+                             <h:outputText value="#{oSolicitCita.paciente.curp}" />
+                        </p:column>
+                         <p:column style="background-color:#ffffff;">
+                              <p:outputLabel value="#{etiq.ocupacionREF}:"/>  <br/>
+                              <h:outputText value="#{oSolicitCita.ocupacion}" />
+                        </p:column>
+                         <p:column style="background-color:#ffffff;">
+                             <p:outputLabel value="#{etiq.estadoCivilREF}:"/><br/>
+                             <h:outputText value="#{oSolicitCita.paciente.estadoCivil.valor}" />
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                         <p:column style="background-color:#ffffff;">
+                            <p:outputLabel value="#{etiq.domicilioCompleto}:"/><br/>
+                            <h:outputText value="#{oSolicitCita.paciente.calleNum}" />
+                            <h:outputText value="#{oSolicitCita.paciente.colonia}" />
+                        </p:column>
+                         <p:column style="background-color:#ffffff;">
+                          <p:outputLabel value="#{etiq.CPREF}"/><br/>
+                          <h:outputText value="#{oSolicitCita.paciente.cp}" />
+                        </p:column>
+                         <p:column style="background-color:#ffffff;">
+                              <p:outputLabel value="#{etiq.telefonoREF}:"/><br/>
+                              <h:outputText value="#{oSolicitCita.paciente.telefono}" />
+                        </p:column>
+                    </p:row>
+                    <p:row> 
+                     <p:column style="background-color:#ffffff;">
+                               <p:outputLabel value="#{etiq.localidadREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.paciente.ciudad.descripcionCiu}" />
+                     </p:column>
+                     <p:column style="background-color:#ffffff;">
+                               <p:outputLabel value="#{etiq.municipioREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.paciente.municipio.descripcionMun}" />
+                     </p:column>
+                     <p:column style="background-color:#ffffff;">
+                             <p:outputLabel value="#{etiq.estadoREF}:"/><br/>
+                             <h:outputText value="#{oSolicitCita.paciente.estado.descripcionEdo}" />
+                      </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3" style="background-color:#ffffff;">
+                               <p:outputLabel value="#{etiq.nombreDeLaMadre}:"/><br/>
+                            <h:outputText value="#{oSolicitCita.nombreMadre}" /> &nbsp;&nbsp;
+                            <h:outputText value="#{oSolicitCita.apellPa}" />&nbsp;&nbsp;
+                            <h:outputText value="#{oSolicitCita.apellMa}" />&nbsp;&nbsp;
+                        </p:column>
+                    </p:row>
+                     <p:row>
+                        <p:column colspan="3" style="background-color:#ffffff;">
+                               <p:outputLabel value="#{etiq.diagnosticoREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.episodioMedico.diagIngreso.descripcionDiag}" />
+                        </p:column>
+                    </p:row>
+                        <p:row>
+                        <p:column colspan="3" style="background-color:#ffffff;">
+                               <p:outputLabel value="#{etiq.servicioREF}:"/><br/>
+                               <h:outputText value="#{oSolicitCita.episodioMedico.area.descripcion}" />
+                        </p:column> 
+                    </p:row>
+                </p:panelGrid>
+                   <p:commandButton value="#{etiq.imprimir}"   icon="ui-icon-print" >
+                      <p:printer target="tablaDatosimp" />
+                  </p:commandButton>
+                     <p:commandButton  oncomplete="PF('ImpDocument').hide()" value="#{etiq.salir}" icon="ui-icon-close"> 
+                </p:commandButton>
+                    
+                </h:form>
+              </p:dialog> 
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

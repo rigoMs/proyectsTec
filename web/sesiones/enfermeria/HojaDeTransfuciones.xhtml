@@ -1,0 +1,889 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                 <div>
+                    <h:form id="frm-bspact">
+                        <br/>                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.buscPacTras}"/></h3>
+                        <p:outputPanel style=" width: 60%;" styleClass="centrar">
+                            <p:accordionPanel>
+                                <p:tab title="#{etiq.buscarDatosBasicos}">
+                                    <p:panelGrid columns="4" >
+                                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                        <h:outputLabel />
+                                        <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPaciente.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>                        
+                                        <p:inputText styleClass="bordes" id="app" value="#{oBuscarPaciente.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                        <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPaciente.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search"
+                                                         update=":frm-bspact :frm-bspact:ac:tablaPac :frmTras">
+                                            <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{0}"/>
+                                            <f:setPropertyActionListener target="#{oDatosTrans.renderizar}" value="#{false}"/>
+                                        </p:commandButton>
+                                    </p:panelGrid>
+                                </p:tab>
+                                <p:tab title="#{etiq.buscarPorExpediente}">
+                                    <p:panelGrid columns="3" styleClass="frmlogin">
+                                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                        <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPaciente.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                                        </p:inputText>
+                                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search"
+                                                         update=":frm-bspact :frm-bspact:ac:tablaPac :frmTras">
+                                            <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{1}"/>
+                                            <f:setPropertyActionListener target="#{oDatosTrans.renderizar}" value="#{false}"/>
+                                        </p:commandButton>
+                                    </p:panelGrid>
+                                    <p:message for="exp" id="mentExp"></p:message>
+                                </p:tab>
+                            </p:accordionPanel>                            
+                        </p:outputPanel> 
+                        <br/> 
+                        <p:outputPanel id="outIdent" style="width: 88%;" styleClass="centrar">
+                             <div class="centrar">
+                                 <p:accordionPanel id="ac" rendered="#{not empty oBuscarPaciente.paciente.buscarPacienteDatos()}">
+                                       <p:tab title="#{etiq.pacEncontra}">
+                                            <p:dataTable paginator="true" rows="4"  id="tablaPac" var="oPacEnc" 
+                                                         value="#{oBuscarPaciente.paciente.buscarPacienteDatos()}" 
+                                                         emptyMessage="#{etiq.noRegistro}">                                                
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.apPaterno}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.apMaterno}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.nombres}"/>
+                                                </p:column>
+                                                <p:column style="width: 9%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.fechaNac}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                    </h:outputText>
+                                                </p:column>                                     
+                                                <p:column style="width: 7%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.edadNumero}"/>
+                                                </p:column>
+                                                <p:column>
+                                                   <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                                   </f:facet>
+                                                    <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                                                </p:column>
+                                                <p:column style="width: 10%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                                                </p:column>
+                                                <p:column>                                         
+                                                    <p:commandButton icon="ui-icon-folder-open" value="Cargar">                              
+                                                        <p:ajax listener="#{oDatosTrans.CargaPacienteEvent(oPacEnc.folioPaciente, oPacEnc.claveEpisodio)}" update=":frmTras :frmTras:msgs" />
+                                                     </p:commandButton>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                   <p:commandButton icon="ui-icon-folder-open" value="#{etiq.ocultar}" update=":frm-bspact:outIdent ">
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.nombres}" value=""/>
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.apPaterno}" value=""/>
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.apMaterno}" value=""/>
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.folioPaciente}" value="#{0}"/>
+                                                   </p:commandButton>
+                                                </f:facet>
+                                            </p:dataTable>
+                                       </p:tab>
+                                 </p:accordionPanel>
+                             </div>
+                         </p:outputPanel> 
+                       
+                        
+                    </h:form>
+                </div>
+                <!--comiensa hoja de transfusion-->
+                <div id="Hoja">
+                    <h:form id="frmTras"> 
+                        <br/>
+                        <p:growl id="msgs" showDetail="true"></p:growl>                                   
+                        <p:panelGrid id="pacTrans" style="width: 96%;" rendered="#{oDatosTrans.renderizar}">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                        <h:outputLabel value="#{etiq.trasfuci}"/> 
+                                    </p:column>
+                                </p:row>
+                            </f:facet>                            
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="3" style="height: 12px; width: 25%; border-right-color:  transparent; border-bottom-color: transparent;" >
+                                    <b><p:outputLabel   value="#{etiq.nombre}:"/></b>&nbsp; &nbsp; <p:outputLabel style="font-size: 16px;" value="#{oDatosTrans.transfusionDatos.episodio.paciente.nombreCompleto}"/>
+                                </p:column>
+                            
+                                <p:column style="width: 10%;height: 12px; border-right-color:  transparent; border-bottom-color: transparent;" styleClass="ui-widget-header" >
+                                    <b> <p:outputLabel  value="#{etiq.cama}:"/></b> &nbsp;&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.cama.numero}"/>                                    
+                                </p:column>
+                            
+                                <p:column style="width: 8%;height: 12px; border-right-color:  transparent; border-bottom-color: transparent;" styleClass="ui-widget-header">
+                                    <b> <p:outputLabel   value="#{etiq.noEXPM}:" style=" text-transform: lowercase;"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.paciente.expediente.numero}"/>
+                                </p:column>
+                            
+                           
+                                <p:column style="width: 20%; height: 12px; border-bottom-color: transparent;"  styleClass="ui-widget-header">
+                                    <b><p:outputLabel  value="#{etiq.servicio}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.area.descripcion}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="width: 8%;border-right-color:  transparent;" styleClass="ui-widget-header" >
+                                    <b> <p:outputLabel value="#{etiq.fecha}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                                </p:column>
+                                <p:column style="width: 8%;border-right-color:  transparent;" styleClass="ui-widget-header">
+                                    <b><p:outputLabel  value="#{etiq.noHoja}:" style=" text-transform: lowercase;"/> </b>&nbsp;&nbsp;<p:outputLabel value="1"/>
+                                </p:column>
+                                <p:column style="width: 8%;border-right-color:  transparent;" styleClass="ui-widget-header">
+                                    <b><p:outputLabel  value="#{etiq.edad}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.paciente.edadNumero}"/>
+                                </p:column>
+                                <p:column style="width: 10%; border-right-color:  transparent;" styleClass="ui-widget-header">
+                                    <b><p:outputLabel  value="#{etiq.sexo}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.paciente.sexoP}"/>
+                                </p:column>
+                                <p:column colspan="2" style="width: 20%;" styleClass="ui-widget-header">
+                                    <b><p:outputLabel  value="#{etiq.diagnostico}:"/></b>&nbsp;&nbsp; <p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.diagIngreso.descripcionDiag}"/>
+                                </p:column>                                
+                            </p:row>
+                        </p:panelGrid>
+                        <br/>
+                        <p:outputPanel style="width: 1300px;" rendered="#{oDatosTrans.renderizar}" styleClass="centrar" id="panel1">                        
+                            <p:dataTable emptyMessage="#{etiq.msjVacio}" value="#{oDatosTrans.tranAgregadaBase}" var="oAgreTran"
+                                         id="tablaTransfusiones" paginator="true" rows="7" >                                       
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="1" headerText="#{etiq.fechTras}" style=" width: 5.5%; color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column rowspan="1" headerText="#{etiq.noUni}" style=" width: 3%;color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column rowspan="1" headerText="#{etiq.tpUnid}" style=" width: 6%; color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column rowspan="1" headerText="#{etiq.horaInicio}" style="width: 3%; color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column colspan="1"  style="width: 23%;background: url('#{facesContext.externalContext.requestContextPath}/imgs/cabeceraSignos.png') no-repeat;background-color: snow"/> 
+                                        <p:column rowspan="1" headerText="#{etiq.horaFin}" style=" width: 4%; color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column rowspan="1" headerText="#{etiq.volmTras}" style=" width: 5.8%; color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column rowspan="1" headerText="#{etiq.nomFirTras}" style=" width: 13%; color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column rowspan="1" headerText="#{etiq.estObs}" style=" width: 16%; color: black; font-size: 12px; font-weight: bold;"/>
+                                        <p:column headerText="" style=" width: 3%; background-color: snow"/>
+                                    </p:row>                               
+                                </p:columnGroup>
+                                <p:column>
+                                    <h:outputText value="#{oAgreTran.fechaTransString2}" style="font-size: 12px;" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oAgreTran.noUnidad}" style="font-size: 12px;"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oAgreTran.tipoUnidad.valor}" style="font-size: 12px;"/>&nbsp;<p:outputLabel value="#{oAgreTran.tipoFactor.valor}" style="font-size: 12px;"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oAgreTran.horaInicioString}" style="font-size: 12px;"/>
+                                </p:column>
+
+                                <p:column colspan="1" style="width: 18%; padding: 0px;">
+                                    <p:dataTable id="tblSignos" value="#{oAgreTran.arraySigno}" var="oSignos" emptyMessage="#{etiq.sigVitales}">
+                                        <p:columnGroup type="header"/>
+                                        <p:column style="font-size: 11px; padding: 0px; color: black; font-weight: bold;">
+                                            <p:outputLabel value="#{oSignos.tipoRevisado.valor}"/>
+                                        </p:column>
+                                        <p:column style=" font-size: 11px;">
+                                            <p:outputLabel value="#{oSignos.ta}"/>
+                                        </p:column>
+                                        <p:column  style=" font-size: 11px;">
+                                            <p:outputLabel value="#{oSignos.fr}"/>
+                                        </p:column>
+                                        <p:column  style=" font-size: 11px;">
+                                            <p:outputLabel value="#{oSignos.temp}"/>
+                                        </p:column>
+                                        <p:column  style=" font-size: 11px;">
+                                            <p:outputLabel value="#{oSignos.fr}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oAgreTran.horaFinString}" style="font-size: 12px;"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oAgreTran.volumenTras}" style="font-size: 12px;"/>
+                                </p:column>
+
+                                <p:column style="font-size: 10px;">
+                                    <h:outputText value="#{oAgreTran.personal.nombreCompleto}"/>
+                                </p:column>
+                                <p:column style="font-size: 10px;">
+                                    <h:outputText value="#{oAgreTran.obsGenerales}" />
+                                </p:column>
+                                <p:column>                                            
+                                    <p:commandButton  icon="ui-icon-pencil" title="#{etiq.edit} Transfusion" actionListener="#{oDatosTrans.buscandoDatosTransfusion(oAgreTran.folio)}"
+                                                     update=":modTras:tblSignosAgre2 :modTras:msgs :modTras">                                        
+                                        <f:setPropertyActionListener target="#{oDatosTrans.operacion}" value="m"/>
+                                    </p:commandButton>
+                                </p:column>
+                                <f:facet name="footer">                                          
+                                    <div class="centrar">
+                                        <p:commandButton  icon="ui-icon-folder-open" value="#{etiq.etiqNuTras}" >
+                                            <p:ajax listener="#{oDatosTrans.buscarSolicitudHemoderivado}" update=":frmTras:msgs :soliHem:outp :soliHem:dtbSo"/>                            
+                                        </p:commandButton>&nbsp;&nbsp;
+                                        <p:commandButton icon="ui-icon-folder-open" value="Abrir Para #{etiq.imprimir}" oncomplete="PF('imprimirTransfucion').show()" update=":TransImp">
+                                            
+                                        </p:commandButton>
+                                    </div>                                    
+                                </f:facet>                                 
+                            </p:dataTable>                
+                        </p:outputPanel>
+                    </h:form>
+                    </div> 
+                
+                <!-- dialogo para agregar transfusion-->
+                <p:dialog header="#{etiq.agrTran}" style="text-align:  center;" widgetVar="agregar" modal="true" showEffect="puff" hideEffect="puff" resizable="false" height="530">
+                    <h:form id="agregaTras">                                
+                    <p:panelGrid style="width: 800px; ">                      
+                        <p:row>
+                            <p:column style=" width: 18%;" styleClass=" ui-widget-header">
+                                <p:outputLabel for="fechaTran" value="#{etiq.fechTras}"/> 
+                            </p:column>
+                            <p:column style=" width: 11%;" styleClass=" ui-widget-header">
+                                <p:outputLabel for="noUni" value="#{etiq.noUni}"/> 
+                            </p:column>
+                            <p:column style=" width: 11%;" styleClass=" ui-widget-header">
+                                <p:outputLabel value="#{etiq.tpUnid}"/> 
+                            </p:column>
+                            <p:column style=" width: 11%;" styleClass=" ui-widget-header">
+                                <p:outputLabel value="#{etiq.horaInicio}"/>  
+                            </p:column>
+
+                        </p:row>
+                        <p:row>
+                            <p:column style="">
+                                <p:calendar id="fechaTran" value="#{oDatosTrans.transfusionDatos.fechaTras}" pattern="dd/MM/yyyy" locale="es" showOn="button" size="8" required="true" requiredMessage="ERROR, Selecciona la fecha de transfusion" />
+                            </p:column>
+                            <p:column style="">
+                                <p:inputText id="noUni" size="12" value="#{oDatosTrans.transfusionDatos.noUnidad}" converterMessage="ERROR, Valor no acptado  en numero de unidad">
+                                    <f:validateLongRange minimum="0" maximum="9999"/>
+                                    <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>                                    
+                                </p:inputText>                                
+                            </p:column>
+                            <p:column style="">
+                                <p:inputText id="tipoUnidad1" value="#{oDatosTrans.transfusionDatos.tipoUnidad.valor}" disabled="true" size="3"/>
+                                <p:inputText id="tipoParametro1" value="#{oDatosTrans.transfusionDatos.tipoFactor.valor}" disabled="true" size="9"/>
+                            </p:column>
+                            <p:column style=" ">
+                                <p:calendar id="horaIT" value="#{oDatosTrans.transfusionDatos.horaIT}" showOn="button" widgetVar="horaIT" 
+                                            timeOnly="true" pattern="HH:mm" size="4" required="true" requiredMessage="ERROR, Ingresa la Hora de Inicio">
+                                    <p:ajax event="valueChange"/>
+                                    <p:ajax event="dateSelect" update=":agregaTras:horaFT "></p:ajax>
+                                </p:calendar>
+                            </p:column>
+
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4" style="text-align: center;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.signosVitales}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                        <!-- signos-->
+                        <div style="margin-bottom: 2px;"/>
+                        <p:panelGrid style="width: 800px;">
+                            <p:row>
+                                <p:column style="" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.revisado}"/>
+                                </p:column>
+                                <p:column style="" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.tenArt}"/>
+                                </p:column>
+                                <p:column style="" styleClass="ui-widget-header">
+                                    <p:outputLabel for="frecCard1" value="#{etiq.frecCar}"/>
+                                </p:column>
+                                <p:column style="" styleClass="ui-widget-header">
+                                    <p:outputLabel for="temp1" value="#{etiq.tempe}"/>
+                                </p:column>
+                                <p:column style="" styleClass="ui-widget-header">
+                                    <p:outputLabel for="frecResp1" value="#{etiq.fr}"/>
+                                </p:column>
+                                <p:column style="" styleClass="ui-widget-header">
+                                    <p:outputLabel value="Ctrl"/>
+                                </p:column>                                        
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:selectOneMenu id="select" value="#{oDatosTrans.signosVitales.tipoRevisado.valor}" >
+                                        <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{oDatosTrans.transfusionDatos.sisnosVitales.arregloTipoRevisado}" var="oRev" itemLabel="#{oRev.valor}" itemValue="#{oRev.valor}"/>
+                                    </p:selectOneMenu>                                           
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="TencionArterial1" value="#{oDatosTrans.signosVitales.ta}" size="8"
+                                                 validator="mx.gob.hrrb.validadores.ValidaEntradaTA">                                        
+                                        <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>                                              
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="frecCard1" value="#{oDatosTrans.signosVitales.fc}" size="8" 
+                                                 converterMessage="ERROR, La frecuencia Cardiaca no debe ser mayor a 300 lpm ni menor a 20 lpm" >
+                                        <f:validateLongRange minimum="20" maximum="300"/>
+                                        <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>  
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="temp1" value="#{oDatosTrans.signosVitales.temp}" size="8" 
+                                                 converterMessage="ERROR,La Temperatura debe ser mayor a 30 y menor a 45 Grados">                                       
+                                        <f:validateDoubleRange minimum="30.0" maximum="45.0"/>                                        
+                                        <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>  
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="frecResp1" value="#{oDatosTrans.signosVitales.fr}" size="8" 
+                                                 converterMessage="ERROR, La frecuencia respiratoria debe ser menor a 70 mayor a 9">                                        
+                                        <f:validateLongRange minimum="9" maximum="70"/>
+                                        <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>                                          
+                                    </p:inputText>                                   
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton  icon="ui-icon-plus" value="#{etiq.agra}" actionListener="#{oDatosTrans.AgregarSignosEvento}"
+                                                      update=":frmTras:msgs :agregaTras:tblSignosAgre">                                                                                                
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="6"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6">
+                                    <p:dataTable value="#{oDatosTrans.listaSignos}" var="oSig" emptyMessage="" id="tblSignosAgre">
+                                        <p:column headerText="#{etiq.revisado}">
+                                            <p:outputLabel value="#{oSig.tipoRevisado.valor}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.tenArt}">
+                                            <p:outputLabel value="#{oSig.ta}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.frecCar}">
+                                            <p:outputLabel value="#{oSig.fc}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.tempe}">
+                                            <p:outputLabel value="#{oSig.temp}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.fr}">
+                                            <p:outputLabel value="#{oSig.fr}"/>
+                                        </p:column>
+                                        <p:column headerText="#{etiq.ctrl}">
+                                            <p:commandButton icon="ui-icon-minusthick" 
+                                                             value="#{etiq.eliminar}">
+                                                <p:ajax listener="#{oDatosTrans.EliminarSignos(oSig)}" update=":agregaTras:tblSignosAgre  :frmTras:msgs"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                 </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <div style="margin-bottom: 2px;"/>
+                        <p:panelGrid style="width: 800px;">
+                       
+                        <p:row>
+                            <p:column style=" width: 12%;" styleClass=" ui-widget-header">
+                                <p:outputLabel value="#{etiq.horaFin}"/> 
+                            </p:column>
+                            <p:column style=" width: 9%;" styleClass=" ui-widget-header">
+                                <p:outputLabel value="#{etiq.volmTras}"/> 
+                            </p:column>
+                            <p:column style=" width: 14%;" styleClass=" ui-widget-header">
+                                <p:outputLabel value="#{etiq.nomFirTras}"/> 
+                            </p:column>
+                            <p:column style=" width: 17%;" styleClass=" ui-widget-header">
+                                <p:outputLabel value="#{etiq.estObs}"/>  
+                            </p:column>
+
+                        </p:row>
+                        <p:row>
+                            <p:column style="width: 12%;">
+                                <p:calendar id="horaFT" value="#{oDatosTrans.transfusionDatos.horaFT}" showOn="button"
+                                            timeOnly="true" pattern="HH:mm" size="4" minHour="#{oDatosTrans.transfusionDatos.minimoHora}">
+                                    <p:ajax event="dateSelect"></p:ajax>
+                                </p:calendar>
+                            </p:column>
+                            <p:column style="width: 9%;">
+                                <p:inputText id="volumenTrans" size="10" value="#{oDatosTrans.transfusionDatos.volumenTras}">
+                                    <p:ajax event="valueChange" process="@this"/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column style=" width: 14%;">
+                                <p:outputLabel value=""/>
+                            </p:column>
+                            <p:column style=" width: 17%;">
+                                <p:inputTextarea id="observ" value="#{oDatosTrans.transfusionDatos.obsGenerales}" cols="33" rows="3" onkeyup="this.value=this.value.toUpperCase()">
+                                    <p:ajax event="valueChange" process="@this"/>
+                                </p:inputTextarea>
+                            </p:column>
+
+                        </p:row>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column colspan="4" >
+                                    <div class="centrar">
+                                        <p:commandButton id="cerrar" value="#{etiq.guardar}" icon="ui-icon-disk">                                                    
+                                            <p:ajax listener="#{oDatosTrans.guardarTransfusion()}" update=":frmTras:panel1 :frmTras:tablaTransfusiones :frmTras:msgs"/>
+                                        </p:commandButton>                                                
+                                    </div>                                            
+                                </p:column>                                            
+
+                            </p:row>
+                        </f:facet>                                
+
+                    </p:panelGrid>
+                    </h:form>
+                </p:dialog>   
+                
+                
+                <!-- dialog para modificar dialisis-->
+                 <p:dialog header="#{etiq.modTrans}" style="text-align:  center;" widgetVar="modificar" modal="true" showEffect="puff" hideEffect="puff" resizable="false" height="530">
+                    <h:form id="modTras"> 
+                        <p:growl id="msgs" showDetail="true"/>
+                        <p:panelGrid style="width: 800px; ">                      
+                            <p:row>
+                                <p:column style=" width: 18%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel for="fechaTra" value="#{etiq.fechTras}"/> 
+                                </p:column>
+                                <p:column style=" width: 11%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel for="noUni" value="#{etiq.noUni}"/> 
+                                </p:column>
+                                <p:column style=" width: 11%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel value="#{etiq.tpUnid}"/> 
+                                </p:column>
+                                <p:column style=" width: 11%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel value="#{etiq.horaInicio}"/>  
+                                </p:column>
+
+                            </p:row>
+                            <p:row>
+                                <p:column style="">
+                                    <p:calendar id="fechaTra" value="#{oDatosTrans.modificar.fechaTras}" pattern="dd/MM/yyyy" locale="es" showOn="button" size="8" required="true" requiredMessage="ERROR, Selecciona la fecha de transfusion" readonlyInput="true" readonly="true" disabled="true" />                              
+                                </p:column>
+                                <p:column style="">
+                                    <p:inputText id="noUni" size="12" value="#{oDatosTrans.modificar.noUnidad}" converterMessage="ERROR, Valor no acptado  en numero de unidad">
+                                        <f:validateLongRange minimum="0" maximum="9999"/>
+                                        <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>
+                                    </p:inputText>
+                                </p:column>
+                                <p:column style="">
+                                    <p:inputText value="#{oDatosTrans.modificar.tipoUnidad.valor}" disabled="true" size="3"/>
+                                    <p:inputText value="#{oDatosTrans.modificar.tipoFactor.valor}" disabled="true" size="7"/>
+                                </p:column>
+                                <p:column style=" ">
+                                    <p:calendar id="fechaini" value="#{oDatosTrans.modificar.horaIT}" showOn="button" timeOnly="true" pattern="HH:mm" size="4"  disabled="true">
+                                        <p:ajax event="dateSelect"/>
+                                    </p:calendar>
+                                </p:column>
+
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4" style="text-align: center;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.signosVitales}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                            <!-- signos-->
+                            <div style="margin-bottom: 2px;"/>                                                     
+                            <p:panelGrid style="width: 800px;">
+                                <p:row>
+                                    <p:column style="" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.revisado}"/>
+                                    </p:column>
+                                    <p:column style="" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.tenArt}"/>
+                                    </p:column>
+                                    <p:column style="" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.frecCar}"/>
+                                    </p:column>
+                                    <p:column style="" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.tempe}"/>
+                                    </p:column>
+                                    <p:column style="" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.fr}"/>
+                                    </p:column>
+                                    <p:column style="" styleClass="ui-widget-header">
+                                        <p:outputLabel value="Ctrl"/>
+                                    </p:column>                                        
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:selectOneMenu id="select2" value="#{oDatosTrans.signosVitales.tipoRevisado.valor}" >
+                                            <f:selectItem itemLabel="Seleccionar" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{oDatosTrans.transfusionDatos.sisnosVitales.arregloTipoRevisado}" var="oRev" itemLabel="#{oRev.valor}" itemValue="#{oRev.valor}"/>
+                                        </p:selectOneMenu>                                           
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="TencionArterial" value="#{oDatosTrans.signosVitales.ta}" 
+                                                     size="8" placeholder="000/000" validator="mx.gob.hrrb.validadores.ValidaEntradaTA">                                            
+                                            <f:ajax event="valueChange" execute="@this" render=":modTras:msgs"/>                                              
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="fc1" value="#{oDatosTrans.signosVitales.fc}" size="8"
+                                                     converterMessage="La frecuencia Cardiaca no debe ser mayor a 300 lpm ni menor a 20 lpm" >
+                                            <f:validateLongRange minimum="20" maximum="300"/>
+                                            <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>  
+                                        </p:inputText>                                        
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="temp1" value="#{oDatosTrans.signosVitales.temp}" size="8" 
+                                                     converterMessage="La Temperatura debe ser mayor a 34 y menor a 40 Grados">
+                                            <f:validateDoubleRange minimum="30" maximum="45"/>
+                                            <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>  
+                                        </p:inputText>                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="fr1" value="#{oDatosTrans.signosVitales.fr}" size="8"
+                                                     converterMessage="La frecuencia respiratoria debe ser menor a 70 mayor a 9">
+                                            <f:validateLongRange minimum="9" maximum="70"/>
+                                            <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>  
+                                        </p:inputText>                                        
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton  icon="ui-icon-plus" value="#{etiq.agra}" actionListener="#{oDatosTrans.AgregarSignosEvento}"
+                                                          update=":frmTras:msgs :modTras:tblSignosAgre2">                                                                                                
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="6"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6">
+                                        <p:dataTable value="#{oDatosTrans.listaSignosBase}" var="oSig" emptyMessage=""
+                                                     id="tblSignosAgre2" editable="true">
+                                            <p:ajax event="rowEdit" listener="#{oDatosTrans.onRowEdit}" update=":modTras:msgs" />
+                                            <p:ajax event="rowEditCancel" listener="#{oDatosTrans.onRowCancel}" update=":modTras:msgs" />
+                                            <p:column headerText="#{etiq.revisado}">
+                                                <p:outputLabel value="#{oSig.tipoRevisado.valor}"/>                                                
+                                            </p:column>
+                                            <p:column headerText="#{etiq.tenArt}">                                                
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{oSig.ta}" /></f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText id="taa2"  value="#{oSig.ta}" size="7" 
+                                                                     required="true" requiredMessage="Falta la Tensión Arterial"
+                                                                     validator="mx.gob.hrrb.validadores.ValidaEntradaTA">                                          
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.frecCar}">                                               
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{oSig.fc}" /></f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{oSig.fc}" size="7" required="true"
+                                                                     requiredMessage="Falta la Frecuencia Cardiaca"
+                                                                     converterMessage="La frecuencia Cardiaca no debe ser mayor a 300 lpm ni menor a 20 lpm" >
+                                                            <f:validateLongRange minimum="20" maximum="300"/>
+                                                            <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>                                                             
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.tempe}">                                                
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{oSig.temp}" /></f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{oSig.temp}" size="7" required="true"
+                                                                    requiredMessage="Falta la Temperatura"
+                                                                    converterMessage="La Temperatura debe ser mayor a 30 y menor a 45 Grados">
+                                                            <f:validateDoubleRange minimum="30" maximum="45"/>
+                                                            <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/> 
+                                                            
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.fr}">                                              
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{oSig.fr}" /></f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{oSig.fr}" size="7" required="true"
+                                                                     requiredMessage="Falta la Frecuencia Respiratoria"
+                                                                     converterMessage="La frecuencia respiratoria debe ser menor a 70 mayor a 9">
+                                                            <f:validateLongRange minimum="9" maximum="70"/>
+                                                            <f:ajax event="valueChange" execute="@this" render=":frmTras:msgs"/>                                                             
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>                                            
+                                            <p:column headerText="#{etiq.ctrl}">
+                                                <p:rowEditor  />
+                                            </p:column>
+                                        </p:dataTable>
+                                     </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 2px;"/>
+                            <p:panelGrid style="width: 800px;">                            
+                            <p:row>
+                                <p:column style=" width: 12%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel value="#{etiq.horaFin}"/> 
+                                </p:column>
+                                <p:column style=" width: 9%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel value="#{etiq.volmTras}"/> 
+                                </p:column>
+                                <p:column style=" width: 14%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel value="#{etiq.nomFirTras}"/> 
+                                </p:column>
+                                <p:column style=" width: 17%;" styleClass=" ui-widget-header">
+                                    <p:outputLabel value="#{etiq.estObs}"/>  
+                                </p:column>
+
+                            </p:row>
+                            <p:row>
+                                <p:column style="width: 12%;">
+                                    <p:calendar id="fechafin" value="#{oDatosTrans.modificar.horaFT}" showOn="button" timeOnly="true"
+                                                pattern="HH:mm" size="4" minHour="#{oDatosTrans.modificar.minimoHora}">
+                                        <p:ajax event="dateSelect"/>
+                                    </p:calendar>
+                                </p:column>
+                                <p:column style="width: 9%;">
+                                    <p:inputText size="10" value="#{oDatosTrans.modificar.volumenTras}">
+                                        <p:ajax event="valueChange"/>
+                                    </p:inputText>
+                                </p:column>
+                                <p:column style=" width: 14%;">
+                                    <p:outputLabel value="#{oDatosTrans.modificar.personal.nombreCompleto}"/>
+                                </p:column>
+                                <p:column style=" width: 17%;">
+                                    <p:inputTextarea value="#{oDatosTrans.modificar.obsGenerales}" cols="33" rows="3" onkeyup="this.value=this.value.toUpperCase()">
+                                        <p:ajax event="valueChange"/>
+                                    </p:inputTextarea>
+                                </p:column>
+
+                            </p:row>
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" >
+                                        <div class="centrar">
+                                            <p:commandButton id="cerrar" value="#{etiq.modificar}" icon="ui-icon-disk">                                                    
+                                                <p:ajax listener="#{oDatosTrans.modificarTransfusion}" update=":frmTras:tablaTransfusiones :frmTras:msgs"/>
+                                            </p:commandButton>                                                
+                                        </div>                                            
+                                    </p:column>                                            
+
+                                </p:row>
+                            </f:facet>
+                            </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                <!--dialod para imprimir-->
+                <p:dialog modal="true" widgetVar="imprimirTransfucion" showEffect="puff" hideEffect="puff" resizable="false" header="#{etiq.impTrans}" height="600">
+                    <h:form id="TransImp">
+                        <p:outputPanel style=" width: 1100px; background-color: white;">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="45" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; ">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hojaTrans}" style="font-style: italic;"/></b>                                    
+                                    </p:column>
+                                    <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120" height="45"  align="left"/>
+                                    </p:column>
+                                </p:row>                                          
+                            </p:panelGrid>
+                            <div style="margin-bottom: 6px;"/>
+                            <p:panelGrid style=" width: 100%; border-color: transparent; background-color: white;">
+                                <p:row>
+                                    <p:column colspan="3" style=" width: 38%; border-color: black; background-color: white; font-size: 12px; height: 15px; border-style: double;">
+                                        <p:outputLabel value="#{etiq.nombre}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.paciente.nombreCompleto}"/> 
+                                    </p:column>
+                                    <p:column style=" width: 10%; border-color: black; background-color: white; font-size: 12px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.cama}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.cama.numero}"/> 
+                                    </p:column>
+                                    <p:column style=" width: 13%; border-color: black; background-color: white; font-size: 12px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.noEXPM}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.paciente.expediente.numero}"/> 
+                                    </p:column>
+                                    <p:column style=" width: 25%; border-color: black; background-color: white; font-size: 12px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.servicio}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.area.descripcion}"/> 
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style=" width: 12%; border-color: black; background-color: white; font-size: 12px; height: 15px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.fecha}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel> 
+                                    </p:column>
+                                    <p:column style=" width: 9%; border-color: black; background-color: white; font-size: 12px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.noHoja}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="1"/> 
+                                    </p:column>
+                                    <p:column style=" width: 9%; border-color: black; background-color: white; font-size: 12px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.edad}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.paciente.edadNumero}"/> 
+                                    </p:column>
+                                    <p:column style=" border-color: black; background-color: white; font-size: 12px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.sexo}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.paciente.sexoP}"/> 
+                                    </p:column>
+                                    <p:column  colspan="2" style=" border-color: black; background-color: white; font-size: 12px;border-style: double;">
+                                        <p:outputLabel value="#{etiq.diagnostico}:" style="text-transform: uppercase;"/>&nbsp;<p:outputLabel value="#{oDatosTrans.transfusionDatos.episodio.diagIngreso.descripcionDiag}"/> 
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <div style=" margin-bottom: 10px;"/>
+                            <p:outputPanel style="width: 100%; background-color: white;" styleClass="centrar" > 
+                                <p:panelGrid style=" width: 100%; background-color: white;">
+                                    <p:row>
+                                        <p:column rowspan="2" style=" width: 6%; color: black; font-size: 11px; border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.fechTras}"/>
+                                        </p:column>
+                                        <p:column rowspan="2"  style=" width: 5%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.noUni}"/>
+                                        </p:column>
+                                        <p:column rowspan="2"  style=" width: 7%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.tpUnid}"/>
+                                        </p:column>
+                                        <p:column rowspan="2" style=" width: 6%;color: black; font-size: 11px; border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.horaInicio}"/>
+                                        </p:column>                                        
+                                        <p:column colspan="5"   style="width: 16%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center; ">
+                                            <p:outputLabel value="#{etiq.signosVitales}"/>
+                                        </p:column>
+                                        <p:column rowspan="2" style=" width: 6%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center; border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.horaFin}"/>
+                                        </p:column>
+                                        <p:column rowspan="2" style=" width: 8%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.volmTras}"/>
+                                        </p:column>
+                                        <p:column rowspan="2"  style=" width: 16%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.nomFirTras}"/>
+                                        </p:column>
+                                        <p:column rowspan="2" style=" width: 18%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.estObs}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="width: 7%; border-color: black; background-color: white; border-bottom-color:  transparent;"/>
+                                        <p:column style=" width: 4%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.tenArt}"/>
+                                        </p:column>
+                                        <p:column  style=" width: 4%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.frecCar}"/>
+                                        </p:column>
+                                        <p:column  style=" width: 3.9%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;  border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.tempe}"/>
+                                        </p:column>
+                                        <p:column  style=" width: 4.5%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center; border-bottom-color:  transparent;">
+                                            <p:outputLabel value="#{etiq.fr}"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:dataTable value="#{oDatosTrans.tranAgregadaBase}" var="oImpTra" emptyMessage="" id="tblimptras">
+                                    <p:columnGroup type="header">                                        
+                                    </p:columnGroup>
+                                    <p:column  style=" width: 5.2%; color: black; font-size: 10px; border-color: black; background-color: white; text-align: center;">
+                                        <p:outputLabel value="#{oImpTra.fechaTransString2}"/>
+                                    </p:column>
+                                    <p:column style=" width: 3.5%; color: black; font-size: 10px;  border-color: black; background-color: white; text-align: center;">
+                                        <p:outputLabel value="#{oImpTra.noUnidad}"/>
+                                    </p:column>
+                                    <p:column  style=" width: 5.8%; color: black; font-size: 10px;  border-color: black; background-color: white; text-align: center;">
+                                        <p:outputLabel value="#{oImpTra.tipoUnidad.valor}"/>&nbsp;<p:outputLabel value="#{oImpTra.tipoFactor.valor}"/>
+                                    </p:column>
+                                    <p:column style=" width: 4.68%;color: black; font-size: 11px; border-color: black; background-color: white; text-align: center;">
+                                        <p:outputLabel value="#{oImpTra.horaInicioString}"/>
+                                    </p:column>
+                                    <p:column style="width: 27%; color: black; border-color: black; background-color: white; text-align: center; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; padding-top: 0px; ">
+                                        <p:dataTable value="#{oImpTra.arraySigno}" var="oArr" emptyMessage="">
+                                            <p:columnGroup type="header"/>                             
+                                            <p:column style=" width: 49.6px; color: black; border-color: black; background-color: white; text-align: center; font-size: 10px; border-bottom-color: black; border-top-color: transparent; border-left-color: transparent; padding-top: 0px; padding-bottom: 0px; padding-left: 1px;">
+                                                <p:outputLabel value="#{oArr.tipoRevisado.valor}"/>
+                                            </p:column>
+                                            <p:column style="width: 24px;color: black; border-color: black; background-color: white; text-align: center; font-size: 10px; border-bottom-color: black; border-top-color: transparent;padding-top: 0px; padding-bottom: 0px; padding-left: 1px;">
+                                                <p:outputLabel value="#{oArr.ta}"/>
+                                            </p:column>
+                                            <p:column style="width: 15px;color: black; border-color: black; background-color: white; text-align: center; font-size: 10px; border-bottom-color: black; border-top-color: transparent; padding-top: 0px; padding-bottom: 0px;">
+                                                <p:outputLabel value="#{oArr.fc}"/>
+                                            </p:column>
+                                            <p:column style="width: 20px; color: black; border-color: black; background-color: white; text-align: center; font-size: 10px; border-bottom-color: black; border-top-color: transparent;padding-top: 0px; padding-bottom: 0px;">
+                                                <p:outputLabel value="#{oArr.temp}"/>
+                                            </p:column>
+                                            <p:column style="width: 19px;color: black; border-color: black; background-color: white; text-align: center; font-size: 10px;border-bottom-color: black; border-top-color: transparent; border-right-color: transparent;padding-top: 0px; padding-bottom: 0px; ">
+                                                <p:outputLabel value="#{oArr.fr}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                    <p:column style=" width: 4.67%; color: black; font-size: 11px;  border-color: black; background-color: white; text-align: center;">
+                                        <p:outputLabel value="#{oImpTra.horaFinString}"/>
+                                    </p:column>
+                                    <p:column style=" width: 6.94%; color: black; font-size: 10px;  border-color: black; background-color: white; text-align: center;">
+                                        <p:outputLabel value="#{oImpTra.volumenTras}"/>
+                                    </p:column>
+                                    <p:column style=" width: 15.8%; color: black; font-size: 10px;  border-color: black; background-color: white; text-align: center;">
+                                        <p:outputLabel value="#{oImpTra.personal.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column style=" width: 18.17%; color: black; font-size: 9.4px;  border-color: black; background-color: white; text-align: center;" >
+                                        <p:outputLabel value="#{oImpTra.obsGenerales}"/>
+                                    </p:column>                                    
+                                </p:dataTable>                                        
+                        </p:outputPanel>
+                        </p:outputPanel>                        
+                    </h:form>
+                    <div style=" margin-bottom: 4px;"/>
+                    <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":TransImp"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('imprimirTransfucion').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                </p:dialog>
+                <p:dialog modal="true" showEffect="puff" hideEffect="puff" header="TRANSFUSIÓN TIPO DE SANGRE" widgetVar="ConSolicitudHemoderiv" resizable="false" >
+                    <h:form id="soliHem">
+                        <p:outputPanel style="width: 420px;" styleClass="centrar" id="outp">
+                            <p:dataTable value="#{oDatosTrans.solicitudHemPac}" var="oStdHe" emptyMessage="" id="dtbSo" rendered="#{oDatosTrans.visible}">
+                                <p:column headerText=" TIPO DE SANGRE SOLICITADA" style=" width: 65%; color : black; font-weight: bold;">
+                                    <p:outputLabel value="#{oStdHe.tipoUnidad.valor}"/>&nbsp; <p:outputLabel value="#{oStdHe.tipoFactor.valor}"/>
+                                </p:column>
+                                
+                                <p:column style="width: 35%;">
+                                    <p:commandButton value="#{etiq.seleccionar}" icon="">
+                                        <p:ajax listener="#{oDatosTrans.instanciarArrayList(oStdHe)}" update=":agregaTras:tblSignosAgre :agregaTras:select :agregaTras:noUni :agregaTras:TencionArterial1 "/>
+                                        <f:setPropertyActionListener value="a" target="#{oDatosTrans.operacion}"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                </p:dialog>
+
+                
+                 <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>   
+</html>
+

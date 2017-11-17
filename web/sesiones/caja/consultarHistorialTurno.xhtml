@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.consultHistTurno}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:dialog id="dlgCaja" widgetVar="dlgCaja" width="35%" height="25%"
+                      position="center" closable="false" visible="#{oConHistTurno.visDlg}"
+                      dynamic="true" resizable="false" header="#{etiq.seleccionCaja}"
+                      appendTo="@(body)" modal="true">
+                <h:form>
+                    <p:panelGrid style="width: 100%;" styleClass="centrado_texto">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel styleClass="texto_negritas" value="#{etiq.seleccioneCaja}:"></p:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu required="true" requiredMessage="Seleccione un tipo de caja." value="#{oConHistTurno.cajaActual.idCaja}">
+                                    <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                    <f:selectItems value="#{oConHistTurno.cajas}" var="oCaja" itemLabel="#{oCaja.tipoCaja.valor}" itemValue="#{oCaja.idCaja}">
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column>
+                                    <center>
+                                        <p:commandButton value="#{etiq.aceptar}" update=":form:mensajes"  actionListener="#{oConHistTurno.preGuardaCajaSession}"> 
+                                        </p:commandButton>
+                                    </center>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+            
+            <h:form id="form">
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column rendered="#{oConHistTurno.disDatos}">
+                            <h:outputText value="#{etiq.caja}:"></h:outputText>
+                        </p:column>
+                        <p:column rendered="#{oConHistTurno.disDatos}">
+                            <p:selectOneMenu required="true" requiredMessage="Seleccione un tipo de caja." value="#{oConHistTurno.caja.idCaja}">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                <f:selectItems value="#{oConHistTurno.cajas}" var="oCaja" 
+                                               itemLabel="#{oCaja.tipoCaja.valor}" itemValue="#{oCaja.idCaja}">
+                                </f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{etiq.tipodeRecibo}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu required="true" requiredMessage="Seleccione un tipo de recibo." value="#{oConHistTurno.rec.tipoParametro}">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                <f:selectItems value="#{oConHistTurno.tiposRecibo}" var="oRec" 
+                                               itemLabel="#{oRec.valor}" itemValue="#{oRec.tipoParametro}">
+                                </f:selectItems>
+                            </p:selectOneMenu>                            
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search"  styleClass="frm_login" 
+                                             update="mensajes dtHistTurno" actionListener="#{oConHistTurno.preBusqueda}">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <center>
+                    <br/>
+                    <p:dataTable id="dtHistTurno" value="#{oConHistTurno.recibos}" var="oRec" 
+                                 style="#{oConHistTurno.activaTabla} width: 700px;" emptyMessage="#{etiq.emptydataTable}">
+                        <f:facet name="header">
+                            <h:outputText value="#{oConHistTurno.caja.tipoCaja.valor}"></h:outputText><br/>
+                            <h:outputText value="#{oConHistTurno.rec.valor}"></h:outputText>
+                        </f:facet>
+                        <p:column headerText="#{etiq.folio}">
+                            <h:outputText value="#{oRec.folio}"></h:outputText>
+                        </p:column>
+                        <p:column headerText="#{etiq.total}">
+                            <h:outputText value="#{oRec.monto}"></h:outputText>
+                        </p:column>
+                        <f:facet name="footer">
+                            <h:outputText value="#{etiq.total}:   "></h:outputText>
+                            <h:outputText value=""></h:outputText>
+                        </f:facet>
+                    </p:dataTable>
+                    <br/><br/>
+                </center> 
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

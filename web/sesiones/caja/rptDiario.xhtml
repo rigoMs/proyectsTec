@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.generarRptDiarios}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{etiq.fecha}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{oRptDiario.fecha}" required="true" requiredMessage="Ingrese una fecha."></p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search"  styleClass="frm_login" 
+                                             actionListener="#{oRptDiario.preBusqueda}" update="mensajes :tabView">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+            </h:form>
+            <p:tabView id="tabView" style="#{oRptDiario.activaTabView}">
+                <p:tab title="#{etiq.infDiarioIngrCR}">
+                    <h:form>
+                        <p:panel id="panel" style="border: none;">
+                            <p:panelGrid style="width: 660px;">
+                                <p:row>
+                                    <p:column style="width: 150px; border-color: #FFFFFF;" rowspan="3">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/ss.jpg"
+                                      align="middle"/>  
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.hrrb}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 150px;border-color: #FFFFFF;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.coordinacionRecFin}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.cajaGral}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.infDiarioIngrCR}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid>
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="3">
+                                            <h:outputText value="#{etiq.fecha}: "></h:outputText>
+                                            <h:outputText value="08 de Julio de 2015"></h:outputText>
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column style="width: 300px;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.turno}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 150px;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.importe}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 150px;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.cajero}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.consultaExterna} #{etiq.turnoMat}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteMatCE.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteMatCE.cajero.nombreCompleto}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.consultaExterna} #{etiq.turnoVesp}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteVesCE.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteVesCE.cajero.nombreCompleto}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.consultaUrg} #{etiq.turnoMat}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteMatUrg.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteMatUrg.cajero.nombreCompleto}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.consultaUrg} #{etiq.turnoVesp}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteVesUrg.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteVesUrg.cajero.nombreCompleto}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.consultaUrg} #{etiq.jornadaAcum}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteJac.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteJac.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.consultaUrg} #{etiq.turnoNoc}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteNoc.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{oRptDiario.corteNoc.montoCuotaRecup}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.total}"></h:outputText>
+                                    </p:column>
+                                    <p:column></p:column>
+                                    <p:column></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:commandButton value="#{etiq.imprimir}">
+                            <p:printer target="panel" />
+                        </p:commandButton>
+                    </h:form>
+                </p:tab>
+                <p:tab title="#{etiq.relCuentasVales}">
+                    <h:form>
+                        <p:panel id="panel2" style="border: none;">
+                            <p:panelGrid style="width: 660px;">
+                                <p:row>
+                                    <p:column style="width: 150px; border-color: #FFFFFF;" rowspan="3">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/ss.jpg"
+                                      align="middle"/>  
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.hrrb}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="width: 150px;border-color: #FFFFFF;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.coordinacionRecFin}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.cajaGral}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.relCtasValesCxc}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="border-color: #FFFFFF;" styleClass="centrado_texto_negritas">
+                                        <h:outputText value="#{etiq.fecha}"></h:outputText>
+                                    </p:column>
+                                </p:row>      
+                            </p:panelGrid>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <p:dataTable value="#{oRptDiario.recibosCE}" var="oRecCE" emptyMessage="#{etiq.emptydataTable}">
+                                            <f:facet name="header">
+                                                <h:outputText value="#{etiq.CE}"></h:outputText>
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.noCuenta}">
+                                                <h:outputText value="#{oRecCE.cuenta.numCta}"></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.noRecibo}">
+                                                <h:outputText value="#{oRecCE.folio}"></h:outputText>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;">
+                                        <p:dataTable value="#{oRptDiario.recibosUrg}" var="oRecUrg" emptyMessage="#{etiq.emptydataTable}">
+                                            <f:facet name="header">
+                                                <h:outputText value="#{etiq.URG}"></h:outputText>
+                                            </f:facet>
+                                            <p:column headerText="#{etiq.noCuenta}">
+                                                <h:outputText value="#{oRecUrg.cuenta.numCta}"></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.noRecibo}">
+                                                <h:outputText value="#{oRecUrg.folio}"></h:outputText>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/><br/>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.recibi}:"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="LINO GUZMAN MONTERROSAS" style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.jefeCxC}"></h:outputText>
+                                    </p:column>
+                                    <p:column style="border-color: #FFFFFF;width: 120px;"></p:column>
+                                    <p:column styleClass="centrado_texto" style="border-color: #FFFFFF;">
+                                        <h:outputText value="#{etiq.entrega}:"></h:outputText>
+                                        <br/><br/><br/>
+                                        <h:outputText value="LORENA MARQUEZ L." style="text-decoration: underline;"></h:outputText>
+                                        <br/>
+                                        <h:outputText value="#{etiq.jefeCajaGral}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:commandButton value="#{etiq.imprimir}">
+                            <p:printer target="panel2" />
+                        </p:commandButton>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

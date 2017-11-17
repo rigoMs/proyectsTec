@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org./TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq."/>
+            <ui:define name="cuerpo">
+                <div class="buscar">
+                    <h:form id="busqueda">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.consultaNotaPreanestesica}"/></h3>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel />
+                                    <p:inputText styleClass="bordes" id="nom" value="#{notapa.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="app" value="#{notapa.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{notapa.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{notapa.cargaDatosPaciente(0)}" 
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{notapa.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>                                
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmLogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{notapa.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                                    </p:inputText>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{notapa.cargaDatosPaciente(1)}"
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{notapa.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <div class="centrar">
+                            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                                <f:setPropertyActionListener target="#{notapa.paciente.nombres}" value=""/>
+                                <f:setPropertyActionListener target="#{notapa.paciente.apPaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{notapa.paciente.apMaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{notapa.paciente.expediente.numero}" value="#{0}"/>
+                                <f:setPropertyActionListener target="#{notapa.muestraPantalla}" value="#{false}"/> 
+                            </p:commandButton>
+                        </div>
+                        <br/>
+                        <p:outputPanel id="destino" styleClass="centrar">
+                            <div class="centrar">
+                                <p:dataTable id="tblResultado" var="oPacEnc"
+                                             value="#{notapa.arrPaciente}"
+                                                emptyMessage="#{etiq.noRegistro}" 
+                                                paginator="true" 
+                                                rows="4"                                                
+                                                rendered="#{not empty notapa.arrPaciente}">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                    </f:facet>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.fechanac}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.fechaNac}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.nombres}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.nombres}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.appat}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.apPaterno}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.apmat}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.apMaterno}"/>
+                                    </p:column>
+                                    <p:column style="width: 150px;">
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Ctrl"/>
+                                        </f:facet>
+                                        <p:commandButton icon="ui-icon-search" value="#{etiq.buscarNotas}">
+                                            <p:ajax listener="#{notapa.buscaNotasporPaciente(oPacEnc.folioPaciente, oPacEnc.claveEpisodio)}"
+                                                    update=":oNotas :fcontenedor :busqueda:msgs" oncomplete="PF('NotasP').show()"/>                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>                                
+                        </p:outputPanel>
+                    </h:form>                    
+                </div>
+                <br/><br/>
+                <div class="frm_centrado">
+                    <h:form class="centrar" id="fcontenedor">
+                        <p:panelGrid styleClass="frm_centrado" id="npe" rendered="#{notapa.muestraPantalla}">
+                            <!--ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="6" style="border-color: #ffffff; border-bottom-color: black; background-color: #ffffff;">                                            
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <h:graphicImage value="/imgs/005.jpg" style="width: 898px; height: 98px;"/>
+                                                </p:column>                                                    
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>                                    
+                                 <p:row>
+                                     <p:column colspan="6" style="text-align: center; border-color: black; background-color: #ffffff; ">
+                                         <b><p:outputLabel value="#{etiq.notapreanestesica}"/></b>
+                                     </p:column>
+                                </p:row>
+                            <!--TERMINA ENCABEZADO-->
+                            <p:row>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.fecha}:"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.fecha}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>                                    
+                                </p:column> 
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.hora}:"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.hora}">
+                                        <f:convertDateTime pattern="HH:mm"/>                                        
+                                    </p:outputLabel>                                    
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.tipoanestecia}"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.procedimientosRealizados.anestEspecifica.descripcion}"/>                                    
+                                </p:column>
+                            </p:row>
+                            <p:row>                                
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.nombre}:"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.paciente.nombres}"/>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.appaterno}:"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.paciente.apPaterno}"/>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.apmaterno}:"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.paciente.apMaterno}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.edad}:"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.sexo}"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.temp}"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.pulso1}"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.fr}"/></b>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.ta}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.paciente.edadNumero}"/>
+                                </p:column>  
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.paciente.sexoP}"/>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.signosVitales.temp}"/>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.signosVitales.pulso}"/>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.signosVitales.FR}"/>
+                                </p:column>
+                                <p:column style="border-color: black; background-color: #ffffff;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.signosVitales.TA}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.resumeninterrogatorio}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 225px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.resumenInter}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.exploracion}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 225px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.exploracionFisica}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.resuemenestadomental}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                           width: 1000px; height: 225px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.resumenEstadoMental}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.resultadoestudios2}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 225px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.resultadosServAuxDiag}"/>
+                                </p:column>
+                            </p:row>                            
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.comentarios2}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 200px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.comentarios}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.impdiagnostica}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 200px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.impresionDiagnostica}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.planmanejo}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 200px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.planDeTratamiento}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.evalucacionclinica}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 200px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.evaluacionClinica}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff; text-align: center;">
+                                    <b><p:outputLabel value="#{etiq.riesgoanestecico}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: black; background-color: #ffffff;
+                                          width: 1000px; height: 200px; vertical-align: top; text-align: justify; font-size: 11px;">
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.riesgoAnestesico}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="text-align: left; border-color: black; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.nMedico}:"/></b>&nbsp;&nbsp;&nbsp;
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.personal.nombreCompleto}"/>&nbsp;&nbsp;&nbsp;
+                                    <b><p:outputLabel value="#{etiq.cedulaProfesional}:"/></b>&nbsp;&nbsp;&nbsp;
+                                    <p:outputLabel value="#{notapa.notaPreanestesica.personal.cedProf}"/>                                    
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>                         
+                         <p:panelGrid id="boton" rendered="#{notapa.muestraPantalla}">
+                             <p:row>
+                                <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                    <p:commandButton value="#{etiq.impr}" icon="ui-icon-print" style="text-align: center;">                                    
+                                        <p:printer target="npe" />
+                                    </p:commandButton>                         
+                                </p:column>
+                            </p:row>
+                         </p:panelGrid>
+                    </h:form>
+                </div>
+                <div>
+                    <p:dialog widgetVar="NotasP" showEffect="fade" hideEffect="fade" modal="true" resizable="false">
+                        <h:form id="oNotas">
+                            <p:panelGrid style="width: 500px; margin-bottom: 6px;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 70%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 25%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.noExp}"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.paciente.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{notapa.notaPreanestesica.epiMed.paciente.expediente.numero}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:outputPanel style="width: 600px;" styleClass="centrar">
+                                <p:dataTable value="#{notapa.notas}" var="notas" emptyMessage="#{etiq.notificacion7}" id="tbl"
+                                             paginator="true" rows="3">
+                                    <p:column headerText="#{etiq.clve}" style="width: 13%">
+                                        <p:outputLabel value="#{notas.consecutivo}"/>
+                                    </p:column>
+                                    <p:column headerText="Tipo Anestesia">
+                                        <p:outputLabel value="#{notas.procedimientosRealizados.anestEspecifica.descripcion}"/>                                        
+                                    </p:column>
+                                    <p:column headerText="Ctrl" style="width: 150px;">
+                                        <p:commandButton icon="ui-icon-folder-open" value="#{etiq.ver}">
+                                            <p:ajax listener="#{notapa.cargaDatosGenerales(notas.epiMed.paciente.folioPaciente, notas.epiMed.paciente.claveEpisodio, 0, notas.consecutivo, 1)}"
+                                                     oncomplete="PF('NotasP').hide()" update=":fcontenedor"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:outputPanel>  
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('NotasP').hide()"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+                </div>
+                <div>
+                    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                        <f:facet name="start">
+                            <p:graphicImage value="/imgs/loading.gif"/>
+                        </f:facet>
+                    </p:ajaxStatus>
+                </div>
+            </ui:define>
+        </ui:composition>
+</html>

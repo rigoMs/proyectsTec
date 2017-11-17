@@ -1,0 +1,1239 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+    <h:form class="centrar" id="frmBusqueda" >
+        <br/><br/>
+        <p:growl id="msgs" showDetail="true"/>
+        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+        <br/>
+        <!--Componente de busqueda del paciente -->
+        <p:accordionPanel styleClass="centrar" id="apBusca" style="width: 700px">
+            <p:ajax event="tabChange" listener="#{oConSen.requerir}" update="@this, nom app exp" />
+            <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                <p:panelGrid columns="4">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                        <p:column></p:column>
+                        <p:inputText styleClass="bordes" id="nom" value="#{oConSen.episodioMed.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="app" value="#{oConSen.episodioMed.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{oConSen.episodioMed.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" 
+                                         actionListener="#{oConSen.buscaPaciente()}" update=":frmBusqueda :frmBusqueda:apDatos:dtDatos">
+                            <f:setPropertyActionListener target="#{oConSen.episodioMed.paciente.opcionUrg}" value="#{0}"/>
+                        </p:commandButton>
+                </p:panelGrid>
+            </p:tab>
+            <p:tab title="#{etiq.buscarPorExpediente}" id="tabE">
+                <p:panelGrid columns="3" styleClass="frmlogin">
+                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                    <p:inputText styleClass="bordes" id="exp" value="#{oConSen.episodioMed.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" required="#{oConSen.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                        <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                    </p:inputText>
+                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" 
+                                     actionListener="#{oConSen.buscaPaciente()}" update=":frmBusqueda :frmBusqueda:apDatos:dtDatos">
+                        <f:setPropertyActionListener target="#{oConSen.episodioMed.paciente.opcionUrg}" value="#{1}"/>
+                    </p:commandButton>
+                </p:panelGrid>
+                <p:message for="exp" id="mentExp"></p:message>
+            </p:tab>
+        </p:accordionPanel>
+        <br/>
+        <p:accordionPanel id="apDatos" rendered="#{not empty oConSen.listaPac}" >
+             <p:tab title="#{etiq.pacEncontrados}">
+                <p:dataTable id="dtDatos"
+                           var="oPacNew" paginator="true" rows="10"
+                           value="#{oConSen.listaPac}"
+                           emptyMessage="#{etiq.noRegistro}" styleClass="centrar">
+                  <p:column style="width: 100px" >
+                      <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.noExp}"/> </f:facet>
+                      <p:outputLabel value="#{oPacNew.expediente.numero}"/>
+                  </p:column>
+                  <p:column style="width: 180px" >
+                      <f:facet name="header" > <h:outputText  style="font-weight: bold; " value="#{etiq.nombre}"/> </f:facet>
+                      <p:outputLabel value="#{oPacNew.nombreCompleto}"/>
+                  </p:column> 
+                  <p:column style="width: 100px" >
+                      <f:facet name="header" > <h:outputText style="font-weight: bold" value="#{etiq.fechanac}"/> </f:facet>
+                      <p:outputLabel value="#{oPacNew.fechaNac}">
+                          <f:convertDateTime pattern="dd/MM/yyyy"/>
+                      </p:outputLabel>
+                  </p:column>
+                  <p:column style="width: 90px">
+                      <f:facet name="header" > <h:outputText style="font-weight: bold" value="#{etiq.edad}"/> </f:facet>
+                      <p:outputLabel value="#{oPacNew.edadNumero}"/>
+                  </p:column>
+                  <p:column style="width: 50px" >
+                      <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.sexo}"/> </f:facet>
+                      <p:outputLabel value="#{oPacNew.sexoP}"/>
+                  </p:column>
+                  <p:column style="width: 110px" >
+                      <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.curp}"/> </f:facet>
+                      <p:outputLabel value="#{oPacNew.curp}"/>
+                  </p:column>
+                  <p:column style="width: 200px" >
+                      <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.municipio}"/> </f:facet>
+                      <p:outputLabel value="#{oPacNew.municipio.descripcionMun}"/>
+                  </p:column>
+                  <p:column style="width: 100px" >
+                      <f:facet name="header" > <h:outputText style="font-weight: bold;" value=""/> </f:facet>
+                      <p:commandButton value="#{etiq.seleccionar}" icon="ui-icon-check" actionListener="#{oConSen.actualizaPac(oPacNew.folioPaciente)}"
+                                      update=":frmDatos :frmDatos:pgDatos2" />
+                  </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:accordionPanel>
+    </h:form>
+    <br/>
+    <!-- |||||||||||||||||||||||||||||PANEL PRINCIPAL -->
+    <h:form id="frmDatos" class="centrar">
+        <p:panelGrid id="pgDatos2" rendered="#{oConSen.pgDatos2}">
+            <f:facet name="header"><p:row><p:column colspan="2"><p:outputLabel value="#{etiq.fConsentimiento}"/></p:column></p:row></f:facet>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.tipoFormato}:"/>
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu value="#{oConSen.tipoCons}" effect="fold" required="true"
+                                     requiredMessage="Debe indicar el tipo de consentimiento" style="text-transform: uppercase;">
+                        <p:ajax event="valueChange" listener="#{oConSen.renderizaPanel()}" update=":frmDatos :frmDatos:#{oConSen.update}"/>
+                        <f:selectItem itemLabel="#{etiq.notificacion12}" noSelectionOption="true"/>
+                        <f:selectItem itemLabel="#{etiq.CIH}"  itemValue="CIH"/>
+                        <f:selectItem itemLabel="#{etiq.CIPF}" itemValue="CIPF"/>
+                        <f:selectItem itemLabel="#{etiq.CIIQ}" itemValue="CIIQ"/>
+                        <f:selectItem itemLabel="#{etiq.CIPA}" itemValue="CIPA"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <!--
+            <p:row>
+                <p:column colspan="2">
+                    <p:commandButton icon="ui-icon-check" validateClient="false" value="Generar" actionListener="#{oConSen.renderizaPanel()}" update=":frmDatos :frmDatos:#{oConSen.update}"/>
+                </p:column>
+            </p:row>
+            -->
+        </p:panelGrid>
+        <br/>
+        <!--PANEL CIH -->
+        <p:panelGrid id="pgCIH" rendered="#{oConSen.CIH}" style="width: 700px">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="6"><p:outputLabel onkeyup="this.value=this.value.toUpperCase();"  value="#{etiq.CIH}"/></p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column colspan="6" styleClass="ui-widget-header">
+                    <p:outputLabel value="("/><p:outputLabel class="requerido" value="*"/><p:outputLabel value=")"/><p:outputLabel value="#{etiq.campo}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.alternativaTratamiento}"/>
+                </p:column>
+                <p:column colspan="5"><p:inputText size="100" onkeyup="this.value=this.value.toUpperCase();" value="#{oConSen.alternativas}"
+                                                   required="#{oConSen.CIH}" requiredMessage="Debe ingresar las alternativas de tratamiento"/></p:column>   
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.complicacionesPosibles}"/>
+                </p:column>
+                <p:column colspan="5"><p:inputText size="100" onkeyup="this.value=this.value.toUpperCase();" value="#{oConSen.complica}"
+                                                   required="#{oConSen.CIH}" requiredMessage="Debe ingresar las complicaciones posibles"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.diagnosticoIngresoo2}"/>
+                </p:column>
+                <p:column colspan="5">
+                    <p:autoComplete onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                        size="100" minQueryLength="4" required="#{oConSen.CIH}" requiredMessage="DEBE INGRESAR UN DIAGNOSTICO"
+                                        styleClass="bordes" value="#{oConSen.diagIngre.descripcionDiag}" effect="fade"
+                                        completeMethod="#{oConSen.diagIngre.completar}"
+                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300"
+                                        validatorMessage="DEBE INGRESAR UNA AFECCION">
+                        <p:ajax event="itemSelect"/>
+                    </p:autoComplete>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.fechaInter}"/>
+                </p:column>
+                <p:column><p:calendar pattern="dd/MM/yyyy hh:mm a" locale="es" required="#{oConSen.CIH}" value="#{oConSen.fechaInter}"/></p:column>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.identificadoCon}:"/>
+                </p:column>
+                <p:column><p:inputText style="text-transform: uppercase" value="#{oConSen.identificado}" 
+                                       onkeyup="this.value=this.value.toUpperCase();"
+                                       required="#{oConSen.CIH}" requiredMessage="DEBE INDICAR CON QUE SE IDENTIFICA EL PACIENTE"/></p:column>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.nomResponsable}:"/>
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu value="#{oConSen.responsable}" effect="fold" required="#{oConSen.CIH}"
+                                     requiredMessage="DEBE INDICAR LA PERSONA RESPONSABLE">
+                        <p:ajax listener="#{oConSen.cambiaFamRes()}" update=":frmIngDatos" event="valueChange"/>
+                            <f:selectItem itemLabel="#{etiq.notificacion12}" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="PACIENTE" itemValue="Paciente"/>
+                            <f:selectItem itemLabel="FAMILIAR" itemValue="Familiar"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="6">
+                    <p:commandButton icon="ui-icon-check" value="Generar" actionListener="#{oConSen.muestraDialogo()}" validateClient="true"
+                                     update=":frmCIH:pgPrintCIH" ></p:commandButton>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <!--PANEL CIPF-->
+        <p:panelGrid id="pgCIPF" rendered="#{oConSen.CIPF}" style="width: 750px">
+            <f:facet name="header">
+                <p:row>
+                    <p:column colspan="4"><p:outputLabel onkeyup="this.value=this.value.toUpperCase();"  value="#{etiq.CIPF}"/></p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column colspan="4" styleClass="ui-widget-header">
+                    <p:outputLabel value="("/><p:outputLabel class="requerido" value="*"/><p:outputLabel value=")"/><p:outputLabel value="#{etiq.campo}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.aceptaPac}"/>
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu value="#{oConSen.acepta}" effect="fold" required="#{oConSen.CIPF}" 
+                                     requiredMessage="DEBE INDICAR SI EL PACIENTE ACEPTA EL MÉTODO ANTICONCEPTIVO">
+                        <f:selectItem itemLabel="SI" itemValue="ACEPTACIÓN"/>
+                        <f:selectItem itemLabel="NO" itemValue="NO ACEPTACIÓN"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.metodoAnticonceptivo}"/></p:column>
+                <p:column>
+                    <p:selectOneMenu value="#{oConSen.metodo}" effect="fold" required="#{oConSen.CIPF}" 
+                                     requiredMessage="Debe indicar el método anticonceptivo">
+                        <f:selectItem itemLabel="HORMONALES ORALES" itemValue="HORMONALES ORALES"/>
+                        <f:selectItem itemLabel="HORMONALES INYECTABLES" itemValue="HORMONALES INYECTABLES"/>
+                        <f:selectItem itemLabel="DIU" itemValue="DIU"/>
+                        <f:selectItem itemLabel="SALPINGOCLASIA" itemValue="SALPINGOCLASIA"/>
+                        <f:selectItem itemLabel="VASECTOMIA" itemValue="VASECTOMIA"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column></p:column>
+                <p:column><h:outputLabel class="negrita" value="#{etiq.nombres}:"/></p:column>
+                <p:column><h:outputLabel class="negrita" value="#{etiq.appat}:"/></p:column>
+                <p:column><h:outputLabel class="negrita" value="#{etiq.apmat}:"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.testigo} 1"/>
+                </p:column>
+                <p:column >
+                    <p:inputText style="text-transform: uppercase" value="#{oConSen.testigo.nombres}"
+                                 onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.CIPF}" requiredMessage="DEBE INDICAR EL NOMBRE DEL TESTIGO 1"/>
+                </p:column>
+                <p:column >
+                    <p:inputText style="text-transform: uppercase" value="#{oConSen.testigo.apPaterno}"
+                                 onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.CIPF}" requiredMessage="DEBE INDICAR EL APELLIDO PATERNO DEL TESTIGO 1"/>
+                </p:column>
+                <p:column >
+                    <p:inputText style="text-transform: uppercase" value="#{oConSen.testigo.apMaterno}"
+                                 onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.CIPF}" requiredMessage="DEBE INDICAR EL APELLIDO MATERNO DEL TESTIGO 1"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.testigo} 2"/>
+                </p:column>
+                <p:column >
+                    <p:inputText style="text-transform: uppercase" value="#{oConSen.familiar.nombresFam}"
+                                 onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.CIPF}" requiredMessage="DEBE INDICAR EL NOMBRE DEL TESTIGO 2"/>
+                </p:column>
+                <p:column >
+                    <p:inputText style="text-transform: uppercase" value="#{oConSen.familiar.apPaternoFam}"
+                                 onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.CIPF}" requiredMessage="DEBE INDICAR EL APELLIDO PATERNO DEL TESTIGO 2"/>
+                </p:column>
+                <p:column >
+                    <p:inputText style="text-transform: uppercase" value="#{oConSen.familiar.apMaternoFam}"
+                                 onkeyup="this.value=this.value.toUpperCase();" required="#{oConSen.CIPF}" requiredMessage="DEBE INDICAR EL APELLIDO MATERNO DEL TESTIGO 1"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="4">
+                    <p:commandButton icon="ui-icon-check" value="Generar" actionListener="#{oConSen.muestraDialogo()}" validateClient="true"
+                                     update=":frmCIPF:pgPrintCIPF" ></p:commandButton>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <!--PANEL CIIQ -->
+        <p:panelGrid id="pgCIIQ" rendered="#{oConSen.CIIQ}" style="width: 700px">
+            <f:facet name="header">
+                <p:row><p:column colspan="6"><p:outputLabel onkeyup="this.value=this.value.toUpperCase();"  value="#{etiq.CIIQ}"/></p:column></p:row>
+            </f:facet>
+            <p:row>
+                <p:column colspan="6" styleClass="ui-widget-header">
+                    <p:outputLabel value="("/><p:outputLabel class="requerido" value="*"/><p:outputLabel value=")"/><p:outputLabel value="#{etiq.campo}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.diagnosticoPreoperatorio}"/>
+                </p:column>
+                <p:column colspan="5">
+                    <p:autoComplete onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                        size="100" minQueryLength="4" required="#{oConSen.CIIQ}" requiredMessage="#{etiq.notificacion31}"
+                                        styleClass="bordes" value="#{oConSen.diagPre.descripcionDiag}" effect="fade"
+                                        completeMethod="#{oConSen.diagPre.completar}"
+                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300"
+                                        validatorMessage="DEBE INGRESAR UNA AFECCIÓN">
+                        <p:ajax event="itemSelect"/>
+                    </p:autoComplete>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.operacionProyectada}"/>
+                </p:column>
+                <p:column colspan="5">
+                    <p:autoComplete id="complete1" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                    size="100" minQueryLength="3" required="#{oConSen.CIIQ}" requiredMessage="DEBE INGRESAR UNA CIRUGÍA"
+                                    styleClass="bordes" value="#{oConSen.CIE9.descripcion}"
+                                    completeMethod="#{oConSen.CIE9.completar}" effect="fade"
+                                    onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300">
+                        <p:ajax listener="#{oConSen.CIE9.nuevo()}" event="itemSelect"/>
+                     </p:autoComplete>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.complicacionesPosibles}"/>
+                </p:column>
+                <p:column colspan="5"><p:inputText size="100" onkeyup="this.value=this.value.toUpperCase();" value="#{oConSen.complica}"
+                                                   required="#{oConSen.CIIQ}" requiredMessage="DEBE INGRESAR LAS COMPLICACIONES POSIBLES"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.fechaInterQuirur}"/>
+                </p:column>
+                <p:column><p:calendar pattern="dd/MM/yyyy hh:mm a" locale="es" required="#{oConSen.CIIQ}" value="#{oConSen.fechaInter}"/></p:column>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.identificadoCon}:"/>
+                </p:column>
+                <p:column><p:inputText style="text-transform: uppercase" value="#{oConSen.identificado}" 
+                                       onkeyup="this.value=this.value.toUpperCase();"
+                                       required="#{oConSen.CIIQ}" requiredMessage="DEBE INDICAR CON QUE SE IDENTIFICA EL PACIENTE"/></p:column>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.nomResponsable}:"/>
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu value="#{oConSen.responsable}" effect="fold" required="#{oConSen.CIIQ}"
+                                     requiredMessage="DEBE INDICAR LA PERSONA RESPONSABLE">
+                        <p:ajax listener="#{oConSen.cambiaFamRes()}" update=":frmIngDatos" event="valueChange"/>
+                            <f:selectItem itemLabel="#{etiq.notificacion12}" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="PACIENTE" itemValue="Paciente"/>
+                            <f:selectItem itemLabel="FAMILIAR" itemValue="Familiar"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="6">
+                    <p:commandButton icon="ui-icon-check" value="Generar" actionListener="#{oConSen.muestraDialogo()}" validateClient="true"
+                                     update=":frmCIIQ:pgPrintCIIQ" ></p:commandButton>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <!--PANEL CIPA -->
+        <p:panelGrid id="pgCIPA" rendered="#{oConSen.CIPA}" style="width: 700px">
+            <f:facet name="header">
+                <p:row><p:column colspan="6"><p:outputLabel style="text-transform: lowercase"  value="#{etiq.consenInforAnes}"/></p:column></p:row>
+            </f:facet>
+            <p:row>
+                <p:column colspan="6" styleClass="ui-widget-header">
+                    <p:outputLabel value="("/><p:outputLabel class="requerido" value="*"/><p:outputLabel value=")"/><p:outputLabel value="#{etiq.campo}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.diagnosticoPreoperatorio}"/>
+                </p:column>
+                <p:column colspan="5">
+                    <p:autoComplete onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                        size="100" minQueryLength="4" required="#{oConSen.CIPA}" requiredMessage="#{etiq.notificacion31}"
+                                        styleClass="bordes" value="#{oConSen.diagPre.descripcionDiag}" effect="fade"
+                                        completeMethod="#{oConSen.diagPre.completar}"
+                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300"
+                                        validatorMessage="DEBE INGRESAR UNA AFECCIÓN">
+                        <p:ajax event="itemSelect"/>
+                    </p:autoComplete>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel style="text-transform: lowercase" value="#{etiq.anesProyectada}"/>
+                </p:column>
+                <p:column colspan="5">
+                    <p:selectOneMenu value="#{oConSen.anestesia.descripcion}" required="#{oConSen.CIPA}" requiredMessage="DEBE INGRESAR TIPO DE ANESTESIA">
+                        <f:selectItem itemLabel="#{etiq.notificacion12}" noSelectionOption="true"/>
+                        <f:selectItems value="#{oConSen.anestesia.buscarTodos()}"
+                                       var="iterador" itemLabel="#{iterador.descripcion}" itemValue="#{iterador.descripcion}"/>
+                        <p:ajax event="valueChange"/>                                        
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.complicacionesPosibles}"/>
+                </p:column>
+                <p:column colspan="5"><p:inputText size="100" onkeyup="this.value=this.value.toUpperCase();" value="#{oConSen.complica}"
+                                                   required="#{oConSen.CIPA}" requiredMessage="DEBE INGRESAR LAS COMPLICACIONES POSIBLES"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.fechaInterQuirur}"/>
+                </p:column>
+                <p:column><p:calendar pattern="dd/MM/yyyy hh:mm a" locale="es" required="#{oConSen.CIPA}" value="#{oConSen.fechaInter}"/></p:column>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.identificadoCon}:"/>
+                </p:column>
+                <p:column>
+                    <p:inputText style="text-transform: uppercase" value="#{oConSen.identificado}" 
+                                       onkeyup="this.value=this.value.toUpperCase();"
+                                       required="#{oConSen.CIPA}" requiredMessage="DEBE INDICAR CON QUE SE IDENTIFICA EL PACIENTE"/></p:column>
+                <p:column styleClass="ui-widget-header">
+                    <p:outputLabel class="requerido" value="*"/>
+                    <p:outputLabel value="#{etiq.nomResponsable}:"/></p:column>
+                <p:column>
+                    <p:selectOneMenu value="#{oConSen.responsable}" effect="fold" required="#{oConSen.CIPA}"
+                                     requiredMessage="DEBE INDICAR LA PERSONA RESPONSABLE">
+                        <p:ajax listener="#{oConSen.cambiaFamRes()}" update=":frmIngDatos" event="valueChange"/>
+                            <f:selectItem itemLabel="#{etiq.notificacion12}" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="PACIENTE" itemValue="Paciente"/>
+                            <f:selectItem itemLabel="FAMILIAR" itemValue="Familiar"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="6">
+                    <p:commandButton icon="ui-icon-check" value="Generar" actionListener="#{oConSen.muestraDialogo()}" validateClient="true"
+                                     update=":frmCIPA:pgPrintCIPA" ></p:commandButton>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+    </h:form>
+    <!--|||       INGRESAR DATOS DEL FAMILIAR RESPONSABLE     |||-->
+    <p:dialog header="#{etiq.ingresarDatos}" widgetVar="dlgIngDatos" showEffect="puff" hideEffect="puff"
+              resizable="false" modal="true" height="230" width="650" style="text-align: center">
+        <h:form id="frmIngDatos">
+            <p:panelGrid>
+                <p:row>
+                    <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.testigo}"/></p:column> 
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel class="requerido" value="*"/>
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel class="requerido" value="*"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel class="requerido" value="*"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column >
+                        <p:inputText style="text-transform: uppercase" value="#{oConSen.testigo.nombres}"
+                                     onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="DEBE INDICAR EL NOMBRE DEL TESTIGO"/>
+                    </p:column>
+                    <p:column >
+                        <p:inputText style="text-transform: uppercase" value="#{oConSen.testigo.apPaterno}"
+                                     onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="DEBE INDICAR EL APELLIDO PATERNO DEL TESTIGO"/>
+                    </p:column>
+                    <p:column >
+                        <p:inputText style="text-transform: uppercase" value="#{oConSen.testigo.apMaterno}"
+                                     onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="DEBE INDICAR EL APELLIDO MATERNO DEL TESTIGO"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{oConSen.responsable} #{etiq.responsable}"/></p:column>
+                </p:row>
+                <p:row rendered="#{oConSen.banFamCercano}">
+                    <p:column >
+                        <p:outputLabel class="requerido" value="*"/>
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                    </p:column>
+                    <p:column >
+                        <p:outputLabel class="requerido" value="*"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                    </p:column>
+                    <p:column >
+                        <p:outputLabel class="requerido" value="*"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column rendered="#{oConSen.banPac}" colspan="3"><p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/></p:column>
+                    <p:column rendered="#{oConSen.banFamCercano}">
+                        <p:inputText style="text-transform: uppercase" value="#{oConSen.familiar.nombresFam}"
+                                     onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="DEBE INDICAR EL NOMBRE DEL FAMILIAR"/>
+                    </p:column>
+                    <p:column rendered="#{oConSen.banFamCercano}">
+                        <p:inputText style="text-transform: uppercase" value="#{oConSen.familiar.apPaternoFam}"
+                                     onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="DEBE INDICAR EL APELLIDO PATERNO DEL FAMILIAR"/>
+                    </p:column>
+                    <p:column rendered="#{oConSen.banFamCercano}">
+                        <p:inputText style="text-transform: uppercase" value="#{oConSen.familiar.apMaternoFam}"
+                                     onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="DEBE INDICAR EL APELLIDO MATERNO DEL FAMILIAR"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3"><p:commandButton value="ok" validateClient="true" icon="ui-icon-check" onclick="PF('dlgIngDatos').hide()"/></p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+    <!-- IMPRESIONES-->
+    <!-- IMPRESIONES-->
+    <!-- IMPRESIONES-->
+    <!-- IMPRESIONES-->
+    <p:dialog header="..." widgetVar="dlgCIH" showEffect="puff" hideEffect="puff"
+              resizable="false" modal="true" height="600" width="1100" style="text-align: center">
+        <h:form id="frmCIH">
+            <p:panelGrid styleClass="frm_centrado" id="pgPrintCIH" style="width:1000px; border-color: white; background-color: white;" >
+                
+                <p:row>
+                    <p:column colspan="7" style="border-color: white; border-bottom-color: black; background-color: white;">
+                        <div id="top">
+                            <table width="98%" border="0">
+                                <tr>
+                                    <td width="15%">
+                                        <div align="center">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" alt="SSAVER" align="middle"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div align="center">
+                                            <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>                                                                
+                                            <h1><h:outputText styleClass="ui-theme" value="#{etiq.hrrb}"/></h1>  
+                                            <h2><h:outputText styleClass="ui-theme" value="#{etiq.siece}"/></h2>                                                                            
+                                        </div>
+                                    </td>
+                                    <td width="15%">
+                                    <div align="center">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" alt="SSAHRRB" align="middle" height="90" width="234"/>
+                                    </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </p:column>
+                </p:row>                                
+                
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.CIH}"/></b>
+                    </p:column>
+                </p:row>                           
+                <p:row>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.lugar}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="width: 200px; border-color: black; background-color: white;" >
+                        <p:outputLabel style="text-transform: uppercase" value="#{etiq.direccion}"/>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.fecha}/#{etiq.hora}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel  value="#{oConSen.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.numeroExpediente}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.expediente.numero}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreDelPaciente}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.edad}: "/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.edadNumero}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.sexo}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.sexoP}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.domicilio}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.calleNum},#{oConSen.episodioMed.paciente.municipio.descripcionMun},#{oConSen.episodioMed.paciente.estado.descripcionEdo}"/></p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.identificadoCon}:"/></b>
+                    </p:column>
+                    <p:column colspan="3" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.identificado}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 287px; border-style: hidden" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIH_up.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.diagnosticoIngreso} "/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.diagIngre.claveCIE10}  #{oConSen.diagIngre.descripcionDiag}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.alternativaTratamiento2}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.alternativas}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.riesgosImportantes}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.complica}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 104px; border-style: hidden" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIH_down1.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nomFirm} #{oConSen.responsable} #{etiq.responsable}"/></b>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nomFirm2}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column rendered="#{oConSen.banPac}" colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column rendered="#{oConSen.banFamCercano}" colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.familiar.nombresFam} #{oConSen.familiar.apPaternoFam} #{oConSen.familiar.apMaternoFam}"/>
+                    </p:column>
+                    <p:column  colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.testigo.nombreCompleto}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 150px; border-style: hidden" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIH_down2.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreCedulaFirmaMedico2}"/></b>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.fechaInter}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;"><p:outputLabel value="#{oConSen.medFirm.cedProf} #{oConSen.medFirm.nombreCompleto}"/></p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.fechaInter}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:row>
+                <p:column style="text-align: center; border-color: white; background-color: white;">
+                    <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print">
+                        <p:printer target="pgPrintCIH"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column colspan="6" style="text-align: center; border-color: white; background-color: white;">
+                    <p:commandButton icon="ui-icon-circle-close" value="cerrar" type="button" onclick="PF('dlgCIH').hide();"/>
+                </p:column>
+            </p:row>
+        </h:form>
+    </p:dialog>
+    <!-- dlgCIPF -->
+    <p:dialog header="..." widgetVar="dlgCIPF" showEffect="puff" hideEffect="puff"
+              resizable="false" modal="true" height="600" width="1100" style="text-align: center">
+        <h:form id="frmCIPF">
+            <p:panelGrid styleClass="frm_centrado" id="pgPrintCIPF" style="width:1000px">
+                
+                    <p:row>
+                        <p:column colspan="7" style="border-color: white; border-bottom-color: black; background-color: white;">
+                            <div id="top">
+                                <table width="98%" border="0">
+                                    <tr>
+                                        <td width="15%">
+                                            <div align="center">
+                                                <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" alt="SSAVER" align="middle"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div align="center">
+                                                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>                                                                
+                                                <h1><h:outputText styleClass="ui-theme" value="#{etiq.hrrb}"/></h1>  
+                                                <h2><h:outputText styleClass="ui-theme" value="#{etiq.siece}"/></h2>                                                                             
+                                            </div>
+                                        </td>
+                                        <td width="15%">
+                                        <div align="center">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" alt="SSAHRRB" align="middle" height="90" width="234"/>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </p:column>
+                    </p:row>                                
+                
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.CIPF}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column  style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.lugar}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="width: 200px; border-color: black; background-color: white;">
+                        <p:outputLabel style="text-transform: uppercase" value="#{etiq.direccion}"/>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.fecha}/#{etiq.hora}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel  value="#{oConSen.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.numeroExpediente}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.expediente.numero}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreDelPaciente}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.edad}: "/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.edadNumero}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.sexo}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.sexoP}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.domicilio}:"/></b>
+                    </p:column>
+                    <p:column colspan="6" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.calleNum},#{oConSen.episodioMed.paciente.municipio.descripcionMun},#{oConSen.episodioMed.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                </p:row>                           
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 250px; border-style: hidden" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIPF_up.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: center; border-color: black; background-color: white;" colspan="7">
+                        <p:outputLabel value="#{oConSen.metodo}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 65px; border-style: hidden " src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIPF_down.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: center; border-color: black; background-color: white;" colspan="7">
+                        <b><p:outputLabel value="#{etiq.firma} #{etiq.de} #{oConSen.acepta}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: center; border-color: black; background-color: white;" colspan="3">
+                        <b><p:outputLabel value="#{etiq.testigo} 1"/></b>
+                    </p:column>
+                    <p:column style="text-align: center; border-color: black; background-color: white;" colspan="4">
+                        <b><p:outputLabel value="#{etiq.testigo} 2"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.testigo.nombreCompleto}"/>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.familiar.nombresFam} #{oConSen.familiar.apPaternoFam} #{oConSen.familiar.apMaternoFam}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreCedulaFirmaMedico2}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.medFirm.cedProf} #{oConSen.medFirm.nombreCompleto}"/>
+                    </p:column></p:row>
+            </p:panelGrid>
+            <p:row>
+                <p:column style="border-color: white; background-color: white;">
+                    <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print">
+                        <p:printer target="pgPrintCIPF"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column style="border-color: white; background-color: white;">
+                    <p:commandButton icon="ui-icon-circle-close" value="cerrar" type="button" onclick="PF('dlgCIPF').hide();"/>
+                </p:column>
+            </p:row>
+        </h:form>
+    </p:dialog>
+    <!--dlgCIIQ -->
+    <p:dialog header="..." widgetVar="dlgCIIQ" showEffect="puff" hideEffect="puff"
+              resizable="false" modal="true" height="600" width="1100" style="text-align: center">
+        <h:form id="frmCIIQ">
+            <p:panelGrid styleClass="frm_centrado" id="pgPrintCIIQ" style="width:1000px;">
+                
+                    <p:row>
+                        <p:column colspan="7" style="border-color: white; border-bottom-color: black; background-color: white;">
+                            <div id="top">
+                                <table width="98%" border="0">
+                                    <tr>
+                                        <td width="15%">
+                                            <div align="center">
+                                                <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" alt="SSAVER" align="middle"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div align="center">
+                                                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>                                                                
+                                                <h1><h:outputText styleClass="ui-theme" value="#{etiq.hrrb}"/></h1>  
+                                                <h2><h:outputText styleClass="ui-theme" value="#{etiq.siece}"/></h2>
+                                            </div>
+                                        </td>
+                                        <td width="15%">
+                                        <div align="center">
+                                            <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" alt="SSAHRRB" align="middle" height="90" width="234"/>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </p:column>
+                    </p:row>                                
+                
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.CIIQ}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.lugar}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="width: 200px; border-color: black; background-color: white;">
+                        <p:outputLabel style="text-transform: uppercase" value="#{etiq.direccion}"/>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.fecha}/#{etiq.hora}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel  value="#{oConSen.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.numeroExpediente}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.expediente.numero}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreDelPaciente}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.edad}: "/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.edadNumero}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.sexo}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.sexoP}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.domicilio}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.calleNum},#{oConSen.episodioMed.paciente.municipio.descripcionMun},#{oConSen.episodioMed.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.identificadoCon}:"/></b>
+                    </p:column>
+                    <p:column colspan="3" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.identificado}"/>
+                    </p:column>
+                </p:row>                            
+                <p:row>                                
+                    <p:column colspan="2" style="height: 1%; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.diagnosticoPreoperatorio}:"/></b>
+                    </p:column>
+                    <p:column colspan="5" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.diagPre.claveCIE10} - #{oConSen.diagPre.descripcionDiag}"/>
+                    </p:column>                               
+                </p:row>
+                <p:row>                                
+                    <p:column colspan="2" style="height: 1%; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.operacionProyectada}:"/></b>
+                    </p:column>
+                    <p:column colspan="5" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.CIE9.clave} - #{oConSen.CIE9.descripcion}"/>
+                    </p:column>                               
+                </p:row>
+                <p:row>
+                    <p:column colspan="2" style="height: 1%; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.complicacionesPosibles}:"/></b>
+                    </p:column>
+                    <p:column colspan="5" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.complica}"/>
+                    </p:column>                               
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 265px; border-style: hidden" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIIQ_UP.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nomFirm} #{oConSen.responsable} #{etiq.responsable}"/></b>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nomFirm2}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column rendered="#{oConSen.banPac}" colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column rendered="#{oConSen.banFamCercano}" colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.familiar.nombresFam} #{oConSen.familiar.apPaternoFam} #{oConSen.familiar.apMaternoFam}"/>
+                    </p:column>
+                    <p:column  colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.testigo.nombreCompleto}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 150px; border-style: hidden" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIH_down2.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreCedulaFirmaMedico2}"/></b>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.fechaInterQuirur}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.medFirm.cedProf} #{oConSen.medFirm.nombreCompleto}"/>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.fechaInter}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:row>
+                <p:column style="border-color: white; background-color: white;">
+                    <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print">
+                        <p:printer target="pgPrintCIIQ"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column style="border-color: white; background-color: white;">
+                    <p:commandButton icon="ui-icon-circle-close" value="cerrar" type="button" onclick="PF('dlgCIIQ').hide();"/>
+                </p:column>
+            </p:row>
+        </h:form>
+    </p:dialog>
+    <!-- dlgCIPA -->
+    <p:dialog header="..." widgetVar="dlgCIPA" showEffect="puff" hideEffect="puff"
+              height="600" width="1100"  resizable="false" modal="true" style="text-align: center">
+        <h:form id="frmCIPA">
+            <p:panelGrid styleClass="frm_centrado" id="pgPrintCIPA" style="width:1000px">
+                
+                <p:row>
+                    <p:column colspan="7" style="border-color: white; border-bottom-color: black; background-color: white;">
+                        <table width="98%" border="0">
+                            <tr>
+                                <td width="15%">
+                                    <div align="center">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" alt="SSAVER" align="middle"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div align="center">
+                                        <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+                                        <h1 id="siteName">
+                                        <h:outputText styleClass="ui-theme" value="#{etiq.hrrb}"/>
+                                        </h1>
+                                        <h2 id="sisName">
+                                        <h:outputText styleClass="ui-theme" value="#{etiq.siece}"/>
+                                        </h2>
+                                    </div>
+                                </td>
+                                <td width="15%">
+                                    <div align="center">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" alt="SSAHRRB" align="middle" height="90" width="234"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.consenInforAnes}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.lugar}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="width: 200px; border-color: black; background-color: white;" >
+                        <p:outputLabel style="text-transform: uppercase" value="#{etiq.direccion}"/>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.fecha}/#{etiq.hora}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel  value="#{oConSen.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column style="width: 100px; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.numeroExpediente}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.expediente.numero}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreDelPaciente}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.edad}: "/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.edadNumero}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.sexo}:"/></b>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.sexoP}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.domicilio}:"/></b>
+                    </p:column>
+                    <p:column colspan="2" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.calleNum},#{oConSen.episodioMed.paciente.municipio.descripcionMun},#{oConSen.episodioMed.paciente.estado.descripcionEdo}"/>
+                    </p:column>
+                    <p:column style="border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.identificadoCon}:"/></b>
+                    </p:column>
+                    <p:column colspan="3" style="border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.identificado}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: left; border-color: black; background-color: white;">
+                        <h:outputLabel style="font-weight: bold; " value="#{etiq.diagPreOperatorio}:"/>
+                    </p:column>
+                    <p:column colspan="6" style="border-color: black; background-color: white;">
+                        <h:outputText value="#{oConSen.diagPre.claveCIE10} - #{oConSen.diagPre.descripcionDiag}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: left; border-color: black; background-color: white;">
+                        <h:outputLabel style="font-weight: bold; " value="#{etiq.anesProyectada}:"/>
+                    </p:column>
+                    <p:column colspan="6" style="border-color: black; background-color: white;">
+                        <h:outputText value="#{oConSen.anestesia.descripcion}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: left; border-color: black; background-color: white;">
+                        <h:outputLabel style="font-weight: bold; " value="#{etiq.complPosibles}:"/>
+                    </p:column>
+                    <p:column colspan="6" style="border-color: black; background-color: white;">
+                        <h:outputText value="#{oConSen.complica}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="border-color: black; background-color: white;">
+                       <iframe style="width: 1000px; height: 200px" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/consentimientoInformProcesoAnestesico.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nomFirm} #{oConSen.responsable} #{etiq.responsable}"/></b>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nomFirm2}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column rendered="#{oConSen.banPac}" colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.episodioMed.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column rendered="#{oConSen.banFamCercano}" colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.familiar.nombresFam} #{oConSen.familiar.apPaternoFam} #{oConSen.familiar.apMaternoFam}"/>
+                    </p:column>
+                    <p:column  colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.testigo.nombreCompleto}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7" style="text-align: center; border-color: black; background-color: white;">
+                        <iframe style="width: 900px; height: 150px; border-style: hidden" src="#{facesContext.externalContext.requestContextPath}/sesiones/comunes/consentimientos/CIH_down2.html"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.nombreCedulaFirmaMedico2}"/></b>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <b><p:outputLabel value="#{etiq.fechaInterQuirur}"/></b>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.medFirm.cedProf} #{oConSen.medFirm.nombreCompleto}"/>
+                    </p:column>
+                    <p:column colspan="4" style="text-align: center; border-color: black; background-color: white;">
+                        <p:outputLabel value="#{oConSen.fechaInter}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print">
+                    <p:printer target="pgPrintCIPA"/>
+            </p:commandButton>
+            <p:column style="border-color: white; background-color: white;">
+                <p:commandButton icon="ui-icon-circle-close" value="#{etiq.cerrar}" type="button" onclick="PF('dlgCIPA').hide();"/>
+            </p:column>
+        </h:form>
+    </p:dialog>
+    <div>
+        <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px">
+            <f:facet name="start">
+                <p:graphicImage value="/imgs/loading.gif"/>
+            </f:facet>
+        </p:ajaxStatus>
+    </div>
+</ui:define>
+</ui:composition>
+</html>

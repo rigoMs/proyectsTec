@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.autorazacion} #{etiq.hemoderivados}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="AutoHemod">
+               
+                 <p:growl id="growl" showDetail="true" /> 
+                 
+                <!--Componenete de busqueda :P-->
+                <p:commandButton id="BuscarPacineT"  value="#{etiq.buscarPac}" icon="ui-icon-search"
+                                 onclick="PF('BuscPacie').show(); "> 
+                </p:commandButton>  
+                <p:dialog widgetVar="BuscPacie" id="BuscPacie" width="1050" height="550">   
+                    <p:panelGrid >
+                        <p:row>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <h:outputText value="#{etiq.buscarDatosBasicos}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="nom" 
+                                             maxlength="50" size="39" style="text-transform:uppercase;"
+                                             value="#{oBusqPacComunJB.paciente.nombres}" 
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="app" 
+                                             maxlength="50" size="39" style="text-transform:uppercase;"
+                                             value="#{oBusqPacComunJB.paciente.apPaterno}" 
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="bordes" id="apm" 
+                                             maxlength="50" size="39" style="text-transform:uppercase;"
+                                             value="#{oBusqPacComunJB.paciente.apMaterno}" 
+                                             onkeypress="return validaCaracter(event);">
+                                    <p:ajax/>
+                                </p:inputText>
+                            </p:column>
+                        </p:row>                
+                        <p:row>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <h:outputText value="#{etiq.buscarPorExpediente}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel class="negrita" value="#{etiq.noExp}:"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:inputText styleClass="bordes" id="exp" 
+                                             value="#{oBusqPacComunJB.paciente.expediente.numero}" 
+                                             converterMessage="#{etiq.errCapturaCaractEsp}">
+                                    <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                    <f:ajax render="mentExp" execute="@this" 
+                                            event="valueChange" />
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <center>
+                        <p:commandButton styleClass="bordes" 
+                                         value="#{etiq.buscar}" 
+                                         icon="ui-icon-search">
+                            <p:ajax update="tablaPac selecc cancel" listener="#{oBusqPacComunJB.buscaPaciente}"/>
+                        </p:commandButton>
+                    </center>
+                    <p:message for="exp" id="mentExp"/>
+                    <br/><br/>
+                    <div class="tabla_pacEnc">
+                       <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                     paginatorPosition="both" rows="5" 
+
+                                     value="#{oBusqPacComunJB.listaPac}" 
+                                     emptyMessage="#{etiq.noRegistro}" 
+                                     style="visibility:#{oBusqPacComunJB.visibilidadTabla};"
+                                     rowKey="#{oPacEnc.apMaterno}"
+                                     selection="#{oBusqPacComunJB.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.pacEncontrados}"/>
+                            </f:facet>
+                            <p:column selectionMode="single">
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.nombres}"/>
+                            </p:column>
+                            <p:column style="width: 9%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.edadNumero}"/>
+                            </p:column>   
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.curp}"/>
+                            </p:column>
+                            <p:column style="width: 7%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.folioPaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                            </p:column>  
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                            </p:column>     
+                        </p:dataTable>
+                    </div>  
+
+                    <p:commandButton value="#{etiq.seleccionar}" id="selecc" style="visibility:#{oBusqPacComunJB.boton};" icon="ui-icon-search" >
+                        <p:ajax listener="#{oAutoHemoderi.llenar}" update="BuscPacie tablaDeDatos TablaDeDonadores tablaautori boton"/> 
+                    </p:commandButton>
+                    
+                      <p:commandButton value="#{etiq.cancelar}" id="cancel" icon="ui-icon-circle-close" style="visibility:#{oBusqPacComunJB.boton2};">
+                        <p:ajax listener="#{oAutoHemoderi.limpiaboton()}" update="BuscPacie tablaDeDatos TablaDeDonadores tablaautori boton"/>
+                    </p:commandButton>
+                    
+                </p:dialog>
+
+                <br/> <br/>
+                <!--Componenete de busqueda :P-->
+                
+            
+                <p:panelGrid styleClass="frm_centrado" id="tablaDeDatos" style="visibility:#{oAutoHemoderi.visible};">
+                    <p:row>
+                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.datosDelPaciente}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tipohospitalizacionurgencia}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}:"/></p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.nombres}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.apPaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.apMaterno}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.sexoP}"/>    
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.tipopac}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.edadNumero}"/>
+                        </p:column>
+
+                    </p:row>
+
+                    <p:row> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.sPop}"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nivSE}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.noCam}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nExp}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.servicios}:"/></p:column>  
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombrede} #{etiq.trabajadorasocial}:"/></p:column>  
+                    </p:row>
+
+                    <p:row> 
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.seg.numero}"/>
+                        </p:column>  
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.nivelSocio}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.episodioMedico.cama.numero}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oAutoHemoderi.paciente.expediente.numero}"/>
+                        </p:column>
+                        <p:column> 
+                         <h:outputText value="#{oAutoHemoderi.episodioMedico.area.descripcion}"/>
+                         </p:column>
+                         <p:column> 
+                             <h:outputText value="#{oAutoHemoderi.personalFirmado.nombreCompleto}"/>
+                         </p:column>
+                    </p:row>  
+                </p:panelGrid> <br/> 
+                 <div  align="center" >
+                              <p:dataTable  id="TablaDeDonadores"  var="oDona" paginator="true"   rows="10" style="visibility:#{oAutoHemoderi.visible}; width:800px;"
+                                            emptyMessage="NO HAY REGISTROS" value="#{oAutoHemoderi.listNombreDonadores}">
+                             <p:column>
+                                <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.nombreDeDonadores}"/>
+                                </f:facet>
+                                 <h:outputText value="#{oDona.nombreDonador}" />
+                              </p:column> 
+                                  <p:column>
+                                   <f:facet name="header" >
+                                    <h:outputLabel class="negrita" value="#{etiq.fechadeDonaci}"/>
+                                </f:facet>
+                                      <h:outputText value="#{oDona.fechaDonacion}" >
+                                          <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                                      </h:outputText>
+                                  </p:column>
+                          </p:dataTable>
+                   </div> 
+                
+                <p:panelGrid id="tablaautori" style="visibility:#{oAutoHemoderi.visible};">
+                      
+                        
+                    <p:row>
+                         <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.autorizaciones}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.autorizado}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.costo}:"/></p:column>
+                    </p:row> 
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu id="autoriza"  required="true" value="#{oAutoHemoderi.personalAuto.clavpeus}" style="visibility:#{oAutoHemoderi.visible};" requiredMessage="Debe Seleccionar a alguién que Autoriza">
+                                <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{oAutoHemoderi.listAutorizacion}" var="oVar"
+                                               itemLabel="#{oVar.puesto}" itemValue="#{oVar.clavpeus}"/>
+                                 <p:ajax></p:ajax>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="costohemo" styleClass="bordes" required="true" size="30" value="#{oAutoHemoderi.servicioRealizadoT.costoUnitACobrar}" requiredMessage="Debe Ingresar el Monto"  converterMessage="Error: No se permiten letras, símbolos ni números menores a cero"
+                                onkeyup="this.value=this.value.toUpperCase();">
+                                <f:validateDoubleRange minimum="0.00" maximum="100000.00"/> 
+                                <p:ajax  update="cantidad"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> 
+                <br/>
+                
+                
+                <p:commandButton value="#{etiq.guardar}"  icon="ui-icon-disk" type="button" id="boton" onclick="PF('dlg1').show();"
+                                   style="visibility:#{oAutoHemoderi.visible};">
+                
+                </p:commandButton>  
+                
+                <p:dialog  widgetVar="dlg1" modal="true" height="100">
+                    <h:outputText value="#{etiq.estaSegurodeGuardar}" /> <br/>
+                    <h:outputText value="#{etiq.laCantidad}" /> <h:outputText value="#{oAutoHemoderi.servicioRealizadoT.costoUnitACobrar}" id="cantidad"/> <br/>
+                    
+                    <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" action="#{oAutoHemoderi.registraHemoderi()}" onclick="PF('dlg1').hide();"  ajax="false"  update="growl AutoHemod"> 
+                    
+                    </p:commandButton>
+                    <p:commandButton value="#{etiq.salir}" onclick="PF('dlg1').hide();">
+                                </p:commandButton>
+                </p:dialog>  
+                
+                 
+
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <div class="centrar">
+        <h:form id="datos">
+          
+            <br/>
+                 <p:panelGrid styleClass="frm_centrado"> 
+                                       
+                     <p:row>
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>  
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.consHL}:"/></p:column> 
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>   
+                     </p:row>
+                     
+                     <p:row>
+                         <p:column>
+                             <p:outputLabel value="#{etiq.seleccionar} #{etiq.rangoFechas}:"/>
+                         </p:column>
+                         
+                         <p:column>
+                             <p:outputLabel value="#{etiq.fechaEmisionDel}: "/>
+                             <p:calendar id="fechaIni" readonlyInput="true" effect="fold" maxdate="#{oBuscaHL.admision.fechaActual()}" required="true" value="#{oBuscaHL.fechaInicial}" locale="es">
+                                 <p:ajax event="dateSelect" update="fechaFin" />
+                             </p:calendar> 
+                            <p:outputLabel value=" #{etiq.al}: "/>
+                            <p:calendar id="fechaFin" readonlyInput="true" effect="fold" mindate="#{oBuscaHL.fechaInicial}" maxdate="#{oBuscaHL.admision.fechaActual()}" value="#{oBuscaHL.fechaFinal}" required="true"  locale="es">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar> 
+                        </p:column>
+                         <p:column>
+                            <p:commandButton styleClass="frm_login" value="#{etiq.consultar}" icon="ui-icon-search" action="#{oBuscaHL.generar()}" update=":resultados:tablaNota"/>
+                         </p:column>
+                     </p:row>
+                 </p:panelGrid>
+            <br></br>
+        </h:form>
+        
+            <h:form id="resultados">
+                <div class="tabla_pacEnc">
+                    <p:dataTable id="tablaNota" var="oNota" value="#{oBuscaHL.episodio}" emptyMessage="No se han encontrado resultados" style="#{oBuscaHL.activaTabla}">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.notasEncontradas}"/>
+                </f:facet>
+                
+                <p:column style="width: 12%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oNota.paciente.apPaterno}"/>
+                </p:column>
+                
+                <p:column style="width: 12%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oNota.paciente.apMaterno}"/>
+                </p:column>
+                
+                <p:column style="width: 15%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oNota.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column style="width: 9%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                    </f:facet>
+                    <h:outputText value="#{oNota.paciente.fechaNacTexto}"/>
+                </p:column>                 
+                
+                <p:column style="width: 11%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.fechaHoraIngreso}"/>
+                    </f:facet>
+                    <h:outputText value="#{oNota.FIngreso}"/>
+                </p:column>
+                
+                   <p:column style="width: 8%"> 
+                       <p:commandButton value="#{etiq.seleccionar}" action="HojaLesionLlena.xhtml" ajax="false" onclick="this.form.target='_blank'">
+                        <f:setPropertyActionListener target="#{oHojaLesionLlena.ope}" value="a" />
+                        <f:setPropertyActionListener target="#{oHojaLesionLlena.folioPac}" value="#{oNota.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oHojaLesionLlena.claveEpisodio}" value="#{oNota.claveEpisodio}" />
+                        <f:setPropertyActionListener target="#{oHojaLesionLlena.buscado}" value="#{false}" />
+                        <f:setPropertyActionListener target="#{oBuscaHL.activaTabla}" value="display: none;" />
+                    </p:commandButton>
+                
+                       
+                   </p:column>
+                </p:dataTable>      
+                </div>
+        </h:form>
+            
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+   </div> 
+    
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

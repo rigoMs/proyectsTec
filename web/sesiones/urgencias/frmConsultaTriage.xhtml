@@ -1,0 +1,886 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org./TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <h:body>
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq"/>
+            <ui:define name="cuerpo">
+                <div class="buscar">
+                    <h:form id="busqueda">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.consultaValoracionTriage}"/></h3>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel/>
+                                    <p:inputText styleClass="bordes" id="nom" value="#{triage.paciente.nombres}" onkeyup="this.value = this.value.toUpperCase();" onkeypress="return validaCaracter(event)"/>
+                                    <p:inputText styleClass="bordes" id="app" value="#{triage.paciente.apPaterno}" onkeyup="this.value = this.value.toUpperCase();" onkeypress="return validaCaracter(event)"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{triage.paciente.apMaterno}" onkeyup="this.value = this.value.toUpperCase();" onkeypress="return validaCaracter(event)"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{triage.buscarDatosPacienteregistroTriage(0)}"
+                                                    update=":busqueda:destino:tblResultado :busqueda:destino:datosGenerales">                                        
+                                        <f:setPropertyActionListener target="#{triage.muestraConsulta}" value="#{false}"/>
+                                    </p:commandButton> 
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmLogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{triage.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange"/>                                        
+                                    </p:inputText>
+                                    <p:commandButton styleClass="brodes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{triage.buscarDatosPacienteregistroTriage(1)}"
+                                                    update=":busqueda:destino:tblResultado :busqueda:destino:datosGenerales">                                        
+                                        <f:setPropertyActionListener target="#{triage.muestraConsulta}" value="#{false}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <div class="centrar">
+                            <p:commandButton styleClass="brodes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                                <f:setPropertyActionListener target="#{triage.paciente.nombres}" value=""/>
+                                <f:setPropertyActionListener target="#{triage.paciente.apPaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{triage.paciente.apMaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{triage.paciente.expediente.numero}" value=""/>
+                                <f:setPropertyActionListener target="#{triage.muestraConsulta}" value="#{false}"/>
+                            </p:commandButton> 
+                        </div>
+                        <p:outputPanel id="destino" styleClass="centrar">
+                            <p:dataTable id="tblResultado" var="oPacEnc"
+                                         value="#{triage.pacienteDatos}"
+                                         emptyMessage="#{etiq.noRegistro}"
+                                         paginator="true"
+                                         rows="5"
+                                         rendered="#{not empty triage.pacienteDatos}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                </f:facet>
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.fechanac}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.fechaNac}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>                                
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.nombres}"/>
+                                </p:column>
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.appat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.apPaterno}"/>
+                                </p:column>
+                                <p:column style="width: 100px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.apmat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.apMaterno}"/>
+                                </p:column>
+                                <p:column style="width: 110px;">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Ctrl"/>
+                                    </f:facet>
+                                   <p:commandButton id="btnDetalles" icon="ui-icon-plusthick" value="#{etiq.buscarNotas}">
+                                       <p:ajax listener="#{triage.metodoCargaDatosGenearal(oPacEnc, 0, null)}" 
+                                               oncomplete="PF('NotaP').show()" update=":hTriage :oNotas"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <br/><br/>
+                <div class="frm_centrado">
+                    <h:form id="hTriage">
+                        <p:messages autoUpdate="true"/>
+                        <p:tabView id="contenedor" rendered="#{triage.muestraConsulta}" dynamic="true">
+                                <p:tab title="#{etiq.notaT00}" >
+                                    <p:panelGrid styleClass="frm_centrado" id="notaGineco" style="font-size: 12px;">                                            
+                                            <p:row>
+                                                <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                    <b><p:outputLabel value="#{etiq.servicioDeSalud}" style="text-align: center;"/></b><br/>
+                                                    <b><p:outputLabel value="#{etiq.hrrbM}" style="text-align: center;"/></b><br/>
+                                                    <b><p:outputLabel value="#{etiq.notaGineco1}" style="text-transform: uppercase; text-align: center;"/></b><br/>
+                                                    <b><p:outputLabel value="#{etiq.notaGineco2}" style="text-transform: uppercase; text-align: center;"/></b><br/>
+                                                </p:column>
+                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:panelGrid>
+                                                        <p:row>
+                                                            <p:column style="border-color: #000000; background-color: #ffffff; text-align: center;">
+                                                                <b><p:outputLabel value="#{etiq.folioUrg}"/></b><br/>
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.admisionUrgs.folioAdmision}"/>
+                                                            </p:column>
+                                                        </p:row>                                                        
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="8" style="border-color: #ffffff; background-color: #ffffff; padding: 0px;">
+                                                    <p:panelGrid style="padding: 0px; font-size: 9px;">
+                                                        <p:row>
+                                                            <p:column style="border-left-color: #000000; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #ffffff; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.nombre}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="5" style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.nombreCompleto}"/>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #ffffff; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.segpop}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: #ffffff; border-right-color: #000000; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;">
+                                                                <b><p:outputLabel  value="#{triage.detallePacienteEP.paciente.seguro.numero}"/></b>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: #000000; border-right-color: #ffffff; border-top-color: #ffffff; border-bottom-color: #ffffff; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.expediente}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.expediente.numero}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.fecha}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.fechaIngreso}">
+                                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                </p:outputLabel>
+                                                            </p:column>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.hora}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.fechaIngreso}">
+                                                                    <f:convertDateTime pattern="HH:mm:ss" timeZone="America/Mexico_City"/>
+                                                                </p:outputLabel>
+                                                            </p:column>
+                                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.edad}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-color: #ffffff; border-bottom-color: #000000; border-right-color: #000000; background-color: #ffffff;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.edadNumero}"/>
+                                                            </p:column>                                                            
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="2" style="border-left-color: #000000; border-right-color: #ffffff; border-bottom-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.motivoConsulta}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="4" style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.admisionUrgs.motivoConsulta}"/>                                                                
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: #ffffff;">
+                                                                <b><p:outputLabel value="#{etiq.telefono1}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: #ffffff; border-right-color: #000000; border-bottom-color: #000000; border-top-color: #ffffff; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.telefono}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="3" style="border-left-color: black; border-right-color: white; border-bottom: white; border-top-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.unidadMedRef}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="5" style="border-left-color: white; border-right-color: black; border-bottom-color: black; border-top-color: white; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.referencia.tipo} "/>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.referencia.descripcion}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.domicilio}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="5" style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.ciudad.descripcionCiu}"/>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.colonia}"/>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.calleNum}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.fechanac}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.fechaNac}">
+                                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                </p:outputLabel>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="8" style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.talla}:" style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.talla} cm"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.peso}:" style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.peso} kg"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.ta}:" style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.signosVitales.TA}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.fc}:" style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.signosVitales.FC}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.fr}:" style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.signosVitales.FR}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="8" style="border-color: #ffffff; background-color: #ffffff;">
+                                                    <p:panelGrid  style="font-size: 9px;">
+                                                        <p:row>
+                                                            <p:column style="background-color: #FF0000; text-align: center; border-color: #000000;">
+                                                                <b><p:outputLabel value="#{etiq.codRojo} #{etiq.hora}:  " style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.horaCodigoRojo}">
+                                                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                                </p:outputLabel>
+                                                            </p:column>
+                                                            <p:column style="background-color: #ffff00; text-align: center; border-color: #000000;">
+                                                                <b><p:outputLabel value="#{etiq.codAma} #{etiq.hora}:" style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.horaCodigoAmarillo}">
+                                                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                                </p:outputLabel>
+                                                            </p:column>
+                                                            <p:column style="background-color: #00cc33; text-align: center; border-color: #000000;">
+                                                                <b><p:outputLabel value="#{etiq.codVer} #{etiq.hora}:" style="text-transform: uppercase;"/></b>&nbsp;&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.horaCodigoVerde}">
+                                                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                                </p:outputLabel>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-color: #000000; background-color: #ffffff; width: 350px;">
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorParoCardioDuranteEmb}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo1}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorAltEdoConciencia}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo2}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorInsufResp}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo3}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorConvulsiones}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo4}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorCefaleaIntensa}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etoq.codRojo5}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorPreeclampsiaSevera}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo6}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorHemorragia}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo7}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorChoqueHipovolemico}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo8}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorSepsisEmbarazo}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo9}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorProlapsoCordonUmb}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codRojo10}"/><br/>
+                                                                <b><p:outputLabel value="#{etiq.notifCodRojo}"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-color: #000000; background-color: #ffffff; width: 350px; vertical-align: text-top; text-align: left;">
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorTrabajoParto}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo1}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorSalidaLiqSangVag}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo2}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorPreeclampsiaLeve}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo3}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorHipomotilidadFetal}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo4}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorRupPrematuraMembranas}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo5}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorEmbPatolCronica}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo6}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorAborto}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo7}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorPartoPretermino}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codAmarillo8}"/><br/>
+                                                                <b><p:outputLabel value="#{etiq.notifCodAmarillo}"/></b>                                                                
+                                                            </p:column>
+                                                            <p:column style="border-color: black; background-color: white; width: 350px; vertical-align: text-top; text-align: left;">
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorEmbMenor3SDGsinTrabParto}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codVerde1}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorEmbAsintomatico}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codVerde2}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorPuerperioFisiologico}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codVerde3}"/><br/>
+                                                                <b><p:outputLabel value="#{triage.detallePaciente.valorPuerperioQxsinCompl}"/></b>&nbsp;
+                                                                <p:outputLabel value="#{etiq.codVerde4}"/><br/>
+                                                                <b><p:outputLabel value="#{etiq.notifCodVerde}"/></b>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="3" style="border-color: black; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.horaAtencion}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.horaAtnCodigo}">
+                                                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                                </p:outputLabel>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                                                                <b><p:outputLabel value="#{etiq.medico1erCon}" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.nombre}:"  style="text-transform: uppercase"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.medicoSupervisor.nombreCompleto}"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.cedulaProf}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.medicoSupervisor.cedProf}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="8" style="border-color: white; background-color: white;">
+                                                    <p:panelGrid  style="font-size: 9px;">
+                                                        <p:row>
+                                                            <p:column colspan="4" style="border-left-color: black; border-right-color: black; border-top-color: black; border-bottom-color: white; background-color: white; width: 1050px;">
+                                                                <b><p:outputLabel value="#{etiq.antecedentesFam}" style="text-transform: uppercase;"/></b>                                                                
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-top-color: white; border-bottom-color: white; background-color: white; width: 150px;">
+                                                                <b><p:outputLabel value="#{etiq.padre}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecHeredoFamiliares.padre}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white; width: 150px;">
+                                                                <b><p:outputLabel value="#{etiq.madre}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: black; border-bottom-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecHeredoFamiliares.madre}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-bottom-color: white; border-top-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.abueloPat}:" style="text-transform: uppercase;"/></b>                                                                
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-bottom-color: black; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecHeredoFamiliares.abueloPaterno}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.abuelaPat}:" style="text-transform: uppercase;"/></b>                                                                
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecHeredoFamiliares.abuelaPaterna}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.abueloMat}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecHeredoFamiliares.abueloMaterno}"/>                                                                
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.abuelaMat}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecHeredoFamiliares.abuelaMaterna}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-bottom-color: black; border-top-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.otros}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecHeredoFamiliares.otros}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="8" style="border-color: white; background-color: white;">
+                                                    <p:panelGrid  style="font-size: 9px;">
+                                                        <p:row>
+                                                            <p:column colspan="4" style="border-left-color: black; border-right-color: white; border-top-color: black; border-bottom-color: white; background-color: white; width: 525px;">
+                                                                <b><p:outputLabel value="#{etiq.antPerNoPato}" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="4" style="border-left-color: white; border-right-color: black; border-top-color: black; border-bottom-color: white; background-color: white; width: 525px;">
+                                                                <b><p:outputLabel value="#{etiq.antPerPato}" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-top-color: white; border-bottom-color: white; background-color: white; width: 20px;">
+                                                                <b><p:outputLabel value="#{etiq.originaria}:" style="text-transform: uppercase"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-bottom-color: black; border-top-color: white; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.lugarNacimiento}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white; width: 20px;">
+                                                                <b><p:outputLabel value="#{etiq.radica}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.ciudad.descripcionCiu}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white; width: 20px;">
+                                                                <b><p:outputLabel value="#{etiq.alergias001}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.alergias}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.edoCivil}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.estadoCivil.valor}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.escolaridad}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecNoPatologicos.escolaridad}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.grupo} y #{etiq.rh}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePacienteEP.paciente.tipoSangre.valor} #{triage.detallePacienteEP.paciente.factorRH.valor}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-bottom-color: white; border-top-color: black; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.religion}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecNoPatologicos.religion}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.ocupacion}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecNoPatologicos.ocupacion}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.quirurgicos}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.quirurgico}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.tabaquismo}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecNoPatologicos.valorTabaquismo}"/>
+                                                            </p:column>
+                                                            <p:column style="border-right-color: white; border-left-color: white; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.alcoholismo}" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecNoPatologicos.valorAlcoholismo}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.transfusionales}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.transfusion}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: white; border-bottom-color: white; border-bottom-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.drogas}" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecNoPatologicos.valorConsumeDrogas}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.otros}" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column style="border-left-color: white; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecNoPatologicos.otro}"/>
+                                                            </p:column>
+                                                            <p:column style="border-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.cardiovasculares}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.cardioVasculares}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="4" style="border-color: white; border-left-color: black; background-color: white;"/>
+                                                            <p:column style="border-color: white; border-left-color: black; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.diabetico}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.valorDiabetico}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="4" style="border-color: white; border-left-color: black; background-color: white;"/>
+                                                            <p:column style="border-color: white; border-left-color: black; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.hip}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.valorHipertenso}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="4" style="border-color: white; border-left-color: black; background-color: white;"/>
+                                                            <p:column style="border-color: white; border-left-color: black; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.onc}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.valorOncologico}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column colspan="4" style="border-left-color: black; border-right-color: white; border-top-color: white; border-bottom-color: black; background-color: white;"/>
+                                                            <p:column style="border-color: white; border-left-color: black; border-bottom-color: black; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.otros}:" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                            <p:column colspan="3" style="border-left-color: white; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecPatologicos.otro}"/>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="8" style="border-color: white; background-color: white;">
+                                                    <p:panelGrid  style="font-size: 9px;">
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: black; border-top-color: black; border-bottom-color: white; background-color: white; width: 1050px;">
+                                                                <b><p:outputLabel value="#{etiq.antecedentesGineco}" style="text-transform: uppercase;"/></b>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.menarca}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.menarca} #{etiq.años}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.ciclos}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.ciclo}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.ivsa1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.IVSA} #{etiq.años}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.g1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.gestaciones}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.p1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.partos}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.c11}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.cesareas}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.a1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.abortos}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.pf1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.PF}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.fum1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.ultimaMenstruacion}" style="text-decoration: underline; text-decoration-color: black;">
+                                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                </p:outputLabel>
+                                                            </p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white;">
+                                                                <b><p:outputLabel value="#{etiq.parejasSexuales}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.parejasSexuales}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.fpp1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.fechaPosibleParto}" style="text-decoration: underline; text-decoration-color: black;">
+                                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                </p:outputLabel>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.doc1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.doc}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.ets1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.ETS}" style="text-decoration: underline; text-decoration-color: black;"/>&nbsp;&nbsp;
+                                                                <b><p:outputLabel value="#{etiq.cpn1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                <p:outputLabel value="#{triage.detallePaciente.epiMed.paciente.expediente.antecGinecoObstetricos.valorControlPrenatal}" style="text-decoration: underline; text-decoration-color: black;"/>                                                                
+                                                            </p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="text-align: center; border-color: #ffffff; background-color: #ffffff;">                                       
+                                                <p:commandButton value="Imprimir" type="button" onclick="" icon="ui-icon-print">                                    
+                                                    <p:printer target="notaGineco" />
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                    </p:tab>
+                            <p:tab title="#{etiq.notaT01}">
+                                <p:panelGrid styleClass="frm_centrado" id="notaGineco02">
+                                    <p:row>
+                                        <p:column style="border-color: white; background-color: white; width: 1000px;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: white; background-color: white; width: 100px;">
+                                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/fondoUterino1.jpg"/>                                                        
+                                                    </p:column>
+                                                    <p:column style="border-color: white; background-color: white; padding: 0px; vertical-align: text-top; text-align: left;">
+                                                        <p:panelGrid>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: black; border-bottom-color: white; background-color: white; width: 450px;">
+                                                                    <b><p:outputLabel value="#{etiq.exploracion}" style="text-transform: uppercase;"/></b>
+                                                                </p:column>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: black; border-bottom-color: white; background-color: white; width: 450px;">
+                                                                    <b><p:outputLabel value="#{etiq.ultrasonido}" style="text-transform: uppercase;"/></b>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.fUterino}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.fondoUterino} cm" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.somatometria}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.sometria}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-bottom-color: white; border-top-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.situacion}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.situacionProducto.valor}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.la}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.LA}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-bottom-color: white; border-top-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.presentacion}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.presentacion.valor}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.placenta}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.placenta}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-bottom-color: white; border-top-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.abocado}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.valorAbocado}" style="text-decoration: underline; text-decoration-color: black;"/>                                                                    
+                                                                </p:column>
+                                                                <p:column rowspan="3" style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white; vertical-align: text-top; text-align: left;">
+                                                                    <b><p:outputLabel value="#{etiq.observaciones}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.observacionesUltrasonido}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-bottom-color: white; border-top-color: white; background-color: white;">
+                                                                     <b><p:outputLabel value="#{etiq.encajado}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                     <p:outputLabel value="#{triage.detalleReverso.valorEncajado}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.fcf}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                     <p:outputLabel value="#{triage.detalleReverso.FCF}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>                                                                
+                                                            </p:row>
+                                                        </p:panelGrid>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: white; background-color: white; width: 1000px;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: white; background-color: white; width: 100px;">
+                                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/fondoUterinoreducido.jpg"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: white; background-color: white; padding: 0px; vertical-align: text-top; text-align: left;">
+                                                        <p:panelGrid>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: black; border-bottom-color: white; background-color: white; width: 450px;">
+                                                                    <b><p:outputLabel value="#{etiq.tactoVag}" style="text-transform: uppercase;"/></b>
+                                                                </p:column>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: black; border-bottom-color: white; background-color: white; width: 450px;">
+                                                                    <b><p:outputLabel value="#{etiq.trazoCardio}" style="text-transform: uppercase;"/></b>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.dilatacion1}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.dilatacion} cm" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                     <b><p:outputLabel value="#{etiq.trazoCardio}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                     <p:outputLabel value="#{triage.detalleReverso.trazoCardio.valor}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.borramiento}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.borramiento}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                                <p:column rowspan="10" style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: black; background-color: white; vertical-align: text-top; text-align: left;">
+                                                                    <b><p:outputLabel value="#{etiq.observaciones}" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.obsCardio}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.plano}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.plano}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.amnios}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.amnios.valor}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: white; border-bottom-color: white; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.la}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.liqAmniotico.valor}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-left-color: black; border-right-color: black; border-top-color: black; border-bottom-color: black; background-color: white;">
+                                                                    <b><p:outputLabel value="#{etiq.pelvis}:" style="text-transform: uppercase;"/></b>&nbsp;
+                                                                    <p:outputLabel value="#{triage.detalleReverso.pelvis.valor}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                        </p:panelGrid>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: white; background-color: white; padding: 0px;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: black; background-color: white; width: 1000px; height: 200px; vertical-align: text-top; text-align: left;">
+                                                        <b><p:outputLabel value="#{etiq.padecimientoAct}:" style="text-transform: uppercase;"/> </b>&nbsp;
+                                                        <p:outputLabel value="#{triage.detalleReverso.resumenInter}" style="text-decoration: underline; text-decoration-color: black;"/>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: white; background-color: white;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: black; background-color: white; width: 1000px; vertical-align: text-top; text-align: left; padding: 0px;">
+                                                        <b><p:outputLabel value="#{etiq.diagnosticos}:" style="text-transform: uppercase;"/></b>
+                                                        <p:dataTable value="#{triage.listaDiagnosticos()}" var="dx" emptyMessage="AUN NO HAY DIAGNÓSTICOS AGREGADOS">
+                                                            <p:column headerText="#{etiq.diagnostico}:" style="border-color: black; background-color: white; width: 900px; text-transform: uppercase;">
+                                                                <p:outputLabel value="#{dx.descripcionDiag}"/>
+                                                            </p:column>
+                                                            <p:column headerText="#{etiq.cie10}:" style="border-color: black; background-color: white; width: 100px; text-transform: uppercase;">
+                                                                <p:outputLabel value="#{dx.clave}"/>
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: white; border-bottom-color: black; background-color: white;">
+                                            <b><p:outputLabel value="#{etiq.pronostico}:" style="text-transform: uppercase;"/> </b><p:outputLabel value="#{triage.detalleReverso.pronostico}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; border-top-color: black; background-color: white; width: 900px; height: 200px; vertical-align: text-top; text-align: left;">
+                                            <b><p:outputLabel value="#{etiq.indicaciones}:" style="text-transform: uppercase;"/></b>&nbsp;<p:outputLabel value="#{triage.detalleReverso.indicacionTer}" style="text-decoration-color: black; text-decoration: underline;"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: black; background-color: white; text-align: center;">
+                                            <b><p:outputLabel value="#{etiq.recibi}" style="text-transform: uppercase;"/></b><br/><br/><br/><br/><br/>
+                                            <p:outputLabel value="#{etiq.nombrefirmapaciente}" style="text-transform: uppercase; text-decoration: overline; text-decoration-color: black;"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="border-color: white; background-color: white;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: white; background-color: white; width: 333px; text-align: center;">
+                                                        <b><p:outputLabel value="#{etiq.elaboro1}" style="text-transform: uppercase;"/></b><br/><br/><br/><br/><br/><br/><br/>
+                                                        <p:outputLabel value="#{triage.detalleReverso.personalHospitalario.nombreCompleto}"/>&nbsp;&nbsp;<p:outputLabel value="#{triage.detalleReverso.personalHospitalario.cedProf}"/><br/>
+                                                        <b><p:outputLabel value="#{etiq.noombreyfirma1}" style="text-decoration-color: black; text-decoration: overline;"/></b>
+                                                        
+                                                    </p:column>
+                                                    <p:column style="border-color: white; background-color: white; width: 333px;">
+                                                        
+                                                    </p:column>
+                                                    <p:column style="border-color: white; background-color: white; width: 333px; text-align: center;">
+                                                        <b><p:outputLabel value="#{etiq.superviso1}" style="text-transform: uppercase;"/></b><br/><br/><br/><br/><br/><br/><br/>
+                                                        <p:outputLabel value="#{triage.detalleReverso.epiMed.medicoTratante.nombreCompleto}"/>&nbsp;&nbsp;<p:outputLabel value="#{triage.detalleReverso.epiMed.medicoTratante.cedProf}"/><br/>
+                                                        <b><p:outputLabel value="#{etiq.noombreyfirma1}" style="text-decoration-color: black; text-decoration: overline;"/></b>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>                                            
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; border-color: white; background-color: white;">                                                                                
+                                            <p:commandButton value="#{etiq.impr}" icon="ui-icon-print">                                    
+                                                <p:printer target="notaGineco02" />
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>                    
+                </div>
+                <div>
+                    <p:dialog widgetVar="NotaP" showEffect="fade" hideEffect="fade" modal="true" resizable="false">
+                        <h:form id="oNotas">
+                            <p:panelGrid style="width: 500px; margin-bottom: 6px;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 70%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 25%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.noExp}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{triage.notaEmbarazo.epiMed.paciente.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{triage.notaEmbarazo.epiMed.paciente.expediente.numero}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:outputPanel style="width: 600px;" styleClass="centrar">
+                                <p:dataTable value="#{triage.datosPacEmbarazo}" var="notas" emptyMessage="#{etiq.notificacion7}" id="tbl"
+                                             paginator="true" rows="3">
+                                    <p:column headerText="#{etiq.numeroNota}" style="width: 80px;">
+                                        <p:outputLabel value="#{notas.consecutivo}"/>                                        
+                                    </p:column>
+                                    <p:column headerText="Ctrl" style="width: 150px;">
+                                        <p:commandButton icon="ui-icon-folder-open" value="#{etiq.ver}" disabled="#{triage.banderaBoton}">
+                                            <p:ajax listener="#{triage.cargaDatos(notas.epiMed.paciente.folioPaciente, notas.epiMed.paciente.claveEpisodio, notas.epiMed.paciente.expediente.numero, notas.consecutivo)}"
+                                                    update=":hTriage" oncomplete="PF('NotaP').hide()"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:outputPanel>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('NotaP').hide()"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+                </div>
+                <div>
+                    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                        <f:facet name="start">
+                            <p:graphicImage value="/imgs/loading.gif"/>
+                        </f:facet>
+                    </p:ajaxStatus>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

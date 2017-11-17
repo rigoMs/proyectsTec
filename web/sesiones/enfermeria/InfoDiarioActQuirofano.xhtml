@@ -1,0 +1,350 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div id="actQuirofano">
+                    <h:form id="busca">
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.registroDiaActQui}"/></h3>
+                        <p:accordionPanel styleClass="centrar" style=" width: 25%; font-weight: bold;">
+                            <p:tab title="#{etiq.buscarXfecha}" >
+                                <p:outputPanel styleClass="centrar" style="width: 100%;">
+                                    <p:panelGrid columns="2" style="width: 100%;" styleClass="ui-widget-header">                                    
+                                        <p:outputLabel for="fecPorServ" value="#{etiq.fecha}:"/>
+                                        <p:outputLabel/>                                    
+                                        <p:calendar value="#{oHojaQx.reporteHojaQx.fecha}" size="9" id="fecPorServ" effect="puff" pattern="dd/MM/yyyy" locale="es" required="true"
+                                                    readonlyInput="true" showOn="button" requiredMessage="Selecciona una fecha"/>
+                                        <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oHojaQx.buscaActividadesDiariasQuirofano()}" 
+                                                         update=":frm_Qx :frm_Qx:tblAc :frm_Qx:msgs">
+                                        </p:commandButton>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                    </h:form>
+                    <h:form id="frm_Qx">                       
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <p:panelGrid style="width: 100%;" rendered="#{oHojaQx.rendering}">
+                            <p:row>                                
+                                <p:column style="border-color: #ffffff;" styleClass="ui-widget-header">
+                                    <b><p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;<p:outputLabel value="#{oHojaQx.fechaConsulta}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-color: #ffffff;"/> 
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-color: #ffffff; padding: 0px;">
+                                    <p:dataTable id="tblAc" value="#{oHojaQx.arrActividesQx}" var="oAct" emptyMessage="#{etiq.noActQui}"  >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="2" style=" width: 10px; font-weight: bold; padding-left: 1px; "    headerText="#{etiq.no}"/>
+                                                <p:column style="width: 33px; font-weight: bold; " rowspan="2" headerText="#{etiq.camaM}"/>
+                                                <p:column style=" width: 45px; font-weight: bold;" rowspan="2" headerText="#{etiq.noEXPM}"/>
+                                                <p:column style="width: 210px; font-weight: bold;" rowspan="2" headerText="#{etiq.nombrePaMay}"/> 
+                                                <p:column style=" width: 180px; font-weight: bold;" rowspan="2" headerText="#{etiq.interveQuirur}"/> 
+                                                <p:column colspan="9" headerText="#{etiq.ser}" style="font-size: 13px; height: 8px; width: 190px; font-weight: bold;  "/> 
+                                                <p:column rowspan="2" headerText="#{etiq.ciruPro}" style=" padding-left: 4px; padding-right: 2px;width: 14px; height: 165px;  border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent; -webkit-writing-mode: vertical-rl; -webkit-transform: rotate(180deg);writing-mode: vertical-rl; transform: rotate(180deg)" />
+                                                <p:column rowspan="2" headerText="#{etiq.ciruUrg}" style="padding-left: 4px; padding-right: 2px;width: 14px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl; -webkit-transform: rotate(180deg);" />    
+                                                <p:column rowspan="2" headerText="#{etiq.tiempoQx}" style="padding-left: 4px; padding-right: 2px;width: 14px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl; -webkit-transform: rotate(180deg);" />    
+                                                <p:column rowspan="2" headerText="#{etiq.ciruSusp}" style="padding-left: 4px; padding-right: 2px;width: 14px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl; -webkit-transform: rotate(180deg);" />                                         
+                                                <p:column rowspan="2" headerText="#{etiq.sala}" style="width: 30px; font-weight: bold;"/>
+                                                <p:column rowspan="2" headerText="#{etiq.motivoSuspe}" style="width: 140px; font-weight: bold;"/>                                                  
+                                                <p:column rowspan="2" headerText="#{etiq.cirugaRes}" style=" width: 160px; font-weight: bold; font-size: 13px;"/>                                
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="#{etiq.cirugiaGral}" style="padding-left: 4px; padding-right: 2px; width: 75px; height: 165px; writing-mode: vertical-lr; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl; -webkit-transform: rotate(180deg);" />                                                                                                     
+                                                <p:column headerText="#{etiq.ginecoObs}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent; -webkit-writing-mode: vertical-rl; -webkit-transform: rotate(180 deg);" />
+                                                <p:column headerText="#{etiq.medInt}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent; -webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                                <p:column headerText="#{etiq.pediatriaM}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                                <p:column headerText="#{etiq.uci}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                                <p:column headerText="#{etiq.ucip}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                                <p:column headerText="#{etiq.ucin}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                                <p:column headerText="#{etiq.oncopediatra}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                                <p:column headerText="#{etiq.serUrg}" style="padding-left: 4px; padding-right: 2px;width: 75px; height: 165px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />     
+                                                
+                                                
+                                            </p:row>                                            
+                                        </p:columnGroup>  
+                                        <p:column style="border-color: black;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.numero}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.procedimiento.episodioMedico.cama.numero}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.procedimiento.episodioMedico.paciente.expediente.numero}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.procedimiento.episodioMedico.paciente.nombreCompleto}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.procedimiento.CIE9.descripcion}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.cirugiaGeneral}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.ginecoObstetricia}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.medicinaInterma}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.pediatria}" />
+                                        </p:column>
+                                        
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.UCI}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.UCIP}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.UCIN}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.oncoPedriatria}" />
+                                        </p:column>                                        
+                                        
+                                        <p:column style="border-color: black; padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.serviciosUrg}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.cirugiaProgramada}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.cirugiaUrgente}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.tiempoQuirurgico}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;padding-left: 4px; padding-right: 2px;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.cirugiaSuspendida}" />
+                                        </p:column>
+                                        
+                                        <p:column style="border-color: black; padding: 1px;">
+                                            <h:outputText style="font-size: 9px;" value="#{oAct.sala}" />
+                                        </p:column>
+                                        
+                                        <p:column style="border-color: black;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.motivoSuspension}" />
+                                        </p:column>
+                                        <p:column style="border-color: black;">
+                                            <h:outputText style="font-size: 10px;" value="#{oAct.procedimiento.cirujano.nombreCompleto}" />
+                                        </p:column>
+                                        <p:columnGroup type="footer">
+                                            <p:row>
+                                                <p:column colspan="5" footerText="#{etiq.total}:" style=" text-align: right; font-weight: bold;">                                                    
+                                                </p:column>
+                                                <p:column footerText="#{oHojaQx.cirugiaGenetal}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.ginecoObstetricia}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.medicinaInterna}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.pediatria}" style="font-size: 10px; padding: 2px;"/>
+                                                
+                                                <p:column footerText="#{oHojaQx.UCI}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.UCIP}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.UCIN}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.oncoPed}" style="font-size: 10px; padding: 2px;"/>
+                                                
+                                                <p:column footerText="#{oHojaQx.servicioUrg}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.cirugiaProgramada}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.cirugiaUrgente}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.tiempoQx}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column footerText="#{oHojaQx.cirugiaSupendida}" style="font-size: 10px; padding: 2px;"/>
+                                                <p:column  colspan="3" style="font-size: 10px;"/>                                                    
+                                            </p:row>
+                                        </p:columnGroup>                                        
+                                    </p:dataTable>                                    
+                                </p:column>
+                            </p:row>                            
+                        </p:panelGrid>
+                        <div style=" margin-bottom: 5px;"/>
+                        <p:panelGrid rendered="#{oHojaQx.rendering}">
+                            <p:row>                                
+                                <p:column styleClass="ui-widget-header">
+                                    <p:commandButton icon="ui-icon-folder-open" value=" Abrir Para #{etiq.imprimir}" 
+                                                    oncomplete="PF('actQxImprimir2').show()" update=":ActQx2"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </div> 
+                <p:dialog modal="true" showEffect="puff" hideEffect="puff" height="600" resizable="false" widgetVar="actQxImprimir2" header="#{etiq.impActQx}">
+                    <h:form id="ActQx2">
+                        <p:outputPanel id="printer" style=" width: 1300px; background-color: white;">
+                        <p:panelGrid style="width:100%;">
+                            <p:row>
+                                <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="40" align="right"/>
+                                </p:column>
+                                <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; ">
+                                    <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                    <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                    <b><p:outputLabel value="#{etiq.registroDiaActQui}"/></b>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>  <p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oHojaQx.fechaConsulta}"/>
+                                </p:column>
+                                <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120"  style=" height: 100%;" align="left"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3" style="border-color: transparent; background-color: white;"/>
+                            </p:row>                             
+                        </p:panelGrid>
+                        <p:outputPanel style="width: 1300px;">
+                        <p:dataTable var="oAct" emptyMessage="#{eqit.noActQui}" value="#{oHojaQx.arrActividesQx}" style="width: 99%;">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column rowspan="2" style=" width: 15px; font-weight: bold; font-size: 12px; color: black; background: white;"    headerText="#{etiq.no}"/>
+                                    <p:column style="width: 33px; font-weight: bold; font-size: 12px; color: black; background: white;" rowspan="2" headerText="#{etiq.camaM}"/>
+                                    <p:column style=" width: 49px; font-weight: bold; font-size: 12px; color: black; background: white;" rowspan="2" headerText="#{etiq.noEXPM}"/>
+                                    <p:column style="width: 215px; font-weight: bold; font-size: 12px; color: black; background: white;" rowspan="2" headerText="#{etiq.nombrePaMay}"/> 
+                                    <p:column style=" width: 190px; font-weight: bold; font-size: 12px; color: black; background: white;" rowspan="2" headerText="#{etiq.interveQuirur}"/> 
+                                    <p:column colspan="9" headerText="#{etiq.ser}" style="font-size: 12px; height: 8px; width: 180px; font-weight: bold;  color: black; background: white; "/> 
+                                    <p:column rowspan="2" headerText="#{etiq.ciruPro}" style="padding-left: 4px; padding-right: 2px;width: 15px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>
+                                    <p:column rowspan="2" headerText="#{etiq.ciruUrg}" style="padding-left: 4px; padding-right: 2px;width: 15px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>
+                                    <p:column rowspan="2" headerText="#{etiq.tiempoQx}" style="padding-left: 4px; padding-right: 2px;width: 15px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>
+                                    <p:column rowspan="2" headerText="#{etiq.ciruSusp}" style="padding-left: 4px; padding-right: 2px;width: 15px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>                                    
+                                    <p:column rowspan="2" headerText="#{etiq.sala}" style="width: 30px; font-weight: bold; font-size: 12px; color: black; background: white;"/> 
+                                    <p:column rowspan="2" headerText="#{etiq.motivoSuspe}" style="width: 170px; font-weight: bold; font-size: 12px; color: black; background: white;"/> 
+                                    <p:column rowspan="2" headerText="#{etiq.cirugaRes}" style=" width: 170px; font-weight: bold; font-size: 12px;  color: black; background: white;"/>
+                                </p:row>
+                                <p:row>                                                
+                                    <p:column headerText="#{etiq.cirugiaGral}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/> 
+                                    <p:column headerText="#{etiq.ginecoObs}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold;color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>
+                                    <p:column headerText="#{etiq.medInt}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold;color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>
+                                    <p:column headerText="#{etiq.pediatriaM}" style="padding-left: 4px; padding-right: 2px;width: 60px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold;color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>
+                                    <p:column headerText="#{etiq.uci}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                    <p:column headerText="#{etiq.ucip}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                    <p:column headerText="#{etiq.ucin}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                    <p:column headerText="#{etiq.oncopediatra}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 14px; background: transparent;font-weight: bold; color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);" />
+                                    <p:column headerText="#{etiq.serUrg}" style="padding-left: 4px; padding-right: 2px;width: 30px; height: 155px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black; text-transform:  uppercase; font-size: 12px; background: transparent;font-weight: bold;color: black;-webkit-writing-mode: vertical-rl;-webkit-transform: rotate(180deg);"/>             
+                                </p:row>                                            
+                            </p:columnGroup>  
+                             <p:column style=" background-color: white; border-color: black; font-size: 10px;">
+                                 <h:outputText value="#{oAct.numero}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;">
+                                <h:outputText value="#{oAct.procedimiento.episodioMedico.cama.numero}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;">
+                                <h:outputText value="#{oAct.procedimiento.episodioMedico.paciente.expediente.numero}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;">
+                                <h:outputText value="#{oAct.procedimiento.episodioMedico.paciente.nombreCompleto}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;">
+                                <h:outputText value="#{oAct.procedimiento.CIE9.descripcion}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.cirugiaGeneral}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.ginecoObstetricia}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.medicinaInterma}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.pediatria}" />
+                            </p:column>
+                             
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.UCI}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.UCIP}" />
+                            </p:column>
+                             <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                 <h:outputText value="#{oAct.UCIN}" />
+                            </p:column>
+                             <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                 <h:outputText value="#{oAct.oncoPedriatria}" />
+                            </p:column>
+                             
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.serviciosUrg}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.cirugiaProgramada}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.cirugiaUrgente}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px;padding: 1px;">
+                                <h:outputText value="#{oAct.tiempoQuirurgico}" />
+                            </p:column>
+                            <p:column style=" background-color: white; border-color: black; font-size: 10px; padding: 1px;">
+                                <h:outputText value="#{oAct.cirugiaSuspendida}" />
+                            </p:column>
+                             
+                            <p:column  style=" background-color: white; border-color: black; font-size: 9px; padding: 1px; text-align: center;">
+                                <h:outputText value="#{oAct.sala}" />
+                            </p:column>
+                             
+                             <p:column  style=" background-color: white; border-color: black; font-size: 10px;">
+                                <h:outputText value="#{oAct.motivoSuspension}" />
+                            </p:column>                             
+                            <p:column  style=" background-color: white; border-color: black; font-size: 10px;">
+                                <h:outputText value="#{oAct.procedimiento.cirujano.nombreCompleto}" />
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column colspan="5" footerText="#{etiq.total}:" style=" text-align: right; font-weight: bold; background: white; border-color: black; color: black; font-size: 12px;"/>                          
+                                    <p:column footerText="#{oHojaQx.cirugiaGenetal}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.ginecoObstetricia}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.medicinaInterna}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.pediatria}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    
+                                    <p:column footerText="#{oHojaQx.UCI}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.UCIP}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.UCIN}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.oncoPed}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    
+                                    <p:column footerText="#{oHojaQx.servicioUrg}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.cirugiaProgramada}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.cirugiaUrgente}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.tiempoQx}" style=" background: white; border-color: black; color: black; font-size: 10px; padding: 1px;"/>
+                                    <p:column footerText="#{oHojaQx.cirugiaSupendida}" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    <p:column colspan="3" style=" background: white; border-color: black; color: black; font-size: 11px; padding: 1px;"/>
+                                    
+                                </p:row>
+                            </p:columnGroup>
+
+                        </p:dataTable>                    
+                        </p:outputPanel>
+                        </p:outputPanel>
+                    </h:form>
+                    <h:form>
+                        <p:panelGrid  style="" styleClass="centrar">
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">                                       
+                                        <p:printer target=":ActQx2"/>
+                                    </p:commandButton> 
+                                    &nbsp;
+                                    &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('actQxImprimir2').hide()">                                        
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>                        
+                    </h:form>    
+                </p:dialog>         
+                
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>                         
+            </ui:define>
+        </ui:composition>
+</html>
+

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:form id="formCie10">
+        <p:panelGrid>
+            <p:row>
+                <p:column>
+                    <p:inputText id="inCveCie10" placeholder="#{etiq.clave}" value="#{gesCauses.causes.diagnosticoCIE10.clave}"
+                                 maxlength="6" required="true" requiredMessage="Se necesita una clave"/>
+                </p:column>
+                <p:column>
+                    <p:inputText id="inDesCie10" placeholder="#{etiq.nombre}" value="#{gesCauses.causes.diagnosticoCIE10.descripcionDiag}"
+                                 maxlength="300" required="true" requiredMessage="Debe agregar una nombre"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{etiq.esCapasits}: " />
+                    <p:selectBooleanCheckbox id="inEsCapa" value="#{gesCauses.causes.diagnosticoCIE10.esCapasits}"/>
+                </p:column>
+                <p:column>
+                    <p:commandButton value="#{etiq.nuevo}" action="#{gesCauses.nuevoCie10(gesCauses.causes.diagnosticoCIE10)}"
+                                     update=":messages tablaCies10 inCveCie10 inDesCie10 inEsCapa "/>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <p:dataTable id="tablaCies10" widgetVar="tablaCies10" var="oCie10" value="#{gesCauses.listaCie10}" 
+                     editable="true" lazy="true" paginator="true" rows="20"  >
+            <p:ajax event="rowEdit" listener="#{gesCauses.modificaCie10}" update=":messages"/>
+
+            <f:facet name="header">
+                <p:outputLabel value="#{etiq.cie10} Encontrados"/>
+            </f:facet>
+            <p:column headerText="#{etiq.clave}" width="20%" filterBy="#{oCie10.clave}" 
+                      filterStyle="text-transform: initial;" >
+                <h:outputText value="#{oCie10.clave}" />
+            </p:column>
+            <p:column headerText="#{etiq.nombre}" filterBy="#{oCie10.descripcionDiag}"
+                      filterStyle="text-transform: initial;" >
+                <p:cellEditor >
+                    <f:facet name="output" ><h:outputText value="#{oCie10.descripcionDiag}"/></f:facet>
+                    <f:facet name="input" >
+                        <p:inputText value="#{oCie10.descripcionDiag}"
+                                     placeholder="#{oCie10.descripcionDiag}" style="width: 100%;"/>
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+            <p:column headerText="Es de #{etiq.capasits}" width="15%">
+                <p:cellEditor>
+                    <f:facet name="output" >
+                        <p:selectBooleanCheckbox value="#{oCie10.esCapasits}" disabled="true" />
+                    </f:facet>
+                    <f:facet name="input" >
+                        <p:selectBooleanCheckbox value="#{oCie10.esCapasits}"/>
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+            <p:column style="width:32px">
+
+                <p:rowEditor />
+            </p:column>
+        </p:dataTable>
+    </h:form>
+
+</html>

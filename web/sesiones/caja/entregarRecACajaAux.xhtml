@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.entregarRecCajaAux}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:growl id="mensajes"  showDetail="true" />
+            
+            <p:dialog id="dlgInfo" widgetVar="dlgInfo" width="35%" height="25%"
+                      position="center" closable="false" 
+                      dynamic="true" resizable="false" header="#{etiq.entregaFolios}"
+                      appendTo="@(body)" modal="true" styleClass="centrado_texto_negritas">
+                <h:form>
+                    <center>
+                        <p:dataTable value="#{oEntregarRec.msj}" var="oMsj" style="width: 85%;">
+                            <p:column styleClass="centrado_texto">
+                                <h:outputText value="#{oMsj}"></h:outputText>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton value="#{etiq.aceptar}" onclick="PF('dlgInfo').hide()" 
+                                     update=":form:dtFolios">
+                                </p:commandButton>
+                            </f:facet>
+                        </p:dataTable>
+                    </center>
+                </h:form>
+            </p:dialog>
+            <p:dialog id="dlgEntrega" widgetVar="dlgEntrega" 
+                      position="center" closable="false" 
+                      dynamic="true" resizable="false"
+                      appendTo="@(body)" modal="true">
+                <h:form id="formulario">
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.cajero}:"></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{oEntregarRec.foliosCaja.recibe.noTarjeta}" 
+                                                 required="true" requiredMessage="Seleccione un cajero.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                    <f:selectItems value="#{oEntregarRec.cajeros}" var="oCaj" itemLabel="#{oCaj.nombreCompleto}" itemValue="#{oCaj.noTarjeta}"></f:selectItems>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="#{etiq.cantEntregar}:"></h:outputText>
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="txtCantidad" value="#{oEntregarRec.cantEntrega}" label="#{etiq.cantEntregar}"
+                                             required="true" requiredMessage="Ingrese una cantidad de recibos.">
+                                    <f:validateDoubleRange maximum="#{oEntregarRec.totalRecibos}" minimum="1"></f:validateDoubleRange>
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column colspan="2">
+                                    <center>
+                                        <p:commandButton value="#{etiq.aceptar}" update=":mensajes :dlgInfo" action="#{oEntregarRec.guarda()}"></p:commandButton>
+                                        <p:commandButton value="#{etiq.cancelar}" onclick="PF('dlgEntrega').hide()"></p:commandButton>
+                                    </center>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+            <h:form id="form">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{etiq.caja}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{oEntregarRec.FD.tipoCaja.tipoParametro}" required="true" requiredMessage="Seleccione una caja.">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                <f:selectItems value="#{oEntregarRec.tiposCaja}" var="oCaja" 
+                                               itemLabel="#{oCaja.valor}" itemValue="#{oCaja.tipoParametro}">
+                                </f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{etiq.tipoRec}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{oEntregarRec.FD.tipoRecibo.tipoParametro}" required="true" requiredMessage="Seleccione un tipo de recibo.">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                <f:selectItems value="#{oEntregarRec.tiposRecibo}" var="oRec" 
+                                               itemLabel="#{oRec.valor}" itemValue="#{oRec.tipoParametro}">
+                                </f:selectItems>
+                            </p:selectOneMenu> 
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" actionListener="#{oEntregarRec.preBusqueda}" 
+                                             icon="ui-icon-search"  styleClass="frm_login" 
+                                             update="dtFolios dtFolios:btnEntregar :mensajes">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:dataTable id="dtFolios" value="#{oEntregarRec.folios}" var="oFo" 
+                                 style="#{oEntregarRec.activaTabla} width: 700px;" styleClass="centrado_texto"
+                                 emptyMessage="#{etiq.noFoliosDisp}">
+                        <f:facet name="header">
+                            <h:outputText value="#{oEntregarRec.FD.tipoCaja.valor}"></h:outputText><br/>
+                            <h:outputText value="#{oEntregarRec.FD.tipoRecibo.valor}"></h:outputText>
+                        </f:facet>
+                        <p:column headerText="#{etiq.folioi}">
+                            <h:outputText value="#{oFo.folioInicial}"></h:outputText>
+                        </p:column>
+                        <p:column headerText="#{etiq.foliof}">
+                            <h:outputText value="#{oFo.folioFinal}"></h:outputText>
+                        </p:column>
+                        <f:facet name="footer">
+                            <h:outputText value="#{etiq.total}: "></h:outputText>
+                            <h:outputText value="#{oEntregarRec.total}"></h:outputText>
+                            <br/><br/>
+                            <p:commandButton id="btnEntregar" disabled="#{oEntregarRec.disDatos}" value="#{etiq.entregar}" onclick="PF('dlgEntrega').show()"></p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                </center>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.mantener} #{etiq.inventario}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+             <div class="centrado_texto">
+            <center>
+                   
+            <p:dialog id="dlgConInven" widgetVar="dlgCsI"  position="center" closable="false" dynamic="true" resizable="false"
+                                  appendTo="@(body)" modal="true" >
+                            <h:form id="formd">
+                    <p:panelGrid style="margin-top:20px; width: 1000px" >
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="40">
+                                    <h:outputLabel value="Medicamento"/></p:column>
+                            </p:row> 
+                        </f:facet>              
+                        <p:row>
+                            <p:column >
+                                <p:outputLabel value="Clave" />
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel value="#{oInventarioJB.currentDetalleMed.clave}">
+                                </p:outputLabel>
+                            </p:column>  
+                            <p:column>
+                                <p:outputLabel value="Nombre"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel value="#{oInventarioJB.currentDetalleMed.nombre}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>    
+                            <p:column>
+                                <p:outputLabel value="Descripcion"></p:outputLabel>
+                                </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="descrip" value="#{oInventarioJB.currentDetalleMed.descripcion}"/>
+                            </p:column>
+                                       
+                            <p:column>
+                                <p:outputLabel value="Presentacion"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="2" >
+                                <p:outputLabel id="presen" value="#{oInventarioJB.currentDetalleMed.presentacion}" />
+                                </p:column> 
+                        </p:row>
+                        <p:row>     
+                            <p:column>
+                                <p:outputLabel value="Cod. barras"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="cbarra" value="#{oInventarioJB.currentDetalleMed.codBarras}"/>
+                            </p:column>
+                                             
+                            <p:column>
+                                <p:outputLabel value="Unidad de Medida"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="unid" value="#{oInventarioJB.currentDetalleMed.unidadMedida}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="lote"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="lote" value="#{oInventarioJB.currentDetalleMed.lote}"/>
+                            </p:column> 
+                                             
+                            <p:column>
+                                <p:outputLabel value="Caducidad"></p:outputLabel>
+                            </p:column>
+                                <p:column colspan="10">
+                                <p:outputLabel id="cad" value="#{oInventarioJB.currentDetalleMed.caducidad}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>     
+                            <p:column>
+                                <p:outputLabel value="Precio"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="precio" value="#{oInventarioJB.currentDetalleMed.precio}"/>
+                            </p:column>
+                                        
+                            <p:column>
+                                <p:outputLabel value="Existencia Actual"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="ExtAct" value="#{oInventarioJB.currentDetalleMed.existencia}"/>
+                            </p:column> 
+                        </p:row>
+                        <p:row>     
+                            <p:column>
+                                <p:outputLabel value="Existencia Sistema"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="ExtSis" value="#{oInventarioJB.currentDetalleMed.existenciaantsist}"/>
+                            </p:column>
+                                       
+                            <p:column>
+                                <p:outputLabel value="Cant Presentacion"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="cantPre" value="#{oInventarioJB.currentDetalleMed.cantPorPresentacion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Cant original"></p:outputLabel>
+                            </p:column>
+                            <p:column colspan="10">
+                                <p:outputLabel id="cantOri" value="#{oInventarioJB.currentDetalleMed.cantOriginal}"/>
+                            </p:column> 
+                                           
+                                            
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="40" >     
+                                <p:commandButton id="btnRegresar" value="Regresar" oncomplete="PF('dlgCsI').hide()"  />
+                            </p:column>
+                        </p:row>         
+                    </p:panelGrid>  
+                        </h:form>
+            </p:dialog>
+                        <p:dialog id="dlgCatInv" widgetVar="dlgCI"  position="center" closable="false" dynamic="true" resizable="false"
+                                  appendTo="@(body)" modal="true" style="width: 100%" >
+                            <center>
+                                <h3>Consulta Inventario Fisico</h3>
+                                <h:form id="hola2">
+                                    <p:panelGrid id="panelDatos">
+                                        <p:row>
+                                            <p:column >
+                                                <p:outputLabel value="Clave" />
+                                           </p:column>
+                                           <p:column colspan="10">
+                                               <p:inputText id ="Clave" value="#{oInventarioJB.currentDetalleMed.clave}">
+                                                    <p:ajax /></p:inputText>
+                                           </p:column>
+                                            
+                                            <p:column>
+                                                <p:outputLabel value="Nombre"></p:outputLabel>
+                                            </p:column>
+                                            <p:column colspan="10">
+                                                <p:inputText id="nombre" value="#{oInventarioJB.currentDetalleMed.nombre}"/>
+                                            </p:column>
+                                         </p:row>
+                                        <p:row>    
+                                            <p:column>
+                                                <p:outputLabel value="Descripcion"></p:outputLabel>
+                                            </p:column>
+                                            <p:column colspan="10">
+                                                <p:inputText id="descripc" value="#{oInventarioJB.currentDetalleMed.descripcion}"/>
+                                            </p:column>
+                                       
+                                            <p:column>
+                                                <p:outputLabel value="Presentacion"></p:outputLabel>
+                                            </p:column>
+                                            <p:column colspan="2" >
+                                                <p:inputText id="present" value="#{oInventarioJB.currentDetalleMed.presentacion}" />
+                                            </p:column> 
+                                         </p:row>
+                                        
+                                         <p:row>
+                                            <p:column>
+                                                <p:outputLabel value="lote"></p:outputLabel>
+                                            </p:column>
+                                            <p:column colspan="10">
+                                                <p:inputText id="lot" value="#{oInventarioJB.currentDetalleMed.lote}"/>
+                                            </p:column> 
+                                             
+                                            <p:column>
+                                                <p:outputLabel value="Caducidad"></p:outputLabel>
+                                            </p:column>
+                                            <p:column colspan="10">
+                                                <p:inputText id="cadu" value="#{oInventarioJB.currentDetalleMed.caducidad}"/>
+                                            </p:column>
+                                         </p:row>
+                                        <p:row>     
+                                            <p:column>
+                                                <p:outputLabel value="Precio"></p:outputLabel>
+                                            </p:column>
+                                            <p:column colspan="10">
+                                                <p:inputText id="preci" value="#{oInventarioJB.currentDetalleMed.precio}"/>
+                                            </p:column>
+                                        
+                                            <p:column>
+                                                <p:outputLabel value="Existencia"></p:outputLabel>
+                                            </p:column>
+                                            <p:column colspan="10">
+                                                <p:inputText id="ExtAc" value="#{oInventarioJB.currentDetalleMed.existencia}"/>
+                                            </p:column> 
+                                         </p:row>
+                                    </p:panelGrid>
+                                    
+                                    <br/><br/>
+                                   
+                                    <p:commandButton value="#{etiq.guardar}" >
+                                    <p:ajax update=":formR:msg :formR:dtDetalleMed" listener="#{oInventarioJB.guarda()}"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="#{etiq.volver}" oncomplete="PF('dlgCI').hide()"/>
+                              
+                                </h:form>
+                            </center>
+                        </p:dialog>
+                 <h:form id="formR" > 
+                    <p:growl id="msg" sticky="true" showDetail="true"/> 
+                        <p:dataTable   id="dtDetalleMed" rows="5" editable="true" paginator="true" paginatorPosition="bottom" 
+                                       value="#{oInventarioJB.listaDetalleMed}" var="oCI" rowKey="#{oCI.clave}" selection="#{oInventarioJB.selectedDetalleMed}" style="width: 1200px">
+                            <p:ajax event="rowSelectRadio"/>
+                            <p:column selectionMode="single"/>
+                            
+                            <p:column headerText="#{etiq.clave}" >
+                                <h:outputText value="#{oCI.clave}"  />
+                               
+                            </p:column >
+                            
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{oCI.nombre}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Descripcion">
+                                <h:outputText value="#{oCI.descripcion}"/>
+                            </p:column>
+                            
+                            <p:column headerText="lote">
+                                <h:outputText  value="#{oCI.lote}"/>
+                            </p:column>
+                            
+                            <p:column headerText="fecha caducidad">
+                                <h:outputText value="#{oCI.caducidad}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Existencia actual">
+                                <h:outputText value="#{oCI.existencia}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Existencia Sistema">
+                                <h:outputText value="#{oCI.existenciaantsist}"/>
+                            </p:column>
+                            
+                            <f:facet name="footer">
+                                
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil" >
+                                    <p:ajax update=":formR:msg :dlgCatInv" listener="#{oInventarioJB.confInventario()}"/>
+                                </p:commandButton>
+                                <p:commandButton value="Consultar" icon="ui-icon-pencil">
+                                    <p:ajax update=":formR:msg :dlgConInven"  listener="#{oInventarioJB.consultaInventario()}"/>
+                                </p:commandButton>
+                                
+                                  
+                            </f:facet>
+                             <f:facet name="header">                              
+                                <p:outputLabel value="#{etiq.administrar} #{etiq.inventario}"></p:outputLabel>
+                            </f:facet>
+                        </p:dataTable> 
+                    </h:form></center>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.conSolInter}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form id="ConsultaInter">
+                        <p:growl id="msg" showDetail="true"/>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.pacientesPorMedico}">
+                                <h4 class="centrado_texto">
+                                    <p:outputLabel id="titPacXMed" value="#{etiq.pacSolInter}"/></h4>
+
+                                <h:panelGrid class="frm_centrado" columns="7">
+                                    <p:outputLabel id="fecPacXFec" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                                    <p:calendar id="tFecCita" value="#{oConInterconsulta.fechaAux}" effect="fold" locale="es" showOn="button" 
+                                                pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                        <p:ajax event="dateSelect"></p:ajax>
+                                    </p:calendar>
+                                    <br/>
+                                    <p:outputLabel id="medico2" styleClass="mensaje" value="#{etiq.medico}:" />
+                                    <p:outputLabel value="#{oConInterconsulta.medFirm.nombreCompleto}" />
+                                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-search">
+                                        <p:ajax update=":ConsultaInter:tablaPac1" listener="#{oConInterconsulta.buscaPacienteFechaConsulta}"/>
+                                    </p:commandButton>
+                                </h:panelGrid>
+                            </p:tab> 
+                        </p:accordionPanel>
+
+                        <br/>
+
+                        <div class="tabla_pacEnc1">
+                            <p:dataTable id="tablaPac1" var="oPacInt" paginator="true"
+                                         paginatorPosition="both" rows="6"
+                                         value="#{oConInterconsulta.listaCitado}"
+                                         emptyMessage="#{etiq.noRegistro}"
+                                         style="visibility:#{oConInterconsulta.visibilidadTabla};"
+                                         rowKey="#{oPacInt.estInter.identificador}"
+                                         selection="#{oConInterconsulta.seleccionado}">
+                                <p:ajax event="rowSelectRadio"></p:ajax>
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.pacEncontrados}"/>
+                                </f:facet>
+                                <p:column selectionMode="single">
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.cama}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacInt.cama.numero}"/>
+                                </p:column>
+                                <p:column style="width: 30%;">
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.nombreCompleto}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacInt.paciente.apPaterno} #{oPacInt.paciente.apMaterno} #{oPacInt.paciente.nombres}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacInt.paciente.edadNumero}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacInt.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.segpop}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacInt.paciente.seg.numero}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputLabel class="negrita" value="#{etiq.situacion}"/>
+                                    </f:facet>
+                                    <h:outputText value="#{oPacInt.estInter.situacion.valor}"/>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton value="#{etiq.consultar}" icon="ui-icon-mail" onclick="PF('dlgConInter').show();">
+                                        <p:ajax listener="#{oConInterconsulta.llenadoDatosPersonales}" update=":ConsultaInter:pgInter"></p:ajax>
+                                    </p:commandButton>
+                                    <p:commandButton value="Realizado" icon="ui-icon-ok" id="btnRealizado">
+                                        <p:ajax listener="#{oConInterconsulta.cambiarRealizado()}" update=":ConsultaInter:tablaPac1 :ConsultaInter:msg"/>
+                                    </p:commandButton>
+                                </f:facet>
+                            </p:dataTable>      
+                        </div>            
+
+                        <br/><br/>               
+
+                        <p:dialog header="Interconsulta" widgetVar="dlgConInter" width="1200" resizable="false" modal="true">
+                            <p:panelGrid id="pgInter" styleClass="frm_centrado">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="8"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>                                
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cama}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechaDeIngreso}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>                                                               
+                                </p:row>
+                                <p:row>
+                                    <p:column><h:outputText value="#{oConInterconsulta.episodioMedico.paciente.nombreCompleto}" /></p:column>                                
+                                    <p:column><h:outputText  value="#{oConInterconsulta.episodioMedico.paciente.edadNumero}" /></p:column>
+                                    <p:column><h:outputLabel value="#{oConInterconsulta.episodioMedico.paciente.sexoP}" /></p:column>   
+                                    <p:column><h:outputText  value="#{oConInterconsulta.episodioMedico.paciente.expediente.numero}" /></p:column>
+                                    <p:column><h:outputText  value="#{oConInterconsulta.episodioMedico.cama.numero}" /></p:column>   
+                                    <p:column><h:outputText value="#{oConInterconsulta.episodioMedico.area.descripcion}" /></p:column>
+                                    <p:column><h:outputText  value="#{oConInterconsulta.episodioMedico.fechaIngreso}" /></p:column>
+                                    <p:column><h:outputText  value="#{oConInterconsulta.episodioMedico.diagIngreso.descripcionDiag}" /></p:column>                           
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.motivoInt}:"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8"><h:outputText  value="#{oConInterconsulta.episodioMedico.estInter.motivo}" /></p:column>                               
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.medicoSol}"/></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.nombre}:"/></p:column>
+                                    <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>                           
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4"><h:outputText  value="#{oConInterconsulta.episodioMedico.medicoTratante.nombreCompleto}" /></p:column>
+                                    <p:column colspan="4"><h:outputText  value="#{oConInterconsulta.episodioMedico.medicoTratante.cedProf}" /></p:column>
+                                </p:row>   
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="8"><h:outputLabel value="#{etiq.fechaSol}:"/></p:column>                    
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8">
+                                        <h:outputText  value="#{oConInterconsulta.episodioMedico.estInter.fechaSolicitud}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:dialog>
+
+                    </h:form>
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

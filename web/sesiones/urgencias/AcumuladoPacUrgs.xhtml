@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <div class="centrar">
+        <h:form id="datos">
+          
+            <br/>
+                 <p:panelGrid styleClass="frm_centrado"> 
+                                       
+                     <p:row>
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>  
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.acumuladoPacientes}:"/></p:column> 
+                         <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>   
+                     </p:row>
+                     
+                     <p:row>
+                         
+                         <p:column>
+                             <p:outputLabel value="#{etiq.anioConsultar}:"/>
+                         </p:column>
+                         
+                         <p:column>
+                             <p:selectOneMenu id="año" value="#{oAcumPac.año}" required="true" requiredMessage="Debe seleccionar un año">
+                                 <f:selectItems value="#{oAcumPac.años}" var="an"
+                                        itemLabel="#{an}" itemValue="#{an}"/>
+                            </p:selectOneMenu>
+                         </p:column>
+                         <p:column>
+                            <p:commandButton styleClass="frm_login" value="#{etiq.consultar}" icon="ui-icon-search" action="#{oAcumPac.generar()}" update=":resultados:tablaNota"/>
+                         </p:column>
+                     </p:row>
+                 </p:panelGrid>
+            
+        </h:form>
+        <br></br><br></br>
+            <h:form id="resultados">
+                    <p:dataTable id="tablaNota" var="oTab" value="#{oAcumPac.admision}" emptyMessage="No se han encontrado resultados" style="#{oAcumPac.activaTabla} width:500px; margin: 0 auto;">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.acumuladoPacientes}"/>
+                </f:facet>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.areaServicio}"/>
+                    </f:facet>
+                    <h:outputText value="#{oTab.areaServicioHRRB}"/>
+                </p:column>
+                               
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.mujeres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oTab.totalMujeres}"/>
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.hombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oTab.totalHombres}"/>
+                </p:column> 
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.total}"/>
+                    </f:facet>
+                    <h:outputText value="#{oTab.total}"/>
+                </p:column>
+                <p:columnGroup type="footer">
+                        <p:row>
+                            <p:column colspan="3" style="text-align:right" footerText="Total:" />
+                            <p:column footerText="#{oAcumPac.admisionUrgs.totalPedia}" />
+                        </p:row>
+                </p:columnGroup>
+             </p:dataTable>      
+             <br/>
+
+        </h:form>
+        
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+   </div> 
+    
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

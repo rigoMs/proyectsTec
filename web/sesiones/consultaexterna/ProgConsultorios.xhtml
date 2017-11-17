@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+  
+  <ui:define name="cuerpo">
+   <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+   <div class="centrado_texto">
+   <br/>
+   <h:form id="capturaCons">
+      <p:panelGrid styleClass="frm_centrado">
+      <f:facet name="header">
+        <p:row>
+            <p:column colspan="5" styleClass="encabezados"><p:outputLabel id="titProgCon" value="#{etiq.programacionConsultorios}" /></p:column>
+        </p:row>
+        <p:row>
+            <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="consultorio" value="#{etiq.consultorio}:" /></p:column>
+            <p:column colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="medico" value="#{etiq.medico}:" /></p:column>
+            <p:column colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="servicio" value="#{etiq.servicio}:" /></p:column>
+        </p:row>
+       </f:facet>
+        <p:row>
+            <p:column>
+                <p:inputText id="tConsultorio" value="#{oProgConsul.consul.noConsultorio}" converterMessage="Error: No se permiten letras, símbolos ni números menores a uno">
+                    <f:validateLongRange minimum="1" maximum="99"/>
+                    <f:ajax render="mentConsultorio" execute="@this" event="valueChange" />
+                </p:inputText>
+            </p:column>
+            <p:column colspan="2">
+                <p:selectOneMenu id="tMedico" value="#{oProgConsul.medico.noTarjeta}" disabled="#{oProgConsul.habilitaMedico()}">
+                    <f:selectItems value="#{oProgConsul.listaMedicos}" var="oMed" 
+                                   itemLabel="#{oMed.apPaterno} #{oMed.apMaterno} #{oMed.nombres}" itemValue="#{oMed.noTarjeta}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column colspan="2">
+                <p:selectOneMenu id="tServicio" value="#{oProgConsul.areaServicio.clave}">
+                    <f:selectItems value="#{oProgConsul.listaAreasCE}" var="oArea"
+                                   itemLabel="#{oArea.descripcion}" itemValue="#{oArea.clave}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="5"></p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header" rowspan="2" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="turno" value="#{etiq.turno}:" /></p:column>
+            <p:column styleClass="ui-widget-header" colspan="3"><p:outputLabel id="noCitas" value="#{etiq.numeroDeCitas}" /></p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="primVez" value="#{etiq.primVez}:" /></p:column>
+            <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="subs" value="#{etiq.subsecuente}:" /></p:column>
+            <p:column styleClass="ui-widget-header"><p:outputLabel id="totalCitas" value="#{etiq.totales}:" /></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="2">
+                <p:selectOneMenu id="tTurno" value="#{oProgConsul.turno.clave}">
+                    <f:selectItems value="#{oProgConsul.listaTurnoCE}" var="oTur"
+                                   itemLabel="#{oTur.descripcion}" itemValue="#{oTur.clave}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column>
+                <p:inputText id="tPrimVez" value="#{oProgConsul.asigcon.citas1eraVez}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                    <f:validateLongRange minimum="0" maximum="99"/>
+                    <p:ajax update="tTotalCitas mentPrimVez" event="valueChange"/>
+                </p:inputText>
+            </p:column>
+            <p:column>
+                <p:inputText id="tSubs" value="#{oProgConsul.asigcon.citasSubs}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                    <f:validateLongRange minimum="0" maximum="99"/>
+                    <p:ajax update="tTotalCitas mentSubs" event="valueChange"/>
+                </p:inputText>
+            </p:column>
+            <p:column><p:inputText id="tTotalCitas" value="#{oProgConsul.sumaCitas}" readonly="true"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="5"></p:column>
+        </p:row>
+        <p:row>
+            <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="dias" value="#{etiq.dias}:"  /></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="5"> 
+                <p:selectManyCheckbox id="tDias" layout="grid" value="#{oProgConsul.asigcon.dias}" columns="5" style="padding-left: 70px;" required="true">
+                 <p:ajax update="tHora tHora2 tHora3 tHora4 tHora5"/> 
+                 <f:selectItem itemLabel="Lunes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="lun"></f:selectItem>
+                 <f:selectItem itemLabel="Martes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="mar"></f:selectItem>
+                 <f:selectItem itemLabel="Miércoles &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="mie"></f:selectItem>
+                 <f:selectItem itemLabel="Jueves &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="jue"></f:selectItem>
+                 <f:selectItem itemLabel="Viernes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" itemValue="vie"></f:selectItem>
+               </p:selectManyCheckbox>
+          </p:column>
+        </p:row>
+        <p:row>
+             <p:column>
+                 <p:inputMask id="tHora" mask="99:99  -  99:99" size="15" value="#{oProgConsul.horaLun.horas}" disabled="#{oProgConsul.habilitaHoras('lun')}" required="true">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.HorasValidator"/>
+                        <f:ajax render="mentHora" execute="@this" event="valueChange"/>
+                    </p:inputMask>
+             </p:column>
+             
+             <p:column>
+                    <p:inputMask id="tHora3" mask="99:99  -  99:99" size="15" value="#{oProgConsul.horaMar.horas}" disabled="#{oProgConsul.habilitaHoras('mar')}" required="true">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.HorasValidator"/>
+                        <f:ajax render="mentHora3" execute="@this" event="valueChange"/>
+                    </p:inputMask>
+             </p:column>
+             
+             <p:column>
+                <p:inputMask id="tHora5" mask="99:99  -  99:99" size="15" value="#{oProgConsul.horaMie.horas}" disabled="#{oProgConsul.habilitaHoras('mie')}" required="true">
+                    <f:validator validatorId="mx.gob.hrrb.validadores.HorasValidator"/>
+                    <f:ajax render="mentHora5" execute="@this" event="valueChange"/>
+                </p:inputMask>
+             </p:column>
+             
+             <p:column>
+                <p:inputMask id="tHora2" mask="99:99  -  99:99" size="15" value="#{oProgConsul.horaJue.horas}" disabled="#{oProgConsul.habilitaHoras('jue')}" required="true">
+                    <f:validator validatorId="mx.gob.hrrb.validadores.HorasValidator"/>
+                    <f:ajax render="mentHora2" execute="@this" event="valueChange"/>
+                </p:inputMask>
+             </p:column>
+            
+            <p:column>
+                <p:inputMask id="tHora4" mask="99:99  -  99:99" size="15" value="#{oProgConsul.horaVie.horas}" disabled="#{oProgConsul.habilitaHoras('vie')}" required="true">
+                    <f:validator validatorId="mx.gob.hrrb.validadores.HorasValidator"/>
+                    <f:ajax render="mentHora4" execute="@this" event="valueChange"/>
+                </p:inputMask>
+            </p:column>
+            
+        </p:row>
+        <p:row>
+            <p:column colspan="5">
+                <p:commandButton id="btnprogc" value="#{etiq.guardar}" icon="ui-icon-disk" actionListener="#{oProgConsul.setDialogo()}" validateClient="true" ajax="false">
+                </p:commandButton>
+            </p:column>
+        </p:row>
+     </p:panelGrid>
+       <p:message for="tConsultorio" id="mentConsultorio"></p:message>
+       <p:message for="tPrimVez" id="mentPrimVez"></p:message>
+       <p:message for="tSubs" id="mentSubs"></p:message>
+       <p:message for="tHora" id="mentHora"/>
+       <p:message for="tHora2" id="mentHora2"/>
+       <p:message for="tHora3" id="mentHora3"/>
+       <p:message for="tHora4" id="mentHora4"/>
+       <p:message for="tHora5" id="mentHora5"/>
+    </h:form>
+   </div>
+  </ui:define> 
+        
+</ui:composition>
+</html>

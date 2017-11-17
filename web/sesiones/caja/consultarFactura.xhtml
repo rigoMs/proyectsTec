@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.consultarFac}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+
+        <div class="centrado_texto">
+            <center>
+            <h:form>
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.facturasEmitidas}:"></p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaIni" value="#{oConsultarFac.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha inicial.">
+                                <p:ajax event="dateSelect" update="fechaFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.al}:"></p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaFin" value="#{oConsultarFac.fechaF}" 
+                                        mindate="#{oConsultarFac.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha final.">
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" actionListener="#{oConsultarFac.preBusqueda}"
+                                             icon="ui-icon-search"  styleClass="frm_login" 
+                                             update="dtFacturas mensajes">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:dataTable id="dtFacturas" value="#{oConsultarFac.facturas}" var="oFact" rows="5" emptyMessage="#{etiq.emptydataTable}" 
+                             styleClass="centrado_texto" style="#{oConsultarFac.activaTabla}" > 
+                    <p:column style="width: 15%;" headerText="#{etiq.fecha}">
+                        <h:outputText value="#{oFact.fechaFacturacion}">
+                            <f:convertDateTime pattern="dd-MM-yyyy HH:mm"></f:convertDateTime>
+                        </h:outputText>
+                    </p:column>
+                    <p:column style="width: 40%;" headerText="#{etiq.nombrePaciente}">
+                        <h:outputText value="#{oFact.paciente.nombreCompleto}"></h:outputText>
+                    </p:column>
+                    <p:column style="width: 30%;" headerText="#{etiq.recibos}">
+                        <p:dataTable value="#{oFact.recibos}" var="oRec">
+                            <p:column style="width: 50%;" headerText="#{etiq.folio}">
+                                <h:outputText value="#{oRec.folio}"></h:outputText>
+                            </p:column>
+                            <p:column style="width: 50%;" headerText="#{etiq.total}">
+                                <h:outputText value="#{oRec.monto}"></h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                    <p:column style="width: 15%;" headerText="#{etiq.archivo}">
+                        <p:commandButton value="#{etiq.archXML}" actionListener="#{oConsultarFac.preDownloadXML(ae,oFact.rutaArchFactXML)}" ajax="false">
+                            <p:fileDownload value="#{oConsultarFac.fileXML}">
+                            </p:fileDownload>
+                        </p:commandButton>
+                        <p:commandButton value="#{etiq.archPDF}" actionListener="#{oConsultarFac.preDownloadPDF(ae,oFact.rutaArchFactPDF)}" ajax="false">
+                            <p:fileDownload value="#{oConsultarFac.filePDF}">
+                            </p:fileDownload>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>  
+            </h:form>
+            </center>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

@@ -1,0 +1,1417 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <h:form>
+                    <h3 class="centrado_texto"><h:outputLabel value="#{etiq.hojaSupervision}"/></h3>
+                    <p:accordionPanel styleClass="centrar" style=" width: 30%; font-weight: bold;">
+                        <p:tab title="#{etiq.ser}:->" >
+                            <p:outputPanel styleClass="centrar">
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                <p:outputLabel value="#{etiq.servicio}:"/>                                       
+                                <p:outputLabel/>
+                                <p:selectOneMenu effect="puff" id="cmbAreas" value="#{oPacSupSer.areaServicio}">
+                                    <f:selectItem itemLabel="Elegir servicio" itemValue="" noSelectionOption="true"/>                                         
+                                    <f:selectItems value="#{oPacSupSer.arrServicio}" var="oAr" itemLabel="#{oAr.descripcion}" itemValue="#{oAr.clave}"/>
+                                </p:selectOneMenu>
+                                <p:commandButton value="Buscar" icon="ui-icon-search"
+                                                 update=":frmHojaSupGen :frmHojaSupGen:panel 
+                                                 :frmHojaSupGen:msgs :frmHojaSupGen:panel2 :frmHojaSupGen:tabw 
+                                                 :frmHojaSupGen:tabw:botton :frmHojaSupGen:obs3 :frmHojaSupGen:obs2 :frmHojaSupGen:obs1" 
+                                                 actionListener="#{oPacSupSer.buscaPacienteEnServicio}">                                                                             
+                                </p:commandButton>
+                            </p:panelGrid>
+                            </p:outputPanel>
+                        </p:tab>
+                    </p:accordionPanel>
+                </h:form>
+                <h:form id="frmHojaSupGen">
+                    <br/>
+                    <p:growl id="msgs" showDetail="true"></p:growl>
+                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>                    
+                    <p:panelGrid style="width: 99%;" styleClass="centrar" id="panel" rendered="#{oPacSupSer.rendering}">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 17%; text-align: left;">
+                                <p:outputLabel value="#{etiq.ser}:"/> &nbsp;<b><p:outputLabel value="#{oPacSupSer.servicio}"/></b>
+                            </p:column>                            
+                            <p:column style="width: 38%" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.infGenSup}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 5%;">
+                                <p:outputLabel value="#{etiq.fechaa1}:"/>
+                            </p:column>
+                            <p:column style="width: 8%; ">
+                                <p:outputLabel value="#{oPacSupSer.fechaActucal}"/>
+                            </p:column>                            
+                        </p:row>
+                    </p:panelGrid>                    
+                    <p:panelGrid style="width: 99%;" styleClass="centrar" id="panel2" rendered="#{oPacSupSer.rendering}">
+                        <p:row>
+                            <p:column rowspan="2" styleClass="ui-widget-header" style="font-size: 9px; width: 40px; height: 10px;" >
+                                <p:outputLabel value="#{etiq.movPac}"/>
+                            </p:column>
+                            <p:column colspan="3" styleClass="ui-widget-header" style="font-size: 9px; width: 45px;">
+                                <p:outputLabel value="#{etiq.turnoo}"/>
+                            </p:column>
+                            <p:column rowspan="2" styleClass="ui-widget-header" style="font-size: 9px; width: 10px;">
+                                <p:outputLabel value="#{etiq.proceGe}"/>
+                            </p:column>
+                            <p:column colspan="3" styleClass="ui-widget-header" style="font-size: 9px; width: 45px;">
+                                <p:outputLabel value="#{etiq.turnoo}"/>
+                            </p:column>
+                            <p:column colspan="3"   styleClass="ui-widget-header" style="font-size: 9px; width: 350px;">
+                                <p:outputLabel value="#{etiq.observaa}"/>
+                            </p:column>                           
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="font-size: 8px; width: 25px; height: 10px;">
+                               <p:outputLabel value="#{etiq.t1}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="font-size: 8px; width: 25px;">
+                               <p:outputLabel value="#{etiq.t2}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="font-size: 8px; width: 25px;">
+                               <p:outputLabel value="#{etiq.t3}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="font-size: 8px; width: 25px;">
+                               <p:outputLabel value="#{etiq.t1}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="font-size: 8px; width: 25px;">
+                               <p:outputLabel value="#{etiq.t2}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="font-size: 8px; width: 25px;">
+                               <p:outputLabel value="#{etiq.t3}"/>
+                            </p:column>                            
+                             <p:column styleClass="ui-widget-header" style="width: 120px; font-size: 9px;">
+                                <p:outputLabel value="#{etiq.matut}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header"  style="font-size: 9px; width: 120px">
+                                <p:outputLabel value="#{etiq.vesper}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header"  style="font-size: 9px; width: 120px">
+                                <p:outputLabel value="#{etiq.nocturn}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.censFi}"/>
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;" >
+                                
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.dialisi}"/>
+                            </p:column>
+                            <p:column >
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column rowspan="6"  style="font-size: 9px;">
+                                <p:outputLabel id="obs1" value="#{oPacSupSer.observacionObj.cabeceraSupervision.observacionTM}"/>
+                            </p:column>
+                            <p:column rowspan="6" style="font-size: 9px;">
+                                <p:outputLabel id="obs2" value="#{oPacSupSer.observacionObj.cabeceraSupervision.observacionTV}"/>
+                            </p:column>
+                            <p:column rowspan="6" style="font-size: 9px;">
+                                <p:outputLabel id="obs3" value="#{oPacSupSer.observacionObj.cabeceraSupervision.observacionTN}"/>
+                            </p:column>                            
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.altaVoDe}"/> 
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                              
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.tras}"/> 
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                 <p:outputLabel value="#{etiq.refeTras}"/> 
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value=" #{etiq.alPar}"/>
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            
+                        </p:row>
+                        <p:row >
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                 <p:outputLabel value="#{etiq.preop}"/> 
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.quimio}"/>
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.graves}"/>
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column style="font-size: 8px; width: 15px;" styleClass="ui-widget-header" >
+                                <p:outputLabel value="#{etiq.sEDPle}"/>
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            <p:column style="background: url('#{facesContext.externalContext.requestContextPath}/imgs/linea2.png')no-repeat;">
+                                
+                            </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                 <p:outputLabel value="#{etiq.noEnfermeras}"/> 
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column style="font-size: 9px;" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.aVenti}"/> 
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            <p:column>
+                                
+                            </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="8" styleClass="ui-widget-header">
+                                
+                            </p:column>
+                            <p:column colspan="3" styleClass="ui-widget-header">
+                                <p:commandButton  icon="ui-icon-folder-open" title="Agregar Observaciones"                                                  
+                                                  value="Agregar Observacion" onclick="PF('agregarObservacion').show()"
+                                                  update=":observ:obserM :observ:obserV :observ:obserN">                                            
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <br/>
+                    <p:tabView id="tabw" dynamic="true"  style="padding: 0px;" rendered="#{oPacSupSer.rendering}">
+                        <p:tab title="#{etiq.porRelacionCama}">
+                            <p:panelGrid styleClass="centrar" style="width:100%;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                       <p:outputLabel value="#{etiq.pacHosp}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>                           
+                                    <p:column style=" border-color: #ffffff; border-bottom-color: darkgray; padding: 0px;">
+                                        <p:dataTable paginator="true" rows="15" id="tbPacProc" value="#{oPacSupSer.arrgloPacientes}" var="oPacS" emptyMessage="Sin Pacientes En Servicio">
+                                            <p:column headerText="#{etiq.camaM}" style="width:4%;">
+                                                <p:outputLabel value="#{oPacS.cama.numero}"/>
+                                            </p:column>
+                                            <p:column filterBy="#{oPacS.paciente.expediente.numero}" headerText="#{etiq.exp2}" style="width:10%; font-size: 10px;">
+                                                <p:outputLabel value="#{oPacS.paciente.expediente.numero}" style="font-size: 14px;"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.fechMay}" style="width:9%;">
+                                                <p:outputLabel value="#{oPacS.fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.nombrePaMay}" style="width:30%;">
+                                                <p:outputLabel value="#{oPacS.paciente.nombreCompleto}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.diagnst}" style="width:34%;">
+                                                <p:outputLabel value="#{oPacS.diagIngreso.descripcionDiag}"/>
+                                            </p:column>
+                                            <p:column style="">
+                                                <p:commandButton  icon="ui-icon-folder-open" title="Registrar procedimiento"  oncomplete="PF('registrarProcedimiento').show()">                                            
+                                                    <p:ajax listener="#{oPacSupSer.datosPaciente(oPacS.paciente.folioPaciente)}" update=":frm-proc:proc :frm-proc:obs" />
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <div class="centrar">
+                                            <p:commandButton  icon="ui-icon-folder-open" 
+                                                              title="Ver Detalles" value="#{etiq.verDetallesPac}" update=":imp" 
+                                                              actionListener="#{oPacSupSer.buscaProcemientoAplicadoServicios}">                                            
+                                            </p:commandButton>&nbsp;&nbsp;
+                                            <p:commandButton icon="ui-icon-folder-open" value="Abrir Para #{etiq.imprimir}" onclick="PF('imprimirSer').show()" update=":imprimeServicio"/>
+                                        </div>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>                            
+                        </p:tab>
+                        <p:tab title="#{etiq.porServicio}">
+                            <p:panelGrid styleClass="centrar" style="width:100%;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                       <p:outputLabel value="#{etiq.pacHosp}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>                           
+                                    <p:column style=" border-color: #ffffff; border-bottom-color: darkgray; padding: 0px;">
+                                        <p:dataTable paginator="true" rows="15"  value="#{oPacSupSer.arrPacHosp}" var="oPacS" emptyMessage="Sin Pacientes En Servicio">
+                                            <p:column headerText="#{etiq.camaM}" style="width:4%;">
+                                                <p:outputLabel value="#{oPacS.cama.numero}"/>
+                                            </p:column>
+                                            <p:column filterBy="#{oPacS.paciente.expediente.numero}" headerText="#{etiq.exp2}" style="width:10%; font-size: 10px;">
+                                                <p:outputLabel value="#{oPacS.paciente.expediente.numero}" style="font-size: 14px;"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.fechMay}" style="width:9%;">
+                                                <p:outputLabel value="#{oPacS.fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.nombrePaMay}" style="width:30%;">
+                                                <p:outputLabel value="#{oPacS.paciente.nombreCompleto}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.diagnst}" style="width:34%;">
+                                                <p:outputLabel value="#{oPacS.diagIngreso.descripcionDiag}"/>
+                                            </p:column>
+                                            <p:column style="">
+                                                <p:commandButton  icon="ui-icon-folder-open" title="Registrar procedimiento"  oncomplete="PF('registrarProcedimiento').show()">                                            
+                                                    <p:ajax listener="#{oPacSupSer.datosPaciente2(oPacS.paciente.folioPaciente)}" update=":frm-proc:proc :frm-proc:proceEnf :frm-proc:procePor"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <div class="centrar">
+                                            <p:commandButton  icon="ui-icon-folder-open" title="Ver Detalles" 
+                                                              value="#{etiq.verDetallesPac}" onclick="PF('verdetalles').show();" update=":imp:hojaSer">                                            
+                                            </p:commandButton>&nbsp;&nbsp;
+                                            <p:commandButton id="botton" icon="ui-icon-folder-open"  update=":imprimeServicio2"
+                                                             value="Abrir Para #{etiq.imprimir}" oncomplete="PF('imprimirSer2').show()" disabled="#{oPacSupSer.disableImp}"/>
+                                        </div>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:tab>                    
+                    </p:tabView>      
+                </h:form>
+                
+                <p:dialog widgetVar="agregarObservacion" showEffect="puff" hideEffect="puff" modal="true" resizable="false" header="#{etiq.observacion}">
+                    <h:form id="observ">
+                        <p:panelGrid style=" width: 800px;" styleClass="centrar">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" >
+                                    <p:outputLabel value="#{etiq.observaa}"/>
+                                </p:column>
+                                <p:column  styleClass="ui-widget-header">
+                                    <p:outputLabel  value="#{etiq.obsV}"/> 
+                                </p:column> 
+                                <p:column  styleClass="ui-widget-header">
+                                    <p:outputLabel  value="#{etiq.obsN}"/> 
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:inputTextarea id="obserM" cols="40" rows="2" value="#{oPacSupSer.observacionObj.cabeceraSupervision.observacionTM}"
+                                                     onkeyup="this.value=this.value.toUpperCase()">
+                                        <p:ajax event="valueChange"/>
+                                    </p:inputTextarea>
+                                </p:column>
+                                <p:column>
+                                    <p:inputTextarea id="obserV" cols="40" rows="2" value="#{oPacSupSer.observacionObj.cabeceraSupervision.observacionTV}"
+                                                     onkeyup="this.value=this.value.toUpperCase()">
+                                        <p:ajax event="valueChange"/>
+                                    </p:inputTextarea>
+                                </p:column>
+                                <p:column>
+                                    <p:inputTextarea id="obserN" cols="40" rows="2" value="#{oPacSupSer.observacionObj.cabeceraSupervision.observacionTN}"
+                                                     onkeyup="this.value=this.value.toUpperCase()" >
+                                        <p:ajax event="valueChange"/>
+                                    </p:inputTextarea>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="3">
+                                    <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}"
+                                                     actionListener="#{oPacSupSer.agregarObservacion}"
+                                                     update=":frmHojaSupGen:msgs :frmHojaSupGen:obs1 :frmHojaSupGen:obs2 :frmHojaSupGen:obs3">                                        
+                                       
+                                    </p:commandButton>&nbsp;                                    
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}"  onclick="PF('agregarObservacion').hide()"
+                                                     actionListener="#{oPacSupSer.limpiaCamposObserv}"/>
+                                    
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog modal="true" showEffect="puff" header="#{etiq.resgProcPac}" hideEffect="puff" widgetVar="registrarProcedimiento" resizable="false" height="560">
+                    <h:form id="frm-proc">
+                        <p:outputPanel id="proc">
+                        <p:panelGrid style="width:900px;">
+                            <p:row>
+                                <p:column style="width:30px;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.camaM}"/>
+                                </p:column>
+                                <p:column  style="width:100px;">
+                                    <p:outputLabel value="#{oPacSupSer.procedimientoPac.episodio.cama.numero}"/>
+                                </p:column>
+                                <p:column style="width:35px;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.noEXPM}"/>
+                                </p:column>
+                                <p:column style="width: 140px;">
+                                    <p:outputLabel value="#{oPacSupSer.procedimientoPac.episodio.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column style="width:35px;" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.nombreM}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oPacSupSer.procedimientoPac.episodio.paciente.nombreCompleto}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header" style=" text-align: center;">
+                                    <p:outputLabel value="#{etiq.apliProPac}"/>
+                                </p:column>
+                            </p:row>                                  
+                        </p:panelGrid>                            
+                        <div style=" margin-bottom: 2px;"/>                        
+                        <p:panelGrid style="width:900px;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="text-align: center; width: 20%; ">
+                                    <p:outputLabel for="proceEnf" value="#{etiq.procEnf}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style=" text-align:center; width: 15%;">
+                                    <p:outputLabel value="#{etiq.procPor}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="text-align: center; width: 2%;">
+                                    <p:outputLabel value="#{etiq.procValor}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 8%;">
+                                    
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:selectOneMenu id="proceEnf" value="#{oPacSupSer.procedimientoAgregado.procedimientoEnfermeria.valor}">
+                                        <p:ajax event="change" listener="#{oPacSupSer.onProceChange}" update=":frm-proc:procePor  :frmHojaSupGen:msgs"/>
+                                        <f:selectItem itemLabel="Selecciona un procedimiento" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{oPacSupSer.listaProc}" var="oProEn" itemValue="#{oProEn.procedimientoEnfermeria.valor}"  itemLabel="#{oProEn.procedimientoEnfermeria.valor}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="procePor" value="#{oPacSupSer.procedimientoAgregado.procedimientoEnfermeriaPor.descripcion}" disabled="#{oPacSupSer.disable}">
+                                        <f:selectItem itemLabel="procedimiento por" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{oPacSupSer.listaProcPor}" var="oProPor" itemLabel="#{oProPor.descripcion}" itemValue="#{oProPor.descripcion}"/>
+                                        <p:ajax event="change"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column styleClass="centrar">
+                                    <p:selectBooleanCheckbox value="#{oPacSupSer.procedimientoAgregado.valorProc}" disabled="true"/> 
+                                </p:column>
+                                <p:column styleClass="centrar">
+                                    <p:commandButton value="#{etiq.agregar}" icon="ui-icon-plus">
+                                        <p:ajax listener="#{oPacSupSer.agregarProcedimiento()}" update=":frm-proc:tblProAgr :frmHojaSupGen:msgs :frm-proc:proceEnf :frm-proc:procePor" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                            
+                        </p:panelGrid>
+                        <div style=" margin-bottom: 2px;"/>
+                        <p:panelGrid style="width:900px;" styleClass="centrar">
+                            <p:row>
+                                <p:column>
+                                    <p:dataTable paginator="true" rows="5" id="tblProAgr" value="#{oPacSupSer.proceAgregado}" var="oProAgre" emptyMessage="Sin Procedimientos">
+                                        <f:facet name="header">
+                                            <p:outputLabel value="PROCEDIMIENTOS AGREGADO"/>
+                                        </f:facet>
+                                        <p:column headerText="PROCEDIMIENTO SELECCIONADO" style=" width: 20%;">
+                                            <p:outputLabel value="#{oProAgre.procedimientoEnfermeria.valor}"/>
+                                        </p:column>
+                                        <p:column headerText="APLICADO POR" style=" width: 15%;">
+                                            <p:outputLabel value="#{oProAgre.procedimientoEnfermeriaPor.descripcion}"/>
+                                        </p:column>
+                                        <p:column headerText="VALOR" style="width: 3%;">                                       
+                                            <p:selectBooleanCheckbox value="#{oProAgre.valorProc}" disabled="true"/>
+                                        </p:column>
+                                        <p:column style="width: 8%;">
+                                            <p:commandButton value="Eliminar" icon="ui-icon-minus">
+                                                <p:ajax listener="#{oPacSupSer.eliminarProcedimietoAgregado(oProAgre)}" update=":frm-proc:tblProAgr :frmHojaSupGen:msgs"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid >
+                        </p:outputPanel>
+                        <p:panelGrid style="width:900px;" styleClass="centrar">
+                            <p:row>
+                                <p:column style="width: 50%"  styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.observaa}"/>
+                                </p:column>                                
+                            </p:row>
+                            <p:row>                                
+                                <p:column>
+                                    <p:inputTextarea id="obs" cols="60" value="#{oPacSupSer.procedimientoPac.observacion}" 
+                                                     rows="2"  onkeyup="this.value=this.value.toUpperCase()">
+                                        <p:ajax event="valueChange"/>
+                                    </p:inputTextarea>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                
+                                <p:column colspan="2" styleClass="ui-widget-header">
+                                    <div class="centrar">
+                                        <p:commandButton  value="#{etiq.guardar}" icon="ui-icon-disk">
+                                            <p:ajax listener="#{oPacSupSer.guadarProcedimientoPaciente()}" update=":frmHojaSupGen:msgs"  />
+                                        </p:commandButton>&nbsp;
+                                        <p:commandButton  onclick="PF('registrarProcedimiento').hide()" value="#{etiq.cerrar}" icon="ui-icon-close">
+                                        </p:commandButton>
+                                    </div>  
+                                </p:column>
+                                
+                            </p:row>
+                        </p:panelGrid>
+                        
+                    </h:form>
+                </p:dialog>       
+                
+                <p:dialog modal="true" showEffect="puff" hideEffect="puff" header="#{etiq.detallesProcPac}" widgetVar="verdetalles" height="600" width="1350" resizable="false">
+                    <h:form id="imp">
+                        <p:dataTable id="hojaSer" value="#{oPacSupSer.arrProcedimientosApli}" var="oPA" emptyMessage="">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column style="width:23px; text-align: center;" headerText="#{etiq.camaM}" />
+                                    <p:column style="width:58px;" headerText="#{etiq.exp2}"/>
+                                    <p:column style="width: 47px;" headerText="#{etiq.fechMay}"/>
+                                    <p:column style="  width: 170px;" headerText="#{etiq.nombrePaMay}"/>
+                                    <p:column style="width: 160px;" headerText="#{etiq.diagnst}"/>
+                                    <p:column style=" width: 6px; height: 135px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/oxigVenti.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/venoclisis2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/cateter2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/transfusiones2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/nptLiquidos.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/sondas2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/glicemias2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px;background: url('#{facesContext.externalContext.requestContextPath}/imgs/curaciones2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/asp.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/nebuli.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/dialisiDre.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/monitoreo2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/ejercicioVesical2.png') no-repeat;"/>
+                                    <p:column style=" width: 6px; height: 135px; background: url('#{facesContext.externalContext.requestContextPath}/imgs/alta.png') no-repeat;"/>
+                                    <p:column headerText="#{etiq.observaa}" style="width: 15%"/>
+                                </p:row>    
+                                   
+                            </p:columnGroup>
+                            <p:column style="border-color: black; color: black; text-align: center;">
+                                <b><p:outputLabel style=" font-size: 9px;" value="#{oPA.episodio.cama.numero}"/></b>
+                            </p:column>
+                            <p:column style="border-color: black; color: black; text-align: center;">
+                                <b><p:outputLabel style=" font-size: 9px;" value="#{oPA.episodio.paciente.expediente.numero}"/></b>
+                            </p:column>
+                            <p:column style="border-color: black; color: black; text-align: center;">
+                                <b><p:outputLabel style="font-size: 9px;" value="#{oPA.episodio.fechaIngreso}">
+                                         <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </b>
+                            </p:column>
+                            <p:column style="border-color: black; color: black; text-align: center;">
+                                <b><p:outputLabel style="font-size: 9px;" value="#{oPA.episodio.paciente.nombreCompleto}"/></b>
+                            </p:column>
+                            <p:column style="border-color: black; color: black; text-align: center;">
+                                <b><p:outputLabel style="font-size: 9px;" value="#{oPA.episodio.diagIngreso.descripcionDiag}"/></b>
+                            </p:column>
+                            <!-- parte de procedimiento-->
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.ventilador}" disabled="true"/>
+                                <p:selectBooleanCheckbox value="#{oPA.oxigeno}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.venoclisis}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.cateter}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.transfusion}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.controlLiquidos}" disabled="true"/>
+                                <p:selectBooleanCheckbox value="#{oPA.NPT}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.sondas}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.glicemias}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.colutorios}" disabled="true"/>
+                                <p:selectBooleanCheckbox value="#{oPA.curaciones}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.lavadoBronq}" disabled="true"/>
+                                <p:selectBooleanCheckbox value="#{oPA.aspiracionSecre}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.fisioPulmonar}" disabled="true"/>
+                                <p:selectBooleanCheckbox value="#{oPA.nebulizaciones}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.drenajesCerrados}" disabled="true"/>
+                                <p:selectBooleanCheckbox value="#{oPA.dialisisPeritonial}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.monitoreo}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.ejercicioResp}" disabled="true"/>
+                                <p:selectBooleanCheckbox value="#{oPA.ejercicioVesical}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; padding-left: 7px;">
+                                <p:selectBooleanCheckbox value="#{oPA.alta}" disabled="true"/>
+                            </p:column>
+                            <p:column style="border-color: black; color: black; text-align: center; padding: 1px;">
+                                <p:inputTextarea style=" font-size: 9px;" value="#{oPA.observacion}" cols="48" rows="1" readonly="true"/>                                
+                            </p:column>
+                            
+                        </p:dataTable>         
+                        <br/>
+                        <p:outputPanel styleClass="centrar">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:commandButton onclick="PF('verdetalles').hide()" 
+                                                         value="#{etiq.cerrar}" icon="ui-icon-close">
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>                                
+                            </p:panelGrid>
+                        </p:outputPanel>                 
+                        
+                    </h:form>                    
+                </p:dialog>    
+                
+                <p:dialog  widgetVar="imprimirSer" showEffect="puff" hideEffect="puff" resizable="false" modal="true" header="#{etiq.impHosp}" height="605">
+                    <h:form id="imprimeServicio">
+                        <p:outputPanel style=" width: 1320px; background-color: white;">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="40" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; ">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hojaSupervision}"/></b>                                    
+                                    </p:column>
+                                    <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120"  style=" height: 100%;" align="left"/>
+                                    </p:column>
+                                </p:row>                                          
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 100%; margin-bottom: 0px;padding: 0px">
+                                <p:row>
+                                    <p:column style="border-color:  transparent; width: 12%; background-color: white; width: 30%; font-size: 10px; font-family: monospace; padding: 0px;">
+                                        <b><p:outputLabel value="#{etiq.ser}:"/></b> &nbsp;<p:outputLabel value="#{oPacSupSer.servicio}"/>
+                                    </p:column>
+                                    <p:column style="border-color:  transparent; width: 12%; background-color: white; width: 40%; font-size: 10px; font-family: monospace;padding: 0px;">
+                                        <b><p:outputLabel value="#{etiq.infGenSup}"/></b>
+                                    </p:column>
+                                    <p:column style="border-color:  transparent; width: 12%; background-color: white; width: 30%; font-size: 10px; font-family: monospace;padding: 0px;">
+                                        <b>  <p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;&nbsp;
+                                        <p:outputLabel value="#{oPacSupSer.fechaActucal}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </p:outputLabel>
+                                    </p:column>
+                                </p:row>                           
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 100%;" styleClass="centrar" id="panel2">
+                                <p:row>
+                                    <p:column rowspan="2" style="font-size: 9px; width: 11%; height: 10px; border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;" >
+                                        <p:outputLabel value="#{etiq.movPac}"/>
+                                    </p:column>
+                                    <p:column colspan="3"  style="font-size: 9px; width: 42px;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.turnoo}"/>
+                                    </p:column>
+                                    <p:column rowspan="2"  style="font-size: 9px; width: 11%;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.proceGe}"/>
+                                    </p:column>
+                                    <p:column colspan="3"  style="font-size: 9px; width: 52px;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.turnoo}"/>
+                                    </p:column>
+                                    <p:column colspan="3"    style="font-size: 9px; width: 347px;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.observaa}"/>
+                                    </p:column>                           
+                                </p:row>
+                                <p:row>
+                                    <p:column  style="font-size: 8px; width: 25px; height: 10px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t1}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; width: 20px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t2}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; width: 20px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t3}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; width: 25px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t1}"/>
+                                    </p:column>
+                                    <p:column  style="font-size: 8px; width: 25px; border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t2}"/>
+                                    </p:column>
+                                    <p:column  style="font-size: 8px; width: 25px; border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t3}"/>
+                                    </p:column>                            
+                                     <p:column  style="width: 115px; font-size: 9px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.matut}"/>
+                                    </p:column>
+                                    <p:column  style="font-size: 9px; width: 115px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.vesper}"/>
+                                    </p:column>
+                                    <p:column   style="font-size: 9px; width: 129px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.nocturn}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.censFi}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.dialisi}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column rowspan="6"  style="font-size: 9px; border-color: black; background: white; color: black;">
+                                       
+                                    </p:column>
+                                    <p:column rowspan="6" style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        
+                                    </p:column>
+                                    <p:column rowspan="6" style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        
+                                    </p:column>                            
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.altaVoDe}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.tras}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                         <p:outputLabel value="#{etiq.refeTras}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value=" #{etiq.alPar}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row >
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                         <p:outputLabel value="#{etiq.preop}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.quimio}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.graves}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.sEDPle}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                         <p:outputLabel value="#{etiq.noEnfermeras}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.aVenti}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                </p:row>  
+                                <p:row>
+                                    <p:column colspan="11" style="text-align: center; font-size: 10px; font-weight: bold; border-color: black; padding-top: 0px; padding-bottom: 0px; background: white;">
+                                        <p:outputLabel value="#{etiq.pacHosp}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>                                    
+                                    <p:column colspan="11" style=" padding: 0px; background: white; background-color: white;">
+                                        <p:dataTable id="hojaSer" value="#{oPacSupSer.arrgloPacientes}" var="oPA" emptyMessage="">
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column style="width:23px; text-align: center; font-size: 9px; color: black; font-weight: bold; background-color: white; background: white;" headerText="#{etiq.camaM}" />
+                                                    <p:column style="width:50px;  font-size: 9px; color: black;font-weight: bold; background-color: white; background: white;" headerText="#{etiq.exp2}"/>
+                                                    <p:column style="width: 35px;  font-size: 9px; color: black;font-weight: bold;background-color: white; background: white;" headerText="#{etiq.fechMay}"/>
+                                                    <p:column style="  width: 197px;  font-size: 9px; color: black;font-weight: bold;background-color: white; background: white;" headerText="#{etiq.nombrePaMay}"/>
+                                                    <p:column style="width: 145px;  font-size: 9px; color: black;font-weight: bold;background-color: white;background: white;" headerText="#{etiq.diagnst}"/>
+                                                    <p:column headerText="#{etiq.oxiT}/#{etiq.vent}" style=" width: 2px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.venoclisis}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.cateter}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.tras}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.npt}/#{etiq.ctrLiq}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.sondas}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.glicemias}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.curaciones}/#{etiq.culatorios}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.aspLav}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.nebFisi}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.dialdreC}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.monitoreo}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.ejerVR}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.alta}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.observaa}" style="width: 15.4%; font-size: 9px; color: black;font-weight: bold; background: white; background-color: white;"/>
+                                                </p:row>  
+                                            </p:columnGroup>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style=" font-size: 9px;" value="#{oPA.cama.numero}"/>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style=" font-size: 9px;" value="#{oPA.paciente.expediente.numero}"/>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style="font-size: 9px;" value="#{oPA.fechaIngreso}">
+                                                     <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style="font-size: 9px;" value="#{oPA.paciente.nombreCompleto}"/>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style="font-size: 9px;" value="#{oPA.diagIngreso.descripcionDiag}"/>
+                                            </p:column>
+                                            <!-- parte de procedimiento-->
+                                            <p:column style="border-color: black; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                               
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                               
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                               
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; padding: 3px;  background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">                                                                                                                             
+                                            </p:column>
+                                        </p:dataTable>         
+                                    </p:column>
+                                </p:row>                                
+                            </p:panelGrid>                            
+                        </p:outputPanel>                      
+                    </h:form>
+                    <div style=" margin-bottom: 4px;"/>
+                    <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":imprimeServicio"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('imprimirSer').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                </p:dialog> 
+                
+                <p:dialog  widgetVar="imprimirSer2" showEffect="puff" hideEffect="puff" resizable="false" modal="true" header="#{etiq.impHosp}" height="605">
+                    <h:form id="imprimeServicio2">
+                        <p:outputPanel style=" width: 1320px; background-color: white;">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column  style=" height: 50px; border-color:  transparent; width: 12%; background-color: white;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="40" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 76%; text-align: center; border-color: transparent; background-color: white; ">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hojaSupervision}"/></b>                                    
+                                    </p:column>
+                                    <p:column style="width : 12%; height: 50px;border-color: transparent; background-color: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120"  style=" height: 100%;" align="left"/>
+                                    </p:column>
+                                </p:row>                                          
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 100%; margin-bottom: 0px;padding: 0px">
+                                <p:row>
+                                    <p:column style="border-color:  transparent; width: 12%; background-color: white; width: 30%; font-size: 10px; font-family: monospace; padding: 0px;">
+                                        <b><p:outputLabel value="#{etiq.ser}:"/></b> &nbsp;<p:outputLabel value="#{oPacSupSer.servicio}"/>
+                                    </p:column>
+                                    <p:column style="border-color:  transparent; width: 12%; background-color: white; width: 40%; font-size: 10px; font-family: monospace;padding: 0px;">
+                                        <b><p:outputLabel value="#{etiq.infGenSup}"/></b>
+                                    </p:column>
+                                    <p:column style="border-color:  transparent; width: 12%; background-color: white; width: 30%; font-size: 10px; font-family: monospace;padding: 0px;">
+                                        <b>  <p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;&nbsp;
+                                        <p:outputLabel value="#{oPacSupSer.fechaActucal}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </p:outputLabel>
+                                    </p:column>
+                                </p:row>                           
+                            </p:panelGrid>
+                            <p:panelGrid style="width: 100%;" styleClass="centrar" id="panel2">
+                                <p:row>
+                                    <p:column rowspan="2" style="font-size: 9px; width: 11%; height: 10px; border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;" >
+                                        <p:outputLabel value="#{etiq.movPac}"/>
+                                    </p:column>
+                                    <p:column colspan="3"  style="font-size: 9px; width: 42px;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.turnoo}"/>
+                                    </p:column>
+                                    <p:column rowspan="2"  style="font-size: 9px; width: 11%;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.proceGe}"/>
+                                    </p:column>
+                                    <p:column colspan="3"  style="font-size: 9px; width: 52px;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.turnoo}"/>
+                                    </p:column>
+                                    <p:column colspan="3"    style="font-size: 9px; width: 347px;border-color: black; color: black; background: white;padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.observaa}"/>
+                                    </p:column>                           
+                                </p:row>
+                                <p:row>
+                                    <p:column  style="font-size: 8px; width: 25px; height: 10px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t1}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; width: 20px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t2}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; width: 20px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t3}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 8px; width: 25px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t1}"/>
+                                    </p:column>
+                                    <p:column  style="font-size: 8px; width: 25px; border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t2}"/>
+                                    </p:column>
+                                    <p:column  style="font-size: 8px; width: 25px; border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                       <p:outputLabel value="#{etiq.t3}"/>
+                                    </p:column>                            
+                                     <p:column  style="width: 115px; font-size: 9px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.matut}"/>
+                                    </p:column>
+                                    <p:column  style="font-size: 9px; width: 115px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.vesper}"/>
+                                    </p:column>
+                                    <p:column   style="font-size: 9px; width: 129px;border-color: black; color: black; background: white; padding-top: 0px; padding-bottom: 0px;">
+                                        <p:outputLabel value="#{etiq.nocturn}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.censFi}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.dialisi}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column rowspan="6"  style="font-size: 9px; border-color: black; background: white; color: black;">
+                                       
+                                    </p:column>
+                                    <p:column rowspan="6" style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        
+                                    </p:column>
+                                    <p:column rowspan="6" style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        
+                                    </p:column>                            
+                                </p:row>
+
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.altaVoDe}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.tras}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                         <p:outputLabel value="#{etiq.refeTras}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value=" #{etiq.alPar}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row >
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                         <p:outputLabel value="#{etiq.preop}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.quimio}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.graves}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;" >
+                                        <p:outputLabel value="#{etiq.sEDPle}"/>
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+
+                                </p:row>
+                                <p:row>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                         <p:outputLabel value="#{etiq.noEnfermeras}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+                                        <p:outputLabel value="#{etiq.aVenti}"/> 
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                    <p:column style="font-size: 9px; border-color: black; color: black; background: white;">
+
+                                    </p:column>
+                                </p:row>  
+                                <p:row>
+                                    <p:column colspan="11" style="text-align: center; font-size: 10px; font-weight: bold; border-color: black; padding-top: 0px; padding-bottom: 0px; background: white;">
+                                        <p:outputLabel value="#{etiq.pacHosp}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>                                    
+                                    <p:column colspan="11" style=" padding: 0px; background: white; background-color: white;">
+                                        <p:dataTable id="hojaSer" value="#{oPacSupSer.arrPacHosp}" var="oPA" emptyMessage="">
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column style="width:23px; text-align: center; font-size: 9px; color: black; font-weight: bold; background-color: white; background: white;" headerText="#{etiq.camaM}" />
+                                                    <p:column style="width:50px;  font-size: 9px; color: black;font-weight: bold; background-color: white; background: white;" headerText="#{etiq.exp2}"/>
+                                                    <p:column style="width: 35px;  font-size: 9px; color: black;font-weight: bold;background-color: white; background: white;" headerText="#{etiq.fechMay}"/>
+                                                    <p:column style="  width: 197px;  font-size: 9px; color: black;font-weight: bold;background-color: white; background: white;" headerText="#{etiq.nombrePaMay}"/>
+                                                    <p:column style="width: 145px;  font-size: 9px; color: black;font-weight: bold;background-color: white;background: white;" headerText="#{etiq.diagnst}"/>
+                                                    <p:column headerText="#{etiq.oxiT}/#{etiq.vent}" style=" width: 2px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.venoclisis}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.cateter}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.tras}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.npt}/#{etiq.ctrLiq}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.sondas}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.glicemias}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.curaciones}/#{etiq.culatorios}" style=" width: 2.5px; height: 135px;writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.aspLav}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.nebFisi}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.dialdreC}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.monitoreo}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.ejerVR}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.alta}" style=" width: 2.5px; height: 135px; writing-mode: vertical-rl; transform: rotate(180deg); border-color: black;font-size: 9px; background: transparent;font-weight: bold; color: black; vertical-align: text-top;"/>
+                                                    <p:column headerText="#{etiq.observaa}" style="width: 15.4%; font-size: 9px; color: black;font-weight: bold; background: white; background-color: white;"/>
+                                                </p:row>  
+                                            </p:columnGroup>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style=" font-size: 9px;" value="#{oPA.cama.numero}"/>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style=" font-size: 9px;" value="#{oPA.paciente.expediente.numero}"/>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style="font-size: 9px;" value="#{oPA.fechaIngreso}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style="font-size: 9px;" value="#{oPA.paciente.nombreCompleto}"/>
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                <p:outputLabel style="font-size: 9px;" value="#{oPA.diagIngreso.descripcionDiag}"/>
+                                            </p:column>
+                                            <!-- parte de procedimiento-->
+                                            <p:column style="border-color: black; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                               
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px; background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                               
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                               
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                                
+                                            </p:column>
+                                            <p:column style="border-color: black; padding-left: 5px;  background-color: white; background: white;padding-bottom: 0px; padding-top: 0px;">
+                                            </p:column>
+                                            <p:column style="border-color: black; color: black; text-align: center; padding: 3px;  background-color: white; background: white; padding-bottom: 0px; padding-top: 0px;">                                                                                                                             
+                                            </p:column>
+                                        </p:dataTable>         
+                                    </p:column>
+                                </p:row>                                
+                            </p:panelGrid>                            
+                        </p:outputPanel>                      
+                    </h:form>
+                    <div style=" margin-bottom: 4px;"/>
+                    <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":imprimeServicio2"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('imprimirSer2').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                </p:dialog>      
+      
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">                    
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+</html>
+

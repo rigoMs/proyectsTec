@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+	<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+	    <ui:define name="cuerpo">
+		#{oBuscarPersHospJB.limpiar()}
+		#{oAddPer.setModificar(true)}
+		<f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq" />
+		<h:form id="frmCompBusqPersHosp" style="display: #{oAddPer.mostrarCompBusq}">
+		    <ui:include src="compBusqPersHosp.xhtml" />
+		    <center>
+			<p:commandButton id="btnSeleccionar" value="Seleccionar Personal" style="display: #{oBuscarPersHospJB.mostrarBusqueda}">
+			    <p:ajax update=":frmCompRegPersHosp :frmCompBusqPersHosp"
+				    listener="#{oAddPer.buscarPersonalComp(oBuscarPersHospJB.personalHospitalarioSelect.noTarjeta)}" />
+			</p:commandButton>
+		    </center>
+		</h:form>
+		<h:form id="frmCompRegPersHosp" style="display: #{oAddPer.mostrarCompReg}">
+		    #{oAddPer.setIdFormCompReg("frmCompRegPersHosp")}
+		    <ui:include src="compRegPersHosp.xhtml" />
+		    <p:dialog id="dlgEstadoPersonal" widgetVar="varDlgEstadoPersonal" header="Modificar Estado de Actividad"
+			      resizable="false" modal="true" closable="false" draggable="true"
+			      style="height: 80%; width: 80%;" dynamic="true" position="center">
+			<p:panelGrid>
+			    <p:row>
+				<p:column>
+				    <p:outputLabel value="#{etiq.estadoActividad}" />
+				</p:column>
+				<p:column>
+				    <p:selectOneMenu value="#{oAddPer.med.activo.tipoParametro}">
+					<p:ajax />
+					<f:selectItems value="#{oAddPer.listaStatusActividad}" var="oStatusAct"
+						       itemLabel="#{oStatusAct.valor}"
+						       itemValue="#{oStatusAct.tipoParametro}" />
+				    </p:selectOneMenu>
+				</p:column>
+			    </p:row>
+			</p:panelGrid>
+			<br/>
+			<center>
+			    <p:commandButton value="Cambiar Estado" icon="ui-icon-disk" partialSubmit="true"
+					     process=":frmCompRegPersHosp:dlgEstadoPersonal"
+					     action="#{oAddPer.modificarActivacionPersonal()}" update=":msgs">
+				<p:confirm header="#{etiq.cambiarEstadoConfirm}"
+					   message="&iquest;Seguro que desea cambiar el estado del personal?" icon="ui-icon-help" />
+			    </p:commandButton>
+			    <p:commandButton value="Regresar" type="button" icon="ui-icon-arrowreturnthick-1-w"
+					     onclick="PF('varDlgEstadoPersonal').hide();" />
+			</center>
+		    </p:dialog>
+		    <p:dialog id="dlgDocumentos" widgetVar="varDlgDocumentos" header="Modificar Documentos" resizable="false" modal="true"
+			  closable="true" draggable="true" style="height: 80%; width: 80%;" dynamic="true" position="center">
+			<p:scrollPanel style="height: 500px; width: 1000px;" mode="native">
+			    <p:dataTable id="dtDocumentos" value="#{oFiltroDocJB.listaDocumentos}" var="oDoc">
+				<p:columnGroup type="header">
+				    <p:row>
+					<p:column rowspan="2" headerText="#{etiq.documentos}" style="font-weight: bold; width: 360px;" />
+					<p:column rowspan="2" headerText="#{etiq.registrado}" style="font-weight: bold; width: 100px;" />
+					<p:column rowspan="2" style="width: 310px;" />
+					<p:column rowspan="2" style="width: 120px;" />
+				    </p:row>
+				</p:columnGroup>
+				<p:column>
+				    <h:outputText value="#{oDoc.tipo.valor}" />
+				</p:column>
+				<p:column styleClass="centrado_texto">
+				    <h:selectBooleanCheckbox value="#{oDoc.subido}" readonly="true" disabled="true" style="height: 30px; width: 30px;" />
+				</p:column>
+				<p:column styleClass="centrado_texto">
+				    <h:form enctype="multipart/form-data">
+					<p:fileUpload value="#{oFiltroDocJB.uploadedFile}" fileUploadListener="#{oFiltroDocJB.fileUploadHandle}"
+						      allowTypes="/(\.|\/)(pdf|jpe?g)$/" process="@this"
+						      sizeLimit="#{oFiltroDocJB.limite}" multiple="false" fileLimit="1"
+						      dragDropSupport="false" update="@this :msgs :frmCompRegPersHosp:dtDocumentos"
+						      styleClass="fileUploader-noProgressBar fileUploader-noCancelFile"
+						      label="Buscar" uploadLabel="Subir" cancelLabel="Cancelar"
+						      fileLimitMessage="Solo puede subir un documento a la vez."
+						      invalidFileMessage="El tipo de archivo no es válido"
+						      invalidSizeMessage="El archivo excede el límite de tamaño">
+					    <f:attribute name="documento" value="#{oDoc}" />
+					</p:fileUpload>
+				    </h:form>
+				</p:column>
+				<p:column styleClass="centrado_texto">
+				    <p:commandButton value="Descargar" icon="ui-icon-arrowthickstop-1-s" ajax="false" disabled="#{!oDoc.subido}"
+						     actionListener="#{oFiltroDocJB.descargaArchivo()}">
+					<f:attribute name="documento" value="#{oDoc}" />
+					<p:fileDownload value="#{oFiltroDocJB.downloadFile}" />
+				    </p:commandButton>
+				</p:column>
+				<f:facet name="footer">
+				    <center>
+					<p:commandButton value="Agregar Documento: Seleccion del Personal" icon="ui-icon-plus"
+							 style="display: #{oFiltroDocJB.displayCarnet}">
+					    <p:ajax update="dtDocumentos :msgs" listener="#{oFiltroDocJB.registraDocumento()}" />
+					</p:commandButton>
+				    </center>
+				</f:facet>
+			    </p:dataTable>
+			</p:scrollPanel>
+			<br/>
+			<center>
+			    <p:commandButton value="Regresar" icon="ui-icon-arrowreturnthick-1-w" type="button" 
+					     onclick="PF('varDlgDocumentos').hide();" />
+			</center>
+		    </p:dialog>
+		    <p:dialog id="dlgCapacitacionPers" widgetVar="varDlgCapacitacionPers" header="Capacitaci&oacute;n del Personal"
+			      resizable="false" modal="true" closable="false" draggable="true"
+			      style="height: 80%; width: 80%;" dynamic="true" position="center">
+			<p:scrollPanel style="height: 300px; width: 900px;" mode="native">
+			    <p:dataTable id="dtCapacitacionPers" value="#{oAddPer.med.listaCapacitacionPersonal}" var="oCapacitacion"
+					 emptyMessage="No hay capacitaciones" scrollable="true" scrollHeight="230">
+				<p:columnGroup type="header">
+				    <p:row>
+					<p:column headerText="#{etiq.fechaRealizacion}" rowspan="2" style="width: 180px;" />
+					<p:column headerText="#{etiq.descripcion}" rowspan="2" style="width: 510px;" />
+					<p:column headerText="" rowspan="2" style="width: 100px;" />
+				    </p:row>
+				</p:columnGroup>
+				<p:column>
+				    <p:calendar value="#{oCapacitacion.fechaReal}" effect="fold" locale="es" disabledWeekends="false"
+						pattern="dd/MM/yyyy" placeholder="DD/MM/AAAA" maxdate="#{oAddPer.fechaHoy}"
+                                                readonlyInput="true" navigator="true" required="true"
+                                                requiredMessage="Se requiere de la fecha de realizacion">
+					<p:ajax />
+				    </p:calendar>
+				</p:column>
+				<p:column>
+				    <p:inputTextarea value="#{oCapacitacion.descripcion}" rows="1" maxlength="150" lang="es" cols="60"
+						     autoResize="true">
+					<p:ajax />
+				    </p:inputTextarea>
+				</p:column>
+				<p:column>
+                                    <p:commandButton value="Eliminar" icon="ui-icon-minus" update="dtCapacitacionPers" process="@this" resetValues="true"
+						     actionListener="#{oAddPer.delRowCapacitacionPersonal(oCapacitacion)}" />
+				</p:column>
+				<f:facet name="footer">
+				    <center>
+					<p:commandButton value="Agregar Capacitacion" icon="ui-icon-plus" update="dtCapacitacionPers :msgs"
+                                                         process="dtCapacitacionPers" resetValues="true" actionListener="#{oAddPer.addRowCapacitacionPersonal()}" />
+				    </center>
+				</f:facet>
+			    </p:dataTable>
+			</p:scrollPanel>
+			<br/>
+			<center>
+			    <p:commandButton value="Registrar Cambios" icon="ui-icon-plus" update=":msgs"
+					     actionListener="#{oAddPer.registrarCapacitacion()}" />
+			    <br/>
+			    <br/>
+                            <p:commandButton value="Regresar" icon="ui-icon-arrowreturnthick-1-w" process="@this" resetValues="true"
+                                             update="dtCapacitacionPers" oncomplete="PF('varDlgCapacitacionPers').hide();">
+				<p:confirm header="&iquest;Cerrar Capacitaci&oacute;n del Personal?"
+					   message="&iexcl;Los cambios realizados NO ser&aacute;n almacenados!" icon="ui-icon-alert" />
+			    </p:commandButton>
+			</center>
+		    </p:dialog>
+		    <center>
+			<p:commandButton id="btnMod" value="Actualizar Registro" icon="ui-icon-disk" update=":frmCompBusqPersHosp :frmCompRegPersHosp"
+					 action="#{oAddPer.modificaPersonal()}" resetValues="true" ajax="false" disabled="#{!oAddPer.personalActivo}" />
+			<br/>
+			<br/>
+			<p:commandButton value="Cambiar Estado Personal" icon="ui-icon-cancel" type="button"
+					 onclick="PF('varDlgEstadoPersonal').show();" />
+			<br/>
+			<p:commandButton value="Modificar Documentos" icon="ui-icon-document" disabled="#{!oAddPer.personalActivo}">
+			    <p:ajax update="dtDocumentos" listener="#{oFiltroDocJB.crearListaDocumentos(oAddPer.med.noTarjeta)}"
+				    oncomplete="PF('varDlgDocumentos').show();" />
+			</p:commandButton>
+                        <p:spacer width="20px" />
+			<p:commandButton value="Capacitaci&oacute;n del Personal" icon="ui-icon-note" disabled="#{!oAddPer.personalActivo}">
+			    <p:ajax update="dtCapacitacionPers" listener="#{oAddPer.crearListaCapacitacionPersonal()}" process="@this"
+                                    oncomplete="PF('varDlgCapacitacionPers').show();" resetValues="true" />
+			</p:commandButton>
+		    </center>
+		</h:form>
+		<h:form>
+		    <p:confirmDialog id="dlgConfirm" widgetVar="varDlgConfirm" global="true" closable="true" closeOnEscape="true"
+				    hideEffect="fold" showEffect="fold">
+			<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			<p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+		    </p:confirmDialog>
+		</h:form>
+		<p:growl id="msgs" showDetail="true" />
+		<p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+		    <f:facet name="start">
+			<p:graphicImage value="/imgs/loading.gif" />
+		    </f:facet>
+		</p:ajaxStatus>
+	    </ui:define>
+	</ui:composition>
+    </body>
+</html>

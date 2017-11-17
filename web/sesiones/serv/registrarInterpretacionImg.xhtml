@@ -1,0 +1,958 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.registrar} #{etiq.interpretacion} de Estudios de Imagenología"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:tabView id="tbpacimg">
+                <p:ajax event="tabChange" listener="#{EstRealImagen.cambiarEstadoSeleccionado}" />
+                <p:tab title="Solicitudes de Rayos X">
+                    <h:form id="frmimg">
+                        <p:growl id="msg" showDetail="true" />
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial de solicitud: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni"  effect="fold" required="#{EstRealImagen.fecIni}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin"  effect="fold" required="#{EstRealImagen.fecFin}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.rebotesSolPend}" update=":tbpacimg:frmimg:tblLisPac1"  />
+                        </p:panelGrid>
+                        <br/>
+                        <div id="tablaConsul">
+                        <p:dataTable id="tblLisPac1" 
+                                    value="#{EstRealImagen.ordenesPend}" 
+                                    var="oImagen" 
+                                    emptyMessage="No hay datos" 
+                                    paginator="true" 
+                                    rows="10"
+                                    rowKey="#{oImagen.identificador}"
+                                    selection="#{EstRealImagen.seleccionado}">
+                           <p:ajax event="rowSelectRadio"></p:ajax>
+                           <f:facet name="header">
+                               <h:outputText value="Lista Pacientes"/>
+                           </f:facet>
+                           <p:column selectionMode="single" width="5%">
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.nompac} y #{etiq.expediente}"/>
+                               </f:facet>
+                               <h:outputText value="#{oImagen.episodio.paciente.nombres} #{oImagen.episodio.paciente.apPaterno} #{oImagen.episodio.paciente.apMaterno} ," /><h:outputText value="#{oImagen.episodio.expediente.numero}" />
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.medicoSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.medicoTratante.nombres} #{oImagen.episodio.medicoTratante.apPaterno} #{oImagen.episodio.medicoTratante.apMaterno}" />
+                           </p:column>
+                           <p:column width="20%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.diagnostico}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.diagIngreso.descripcionDiag}" />
+                           </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estudioSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.estudio.descripcion}" />
+                            </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estatusSol}" />
+                               </f:facet>
+                               <h:outputText value="#{oImagen.situacion.valor}" />
+                           </p:column>
+                           <p:column>
+                               <f:facet name="header">
+                                   <p:outputLabel value="#{etiq.accion}" styleClass="mensaje" />
+                               </f:facet>
+                               <p:commandButton id="btnReal" value="Realizado" icon="ui-icon-check" actionListener="#{EstRealImagen.modificaEstadoSolicitud(1,1)}" update=":tbpacimg:frmimg:tblLisPac1 :tbpacimg:frmimg:msg" />
+                               <p:commandButton id="btnCanc" value="Cancelado" icon="ui-icon-check" actionListener="#{EstRealImagen.modificaEstadoSolicitud(2,1)}" update=":tbpacimg:frmimg:tblLisPac1 :tbpacimg:frmimg:msg"/>
+                           </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton process="tblLisPac1" id="btnDetalles" icon="ui-icon-search" update=":tbpacimg:frmimg:pacImg" value="Ver Detalles" actionListener="#{EstRealImagen.detallePaciente}" oncomplete="PF('dlgPaciente1').show()"/>
+                                <p:commandButton process="tblLisPac1" id="btnInter"  icon="ui-icon-plus" value="Editar Interpretación" update=":tbpacimg:frmimg:msg :tbpacimg:frmint:btnRegInt" actionListener="#{EstRealImagen.rebotesVal}" oncomplete="PF('dlgInterpretacion').show()" />
+                                <p:commandButton process="tblLisPac1" id="btnFile"  icon="ui-icon-plus" value="Adjuntar archivo" update=":tbpacimg:frmimg:msg" actionListener="#{EstRealImagen.rebotesVal}" oncomplete="PF('dlgFile').show()" />
+                            </f:facet>
+                        </p:dataTable>
+                       </div>
+                       <p:dialog header="Datos del Paciente" widgetVar="dlgPaciente1"
+                            height="40%" width="70%" resizable="false" position="center">
+                            <p:outputPanel id="pacImg">
+                                <p:panelGrid styleClass="frm_centrado" rendered="#{not empty EstRealImagen.selPac}"> 
+                                    <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                      </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.nombres} #{EstRealImagen.selPac.episodio.paciente.apPaterno} #{EstRealImagen.selPac.episodio.paciente.apMaterno}" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.expediente.numero}"/>
+                                     </p:column>
+                                 </p:row>
+                                 <p:row>
+                                     <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                      </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.area.descripcion}"/>
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.cama.numero}"/>
+                                     </p:column>
+                                 </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.edadNumero}"/>
+                                     </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.sexo} " styleClass="mensaje" />
+                                     </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.sexoP}"/>
+                                     </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.medicoTratante.nombres} #{EstRealImagen.selPac.episodio.medicoTratante.apPaterno} #{EstRealImagen.selPac.episodio.medicoTratante.apMaterno}"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.fechaSolicitud}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="3" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.diagIngreso.descripcionDiag}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.estudio.descripcion}"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.estudio.claveStudio}"/>
+                                      </p:column>
+                                  </p:row>                
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.regionEstudiar}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.regionSolicitada.valor}"/>
+                                      </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.portatil}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{EstRealImagen.selPac.portat}" styleClass="mensaje" />
+                                      </p:column>
+                                  </p:row>
+                                  <p:row> 
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.placaSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.tipoPlaca.valor}"/>
+                                      </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.estadoEstudio}" styleClass="mensaje"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.situacion.valor}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                     <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.estatusPago}" styleClass="mensaje"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{EstRealImagen.selPac.sitPago.valor}" styleClass="mensaje"/>
+                                      </p:column>
+                                  </p:row>
+                             </p:panelGrid>
+                         </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+                    <h:form id="frmint">
+                        <p:growl id="msgi" showDetail="true"/>
+                        <p:dialog header="Editar Interpretación" widgetVar="dlgInterpretacion"
+                                  height="60%" width="60%" resizable="true" visible="#{EstRealImagen.boton}">
+                        
+                            <p:outputPanel>
+                                <h:panelGrid columns="1" styleClass="frm_centrado"
+                                             rowClasses="frm_centrado">
+                                     <h:outputText value="Ingrese la Interpretación" styleClass="mensaje"/>
+                                     <p:inputTextarea id="txtAInter" value="#{EstRealImagen.estImagen.impresionDiagnostica}" cols="70" rows="20"/>
+                                     <br/>
+                                     <p:row>
+                                         <p:commandButton id="btnRegInt" value="Guardar" actionListener="#{EstRealImagen.modificarInterpretacion}" disabled="#{EstRealImagen.showButton}" update=":tbpacimg:frmimg:msg :tbpacimg:frmimg:tblLisPac1 :tbpacimg:frmint:txtAInter"/>
+                                         <p:commandButton value="Cerrar" update="txtAInter" oncomplete="PF('dlgInterpretacion').hide()"/>
+                                     </p:row>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+                    <h:form id="frmfile">
+                        <p:growl id="msgf" showDetail="true" />
+                        <p:dialog header="Carga de archivo" widgetVar="dlgFile"
+                                  width="50%"  height="40%">
+                            <p:outputLabel>
+                            <h:panelGrid styleClass="frm_centrado">
+                                    <f:facet name="header">
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel value="Agregar Archivo PDF" styleClass="mensaje" />
+                                            </p:column>
+                                        </p:row>
+                                    </f:facet>
+                                     <p:row>
+                                         <p:column>
+                                             <p:fileUpload fileUploadListener="#{EstRealImagen.handleFileUpload}" 
+                                                    allowTypes="/(\.|\/)(pdf|txt)$/"
+                                                    sizeLimit="1024000" update=":tbpacimg:frmfile:msgf"
+                                                    mode="advanced" dragDropSupport="false"/>
+                                         </p:column>
+                                     </p:row>
+                                 </h:panelGrid>
+                            </p:outputLabel>
+                        </p:dialog>
+                    </h:form>
+                </p:tab>
+                <p:tab title="Solicitudes de Mastografía">
+                    <h:form id="frmult">
+                        <p:growl id="msg3" showDetail="true" />
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial de solicitud: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni"  effect="fold" required="#{EstRealImagen.fecIni}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin"  effect="fold" required="#{EstRealImagen.fecFin}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.rebotesSolPend3}" update=":tbpacimg:frmult:tblLisPac3"  />
+                        </p:panelGrid>
+                        <br/>
+                        <div id="tablaConsul">
+                        <p:dataTable id="tblLisPac3" 
+                                     value="#{EstRealImagen.ordenesPendTres}" 
+                                    var="oImagen" 
+                                    emptyMessage="No hay datos" 
+                                    paginator="true" 
+                                    rows="10"
+                                    rowKey="#{oImagen.identificador}"
+                                    selection="#{EstRealImagen.seleccionado}">
+                           <p:ajax event="rowSelectRadio"></p:ajax>
+                           <f:facet name="header">
+                               <h:outputText value="Lista Pacientes"/>
+                           </f:facet>
+                           <p:column selectionMode="single" width="5%">
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.nompac} y #{etiq.expediente}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.paciente.nombres} #{oImagen.episodio.paciente.apPaterno} #{oImagen.episodio.paciente.apMaterno} ," /><h:outputText value="#{oImagen.episodio.expediente.numero}" />
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.medicoSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.medicoTratante.nombres} #{oImagen.episodio.medicoTratante.apPaterno} #{oImagen.episodio.medicoTratante.apMaterno}" />
+                           </p:column>
+                           <p:column width="20%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.diagnostico}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.diagIngreso.descripcionDiag}" />
+                           </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estudioSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.estudio.descripcion}" />
+                            </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estatusSol}" />
+                               </f:facet>
+                               <h:outputText value="#{oImagen.situacion.valor}" />
+                           </p:column>
+                           <p:column>
+                               <f:facet name="header">
+                                   <p:outputLabel value="#{etiq.accion}" styleClass="mensaje" />
+                               </f:facet>
+                               <p:commandButton id="btnReal3" value="Realizado" icon="ui-icon-check" actionListener="#{EstRealImagen.modificaEstadoSolicitud(1,3)}" update=":tbpacimg:frmult:tblLisPac3 :tbpacimg:frmult:msg3" />
+                               <p:commandButton id="btnCanc3" value="Cancelado" icon="ui-icon-check" actionListener="#{EstRealImagen.modificaEstadoSolicitud(2,3)}" update=":tbpacimg:frmult:tblLisPac3 :tbpacimg:frmult:msg3"/>
+                           </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton process="tblLisPac3" id="btnDetalles" icon="ui-icon-search" update=":tbpacimg:frmult:pacImg" value="Ver Detalles" actionListener="#{EstRealImagen.detallePaciente}" oncomplete="PF('dlgPaciente3').show()"/>
+                                <p:commandButton process="tblLisPac3" id="btnInter"  icon="ui-icon-plus" value="Editar Interpretación" update=":tbpacimg:frmult:msg3 :tbpacimg:frmint3:btnRegInt3" actionListener="#{EstRealImagen.rebotesVal}" oncomplete="PF('dlgInterpretacion3').show()" />
+                            </f:facet>
+                        </p:dataTable>
+                       </div>
+                       <p:dialog header="Datos del Paciente" widgetVar="dlgPaciente3"
+                            height="40%" width="70%" resizable="false" position="center">
+                            <p:outputPanel id="pacImg">
+                                <p:panelGrid styleClass="frm_centrado" rendered="#{not empty EstRealImagen.selPac}"> 
+                                    <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                      </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.nombres} #{EstRealImagen.selPac.episodio.paciente.apPaterno} #{EstRealImagen.selPac.episodio.paciente.apMaterno}" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.expediente.numero}"/>
+                                     </p:column>
+                                 </p:row>
+                                 <p:row>
+                                     <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                      </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.area.descripcion}"/>
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.cama.numero}"/>
+                                     </p:column>
+                                 </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.edadNumero}"/>
+                                     </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.sexo} " styleClass="mensaje" />
+                                     </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.sexoP}"/>
+                                     </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.medicoTratante.nombres} #{EstRealImagen.selPac.episodio.medicoTratante.apPaterno} #{EstRealImagen.selPac.episodio.medicoTratante.apMaterno}"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.fechaSolicitud}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="3" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.diagIngreso.descripcionDiag}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.estudio.descripcion}"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.estudio.claveStudio}"/>
+                                      </p:column>
+                                  </p:row>                
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.regionEstudiar}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.regionSolicitada.valor}"/>
+                                      </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.portatil}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{EstRealImagen.selPac.portat}" styleClass="mensaje" />
+                                      </p:column>
+                                  </p:row>
+                                  <p:row> 
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.placaSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.tipoPlaca.valor}"/>
+                                      </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.estadoEstudio}" styleClass="mensaje"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.situacion.valor}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                     <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.estatusPago}" styleClass="mensaje"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{EstRealImagen.selPac.sitPago.valor}" styleClass="mensaje"/>
+                                      </p:column>
+                                  </p:row>
+                             </p:panelGrid>
+                         </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+                    <h:form id="frmint3">
+                        <p:growl id="msgi3" showDetail="true"/>
+                        <p:dialog header="Editar Interpretación" widgetVar="dlgInterpretacion3"
+                                  height="60%" width="60%" resizable="true" visible="#{EstRealImagen.boton}">
+                        
+                            <p:outputPanel>
+                                <h:panelGrid columns="1" 
+                                             rowClasses="frm_centrado"
+                                             styleClass="frm_centrado">
+                                     <h:outputText value="Ingrese la Interpretación" styleClass="mensaje"/>
+                                     <p:inputTextarea id="txtAInter" value="#{EstRealImagen.estImagen.impresionDiagnostica}" cols="70" rows="20"/>
+                                     <br/>
+                                     <p:row>
+                                         <p:commandButton id="btnRegInt3" value="Guardar" actionListener="#{EstRealImagen.modificarInterpretacion}" disabled="#{EstRealImagen.showButton}" update=":tbpacimg:frmint3:msgi3 :tbpacimg:frmint3:txtAInter"/>
+                                         <p:commandButton value="Cerrar" update="txtAInter" oncomplete="PF('dlgInterpretacion3').hide()"/>
+                                     </p:row>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+
+                </p:tab>
+                <p:tab title="Solicitudes de Ultrasonido">
+                    <h:form id="frmmas">
+                        <p:growl id="msg4" showDetail="true" />
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial de solicitud: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni"  effect="fold" required="#{EstRealImagen.fecIni}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin"  effect="fold" required="#{EstRealImagen.fecFin}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.rebotesSolPend4}" update=":tbpacimg:frmmas:tblLisPac4"  />
+                        </p:panelGrid>
+                        <br/>
+                        <div id="tablaConsul">
+                        <p:dataTable id="tblLisPac4" 
+                                     value="#{EstRealImagen.ordenesPendCuatro}" 
+                                    var="oImagen" 
+                                    emptyMessage="No hay datos" 
+                                    paginator="true" 
+                                    rows="10"
+                                    rowKey="#{oImagen.identificador}"
+                                    selection="#{EstRealImagen.seleccionado}">
+                           <p:ajax event="rowSelectRadio"></p:ajax>
+                           <f:facet name="header">
+                               <h:outputText value="Lista Pacientes"/>
+                           </f:facet>
+                           <p:column selectionMode="single" width="5%">
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.nompac} y #{etiq.expediente}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.paciente.nombres} #{oImagen.episodio.paciente.apPaterno} #{oImagen.episodio.paciente.apMaterno} ," /><h:outputText value="#{oImagen.episodio.expediente.numero}" />
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.medicoSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.medicoTratante.nombres} #{oImagen.episodio.medicoTratante.apPaterno} #{oImagen.episodio.medicoTratante.apMaterno}" />
+                           </p:column>
+                           <p:column width="20%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.diagnostico}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.diagIngreso.descripcionDiag}" />
+                           </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estudioSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.estudio.descripcion}" />
+                            </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estatusSol}" />
+                               </f:facet>
+                               <h:outputText value="#{oImagen.situacion.valor}" />
+                           </p:column>
+                           <p:column>
+                               <f:facet name="header">
+                                   <p:outputLabel value="#{etiq.accion}" styleClass="mensaje" />
+                               </f:facet>
+                               <p:commandButton id="btnReal4" value="Realizado" icon="ui-icon-check" actionListener="#{EstRealImagen.modificaEstadoSolicitud(1,4)}" update=":tbpacimg:frmmas:tblLisPac4 :tbpacimg:frmmas:msg4" />
+                               <p:commandButton id="btnCanc4" value="Cancelado" icon="ui-icon-check" actionListener="#{EstRealImagen.modificaEstadoSolicitud(2,4)}" update=":tbpacimg:frmmas:tblLisPac4 :tbpacimg:frmmas:msg4"/>
+                           </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton process="tblLisPac4" id="btnDetalles" icon="ui-icon-search" update=":tbpacimg:frmmas:pacImg" value="Ver Detalles" actionListener="#{EstRealImagen.detallePaciente}" oncomplete="PF('dlgPaciente4').show()"/>
+                                <p:commandButton process="tblLisPac4" id="btnInter"  icon="ui-icon-plus" value="Editar Interpretación" update=":tbpacimg:frmmas:msg4 :tbpacimg:frmint4:btnRegInt4" actionListener="#{EstRealImagen.rebotesVal}" oncomplete="PF('dlgInterpretacion4').show()" />
+                            </f:facet>
+                        </p:dataTable>
+                       </div>
+                       <p:dialog header="Datos del Paciente" widgetVar="dlgPaciente4"
+                            height="40%" width="70%" resizable="false" position="center">
+                            <p:outputPanel id="pacImg">
+                                <p:panelGrid styleClass="frm_centrado" rendered="#{not empty EstRealImagen.selPac}"> 
+                                    <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                      </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.nombres} #{EstRealImagen.selPac.episodio.paciente.apPaterno} #{EstRealImagen.selPac.episodio.paciente.apMaterno}" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.expediente.numero}"/>
+                                     </p:column>
+                                 </p:row>
+                                 <p:row>
+                                     <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                      </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.area.descripcion}"/>
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                     </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                         <h:outputText value="#{EstRealImagen.selPac.episodio.cama.numero}"/>
+                                     </p:column>
+                                 </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.edadNumero}"/>
+                                     </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.sexo} " styleClass="mensaje" />
+                                     </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.sexoP}"/>
+                                     </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.medicoTratante.nombres} #{EstRealImagen.selPac.episodio.medicoTratante.apPaterno} #{EstRealImagen.selPac.episodio.medicoTratante.apMaterno}"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.fechaSolicitud}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="3" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.episodio.diagIngreso.descripcionDiag}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.estudio.descripcion}"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.estudio.claveStudio}"/>
+                                      </p:column>
+                                  </p:row>                
+                                  <p:row>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.regionEstudiar}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.regionSolicitada.valor}"/>
+                                      </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.portatil}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{EstRealImagen.selPac.portat}" styleClass="mensaje" />
+                                      </p:column>
+                                  </p:row>
+                                  <p:row> 
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.placaSol}" styleClass="mensaje" />
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.tipoPlaca.valor}"/>
+                                      </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.estadoEstudio}" styleClass="mensaje"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputText value="#{EstRealImagen.selPac.situacion.valor}"/>
+                                      </p:column>
+                                  </p:row>
+                                  <p:row>
+                                     <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{etiq.estatusPago}" styleClass="mensaje"/>
+                                      </p:column>
+                                      <p:column colspan="1" rowspan="1">
+                                          <h:outputLabel value="#{EstRealImagen.selPac.sitPago.valor}" styleClass="mensaje"/>
+                                      </p:column>
+                                  </p:row>
+                             </p:panelGrid>
+                         </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+                    <h:form id="frmint4">
+                        <p:growl id="msgi4" showDetail="true"/>
+                        <p:dialog header="Editar Interpretación" widgetVar="dlgInterpretacion4"
+                                  height="60%" width="60%" resizable="true" visible="#{EstRealImagen.boton}">
+                        
+                            <p:outputPanel>
+                                <h:panelGrid columns="1" 
+                                             rowClasses="frm_centrado"
+                                             styleClass="frm_centrado">
+                                     <h:outputText value="Ingrese la Interpretación" styleClass="mensaje"/>
+                                     <p:inputTextarea id="txtAInter" value="#{EstRealImagen.estImagen.impresionDiagnostica}" cols="70" rows="20"/>
+                                     <br/>
+                                     <p:row>
+                                         <p:commandButton id="btnRegInt4" value="Guardar" actionListener="#{EstRealImagen.modificarInterpretacion}" disabled="#{EstRealImagen.showButton}" update=":tbpacimg:frmint4:msgi4 :tbpacimg:frmint4:txtAInter"/>
+                                         <p:commandButton value="Cerrar" update="txtAInter" oncomplete="PF('dlgInterpretacion4').hide()"/>
+                                     </p:row>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+
+                </p:tab>
+                <p:tab title="Solicitudes de Tomografía">
+                    <h:form id="frmtomo">
+                        <p:growl id="msg1" showDetail="true" />
+                        <p:panelGrid styleClass="frm_centrado" columns="7">
+                            <p:outputLabel id="fechaIni1" value="Fecha inicial de solicitud: " styleClass="mensaje"/>
+                            <p:calendar id="fechaIni2"  effect="fold" required="#{EstRealImagen.fecIni}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealImagen.fechaIni}" maxdate="#{EstRealImagen.estImagen.fechaActual()}" locale="es" readonlyInput="true">
+                                    <p:ajax event="dateSelect" update="fechaFin2"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin2"  effect="fold" required="#{EstRealImagen.fecFin}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealImagen.fechaFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealImagen.fechaIni}" locale="es" readonlyInput="true">
+                                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{EstRealImagen.rebotesSolPend2}" update=":tbpacimg:frmtomo:tblLisPac2" />
+                        </p:panelGrid>
+                        <br/>
+                        <div id="tablaConsul1">
+                        <p:dataTable id="tblLisPac2" 
+                                     value="#{EstRealImagen.ordenesPendDos}" 
+                                    var="oImagen" 
+                                    emptyMessage="No hay datos" 
+                                    paginator="true" 
+                                    rows="10"
+                                    rowKey="#{oImagen.identificador}"
+                                    selection="#{EstRealImagen.seleccionado}">
+                           <p:ajax event="rowSelectRadio"></p:ajax>
+                           <f:facet name="header">
+                               <h:outputText value="Lista Pacientes"/>
+                           </f:facet>
+                           <p:column selectionMode="single" width="5%">
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.nompac}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.paciente.nombres} #{oImagen.episodio.paciente.apPaterno} #{oImagen.episodio.paciente.apMaterno}" />
+                           </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.expediente}"/>
+                               </f:facet>
+                               <h:outputText value="#{oImagen.episodio.expediente.numero}" />
+                           </p:column>
+                           <p:column width="15%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.medicoSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.medicoTratante.nombres} #{oImagen.episodio.medicoTratante.apPaterno} #{oImagen.episodio.medicoTratante.apMaterno}" />
+                           </p:column>
+                           <p:column width="25%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.diagnostico}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.episodio.diagIngreso.descripcionDiag}" />
+                           </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estudioSol}"/>
+                               </f:facet>
+                                <h:outputText value="#{oImagen.estudio.descripcion}" />
+                            </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.estatusSol}" />
+                               </f:facet>
+                               <h:outputText value="#{oImagen.situacion.valor}" />
+                           </p:column>
+                           <p:column width="10%">
+                               <f:facet name="header">
+                                   <h:outputText value="#{etiq.accion}" />
+                               </f:facet>
+                               <p:commandButton id="btnCanc4" value="Cancelado" icon="ui-icon-check" actionListener="#{EstRealImagen.modificaEstadoSolicitud(2,2)}" update=":tbpacimg:frmtomo:tblLisPac2 :tbpacimg:frmtomo:msg1"/>
+                           </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton process="tblLisPac2" id="btnDetalles" icon="ui-icon-search" update=":tbpacimg:frmtomo:pacImg2" value="Ver Detalles" actionListener="#{EstRealImagen.detallePaciente}" oncomplete="PF('dlgPaciente2').show()"/>
+                                <p:commandButton process="tblLisPac2" id="btnInter"  icon="ui-icon-plus" value="Editar Interpretación" update=":tbpacimg:frmtomo:msg1 :tbpacimg:frmint2:btnRegInt" actionListener="#{EstRealImagen.rebotesVal}" oncomplete="PF('dlgInterpretacion2').show()" />
+                            </f:facet>
+                        </p:dataTable>
+                       </div>
+                      <p:dialog header="Datos del Paciente" widgetVar="dlgPaciente2"
+                                height="40%" width="90%" resizable="false" position="center" modal="true">
+                <p:outputPanel id="pacImg2">
+                    <p:panelGrid styleClass="frm_centrado" rendered="#{not empty EstRealImagen.selPac}"> 
+                        <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                             </p:column>
+                            <p:column colspan="1" rowspan="1">
+                                <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.nombres} #{EstRealImagen.selPac.episodio.paciente.apPaterno} #{EstRealImagen.selPac.episodio.paciente.apMaterno}" />
+                            </p:column>
+                            <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                            </p:column>
+                            <p:column colspan="1" rowspan="1">
+                                <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.expediente.numero}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="1" rowspan="1">
+                                 <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                             </p:column>
+                            <p:column colspan="1" rowspan="1">
+                                <h:outputText value="#{EstRealImagen.selPac.episodio.area.descripcion}"/>
+                            </p:column>
+                            <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                            </p:column>
+                            <p:column colspan="1" rowspan="1">
+                                <h:outputText value="#{EstRealImagen.selPac.episodio.cama.numero}"/>
+                            </p:column>
+                        </p:row>
+                         <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.edadNumero}"/>
+                            </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.sexo} " styleClass="mensaje" />
+                            </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.sexoP}"/>
+                            </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.episodio.medicoTratante.nombres} #{EstRealImagen.selPac.episodio.medicoTratante.apPaterno} #{EstRealImagen.selPac.episodio.medicoTratante.apMaterno}"/>
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.fechaSolicitud}"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="2" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.episodio.diagIngreso.descripcionDiag}"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.estudio.descripcion}"/>
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.estudio.claveStudio}"/>
+                             </p:column>
+                         </p:row>                
+                         <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.alergias}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.episodio.paciente.expediente.antecPatologicos.alergias}"/>
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputLabel value="#{etiq.regionEstudiar}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.regionSolicitada.valor}"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.cantidadMedCon}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputText value="#{EstRealImagen.selPac.cantMedio}"/>
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                <h:outputLabel value="#{etiq.medioContrasteTipo}" styleClass="mensaje" />
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.medioContraste.valor}"/>
+                             </p:column>
+                         </p:row>
+                         <p:row>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputLabel value="#{etiq.estadoEstudio}" styleClass="mensaje"/>
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputText value="#{EstRealImagen.selPac.situacion.valor}"/>
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputLabel value="#{etiq.estatusPago}" styleClass="mensaje"/>
+                             </p:column>
+                             <p:column colspan="1" rowspan="1">
+                                 <h:outputLabel value="#{EstRealImagen.selPac.sitPago.valor}" styleClass="mensaje"/>
+                             </p:column>
+                         </p:row>
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+                        <p:dialog header="Editar Interpretación" widgetVar=""
+                                    height="60%" width="60%" resizable="true" visible="#{EstRealImagen.boton}">
+                            <p:outputPanel id="interpretacion" >
+                                  <h:panelGrid columns="1" 
+                                               rowClasses="frm_centrado"
+                                               styleClass="frm_centrado">
+                                     <h:outputText value="Ingrese la Interpretación" styleClass="mensaje"/>
+                                     <p:inputTextarea id="txtAInter" value="#{EstRealImagen.estImagen.impresionDiagnostica}" cols="70" rows="20"/>
+                                     <br/>
+                                     <p:row>
+                                         <p:commandButton id="btnRegInt" value="Guardar" actionListener="#{EstRealImagen.modificaEstadoSolicitud(3, 2)}" disabled="#{EstRealImagen.showButton}" update=":tbpacimg:frmtomo:msg1 :tbpacimg:frmtomo:tblLisPac2 :tbpacimg:frmtomo:txtAInter"/>
+                                         <p:commandButton value="Cerrar" update="txtAInter" oncomplete="PF('dlgInterpretacion').hide()"/>
+                                     </p:row>
+                                 </h:panelGrid>
+                              </p:outputPanel>
+                         </p:dialog>
+                    </h:form>
+                    <h:form id="frmint2">
+                        <p:growl id="msgi2" showDetail="true"/>
+                        <p:dialog header="Editar Interpretación" widgetVar="dlgInterpretacion2"
+                                  height="60%" width="60%" resizable="true" visible="#{EstRealImagen.boton}">
+                            <p:outputPanel id="interpretacion">
+                                <h:panelGrid columns="1" 
+                                             rowClasses="frm_centrado"
+                                             styleClass="frm_centrado">
+                                     <h:outputText value="Ingrese la Interpretación" styleClass="mensaje"/>
+                                     <p:inputTextarea id="txtAInter" value="#{EstRealImagen.estImagen.impresionDiagnostica}" cols="70" rows="20"/>
+                                     <br/>
+                                     <p:row>
+                                         <p:commandButton id="btnRegInt" value="Guardar" actionListener="#{EstRealImagen.modificaEstadoSolicitud(3, 2)}" disabled="#{EstRealImagen.showButton}" update=":tbpacimg:frmint2:msgi2 :tbpacimg:frmint2:txtAInter"/>
+                                         <p:commandButton value="Cerrar" oncomplete="PF('dlgInterpretacion2').hide()" update=":tbpacimg:frmtomo:tblLisPac2 :tbpacimg:frmint2:txtAInter"/>
+                                     </p:row>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

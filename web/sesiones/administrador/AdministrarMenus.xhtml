@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+
+                <p:growl id="ladridos" showDetail="true"/>
+
+                <p:ajaxStatus style=" position: absolute; bottom: 50%; left: 50%; " >
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+
+                <p:panel header="Menus">
+                    <h:form id="listaDeMenus">
+                        <p:panel>
+                            <p:autoComplete id="inputMenusBusq" dropdown="true" maxResults="10" style="text-transform: initial;"
+                                            queryDelay="300" size="50" minQueryLength="3" styleClass="bordes"
+                                            value="#{adminMenu.nombre}" completeMethod="#{adminMenu.completaMenu}"
+                                            />
+                            <p:spacer width="40" />
+                            <p:commandButton id="buscarMenu" value="#{etiq.buscar}" icon="ui-icon-search" update=":listaDeMenus:tablaMenus"/>
+                            <p:spacer width="5" />
+                            <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-plus" oncomplete="PF('dialogModMenu').show()"
+                                             update=":dialogModMenu" actionListener="#{adminMenu.nuevoMenu()}">
+                                <f:setPropertyActionListener target="#{adminMenu.tituloVentana}" value="#{etiq.nuevo}" />
+                            </p:commandButton>
+
+                        </p:panel>
+                        <p:separator/>
+                        <p:dataTable id="tablaMenus" var="oMenuEnc" value="#{adminMenu.listaMenus}" paginator="true" rows="15">
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.clave}" />
+                                </f:facet>
+                                <h:outputText value="#{oMenuEnc.claveMenu}"/>
+                            </p:column>
+                            <p:column style="width: 60%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombreMenu}"/>
+                                </f:facet>
+                                <h:outputText value="#{oMenuEnc.descripcion}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.menu} padre" />
+                                </f:facet>
+                                <h:outputText value="#{oMenuEnc.padre.descripcion}" />
+                            </p:column>
+                            <p:column style="width: 25%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="Acciones"/>
+                                </f:facet>
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil" oncomplete="PF('dialogModMenu').show()" 
+                                                 update=":dialogModMenu" actionListener="#{adminMenu.modificarMenu(oMenuEnc)}" >
+                                    <f:setPropertyActionListener target="#{adminMenu.tituloVentana}" value="#{etiq.modificar}" />
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.eliminar}" icon="ui-icon-cancel" oncomplete="PF('dialogoBorrarMenu').show()" 
+                                                 update=":dialogoBorrarMenu" actionListener="#{adminMenu.preparaEliminar(oMenuEnc)}" >
+
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+
+                <p:dialog id="dialogModMenu" widgetVar="dialogModMenu" closable="true" resizable="false" visible="false"
+                          modal="true"  >
+                    <f:facet name="header">
+                        <p:outputLabel value="#{adminMenu.tituloVentana}" />
+                    </f:facet>
+
+                    <h:form id="panelEdicionMenu" rendered="#{adminMenu.mostrarVentanaEdicion}">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.nombre} *"/></p:column>
+                                <p:column>
+                                    <p:inputText maxlength="150" size="60" required="true" value="#{adminMenu.menu.descripcion}" 
+                                                 validatorMessage="Escriba un nombre para el menú" style="text-transform: initial;"/>
+                                </p:column>
+
+                                <p:column rowspan="4">
+                                    <p:commandButton id="pojoSubmit" value="Guardar" style="margin-top:5px" action="#{adminMenu.guardarMenu()}" 
+                                                     oncomplete="PF('dialogModMenu').hide()" update=":listaDeMenus:tablaMenus :ladridos" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.menu} Padre *" /></p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="listaMenus" value="#{adminMenu.menu.padre.claveMenu}">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="" />
+                                        <f:selectItems value="#{adminMenu.todosMenus}" var="menu" 
+                                                       itemLabel="#{menu.descripcion}" itemValue="#{menu.claveMenu}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.icono}" /></p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="listaIconos" value="#{adminMenu.menu.icono.clave}" >
+                                        <f:selectItems value="#{adminMenu.todosIconos}" var="icono"
+                                                       itemLabel="#{icono.nombre}" itemValue="#{icono.clave}" />
+                                        <p:ajax update="prevIcon" listener="#{adminMenu.menu.icono.buscar()}" />
+                                    </p:selectOneMenu>
+                                    <p:spacer width="10px" />
+                                    <p:commandButton id="prevIcon" icon="#{adminMenu.menu.icono.nombre}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:pickList id="PojoPickList" value="#{adminMenu.listaFunciones}" var="funcion"
+                                                itemLabel="#{funcion.descripcion}" itemValue="#{funcion}"
+                                                converter="entityConverter" showCheckbox="true"
+                                                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains">
+
+                                        <f:facet name="sourceCaption">Funciones disponibles</f:facet>
+                                        <f:facet name="targetCaption">Funciones del Menu</f:facet>
+
+
+                                        <p:column>
+                                            <h:outputText value="#{funcion.descripcion}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="en"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputLabel value="#{funcion.menu.descripcion}" />
+                                        </p:column>
+
+                                    </p:pickList>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+
+                </p:dialog>
+
+                <p:dialog id="dialogoBorrarMenu" widgetVar="dialogoBorrarMenu" closable="true" visible="false" resizable="false" dynamic="true" modal="true">
+                    <f:facet name="header" >
+                        <p:outputLabel value="#{etiq.confirmar}" />
+                    </f:facet>
+
+                    <h:form id="formEliminarMenu" rendered="#{adminMenu.renderEliminar}">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:outputLabel value="#{etiq.preguntaEliminarMenu} #{adminMenu.menu.descripcion}?" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.eliminar}" action="#{adminMenu.eliminarMenu()}" 
+                                                     oncomplete="PF('dialogoBorrarMenu').hide()" update=":listaDeMenus:tablaMenus :ladridos" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.cancelar}" onclick="PF('dialogoBorrarMenu').hide()" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

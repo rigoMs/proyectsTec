@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" value="#{etiq.DNA}"/>
+                </h2>
+                <br/>
+                <div>
+                    <h:form id="demandaNA" > 
+                        <p:growl id="mensajes" showDetail="true" />                                       
+                        <p:panelGrid class="frm_centrado" columns="5" >                                      
+                            <h:outputLabel value="Fecha:" id="fechaIni1"  styleClass="mensaje"/>
+                            <p:calendar id="fechaIni"  effect="explode"  required="true" placeholder="dd/mm/aa" showOn="button"    
+                                        requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)"
+                                        value="#{oDNA.fechaIn}" maxdate="#{oDNA.inventario.fechaActual()}" locale="es"  readonlyInput="true">
+                                <p:ajax event="dateSelect" update="fechaFin"/>
+                            </p:calendar>
+                            <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                            <p:calendar id="fechaFin"  effect="explode" required="true" placeholder="dd/mm/aa"  showOn="button" 
+                                        requiredMessage="Debe seleccionar una fecha final" value="#{oDNA.fechaFi}"
+                                        onkeypress="return validaCaracter(event)" mindate="#{oDNA.fechaIn}" maxdate="#{oDNA.inventario.fechaActual()}" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                            </p:calendar>   
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oDNA.eventoDNA}"
+                                             update= "mensajes :demandaNA:tblDemanda"/>
+                        </p:panelGrid>
+                        <br/> 
+                        <p:panelGrid style="margin-top:20px; width: 1000px">
+                            <f:facet name="header">                                 
+                                <p:row>
+                                    <p:column colspan="30">
+                                        <h:outputLabel value="#{etiq.TotalMaterialesNoSurtidos}"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>  
+                            <p:row> 
+                                <p:column>
+                                    <p:dataTable var="demanda" 
+                                                 value="#{oDNA.arrReporteDNA}"  
+                                                 emptyMessage="No Registrados"
+                                                 id="tblDemanda" paginator="true"
+                                                 rows="10" 
+                                                 paginatorPosition="bottom"  >
+                                        <p:column headerText="Fecha" width="15">
+                                            <h:outputLabel value="#{demanda.vale.fechaEmision}"/>                                             
+                                        </p:column> 
+                                        <p:column headerText="#{etiq.clave}" width="30">
+                                            <h:outputLabel value="#{demanda.claveMaterial}"/>                                             
+                                        </p:column>                                         
+                                        <p:column headerText="#{etiq.nombre}" width="50" >
+                                            <h:outputLabel value="#{demanda.nombre}"/>                                             
+                                        </p:column>                                         
+                                        <p:column headerText="Area" width="40" >
+                                            <h:outputLabel value="#{demanda.area}" />
+                 
+                                        </p:column>    
+                                        <p:column headerText="#{etiq.CantidadNoSurtida}" width="20">                                             
+                                            <h:outputLabel value="#{demanda.colectivo.cantSolicitada}"/>
+                                        </p:column> 
+                                    </p:dataTable> 
+                                    <div style="text-align: center"> 
+                                        <p:column>    
+                                            <p:outputLabel  title="Exportar PDF" value="Exportar" styleClass="mensaje" />
+                                            <h:commandLink id="pdf"   >
+                                                <p:graphicImage value="/imgs/pdf.jpg" width="30" />
+                                                <poue:exporter type="pdf" target="tblDemanda" fileName="Demanda No Atendida"
+                                                               orientation="center"  cellFontColor="#090908" cellFontStyle="oblique" facetBackground="#8CF09B" 
+                                                               tableTitle="Reporte de Demanda No Atendida"  cellFontSize="8" fontName="Verdana" 
+                                                               facetFontSize="10"  facetFontStyle="italic" />                                    
+                                            </h:commandLink>
+                                        </p:column>
+                                    </div>
+                                </p:column>
+                            </p:row>                                
+                        </p:panelGrid>  
+                    </h:form> 
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+    
+</html>

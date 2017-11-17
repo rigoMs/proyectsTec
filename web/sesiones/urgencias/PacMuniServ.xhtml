@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+      <div class="centrar">
+        <h2><p:outputLabel value="#{etiq.pacMunicipioUrgs}"/></h2>
+        <br></br>
+        <p:tabView effect="fade" effectDuration="slow">
+          <p:tab title="#{etiq.pacMunicipio}"> 
+              <h:form id="datos">
+                    <br/>
+                         <p:panelGrid styleClass="frm_centrado"> 
+
+                             <p:row>
+                                 <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>  
+                                 <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.pacMunicipio}:"/></p:column> 
+                                 <p:column styleClass="ui-widget-header"><p:outputLabel value=""/></p:column>   
+                             </p:row>
+
+                             <p:row>
+
+                                 <p:column>
+                                     <p:outputLabel value="#{etiq.seleccionar} #{etiq.rangoFechas}"/>
+                                 </p:column>
+
+                                 <p:column>
+                                     <p:outputLabel value="#{etiq.fechaEmisionDel}: "/>
+                                     <p:calendar id="fechaIni" readonlyInput="true" effect="fold" maxdate="#{oPacMunSer.fechaHoy}" required="true" value="#{oPacMunSer.fechaInicial}" locale="es">
+                                         <p:ajax event="dateSelect" update="fechaFin" />
+                                     </p:calendar> 
+                                    <p:outputLabel value=" #{etiq.al} "/>
+                                    <p:calendar id="fechaFin" readonlyInput="true" effect="fold" mindate="#{oPacMunSer.fechaInicial}" maxdate="#{oPacMunSer.fechaHoy}" value="#{oPacMunSer.fechaFinal}" required="true"  locale="es">
+                                        <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                                    </p:calendar> 
+                                </p:column>
+                                 <p:column>
+                                    <p:commandButton styleClass="frm_login" value="#{etiq.consultar}" icon="ui-icon-search" action="#{oPacMunSer.generar()}" update="tablaRes"/>
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                    <br></br>
+               
+                    <p:dataTable id="tablaRes" var="oTab" value="#{oPacMunSer.admision}" emptyMessage="No se han encontrado resultados" style="#{oPacMunSer.activaTabla} width:900px; margin: 0 auto;">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.pacMunicipio}"/>
+                        </f:facet> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.paciente.municipio.descripcionMun}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.medicinaGral}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.totalMedicina}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.gineco}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.totalGineco}"/>
+                        </p:column> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.neonatologia}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.totalNeonato}"/>
+                        </p:column> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.cirugiaGral}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.totalCirugia}"/>
+                        </p:column> 
+
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.pedia}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.totalPedia}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.total}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTab.total}"/>
+                        </p:column>
+                         
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column colspan="6" style="text-align:right" footerText="Total:" />
+                                <p:column footerText="#{oPacMunSer.admisionUrgs.totalMujeres}" />
+                            </p:row>
+                        </p:columnGroup>
+                     </p:dataTable>      
+                     <br/>
+                </h:form>
+            </p:tab>
+            <p:tab title="#{etiq.totalPacHosp}">
+                <h:form>
+                    
+                    <p:dataTable id="totalHosp" var="oTabT" value="#{oPacMunSer.admisionTotal}" emptyMessage="No se han encontrado resultados" style="width:900px; margin: 0 auto;">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.pacServicio}"/>
+                        </f:facet> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.servicio}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTabT.areaServicioHRRB}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.hombres}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTabT.totalHombres}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.mujeres}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTabT.totalMujeres}"/>
+                        </p:column> 
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel class="negrita" value="#{etiq.total}"/>
+                            </f:facet>
+                            <h:outputText value="#{oTabT.total}"/>
+                        </p:column>
+                        
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column colspan="3" style="text-align:right" footerText="Total:" />
+                                <p:column footerText="#{oPacMunSer.admisionUrgs.totalPedia}" />
+                            </p:row>
+                        </p:columnGroup>
+                     </p:dataTable>      
+                     <br/>
+                     
+                     <p:commandButton action="#{oPacMunSer.buscaTotalHosp()}"  value="Actualizar" update="totalHosp" />
+                </h:form>
+            </p:tab>
+         </p:tabView>
+         
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>        
+   </div> 
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

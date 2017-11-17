@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">   
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div>
+                    <h:form id="busca">
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.relacionCamas}"/></h3>
+                        <p:accordionPanel styleClass="centrar" style=" width: 500px; font-weight: bold;">
+                            <p:tab title="#{etiq.filtrado}:" >
+                                <p:outputPanel styleClass="centrar">
+                                <p:panelGrid columns="2">
+                                    <p:outputLabel value="#{etiq.servicio}:"/>                                    
+                                    <p:outputLabel/>
+                                    <p:selectOneMenu effect="puff" id="cmbAreas"
+                                                     value="#{oRCama.cama.servicio.clave}" required="true"
+                                                     requiredMessage="ERROR, Selecciona un Servicio">
+                                        <f:selectItem itemLabel="Elegir servicio" itemValue=""/>
+                                        <f:selectItems value="#{oRCama.mapServicio}"/>
+                                    </p:selectOneMenu>                                    
+                                    <p:commandButton value="Buscar" icon="ui-icon-search" 
+                                                     actionListener="#{oRCama.buscaRelacuionCamasServicios}"
+                                                     update=":relaC :relaC:p1 :relaC:p2">
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                    </h:form>
+                    
+                    <h:form id="relaC">                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <p:panelGrid id="p1" rendered="#{oRCama.render}" style="width: 970px;">
+                            <p:row>
+                                <p:column style="border-color: transparent; background: white;">
+                                    <p:outputLabel value="#{etiq.relacionCamas}"/>
+                                </p:column>
+                                <p:column style="border-color: transparent; background: white;">
+                                    <p:outputLabel value="#{oRCama.cama.servicio.descripcion}"/>&nbsp;
+                                    <p:outputLabel value="#{oRCama.cama.fechaConsulta}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="padding: 0px; border-color: transparent;" colspan="2">
+                                    <p:dataTable value="#{oRCama.arrCamasCensables}" var="oA">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column style="width: 4.7%; color: black;border-color: black; font-size: 13px; font-weight: bold;" headerText="#{etiq.camaM}"/>
+                                                <p:column style="width: 7.9%;color: black;border-color: black; font-size: 13px; font-weight: bold;" headerText="#{etiq.exp2}"/>
+                                                <p:column style="width: 25%;color: black;border-color: black; font-size: 13px; font-weight: bold;" headerText="#{etiq.nombrePaMay}"/>
+                                                <p:column style="width: 27%;color: black;border-color: black; font-size: 13px; font-weight: bold;" headerText="#{etiq.diagnst}"/>
+                                                <p:column style="width: 6.2%;color: black;border-color: black; font-size: 13px; font-weight: bold;" headerText="#{etiq.fechMay}"/>
+                                                <p:column headerText="#{etiq.proglib}" style=" width: 5.5%;color: black; border-color: black; font-size: 13px; font-weight: bold;"/>
+                                            </p:row>                                    
+                                        </p:columnGroup>
+                                        <p:subTable value="#{oA.arrCamas}" var="oAR" >   
+                                            <p:columnGroup type="header">
+                                                <p:row>                                       
+                                                    <p:column colspan="6" headerText="#{oA.descripcionServ}" styleClass="ui-widget-header"
+                                                              style="font-size: 13px; color: black; font-weight: bold; text-align: left;"/>                                                        
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="width: 4%; color: black;border-color: black;font-size: 11px;">
+                                                <p:outputLabel value="#{oAR.episodio.cama.numero}"/>
+                                            </p:column>
+                                            <p:column style="width: 7%;color: black;border-color: black; font-size: 11px;">
+                                                <p:outputLabel value="#{oAR.episodio.paciente.expediente.numero}"/>
+                                            </p:column>
+                                            <p:column style="width: 28%;color: black;border-color: black;font-size: 11px;">
+                                                <p:outputLabel value="#{oAR.episodio.paciente.nombreCompleto}"/>
+                                            </p:column>
+                                            <p:column style="width: 30%;color: black;border-color: black;font-size: 11px;">
+                                                <p:outputLabel value="#{oAR.episodio.diagIngreso.descripcionDiag}"/>
+                                            </p:column>
+                                            <p:column style="width: 15%;color: black;border-color: black;font-size: 11px;">
+                                                <p:outputLabel value="#{oAR.episodio.fechaIngreso}"/>
+                                            </p:column>
+                                            <p:column style="color: black; border-color: black;font-size: 11px;">
+                                                <p:outputLabel value=""/>
+                                            </p:column>
+                                        </p:subTable>                                
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:panelGrid id="p2" styleClass="centrar" rendered="#{oRCama.render}">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:commandButton icon="ui-icon-folder-open" value="#{etiq.imprimir}" oncomplete="PF('printRelacion').show()"
+                                                        update=":imp">
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>                    
+                </div>
+                <p:dialog modal="true" widgetVar="printRelacion" showEffect="puff" hideEffect="puff" header="" height="600" resizable="false">
+                    <h:form id="imp">
+                        <p:outputPanel id="pr2" style="width: 970px;">
+                           <p:panelGrid style="width: 970px; background: white;">
+                                <p:row>
+                                    <p:column  style="height: 70px; width: 190px;border-color: #ffffff; background: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" align="right" width="180" height="65"/>
+                                    </p:column>
+                                    <p:column  style="height: 70px; width: 420px; border-color: #ffffff; background: white;" styleClass="centrado_texto">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}"/></b><br/>
+                                        <b><p:outputLabel style="font-size: 14px;font-style:  normal;" value="#{etiq.deparEnfermeria}"/></b>
+                                    </p:column>
+                                    <p:column  style="height: 70px; width: 230px;border-color: #ffffff; background: white; ">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" align="left" width="190" height="70"/>
+                                    </p:column>
+                                </p:row>  
+                            </p:panelGrid>
+                            <p:panelGrid id="p1" rendered="#{oRCama.render}" style="width: 970px;">
+                                <p:row>
+                                    <p:column style="border-color: transparent; background: white;">
+                                        <p:outputLabel value="#{etiq.relacionCamas}"/>
+                                    </p:column>
+                                    <p:column style="border-color: transparent; background: white;">
+                                        <p:outputLabel value="#{oRCama.cama.servicio.descripcion}"/>&nbsp;
+                                        <p:outputLabel value="#{oRCama.cama.fechaConsulta}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="padding: 0px; border-color: transparent;" colspan="2">
+                                        <p:dataTable value="#{oRCama.arrCamasCensables}" var="oA">
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column style="width: 4.7%; color: black;border-color: black; font-size: 12px; font-weight: bold;" headerText="#{etiq.camaM}"/>
+                                                <p:column style="width: 7.9%;color: black;border-color: black; font-size: 12px; font-weight: bold;" headerText="#{etiq.exp2}"/>
+                                                <p:column style="width: 25%;color: black;border-color: black; font-size: 12px; font-weight: bold;" headerText="#{etiq.nombrePaMay}"/>
+                                                <p:column style="width: 27%;color: black;border-color: black; font-size: 12px; font-weight: bold;" headerText="#{etiq.diagnst}"/>
+                                                <p:column style="width: 6.2%;color: black;border-color: black; font-size: 12px; font-weight: bold;" headerText="#{etiq.fechMay}"/>
+                                                <p:column headerText="#{etiq.proglib}" style=" width: 5.5%;color: black; border-color: black; font-size: 12px; font-weight: bold;"/>
+                                                </p:row>                                    
+                                            </p:columnGroup>
+                                            <p:subTable value="#{oA.arrCamas}" var="oAR" >
+                                                <p:columnGroup type="header">
+                                                    <p:row>                                       
+                                                        <p:column colspan="6" headerText="#{oA.descripcionServ}" styleClass="ui-widget-header"
+                                                                  style="font-size: 12px; border-color: black; color: black; font-weight: bold; text-align: left;"/>                                                        
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column style="width: 4%; color: black;border-color: black;font-size: 11px;">
+                                                    <p:outputLabel value="#{oAR.episodio.cama.numero}"/>
+                                                </p:column>
+                                                <p:column style="width: 7%;color: black;border-color: black; font-size: 11px;">
+                                                    <p:outputLabel value="#{oAR.episodio.paciente.expediente.numero}"/>
+                                                </p:column>
+                                                <p:column style="width: 28%;color: black;border-color: black;font-size: 10px;">
+                                                    <p:outputLabel value="#{oAR.episodio.paciente.nombreCompleto}"/>
+                                                </p:column>
+                                                <p:column style="width: 30%;color: black;border-color: black;font-size: 10px;">
+                                                    <p:outputLabel value="#{oAR.episodio.diagIngreso.descripcionDiag}"/>
+                                                </p:column>
+                                                <p:column style="width: 15%;color: black;border-color: black;font-size: 10px;">
+                                                    <p:outputLabel value="#{oAR.episodio.fechaIngreso}"/>
+                                                </p:column>
+                                                <p:column style="color: black; border-color: black;font-size: 10px;">
+                                                    <p:outputLabel value=""/>
+                                                </p:column>
+                                            </p:subTable>                                
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>                            
+                        <p:panelGrid>
+                            <p:row>
+                                <div class="centrar">
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:commandButton value="#{etiq.imprimir}" type="button" icon="ui-icon-print" >
+                                            <p:printer target="pr2" />
+                                        </p:commandButton>&nbsp;
+                                        <p:commandButton onclick="PF('printRelacion').hide();" value="#{etiq.cerrar}" icon="ui-icon-close">
+                                        </p:commandButton>
+                                    </p:column>                                    
+                                </div>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>                 
+                </p:dialog>      
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus> 
+            </ui:define>
+        </ui:composition>
+    
+</html>
+

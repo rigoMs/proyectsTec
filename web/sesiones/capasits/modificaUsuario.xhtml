@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">          
+            <h:form id="frmpac">                
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/> 
+                <h2><center><h:outputLabel value="#{etiq.modUsu}"/></center></h2>
+            </h:form>
+            <p:tabView id="tmodi" dynamic="true" cache="true">
+                <p:tab  id="tabmodi" title="#{etiq.administrador}">
+                    <h:form id="frma">
+                        <p:growl id="mensajes"  showDetail="true" /> <br/><br/>
+                        <p:panelGrid style="margin-top:30px" id="buscap"> 
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column><center><h:outputLabel value="#{etiq.buscarAdminist}"/> </center></p:column>   
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column> <h:outputLabel value="#{etiq.usuario} "/>
+                                    <p:inputText value="#{regUsuAdm.usuAdm.idUsuario}"  required="true" onkeyup="this.value = this.value.toUpperCase();" requiredMessage="INGRESAR USUARIO"/> 
+                                    <p:commandButton value="#{etiq.buscar}" action="#{regUsuAdm.buscar()}" onclick="location.replace()" update="mensajes"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>                           
+                    </h:form> 
+
+                    <h:form id="datos">
+                        <p:panelGrid style="margin-top:30px">
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header">
+                                    <center>  <h:outputLabel value="#{etiq.datosUsuario}"/> </center>
+                                </p:column>    
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputLabel value="#{etiq.nombUsuario}"/></p:column>
+                                <p:column><p:inputText id="nomusu" value="#{regUsuAdm.usuAdm.idUsuario2}" maxlength="10" required="true" requiredMessage="INGRESAR USUARIO" onkeyup="this.value = this.value.toUpperCase();"/></p:column>
+                                <p:column> <h:outputLabel value="#{etiq.contraseña}"/></p:column>
+                                <p:column colspan="3">
+                                    <p:password id="constrasena" value="#{regUsuAdm.usuAdm.password}" feedback="true" maxlength="20" required="true" requiredMessage="INGRESAR CONTRASEÑA"/>
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="centrado_texto" colspan="6">
+                                    <p:commandButton value="#{etiq.modificar}" icon="ui-icon-disk" ajax="false" action="#{regUsuAdm.modificar()}" rendered="#{regUsuAdm.estadoBoton}" onclick="location.replace()"/>
+                                </p:column>   
+                            </p:row>                               
+                        </p:panelGrid>
+                    </h:form>
+                </p:tab>
+
+                <p:tab  id="tabEli" title="#{etiq.eliminar} #{etiq.usuario}">
+                    <h:form id="frme">
+                        <p:growl id="mensajes"  showDetail="true" /> <br/><br/>
+                        <p:panelGrid style="margin-top:30px" id="buscap"> 
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column><center><h:outputLabel value="#{etiq.buscar} #{etiq.usuario}"/> </center></p:column>   
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column> <h:outputLabel value="#{etiq.usuario} "/>
+                                    <p:inputText value="#{regUsuAdm.usuAdm.idUsuario}"  required="true" onkeyup="this.value = this.value.toUpperCase();" requiredMessage="INGRESAR USUARIO"/> 
+                                    <p:commandButton value="#{etiq.buscar}" action="#{regUsuAdm.buscarElinacion()}" onclick="location.replace()" update="mensajes"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>                           
+                    </h:form> 
+                </p:tab>
+            </p:tabView>
+
+            <h:form id="frmEliUsu">
+                <div style=" text-align: center">
+                    <p:dialog visible="#{regUsuAdm.estadoDlg}" header="#{etiq.eliminar} #{etiq.usuario}" widgetVar="dlgtem" closable="false" modal="true" width="350"  height="100" resizable="false">
+                        <br/>
+                        <h:outputLabel value="¿¿ #{etiq.eliminar} #{etiq.usuario} ??: "/>                   
+                        <h:outputLabel value="#{regUsuAdm.usuAdm.idUsuario}" style="font-size: medium"/>
+                        <br/> 
+                        <br/>
+                        <p:commandButton  value="#{etiq.eliminar}" action="#{regUsuAdm.eliminar()}" onclick="location.replace()"/>  
+                        <p:commandButton value="#{etiq.cancelar}" action="#{regUsuAdm.cambiaEstadoDlg()}" onclick="location.replace()"/>  
+                    </p:dialog>
+                </div>
+            </h:form>
+
+
+        </ui:define>
+    </ui:composition>
+</html>
+

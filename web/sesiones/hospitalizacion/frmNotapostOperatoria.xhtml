@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org./TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:body>
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq."/>
+            <ui:define name="cuerpo">
+                <div class="buscar">
+                    <h:form id="busqueda">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.generaNotaPost}"/></h3>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel />
+                                    <p:inputText styleClass="bordes" id="nom" value="#{notapoo.notaPreoperatoria.epiMed.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="app" value="#{notapoo.notaPreoperatoria.epiMed.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{notapoo.notaPreoperatoria.epiMed.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{notapoo.cargaDatosPaciente(0)}" 
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{notapoo.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>                                
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmLogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{notapoo.notaPreoperatoria.epiMed.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                                    </p:inputText>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{notapoo.cargaDatosPaciente(1)}"
+                                                    update=":busqueda:destino:tblResultado">                                        
+                                        <f:setPropertyActionListener target="#{notapoo.muestraPantalla}" value="#{false}"/> 
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <div class="centrar">
+                            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                                <f:setPropertyActionListener target="#{notapoo.notaPreoperatoria.epiMed.paciente.nombres}" value=""/>
+                                <f:setPropertyActionListener target="#{notapoo.notaPreoperatoria.epiMed.paciente.apPaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{notapoo.notaPreoperatoria.epiMed.paciente.apMaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{notapoo.notaPreoperatoria.epiMed.paciente.expediente.numero}" value="#{0}"/>
+                                <f:setPropertyActionListener target="#{notapoo.muestraPantalla}" value="#{false}"/> 
+                            </p:commandButton>
+                        </div>
+                        <br/>
+                        <p:outputPanel id="destino" styleClass="centrar" >
+                            <div class="centrar">
+                                <p:dataTable id="tblResultado" var="oPacEnc"
+                                             value="#{notapoo.notasPreoperatorias}"
+                                                emptyMessage="#{etiq.noRegistro}" 
+                                                paginator="true" 
+                                                rows="4"                                                
+                                                rendered="#{not empty notapoo.notasPreoperatorias}">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                    </f:facet>
+                                    <p:column style="width: 70px;">
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.fechanac}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.epiMed.paciente.fechaNac}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.nombres}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.epiMed.paciente.nombres}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.appat}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.epiMed.paciente.apPaterno}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.apmat}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.epiMed.paciente.apMaterno}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <p:outputLabel value="#{etiq.cirugia}"/>
+                                        </f:facet>
+                                        <p:outputLabel value="#{oPacEnc.CIE9.descripcion}"/>
+                                    </p:column>
+                                    <p:column style="width: 130px;">
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Ctrl"/>
+                                        </f:facet>                                       
+                                        <p:commandButton icon="ui-icon-search" value="#{etiq.buscarNotas}">
+                                            <p:ajax listener="#{notapoo.buscaNotasPorPaciente(oPacEnc, null, 0)}"
+                                                    oncomplete="PF('NotasP').show()" update=":fcontenedor :oNotas"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>                                
+                        </p:outputPanel>
+                    </h:form>                    
+                </div>
+                <br/><br/>
+                <div class="frm_centrado">
+                    <h:form class="centrar" id="fcontenedor">
+                        <p:tabView id="tabcontenedor" rendered="#{notapoo.muestraPantalla}" dynamic="true">
+                            <p:ajax event="tabChange" listener="#{notapoo.requerir}" update="@this"/>
+                            <p:tab title="#{etiq.notaPostOperatoriaAnv}" id="tab1">
+                                <p:panelGrid styleClass="frm_centrado" id="npo00" style="border-color: #ffffff; background-color: #ffffff;">
+                                    <!--ENCABEZADO-->
+                                    <p:row>
+                                        <p:column colspan="8" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <h:graphicImage value="/imgs/004.jpg" style="width: 898px; height: 157px;"/>
+                                                    </p:column>                                                    
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="8" style="border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff;"></p:column>
+                                    </p:row>
+                                     <p:row>
+                                         <p:column colspan="8" styleClass="ui-widget-header" style="text-align: center; border-color: #000000; border-top-color: #000000; background-color: #ffffff; "><p:outputLabel value="#{etiq.npo00}"/></p:column>
+                                    </p:row>
+                                    <!--TERMINA ENCABEZADO-->
+                                    <!--CUERPO-->
+                                    <br/>
+                                    <br/>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.pacien}:"/>
+                                        </p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;" >
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.epiMed.paciente.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.edad}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;" >
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.epiMed.paciente.edadNumero}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.sexo}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;" >
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.epiMed.paciente.sexoP}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.fechanac}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;" >
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.epiMed.paciente.fechaNac}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.expediente}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.epiMed.paciente.expediente.numero}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.horaInicio}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.fechaEntrada}">
+                                                <f:convertDateTime type="Time" pattern="HH:mm"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.horaTermino}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.fechaSalida}">
+                                                <f:convertDateTime type="Time" pattern="HH:mm"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.diagnosticoPreoperatorio}:"/>
+                                        </p:column>
+                                        <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:autoComplete id="complete2" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                                                        size="80" minQueryLength="3" styleClass="bordes" value="#{notapoo.notaPostoperatoria.notaPreoperatoria.diagnosticoPreoperatorio.descripcionDiag}"
+                                                                        completeMethod="#{notapoo.notaPostoperatoria.notaPreoperatoria.diagnosticoPreoperatorio.completar}"
+                                                                        onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300">
+                                                            <p:ajax update=":busqueda:msgs npo00" event="itemSelect"/>
+                                                        </p:autoComplete>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.cie10}"/>
+                                                        <p:inputText id="clave" size="5" readonly="true" value="#{notapoo.notaPostoperatoria.notaPreoperatoria.diagnosticoPreoperatorio.claveCIE10}" styleClass="bordes"/>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.diagnosticoPostoperatorio}:"/>
+                                        </p:column>
+                                        <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:autoComplete id="complete" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                                                        size="80" minQueryLength="3" styleClass="bordes" value="#{notapoo.notaPostoperatoria.diagnosticoPostoperatorio.descripcionDiag}"
+                                                                        completeMethod="#{notapoo.notaPostoperatoria.diagnosticoPostoperatorio.completar}" required="#{notapoo.tab1}" requiredMessage="#{etiq.notificacion8}"
+                                                                        onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300">
+                                                            <p:ajax update=":busqueda:msgs npo00" event="itemSelect"/>
+                                                        </p:autoComplete>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.cie10}"/>
+                                                        <p:inputText id="cve" size="5" readonly="true" value="#{notapoo.notaPostoperatoria.diagnosticoPostoperatorio.claveCIE10}" styleClass="bordes"/>                                                            
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="7" style="text-align: center;" styleClass="ui-widget-header">
+                                                        <p:outputLabel value="#{etiq.diagnosticoClinico}"/>                                                        
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="7" style="padding: 0px;">
+                                                        <p:dataTable id="tbldx" value="#{notapoo.diagnosticosAgregados}" var="odx" emptyMessage="#{etiq.notificacion9}">
+                                                            <p:column headerText="#{etiq.diagnostico}" styleClass="columnachica centrado_texto" style="width: 90%;">
+                                                                <p:outputLabel value="#{odx.diagnosticoPreoperatorio.descripcionDiag}"/>                                                                
+                                                            </p:column>
+                                                            <p:column headerText="#{etiq.cie10}" styleClass="columnachica centrado_texto" style="width: 10%;">
+                                                                <p:outputLabel value="#{odx.diagnosticoPreoperatorio.clave}"/>
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.operacionPlaneada}:"/>
+                                        </p:column>
+                                        <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{etiq.desdet}:"/></b>&nbsp;&nbsp;&nbsp;
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.notaPreoperatoria.procedimientosRealizados.CIE9.descripcion}"/>&nbsp;&nbsp;&nbsp;                                            
+                                            <b><p:outputLabel value="#{etiq.clve}:"/></b>&nbsp;&nbsp;&nbsp;
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.notaPreoperatoria.procedimientosRealizados.CIE9.clave}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.operacionRealizada}:"/>
+                                        </p:column>
+                                        <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid>
+                                                <p:row>
+                                                    <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <b><p:outputLabel value="#{etiq.desdet}:"/></b>&nbsp;&nbsp;&nbsp;
+                                                        <p:autoComplete id="complete3" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                                                        size="100" minQueryLength="3" styleClass="bordes" value="#{notapoo.notaPostoperatoria.procedimientosRealizados.CIE9.descripcion}" required="#{notapoo.tab1}"
+                                                                        onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300" requiredMessage="#{etiq.notificacion10}"
+                                                                        completeMethod="#{notapoo.notaPostoperatoria.procedimientosRealizados.CIE9.completar}">
+                                                            <p:ajax event="itemSelect" listener="#{notapoo.notaPostoperatoria.procedimientosRealizados.CIE9.nuevo()}" update="npo00"/>
+                                                        </p:autoComplete>&nbsp;&nbsp;&nbsp;
+                                                        <b><p:outputLabel value="#{etiq.clve}:"/></b>&nbsp;&nbsp;&nbsp;
+                                                        <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.CIE9.clave}"/>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.cirujanoPrincipal}:"/>
+                                        </p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.cirujano.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.circulante2}:"/>
+                                        </p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.circulante.nombreCompleto}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.cirujanoAyudante1}:"/>
+                                        </p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.CAyudanteUno.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.cirujanoAyudante2}:"/>
+                                        </p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:selectOneMenu value="#{notapoo.notaPostoperatoria.procedimientosRealizados.CAyudanteDos.noTarjeta}">
+                                                <f:selectItem noSelectionOption="true" itemValue="" itemLabel="SELECCIONE"/>
+                                                <f:selectItems value="#{notapoo.notaPostoperatoria.procedimientosRealizados.CAyudanteDos.buscaAyudanteInstrumentistaCirculante(1)}"
+                                                               var="oMedico" itemLabel="#{oMedico.nombreCompleto}" itemValue="#{oMedico.noTarjeta}"/>
+                                                <p:ajax/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.instrumentista}:"/>
+                                        </p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.instrumentista.nombreCompleto}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anesteciologo}:"/>
+                                        </p:column>
+                                        <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.anestesio.nombreCompleto}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="8" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{etiq.descTecQuirurjica}:"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="8" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                            <p:inputTextarea value="#{notapoo.notaPostoperatoria.procedimientosRealizados.resultado}" style="text-transform: uppercase;" cols="140" rows="47" autoResize="false">
+                                                <p:ajax/>
+                                            </p:inputTextarea>
+                                        </p:column>
+                                    </p:row>
+                                    <!--TERMINA CUERPO-->
+                                    <p:row>
+                                        <p:column colspan="8" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:commandButton value="#{etiq.guard}" icon="ui-icon-disk" 
+                                                             process="@form" update="npo00 :busqueda:msgs" 
+                                                             actionListener="#{notapoo.guardAnverso()}"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>                               
+                            </p:tab>
+                            <p:tab title="#{etiq.notaPostOperatoriaRev}" id="tab2">
+                                <p:panelGrid id="npo01">
+                                    <p:row>
+                                        <p:column colspan="8" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff">
+                                            <p:outputLabel value="#{etiq.hallazgoTOperatorios}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="8" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:inputTextarea value="#{notapoo.notaPostoperatoria.HTransOpe}" 
+                                                             styleClass="bordes" style="text-transform: uppercase;" cols="140" rows="8">
+                                                <p:ajax/>
+                                            </p:inputTextarea>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; width:25%">
+                                            <p:outputLabel value="#{etiq.rGasaCompresas}:"/>
+                                        </p:column>
+                                        <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <b><p:outputLabel value="#{notapoo.notaPostoperatoria.hojaQuirofano.conteoGasas}"/></b>&nbsp;
+                                            <b><p:outputLabel value="#{notapoo.notaPostoperatoria.hojaQuirofano.completoGasas}"/></b>&nbsp;&nbsp;&nbsp;
+                                            <b><p:outputLabel value="#{notapoo.notaPostoperatoria.hojaQuirofano.conteoCompresas}"/></b>&nbsp;
+                                            <b><p:outputLabel value="#{notapoo.notaPostoperatoria.hojaQuirofano.completoCompresas}"/></b>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; width: 25%;">
+                                            <p:outputLabel value="#{etiq.incidentesAcci}:"/>
+                                        </p:column>
+                                        <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:inputText value="#{notapoo.notaPostoperatoria.incidentesAccidentes}" styleClass="bordes" style="text-transform: uppercase;" size="110">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; width: 25%;">
+                                            <p:outputLabel value="#{etiq.sangradoEstimado}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff; width: 10%;">
+                                            <b><p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.cantSangreQx}"/></b>
+                                            <p:outputLabel value=" #{etiq.ml}"/>                                        
+                                        </p:column>
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;"></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; width: 25%;">
+                                            <p:outputLabel value="#{etiq.estTransOpe}:"/>
+                                        </p:column>
+                                        <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:inputText value="#{notapoo.notaPostoperatoria.estudiosTransoperatorios}" size="110" style="text-transform: uppercase;">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="8" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:panelGrid style="border-color: #ffffff; background-color: #ffffff; padding: 0px;">
+                                                <p:row>
+                                                    <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.estPostQuIme}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.ta}:"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.fc}:"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.fr}:"/>
+                                                    </p:column>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.temp}:"/>
+                                                    </p:column>
+                                                    <p:column colspan="2" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.saturacionArterial}:"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputText value="#{notapoo.notaPostoperatoria.epiMed.signosVitales.TA}" size="8" placeholder="000/000"
+                                                                     validator="mx.gob.hrrb.validadores.ValidaEntradaTA">
+                                                            <p:ajax event="valueChange" process="@this" update=":busqueda:msgs"/>
+                                                        </p:inputText>
+                                                    </p:column>                                                    
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputText value="#{notapoo.notaPostoperatoria.epiMed.signosVitales.FC}" size="8" placeholder="20 -200"> 
+                                                            <f:validateLongRange minimum="20" maximum="200"/>
+                                                            <p:ajax event="valueChange" update=":busqueda:msgs"/>                                                              
+                                                        </p:inputText>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputText value="#{notapoo.notaPostoperatoria.epiMed.signosVitales.FR}" size="8" placeholder="20-100">
+                                                            <f:validateLongRange minimum="20" maximum="100"/>
+                                                            <p:ajax event="valueChange" update=":busqueda:msgs"/>                                                            
+                                                        </p:inputText>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputText value="#{notapoo.notaPostoperatoria.epiMed.signosVitales.temp}" size="8"  placeholder="35.0 - 42.0">
+                                                            <f:validateDoubleRange minimum="34.99" maximum="42"/>                                            
+                                                            <p:ajax update=":busqueda:msgs"/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                    <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputText value="#{notapoo.notaPostoperatoria.saturacionArterial}" size="8" placeholder="0 - 100">
+                                                            <f:validateLongRange minimum="0" maximum="100"/>
+                                                            <p:ajax event="valueChange" update=":busqueda:msgs"/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="5" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.aCuidadosInten}:"/>
+                                                    </p:column>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:selectOneRadio value="#{notapoo.notaPostoperatoria.ameritaUCI}">
+                                                            <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                            <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                            <p:ajax event="valueChange" listener="#{notapoo.habilitaMotivo()}" update="npo01"/>
+                                                        </p:selectOneRadio>
+                                                    </p:column>                                                
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.motivo}:"/>
+                                                    </p:column>
+                                                    <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputText value="#{notapoo.notaPostoperatoria.motivo}" 
+                                                                     styleClass="bordes" style="text-transform: uppercase;" size="110" disabled="#{notapoo.motivo}">
+                                                            <p:ajax/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.planManejoTratamientoPostO}:"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputTextarea value="#{notapoo.notaPostoperatoria.planDeTratamiento}" styleClass="bordes" style="text-transform: uppercase;" cols="140" rows="8" autoResize="false">
+                                                            <p:ajax/>
+                                                        </p:inputTextarea>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.pronostico}:"/>
+                                                    </p:column>
+                                                    <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputText value="#{notapoo.notaPostoperatoria.pronostico}" styleClass="bordes" style="text-transform: uppercase;" size="100">
+                                                            <p:ajax/>
+                                                        </p:inputText>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.probCompPost}:"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputTextarea value="#{notapoo.notaPostoperatoria.problemasPostOpe}" styleClass="bordes" style="text-transform: uppercase;" cols="140" rows="8" autoResize="false">
+                                                            <p:ajax/>
+                                                        </p:inputTextarea>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.envioBiopParaExa}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:selectOneRadio value="#{notapoo.notaPostoperatoria.envioPiezasBiopcia}">
+                                                            <f:selectItem itemLabel="SÍ" itemValue="true"/>
+                                                            <f:selectItem itemLabel="NO" itemValue="false"/>
+                                                            <p:ajax event="valueChange" listener="#{notapoo.habilita()}" update="npo01"/>
+                                                        </p:selectOneRadio>
+                                                    </p:column>
+                                                    <p:column colspan="2" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.piezaLlevadaPatologia}:"/>
+                                                    </p:column>
+                                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff;">                                                        
+                                                        <p:selectOneMenu value="#{notapoo.notaPostoperatoria.medicoLlevoPieza.noTarjeta}" disabled="#{notapoo.banderaMedico}"
+                                                                         required="#{notapoo.tab2}" requiredMessage="#{etiq.notificacion1}">
+                                                            <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                                            <f:selectItems value="#{notapoo.notaPostoperatoria.procedimientosRealizados.CAyudanteDos.buscaAyudanteInstrumentistaCirculante(1)}" 
+                                                                           var="oMedico1" itemLabel="#{oMedico1.nombreCompleto}" itemValue="#{oMedico1.noTarjeta}"/>
+                                                            <p:ajax/>
+                                                        </p:selectOneMenu>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.marqueTiciruRea}"/>
+                                                    </p:column>
+                                                    <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:selectBooleanCheckbox value="#{notapoo.limpia}">
+                                                            <p:ajax event="valueChange" listener="#{notapoo.asignaCirugiaLimpia()}"/>
+                                                        </p:selectBooleanCheckbox>
+                                                        <b><p:outputLabel value="#{etiq.limpia}"/></b>&nbsp;&nbsp;&nbsp;
+                                                        <p:selectBooleanCheckbox value="#{notapoo.limpiaContaminada}">
+                                                            <p:ajax event="valueChange" listener="#{notapoo.asignaCirugiaLimpiaContaminda()}"/>
+                                                        </p:selectBooleanCheckbox>
+                                                        <b><p:outputLabel value="#{etiq.limpiaContaminada}"/></b>&nbsp;&nbsp;&nbsp;
+                                                        <p:selectBooleanCheckbox value="#{notapoo.contaminda}">
+                                                            <p:ajax event="valueChange" listener="#{notapoo.asignaCirugiaContaminada()}"/>
+                                                        </p:selectBooleanCheckbox>
+                                                        <b><p:outputLabel value="#{etiq.contaminada}"/></b>&nbsp;&nbsp;&nbsp;
+                                                        <p:selectBooleanCheckbox value="#{notapoo.sucia}">
+                                                            <p:ajax event="valueChange" listener="#{notapoo.asignaCirugiaSucia()}"/>
+                                                        </p:selectBooleanCheckbox>
+                                                        <b><p:outputLabel value="#{etiq.sucia}"/></b>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:outputLabel value="#{etiq.otrosHallazgos}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:inputTextarea value="#{notapoo.notaPostoperatoria.otrosHayasgos}" cols="140" rows="4" autoResize="false" style="text-transform: uppercase;">
+                                                            <p:ajax/>
+                                                        </p:inputTextarea>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                                        <p:panelGrid>
+                                                            <p:row>
+                                                                <p:column colspan="3" styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                                    <p:outputLabel value="#{etiq.respCirugia}"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                                    <p:outputLabel value="#{etiq.nombreCompleto}:"/>
+                                                                </p:column>
+                                                                <p:column styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                                    <p:outputLabel value="#{etiq.cedulaProfesional}:"/>
+                                                                </p:column>
+                                                                <p:column styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                                                    <p:outputLabel value="#{etiq.firma}:"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                                    <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.cirujano.nombreCompleto}"/>
+                                                                </p:column>                                                            
+                                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                                    <p:outputLabel value="#{notapoo.notaPostoperatoria.procedimientosRealizados.cirujano.cedProf}"/>
+                                                                </p:column>
+                                                                <p:column style="width: 50%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;">                                                                    
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="3" styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.realizaNota}"/></p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                                                <p:column styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.cedulaProfesional}:"/></p:column>
+                                                                <p:column styleClass="ui-widget-header" style="width: 500px; border-color: #ffffff; background-color: #ffffff; text-align: center;"><p:outputLabel value="#{etiq.firma}:"/></p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                                    <p:outputLabel value="#{notapoo.notaPostoperatoria.personalHospitalario.nombreCompleto}"/>
+                                                                </p:column>                                                            
+                                                                <p:column style="border-color: #ffffff; background: #ffffff">
+                                                                    <p:outputLabel value="#{notapoo.notaPostoperatoria.personalHospitalario.cedProf}"/>
+                                                                </p:column>
+                                                                <p:column style="width: 50%; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff;background-color: #ffffff;"></p:column>
+                                                            </p:row>
+                                                        </p:panelGrid>
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <!--Botones guargar e imprimir-->
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                            <p:commandButton value="#{etiq.guard}" icon="ui-icon-disk" actionListener="#{notapoo.guardaReverso()}" update=":busqueda:msgs" validateClient="true"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>                               
+                                <!--TERMINA BOTONES GUARDAR E IMPRIMIR-->
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </div>
+                <div>
+                    <p:dialog widgetVar="NotasP" showEffect="puff" hideEffect="puff" modal="true" resizable="false">
+                        <h:form id="oNotas">
+                            <p:panelGrid style="width: 500px; margin-bottom: 6px;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 70%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 25%; text-align: center;">
+                                        <p:outputLabel value="#{etiq.noExp}"/>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{notapoo.temp.epiMed.paciente.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column style="text-align: center;">
+                                        <p:outputLabel value="#{notapoo.temp.epiMed.paciente.expediente.numero}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:outputPanel style="width: 600px;" styleClass="centrar">
+                                <p:dataTable value="#{notapoo.notasPostoperatorias}" var="notas" emptyMessage="#{etiq.notificacion44}" id="tbl"
+                                             paginator="true" rows="3">
+                                    <p:column headerText="#{etiq.numeroNota}" style="width: 80px;">
+                                        <p:outputLabel value="#{notas.consecutivo}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.clve}" style="width: 13%">
+                                        <p:outputLabel value="#{notas.notaPreoperatoria.procedimientosRealizados.CIE9.clave}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.cirugia}">
+                                        <p:outputLabel value="#{notas.notaPreoperatoria.procedimientosRealizados.CIE9.descripcion}"/>                                        
+                                    </p:column>                                    
+                                    <p:column headerText="Ctrl" style="width: 150px;">
+                                        <p:commandButton icon="ui-icon-folder-open" value="#{etiq.modnota}" disabled="#{notapoo.banderaBoton}">
+                                            <p:ajax listener="#{notapoo.buscaNotasPorPaciente(null, notas, 1)}"
+                                                    update=":fcontenedor" oncomplete="PF('NotasP').hide()"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>                                
+                            </p:outputPanel>  
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-plus" value="#{etiq.nuevaNota}">
+                                            <p:ajax listener="#{notapoo.buscaNotasPorPaciente(null, null, 2)}" 
+                                                    update=":fcontenedor" oncomplete="PF('NotasP').hide()"/>
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+                </div>
+                <div>
+                    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                        <f:facet name="start">
+                            <p:graphicImage value="/imgs/loading.gif"/>
+                        </f:facet>
+                    </p:ajaxStatus>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

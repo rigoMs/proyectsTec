@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+		<f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq" />
+		<h:form id="frmRepPersHosp">
+		    <h2 class="centrado_texto">
+			<p:outputLabel value="#{etiq.reportePersHosp}"/>
+		    </h2>
+		    <p:panelGrid>
+			<p:row>
+			    <p:column>
+				<p:selectOneMenu id="mentReportes" value="#{oRepPersHosp.tipoReporte}" required="true"
+						 requiredMessage="Se necesita seleccionar un reporte.">
+				    <p:ajax />
+				    <f:selectItem itemLabel="ELEGIR REPORTE" itemValue="" noSelectionOption="true" />
+				    <f:selectItem itemLabel="CREDENCIAL DE ELECTOR VENCIMIENTO" itemValue="0" />
+				    <f:selectItem itemLabel="DOCUMENTOS FALTANTES" itemValue="1" />
+				    <f:selectItem itemLabel="ANTIG&Uuml;EDAD" itemValue="2" />
+				    <f:selectItem itemLabel="TODO PERSONAL HOSPITALARIO" itemValue="3" />
+				</p:selectOneMenu>
+			    </p:column>
+			    <p:column>
+				<p:commandButton id="btnSeleccionar" value="#{etiq.seleccionar}" icon="ui-icon-check"
+					 actionListener="#{oRepPersHosp.seleccionarReporte()}"
+					 update="panelAntiguedad dtReportes btnExportaReporte panelFiltro :msgs"
+					 resetValues="true" />
+			    </p:column>
+			</p:row>
+		    </p:panelGrid>
+		    <p:spacer />
+		    <p:panelGrid id="panelAntiguedad" style="display: #{oRepPersHosp.displayAntiguedad}">
+			<f:facet name="header">
+			    <p:row>
+				<p:column colspan="3">
+				    <h:outputText value="#{etiq.aniosServicio}" />
+				</p:column>
+			    </p:row>
+			    <p:row>
+				<p:column>
+				    <h:outputText styleClass="requerido" value="*" />
+				    <p:outputLabel for="tInicio" value="#{etiq.inicio}" />
+				</p:column>
+				<p:column>
+				    <p:outputLabel for="tFin" value="#{etiq.fin}" />
+				</p:column>
+				<p:column />
+			    </p:row>
+			</f:facet>
+			<p:row>
+			    <p:column>
+				<p:inputMask id="tInicio" mask="9?9" value="#{oRepPersHosp.antiguedadInicio}">
+				    <p:ajax />
+				</p:inputMask>
+			    </p:column>
+			    <p:column>
+				<p:inputMask id="tFin" mask="9?9" value="#{oRepPersHosp.antiguedadFin}">
+				    <p:ajax />
+				</p:inputMask>
+			    </p:column>
+			    <p:column>
+				<p:commandButton id="btnBuscar" value="Generar Reporte" icon="ui-icon-check"
+						 actionListener="#{oRepPersHosp.generaReporte()}"
+						 update="dtReportes btnExportaReporte :msgs"
+						 resetValues="true" />
+			    </p:column>
+			</p:row>
+		    </p:panelGrid>
+		    <p:panelGrid id="panelFiltro" style="display: #{oRepPersHosp.displayFiltro}">
+			<p:row>
+			    <p:column styleClass="ui-widget-header centrado_texto">
+				<h:outputText value="#{etiq.grupoPersonal}" />
+			    </p:column>
+			    <p:column styleClass="ui-widget-header centrado_texto">
+				<h:outputText value="#{etiq.areaServicio}" />
+			    </p:column>
+			</p:row>
+			<p:row>
+			    <p:column>
+				<p:selectOneMenu id="tGrupo" value="#{oRepPersHosp.personalHospitalario.personalAreaServ.personalGrupo.claveGrupo}"
+						 filter="true" filterMatchMode="contains">
+				    <p:ajax />
+				    <f:selectItem itemLabel="GRUPO PERSONAL" itemValue="" noSelectionOption="true" />
+				    <f:selectItems value="#{oRepPersHosp.listaPersonalGrupo}" var="oPersGrupo"
+						   itemLabel="#{oPersGrupo.descripcion}" itemValue="#{oPersGrupo.claveGrupo}" />
+				</p:selectOneMenu>
+			    </p:column>
+			    <p:column>
+				<p:selectOneMenu id="tArea" value="#{oRepPersHosp.personalHospitalario.personalAreaServ.areaServ.clave}"
+						 filter="true" filterMatchMode="contains">
+				    <p:ajax />
+				    <f:selectItem itemLabel="AREA DE SERVICIO" itemValue="#{0}" noSelectionOption="true" />
+				    <f:selectItems value="#{oRepPersHosp.listaAreaServ}" var="oArea"
+						   itemLabel="#{oArea.descripcion}#{oArea.tipo}" itemValue="#{oArea.clave}" />
+				</p:selectOneMenu>
+			    </p:column>
+			</p:row>
+			<p:row>
+			    <p:column styleClass="ui-widget-header centrado_texto">
+				<h:outputText value="#{etiq.puesto}" />
+			    </p:column>
+			    <p:column styleClass="ui-widget-header centrado_texto">
+				<h:outputText value="#{etiq.tipoEmpleado}" />
+			    </p:column>
+			</p:row>
+			<p:row>
+			    <p:column>
+				<p:selectOneMenu id="tPuesto" value="#{oRepPersHosp.personalHospitalario.personalAreaServ.puesto.clave}"
+						 filter="true" filterMatchMode="contains">
+				    <p:ajax />
+				    <f:selectItem itemLabel="PUESTO" itemValue="" noSelectionOption="true" />
+				    <f:selectItems value="#{oRepPersHosp.listaPuesto}" var="oPuesto"
+						   itemLabel="#{oPuesto.descripcion}" itemValue="#{oPuesto.clave}" />
+				</p:selectOneMenu>
+			    </p:column>
+			    <p:column>
+				<p:selectOneMenu id="tTipoEmpleado" value="#{oRepPersHosp.personalHospitalario.tipoEmpleado.tipoParametro}"
+						 filter="true" filterMatchMode="contains">
+				    <p:ajax />
+				    <f:selectItem itemLabel="TIPO EMPLEADO" itemValue="" noSelectionOption="true" />
+				    <f:selectItems value="#{oRepPersHosp.listaTipoEmpleado}" var="oPersGrupo"
+						   itemLabel="#{oPersGrupo.valor}" itemValue="#{oPersGrupo.tipoParametro}" />
+				</p:selectOneMenu>
+			    </p:column>
+			</p:row>
+			<p:row>
+			    <p:column colspan="2" styleClass="frm_centrado centrado_texto">
+				<p:commandButton id="btnBuscar2" value="Generar Reporte" icon="ui-icon-check"
+						 actionListener="#{oRepPersHosp.generaReporte()}"
+						 update="dtReportes btnExportaReporte :msgs"
+						 resetValues="true" />
+			    </p:column>
+			</p:row>
+		    </p:panelGrid>
+		    <p:spacer />
+		    <p:dataTable id="dtReportes" widgetVar="varDtReportes" value="#{oRepPersHosp.reporte}" var="oRep"
+				 paginator="true" paginatorPosition="top" rows="15"
+				 emptyMessage="#{oRepPersHosp.emptyMessage}" scrollable="true" scrollHeight="300"
+				 filteredValue="#{oRepPersHosp.filtro}" filterDelay="500" sortMode="multiple"
+				 paginatorTemplate="(P&aacute;gina {JumpToPageDropdown} {CurrentPageReport} {FirstPageLink} 
+					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				 currentPageReportTemplate="de {totalPages})" style="display: #{oRepPersHosp.displayReportes}"
+				 rowsPerPageLabel=" Filas Mostradas" rowsPerPageTemplate="5,10,15,20,25,50">
+			<f:facet name="header">
+			    <h:outputText value="#{oRepPersHosp.titulo}" />
+			</f:facet>
+			<p:column headerText="#{etiq.noTarjeta}" sortBy="#{oRep.noTarjeta}" style="width: 135px;"
+				  filterBy="#{oRep.noTarjeta}" filterMatchMode="contains" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.noTarjeta}" />
+			</p:column>
+			<p:column headerText="#{etiq.nombre}" sortBy="#{oRep.nombres}" style="width: 135px;"
+				  filterBy="#{oRep.nombres}" filterMatchMode="contains"
+				  filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.nombres}" />
+			</p:column>
+			<p:column headerText="#{etiq.appat}" sortBy="#{oRep.apPaterno}" style="width: 135px;"
+				  filterBy="#{oRep.apPaterno}" filterMatchMode="contains"
+				  filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.apPaterno}" />
+			</p:column>
+			<p:column headerText="#{etiq.apmat}" sortBy="#{oRep.apMaterno}" style="width: 135px;"
+				  filterBy="#{oRep.apMaterno}" filterMatchMode="contains"
+				  filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.apMaterno}" />
+			</p:column>
+			<p:column headerText="#{etiq.anioRegCredElector}" sortBy="#{oRep.anoRegCredElector}" style="width: 135px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[0]}"
+				  filterBy="#{oRep.anoRegCredElector}" filterMatchMode="contains">
+			    <h:outputText value="#{oRep.anoRegCredElector}" />
+			</p:column>
+			<p:column headerText="#{etiq.noDocsFaltante}" sortBy="#{oRep.noTarjetaBase}" style="width: 135px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[1]}"
+				  filterBy="#{oRep.noTarjetaBase}" filterMatchMode="contains">
+			    <h:outputText value="#{oRep.noTarjetaBase}" />
+			</p:column>
+			<p:column headerText="#{etiq.curp}" sortBy="#{oRep.curp}" style="width: 185px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.curp}" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.curp}" />
+			</p:column>
+			<p:column headerText="#{etiq.rfc}" sortBy="#{oRep.RFC}" style="width: 140px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.RFC}" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.RFC}" />
+			</p:column>
+			<p:column headerText="#{etiq.cedulaProf}" sortBy="#{oRep.cedProf}" style="width: 140px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.cedProf}" filterMatchMode="contains">
+			    <h:outputText value="#{oRep.cedProf}" />
+			</p:column>
+			<p:column headerText="#{etiq.fechaRegistro}" sortBy="#{oRep.fechaRegistro}" style="width: 135px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[2] or oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.fechaRegistro}" filterFunction="#{oRepPersHosp.filterByDate}">
+			    <h:outputText value="#{oRep.fechaRegistro}">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			    </h:outputText>
+			</p:column>
+			<p:column headerText="#{etiq.aniosServicio}" sortBy="#{oRep.edad}" style="width: 135px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[2]}"
+				  filterBy="#{oRep.edad}" filterMatchMode="contains">
+			    <h:outputText value="#{oRep.edad}" />
+			</p:column>
+			<p:column headerText="#{etiq.estadoActividad}" sortBy="#{oRep.activo.valor}" style="width: 135px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.activo.valor}" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.activo.valor}" />
+			</p:column>
+			<p:column headerText="#{etiq.fechaCambioActividad}" sortBy="#{oRep.fechaCambioActivo}" style="width: 135px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.fechaCambioActivo}" filterFunction="#{oRepPersHosp.filterByDate}">
+			    <h:outputText value="#{oRep.fechaCambioActivo}">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			    </h:outputText>
+			</p:column>
+			<p:column headerText="#{etiq.tipoEmpleado}" sortBy="#{oRep.tipoEmpleado.valor}" style="width: 140px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.tipoEmpleado.valor}" filterMatchMode="contains">
+			    <h:outputText value="#{oRep.tipoEmpleado.valor}" />
+			</p:column>
+			<p:column headerText="#{etiq.vistoSinergia}" sortBy="#{oRep.sinergia}" style="width: 135px;"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}"
+				  filterBy="#{oRep.sinergia}" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.sinergia}" />
+			</p:column>
+			<p:column headerText="#{etiq.grupoPersonal}" sortBy="#{oRep.personalAreaServ.personalGrupo.descripcion}"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}" style="width: 140px;"
+				  filterBy="#{oRep.personalAreaServ.personalGrupo.descripcion}" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.personalAreaServ.personalGrupo.descripcion}" />
+			</p:column>
+			<p:column headerText="#{etiq.puesto}" sortBy="#{oRep.personalAreaServ.puesto.descripcion}"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}" style="width: 140px;"
+				  filterBy="#{oRep.personalAreaServ.puesto.descripcion}" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.personalAreaServ.puesto.descripcion}" />
+			</p:column>
+			<p:column headerText="#{etiq.areaServicio}" sortBy="#{oRep.personalAreaServ.areaServ.descripcion}"
+				  rendered="#{oRepPersHosp.arrRenderColumn[3]}" style="width: 140px;"
+				  filterBy="#{oRep.personalAreaServ.areaServ.descripcion}" filterFunction="#{oRepPersHosp.filterByUpperCase}">
+			    <h:outputText value="#{oRep.personalAreaServ.areaServ.descripcion}" />
+			</p:column>
+			<f:facet name="footer">
+			    <p:commandButton value="Borrar Filtrado" actionListener="#{oRepPersHosp.setFiltro(null)}"
+					     onclick="PF('varDtReportes').clearFilters();"
+					     update="dtReportes" resetValues="true" />
+			</f:facet>
+		    </p:dataTable>
+		    <p:spacer />
+		    <center>
+			<p:commandButton id="btnExportaReporte" value="Exportar" icon="ui-icon-arrowthickstop-1-s" ajax="false" 
+					 actionListener="#{oRepPersHosp.exportaReporte()}" style="display: #{oRepPersHosp.displayReportes}"
+					 onclick="PrimeFaces.monitorDownload(null, stop);">
+			    <p:fileDownload value="#{oRepPersHosp.downloadFile}" />
+			</p:commandButton>
+		    </center>
+		    <p:remoteCommand name="stop" action="#{oRepPersHosp.postDownload()}" />
+		</h:form>
+		<p:growl id="msgs" showDetail="true" />
+		<p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+		    <f:facet name="start">
+			<p:graphicImage value="/imgs/loading.gif" />
+		    </f:facet>
+		</p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <div>
+	<f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+	<h2 class="centrado_texto">
+	    <p:outputLabel value="Buscar Personal Hospitalario"/>
+	</h2>
+	<p:accordionPanel id="acordionCompBusq" style="#{oBuscarPersHospJB.divStyle}">
+	    <p:ajax update="@this" event="tabChange" listener="#{oBuscarPersHospJB.tabChange}" />
+	    <p:tab id="tab1" title="#{etiq.buscarDatosAdministrativos}">
+		<p:panelGrid styleClass="frm_centrado">
+		    <f:facet name="header">
+			<p:row>
+			    <p:column>
+				<h:outputText value="#{etiq.noTarjeta}" />
+			    </p:column>
+			    <p:column>
+				<h:outputText value="#{etiq.cedulaProf}" />
+			    </p:column>
+			    <p:column>
+				<h:outputText value="#{etiq.rfc}" />
+			    </p:column>
+			</p:row>
+		    </f:facet>
+		    <p:row>
+			<p:column>
+			    <p:inputMask id="tNoTarjeta" mask="9?99999" value="#{oBuscarPersHospJB.persHosp.noTarjeta}">
+				<p:ajax />
+			    </p:inputMask>
+			</p:column>
+			<p:column>
+			    <p:inputMask id="tCedProf" mask="9?999999999"  value="#{oBuscarPersHospJB.persHosp.cedProf}">
+				<p:ajax />
+			    </p:inputMask>
+			</p:column>
+			<p:column>
+			    <p:inputMask id="tRFC" maxlength="13" mask="aaa*99999***?*" value="#{oBuscarPersHospJB.persHosp.RFC}"
+					 style="text-transform: uppercase;">
+				<p:ajax />
+			    </p:inputMask>
+			</p:column>
+		    </p:row>
+		</p:panelGrid>
+	    </p:tab>
+	    <p:tab id="tab2" title="#{etiq.buscarDatosBasicos}">
+		<p:panelGrid styleClass="frm_centrado">
+		    <f:facet name="header">
+			<p:row>
+			    <p:column>
+				<h:outputText value="#{etiq.nombres}" />
+			    </p:column>
+			    <p:column>
+				<h:outputText value="#{etiq.appat}" />
+			    </p:column>
+			    <p:column>
+				<h:outputText value="#{etiq.apmat}" />
+			    </p:column>
+			    <p:column>
+				<h:outputText value="#{etiq.curp}" />
+			    </p:column>
+			</p:row>
+		    </f:facet>
+		    <p:row>
+			<p:column>
+			    <p:inputText value="#{oBuscarPersHospJB.persHosp.nombres}" onkeyup="this.value=this.value.toUpperCase();">
+				<p:ajax />
+			    </p:inputText>
+			</p:column>
+			<p:column>
+			    <p:inputText value="#{oBuscarPersHospJB.persHosp.apPaterno}" onkeyup="this.value=this.value.toUpperCase();">
+				<p:ajax />
+			    </p:inputText>
+			</p:column>
+			<p:column>
+			    <p:inputText value="#{oBuscarPersHospJB.persHosp.apMaterno}" onkeyup="this.value=this.value.toUpperCase();">
+				<p:ajax />
+			    </p:inputText>
+			</p:column>
+			<p:column>
+			    <p:inputMask id="tCurp" mask="aaaa999999aaaaaa99"
+					 value="#{oBuscarPersHospJB.persHosp.curp}" style="text-transform: uppercase;">
+				<p:ajax />
+			    </p:inputMask>
+			</p:column>
+		    </p:row>
+		</p:panelGrid>
+	    </p:tab>
+	    <p:tab id="tab3" title="#{etiq.buscarDatosServicio}">
+		<p:panelGrid styleClass="frm_centrado">
+		    <p:row>
+			<p:column styleClass="ui-widget-header centrado_texto">
+			    <h:outputText value="#{etiq.grupoPersonal}" />
+			</p:column>
+			<p:column styleClass="ui-widget-header centrado_texto">
+			    <h:outputText value="#{etiq.areaServicio}" />
+			</p:column>
+		    </p:row>
+		    <p:row>
+			<p:column>
+			    <p:selectOneMenu id="tGrupo" value="#{oBuscarPersHospJB.persHosp.personalAreaServ.personalGrupo.claveGrupo}"
+					     filter="true" filterMatchMode="contains">
+				<p:ajax />
+				<f:selectItem itemLabel="GRUPO PERSONAL" itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{oBuscarPersHospJB.listaPersonalGrupo}" var="oPersGrupo"
+					       itemLabel="#{oPersGrupo.descripcion}" itemValue="#{oPersGrupo.claveGrupo}" />
+			    </p:selectOneMenu>
+			</p:column>
+			<p:column>
+			    <p:selectOneMenu id="tArea" value="#{oBuscarPersHospJB.persHosp.personalAreaServ.areaServ.clave}"
+					     filter="true" filterMatchMode="contains">
+				<p:ajax />
+				<f:selectItem itemLabel="AREA DE SERVICIO" itemValue="#{0}" noSelectionOption="true" />
+				<f:selectItems value="#{oBuscarPersHospJB.listaAreaServ}" var="oArea"
+					       itemLabel="#{oArea.descripcion} - #{oArea.tipo}" itemValue="#{oArea.clave}" />
+			    </p:selectOneMenu>
+			</p:column>
+		    </p:row>
+		    <p:row>
+			<p:column styleClass="ui-widget-header centrado_texto">
+			    <h:outputText value="#{etiq.puesto}" />
+			</p:column>
+			<p:column styleClass="ui-widget-header centrado_texto">
+			    <h:outputText value="#{etiq.tipoEmpleado}" />
+			</p:column>
+		    </p:row>
+		    <p:row>
+			<p:column>
+			    <p:selectOneMenu id="tPuesto" value="#{oBuscarPersHospJB.persHosp.personalAreaServ.puesto.clave}"
+					     filter="true" filterMatchMode="contains">
+				<p:ajax />
+				<f:selectItem itemLabel="PUESTO" itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{oBuscarPersHospJB.listaPuesto}" var="oPuesto"
+					       itemLabel="#{oPuesto.descripcion}" itemValue="#{oPuesto.clave}" />
+			    </p:selectOneMenu>
+			</p:column>
+			<p:column>
+			    <p:selectOneMenu id="tTipoEmpleado" value="#{oBuscarPersHospJB.persHosp.tipoEmpleado.tipoParametro}"
+					     filter="true" filterMatchMode="contains">
+				<p:ajax />
+				<f:selectItem itemLabel="TIPO EMPLEADO" itemValue="" noSelectionOption="true" />
+				<f:selectItems value="#{oBuscarPersHospJB.listaTipoEmpleado}" var="oTipoEmp"
+					       itemLabel="#{oTipoEmp.valor}" itemValue="#{oTipoEmp.tipoParametro}" />
+			    </p:selectOneMenu>
+			</p:column>
+		    </p:row>
+		</p:panelGrid>
+	    </p:tab>
+	</p:accordionPanel>
+	<center>
+	    <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search">
+		<p:ajax update="@form" listener="#{oBuscarPersHospJB.buscar()}" />
+	    </p:commandButton>
+	    <p:commandButton value="Limpiar Valores" resetValues="true" icon="ui-icon-refresh">
+		<p:ajax update="@form" listener="#{oBuscarPersHospJB.limpiar()}" />
+	    </p:commandButton>
+	</center>
+	<p:spacer />
+        <p:dataTable id="dtPersonalHosp" value="#{oBuscarPersHospJB.listaPersonal}" var="oPers" widgetVar="varDtPersonalHosp"
+		     style="display: #{oBuscarPersHospJB.mostrarBusqueda}" selection="#{oBuscarPersHospJB.personalHospitalarioSelect}"
+                     rowKey="#{oPers.noTarjeta}" paginatorPosition="bottom" rows="10" scrollable="true" scrollWidth="100%"
+		     paginatorTemplate="(P&aacute;gina {JumpToPageDropdown} {CurrentPageReport} {FirstPageLink} 
+					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+		     currentPageReportTemplate="de {totalPages})"
+		     emptyMessage="No hay registros." paginator="true">
+	    <f:facet name="header">
+		<p:row>
+		    <p:column colspan="8">
+			<h:outputText value="#{etiq.persHospEncontrados}" />
+		    </p:column>
+		</p:row>
+	    </f:facet>
+	    <p:columnGroup type="header">
+		<p:row>
+                    <p:column headerText="" rowspan="2" style="width: 20px;" />
+                    <p:column headerText="#{etiq.noTarjeta}" rowspan="2" style="width: 110px;" filterBy="#{oPers.noTarjeta}" />
+                    <p:column headerText="#{etiq.cedulaProf}" rowspan="2" style="width: 110px;" filterBy="#{oPers.cedProf}" />
+                    <p:column headerText="#{etiq.rfc}" rowspan="2" style="width: 115px;" filterBy="#{oPers.RFC}"
+                              filterFunction="#{oBuscarPersHospJB.filterByUpperCase}" />
+                    <p:column headerText="#{etiq.nombres}" rowspan="2" style="width: 200px;" filterBy="#{oPers.nombres}"
+                              filterFunction="#{oBuscarPersHospJB.filterByUpperCase}" />
+                    <p:column headerText="#{etiq.appat}" rowspan="2" style="width: 200px;" filterBy="#{oPers.apPaterno}"
+                              filterFunction="#{oBuscarPersHospJB.filterByUpperCase}" />
+                    <p:column headerText="#{etiq.apmat}" rowspan="2" style="width: 200px;" filterBy="#{oPers.apMaterno}"
+                              filterFunction="#{oBuscarPersHospJB.filterByUpperCase}" />
+                    <p:column headerText="#{etiq.curp}" rowspan="2" style="width: 160px;" filterBy="#{oPers.curp}"
+                              filterFunction="#{oBuscarPersHospJB.filterByUpperCase}" />
+		</p:row>
+	    </p:columnGroup>
+	    <p:ajax event="rowSelectRadio" />
+	    <p:column selectionMode="single" />
+	    <p:column>
+		<h:outputText value="#{oPers.noTarjeta}" />
+	    </p:column>
+	    <p:column>
+		<h:outputText value="#{oPers.cedProf}" />
+	    </p:column>
+	    <p:column>
+		<h:outputText value="#{oPers.RFC}" />
+	    </p:column>
+	    <p:column>
+		<h:outputText value="#{oPers.nombres}" />
+	    </p:column>
+	    <p:column>
+		<h:outputText value="#{oPers.apPaterno}" />
+	    </p:column>
+	    <p:column>
+		<h:outputText value="#{oPers.apMaterno}" />
+	    </p:column>
+	    <p:column>
+		<h:outputText value="#{oPers.curp}" />
+	    </p:column>
+            <f:facet name="footer">
+                <p:commandButton value="Borrar Filtrado" type="button" onclick="PF('varDtPersonalHosp').clearFilters();" />
+            </f:facet>
+	</p:dataTable>
+        <br/>
+    </div>
+</html>

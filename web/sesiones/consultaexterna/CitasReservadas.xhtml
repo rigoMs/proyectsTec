@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    
+  <ui:define name="cuerpo">
+   <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+   <h2 class="centrado_texto"><p:outputLabel id="titResCitas" value="#{etiq.citaReservadas}"/></h2>
+   <div>
+             
+     <h:form>
+         <p:dataTable id="tablaConsulCitas" styleClass="frm_centrado" var="oReser" value="#{oResCita.cita.buscaEPCitasRes()}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.citaReservada}"/>
+                </f:facet>
+                
+                <p:column headerText="#{etiq.noExp}" styleClass="centrado_texto columnamed7">
+                    <h:outputText value="#{oReser.paciente.expediente.numero}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.nombreCompleto}" styleClass="columnamed15">
+                    <h:outputText value="#{oReser.paciente.apPaterno} #{oReser.paciente.apMaterno} #{oReser.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnamed10">
+                    <h:outputText value="#{oReser.areaServicio.descripcion}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.diagnostico}">
+                    <h:outputText value="#{oReser.diag.descripcionDiag}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.tiempoAprox}" styleClass="columnamed">
+                    <h:outputText value="#{oReser.tiempoAproximado()}"/>
+                </p:column>
+                <p:column headerText="#{etiq.accion}" styleClass="centrado_texto columnamed10">   
+                    <p:commandButton value="#{etiq.registrar}" action="RegistrarCita.xhtml" ajax="false" icon="ui-icon-check">
+                        <f:setPropertyActionListener target="#{oRegCita.cita}" value="#{oReser}"/>
+                        <f:setPropertyActionListener target="#{oRegCita.diagcie10.descripcionDiag}" value="#{oReser.diag.descripcionDiag}"/>
+                        <f:setPropertyActionListener target="#{oRegCita.EP.primeraVezHRRB}" value="#{false}"/>
+                        <f:setPropertyActionListener target="#{oRegCita.EP.primeraVezEsp}" value="#{oResCita.direccion(oReser.areaServicio.clave, oReser.paciente.folioPaciente)}"/>
+                        <f:setPropertyActionListener target="#{oRegCita.cita.opcion}" value="#{true}"/>
+                        <f:setPropertyActionListener target="#{oRegCita.estado}" value="mostrarbtn"/>
+                        <f:setPropertyActionListener target="#{oRegCita.cita.paciente.tipoSol.tipoParametro}" value="03"/>
+                        <f:setPropertyActionListener target="#{oRegCita.cita.paciente.referencia.clave}" value="0"/>
+                        <f:setPropertyActionListener target="#{oRegCita.pestana}" value="#{0}" />
+                    </p:commandButton>
+                </p:column> 
+            </p:dataTable>  
+     </h:form>
+   </div>
+  </ui:define>         
+</ui:composition>
+</html>

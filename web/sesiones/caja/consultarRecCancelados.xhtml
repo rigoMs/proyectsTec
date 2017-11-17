@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.consultRecCancelados}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{etiq.tipoRec}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="cmbTipoRecibo" required="true" requiredMessage="Seleccione un tipo de recibo." 
+                                             value="#{oConsRecCan.rec.tipoParametro}">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                <f:selectItems value="#{oConsRecCan.tiposRecibo}" var="oRec" 
+                                               itemLabel="#{oRec.valor}" itemValue="#{oRec.tipoParametro}">
+                                </f:selectItems>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{etiq.recCancelados}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaIni" value="#{oConsRecCan.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha inicial.">
+                                <p:ajax event="dateSelect" update="fechaFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{etiq.al}:"></h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaFin" value="#{oConsRecCan.fechaF}" 
+                                        mindate="#{oConsRecCan.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha final.">                              <p:ajax></p:ajax>
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" actionListener="#{oConsRecCan.preBusqueda}"
+                                             icon="ui-icon-search"  styleClass="frm_login" 
+                                             update="dtRecibosCan mensajes">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:dataTable id="dtRecibosCan" value="#{oConsRecCan.recCancelados}" var="oRec"
+                             emptyMessage="#{etiq.emptydataTable}" style="#{oConsRecCan.activaTabla}}">
+                    <f:facet name="header">
+                        <h:outputText value="#{oConsRecCan.rec.valor}"></h:outputText>
+                    </f:facet>
+                    <p:column width="10%" headerText="#{etiq.folioRec}">
+                        <h:outputText value="#{oRec.folio}"></h:outputText>
+                    </p:column>
+                    <p:column width="45%" headerText="#{etiq.incidencia}">
+                        <h:outputText value="#{oRec.incidencia}"></h:outputText>
+                    </p:column>
+                    <p:column width="15%" headerText="#{etiq.fechaCancelacion}">
+                        <h:outputText value="#{oRec.fechaCancelacion}">
+                            <f:convertDateTime pattern="dd-MM-yyyy HH:mm"></f:convertDateTime>
+                        </h:outputText>
+                    </p:column>
+                    <p:column width="30%" headerText="#{etiq.cancelo}">
+                        <h:outputText value="#{(oRec.cajaCancela.corteCaja.get(0)).cajero.nombreCompleto}"></h:outputText>
+                    </p:column>                    
+                </p:dataTable>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

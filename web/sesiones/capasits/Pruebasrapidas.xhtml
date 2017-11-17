@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+       <h:form id="form"> 
+           <p:growl id="mensajes"  showDetail="true" />
+           <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+           <center><h2><h:outputText value="#{etiq.pruebasRapidas}"/></h2></center>     
+        <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+           <p:column colspan="6" styleClass="ui-widget-header"><center> 
+               <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+        </p:row>
+    </f:facet> 
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+            <p:column>  <p:inputText id="nombre" value="#{pruebasr.pruebr.nombre}" required="true" requiredMessage="INGRESAR NOMBRE(S)" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/>
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+            <p:column> <p:inputText id="ppaterno" value="#{pruebasr.pruebr.apPaterno}" required="true" requiredMessage="INGRESAR APELLIDO PATERNO" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+            <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+            <p:column><p:inputText id="pmaterno" value="#{pruebasr.pruebr.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+        </p:row>    
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.sexo}"/></p:column>
+            <p:column>
+                <p:selectOneRadio id="sexo" value="#{pruebasr.pruebr.sexo}" required="true" requiredMessage="INGRESAR SEXO, FALTA SELECIONAR SEXO">
+                    <f:selectItem itemLabel="Femenino " itemValue="F"/>
+                    <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                </p:selectOneRadio>
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.edad}"/></p:column>
+            <p:column colspan="3"><p:inputText id="id1" value="#{pruebasr.pruebr.edad}"  required="true" requiredMessage="INGRESAR EDAD" size="3"/></p:column>
+        </p:row>
+        <p:row>
+                 <p:column colspan="6" styleClass="ui-widget-header">
+                     <center><h:outputLabel value="#{etiq.diagnostico}"/></center></p:column>  
+      </p:row>
+     <p:row><p:column colspan="6"><center>
+                 <p:inputTextarea id="txtDiagnostico" cols="80" rows="6" value="#{pruebasr.pruebr.diagnostico}" onkeyup="this.value=this.value.toUpperCase();" required="true"/></center></p:column> 
+      </p:row>
+      <p:row><p:column colspan="6" styleClass="centrado_texto"> 
+              <p:commandButton  value="#{etiq.registrar}" icon="ui-icon-disk"  action="#{pruebasr.almacena()}" update="mensajes" onclick="recarga()"/>
+             </p:column>
+      </p:row>
+</p:panelGrid>          
+        </h:form>     
+    </ui:define>
+</ui:composition>
+</html>    

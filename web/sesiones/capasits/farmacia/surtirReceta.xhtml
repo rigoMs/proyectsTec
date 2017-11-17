@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="#{facesContext.externalContext.requestContextPath}/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>Hospital Regional de R&iacute;o Blanco-CAPASITS</title>
+    </h:head>
+
+    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo"> 
+                <h:form id="formR" >  
+                    <p:growl id="mensages" showDetail="true" />
+                    <p:panelGrid style="margin-top:20px; width: 1000px">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="30"><h:outputLabel value="#{etiq.surtidoReceta}"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="30"><h:outputLabel value="#{etiq.paciente}"/></p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column colspan="30" >                                
+                                    <h:outputLabel value="#{etiq.fecha} : " style="font-weight: bold;"/>
+                                    <p:calendar value="#{surtir.fecha}" id="multi"  pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="Inserte Fecha" />
+                                   &nbsp;&nbsp;&nbsp;&nbsp;                                  
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="15" >
+
+                                <h:outputLabel value="#{etiq.folioReceta}: " style="font-weight: bold;"/>  
+                                <p:inputText  value="#{surtir.receta.folioReceta}" size="7" style="font-weight: bold;" autocomplete="false" required="true" requiredMessage="Ingresar Folio Receta" converterMessage="Folio Receta, Solo ingresar números"/>
+                                &nbsp;&nbsp;
+                                <h:outputLabel value="#{etiq.codigo} : " style="font-weight: bold;"/>
+                                <p:inputText value="#{surtir.idNacional}" autocomplete="false" required="true" requiredMessage="Ingresar Código Paciente" converterMessage="Cód. Paciente, Solo ingresar números"/>
+                                <p:commandButton value="#{etiq.buscar}" actionListener="#{surtir.buscarPaciente()}"  update=":formR:nom :formR:idd :formR:exp msgs"/>
+                                <p:growl id="msgs" showDetail="true" /> 
+
+                            </p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="10" >
+                                <h:outputLabel value="#{etiq.nombre} : " style="font-weight: bold;"/>   
+                                <h:outputLabel value="#{surtir.pacienteCapa.nombres} #{surtir.pacienteCapa.apPaterno} #{surtir.pacienteCapa.apMaterno}" id="nom"/>
+                            </p:column> 
+
+                            <p:column colspan="3" >
+                                <h:outputLabel value="#{etiq.id} : " style="font-weight: bold;"/>   
+                                <h:outputLabel value="#{surtir.pacienteCapa.idNacional}" id="idd"/>
+                            </p:column>
+
+                            <p:column colspan="2" >
+                                <h:outputLabel value="#{etiq.expediente} : " style="font-weight: bold;"/>   
+                                <h:outputLabel value="#{surtir.pacienteCapa.hospitalizado}" id="exp"/>
+                            </p:column>     
+                        </p:row>   
+                    </p:panelGrid>  
+                </h:form> 
+                <h:form id="busmedic">                    
+                    <p:panelGrid style="margin-top:20px; width: 1300px" id="panels">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="30"><h:outputLabel value="#{etiq.medicamentos}"/> </p:column>
+                            </p:row>    
+                        </f:facet>
+                        <p:row>
+                            <p:column colspan="30" >
+                                <br/>
+                                <h:form id="inser">
+                                    <p:growl id="msgs" showDetail="true" /> 
+                                    <h:outputLabel value="#{etiq.medicamento} : " style="font-weight: bold;"/>   
+                                    <p:inputText value="#{surtir.codigoBarras}" onkeyup="this.value = this.value.toUpperCase();" autocomplete="false" required="true" requiredMessage="Inserte nombre o codigo"/>
+                                    <p:commandButton value="#{etiq.agregar}" update="msgs :formR :busquedaNom:tblNom" actionListener="#{surtir.buscarMedicamento()}" onclick="location.replace();"/>
+                                    <p:commandButton icon="ui-icon-search"  actionListener="#{surtir.muestraCoincidencias()}"  onclick="location.replace();"/> 
+                                    <br/>
+                                </h:form>                            
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="30">
+                                <p:dataTable var="oMed" id="tblMed" editable="true" value="#{surtir.listaDetalleMed}"
+                                             emptyMessage="#{etiq.noMedicamentosRegistrados}">
+                                    <f:facet name="header"><h:outputLabel value="#{etiq.listaSurtido}"/></f:facet>
+                                    <p:column headerText="#{etiq.clave}" width="15">
+                                        <h:outputLabel value="#{oMed.claveMedicamento}"/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.nombre}" width="30">
+                                        <h:outputLabel value="#{oMed.nombre}"/>                                             
+                                    </p:column>
+                                    <p:column headerText="#{etiq.presentacion}" width="30">
+                                        <h:outputLabel value="#{oMed.presentacion}"/>                    
+                                    </p:column>
+                                    <p:column headerText="#{etiq.descripcion}" width="30">
+                                        <h:outputLabel value="#{oMed.descripcion}"/>                  
+                                    </p:column>                
+                                    <p:column headerText="#{etiq.lote}" width="30">
+                                        <h:outputLabel value="#{oMed.lote}"/>                     
+                                    </p:column>                 
+                                    <p:column headerText="#{etiq.caducidad}" width="30">
+                                        <h:outputLabel value="#{oMed.caducidad}"/>                     
+                                    </p:column> 
+                                    <p:column headerText="#{etiq.cantidad}" width="15">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputLabel value="#{oMed.existencia}"/>   
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{oMed.existencia}" size="3" required="true" requiredMessage="Ingresar Cantidad" converterMessage="Cantidad, Solo ingresar números"/>
+                                            </f:facet>   
+                                        </p:cellEditor>                                         
+                                    </p:column>
+                                    <p:column headerText="#{etiq.surtido}" width="10">                                        
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <p:selectBooleanCheckbox value="#{oMed.surtido}" disabled="true"/>   
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:selectBooleanCheckbox value="#{oMed.surtido}"/> 
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column> 
+                                    <p:column width="15" headerText="#{etiq.edicion}">                                         
+                                        <p:rowEditor>
+                                        </p:rowEditor>
+                                    </p:column>
+                                </p:dataTable>                           
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="30" >    
+                                <p:commandButton id="btnSurt"  value="#{etiq.surtir}" action="#{surtir.guardarSurtido()}" update="msgs" rendered="#{surtir.almenosUnoEnLista}" immediate="true" onclick="location.replace()"/>  
+                                <p:commandButton id="btnLimp"  value="#{etiq.limpiar}" rendered="#{surtir.almenosUnoEnLista}" onclick="PF('confLimp').show()"  update=":busmedic:tblMed" />
+                            </p:column>
+                        </p:row> 
+                    </p:panelGrid>  
+                    <p:growl id="msgs" showDetail="true" />
+                </h:form>
+
+                <h:form id="dia">               
+                    <p:dialog header="#{etiq.medicamento}" widgetVar="dlg1" minHeight="40" modal="true"  visible="#{surtir.masDeUnLote}" closable="false" draggable="false" >
+                        <h:outputText value="#{etiq.lotesDis}" />
+                        <p:dataTable var="oMed" id="tblLote" 
+                                     value="#{surtir.listaLotes}"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}">
+                            <f:facet name="header"><h:outputLabel value="#{etiq.listaLotes}"/></f:facet>
+                            <p:column headerText="#{etiq.lote}" width="15">
+                                <h:outputLabel value="#{oMed.lote}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.caducidad}" width="30">
+                                <h:outputLabel value="#{oMed.caducidad}"/>                                             
+                            </p:column>
+                            <p:column headerText="#{etiq.anadir}" width="30">
+                                <p:commandButton value="#{etiq.seleccionar}" update=":busmedic :dia" actionListener="#{surtir.medicamentoSeleccionado(oMed)}" onclick="PF('dlg1').hide()"/>                                           
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="#{etiq.cerrar}" styleClass="button" update=":busmedic" actionListener="#{surtir.cambiaEstado()}"
+                                         onclick="PF('dlg1').hide()"/>
+                    </p:dialog> 
+                </h:form>
+
+                <h:form id="busquedaNom">               
+                    <p:dialog header="#{etiq.medicamentos}" widgetVar="dlg2" minHeight="60" width="900" height="200" modal="true"  visible="#{surtir.nombreEncontrado}" closable="false" >
+                        <p:dataTable var="oMed" id="tblNom" 
+                                     value="#{surtir.medBusNom}"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}">
+                            <f:facet name="header"><h:outputLabel value="#{etiq.medCoincid}"/><h:outputLabel value="  ''#{surtir.nombreBusqueda}'' "/></f:facet>
+                            <p:column headerText="#{etiq.nombre}" width="15">
+                                <h:outputLabel value="#{oMed.nombre}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.lote}" width="15">
+                                <h:outputLabel value="#{oMed.lote}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.presentacion}" width="15">
+                                <h:outputLabel value="#{oMed.presentacion}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.descripcion}" width="15">
+                                <h:outputLabel value="#{oMed.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.codigoBarras}" width="15">
+                                <h:outputLabel value="#{oMed.codBarras}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.caducidad}" width="30">
+                                <h:outputLabel value="#{oMed.caducidad}"/>                                             
+                            </p:column>
+                            <p:column headerText="#{etiq.existencia}" width="30">
+                                <h:outputLabel value="#{oMed.existencia}"/>                                             
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <div style="text-align: center;">
+                            <p:commandButton value="#{etiq.cerrar}"  styleClass="button" update=":busmedic:tblMed" actionListener="#{surtir.borraNom()}"
+                                             onclick="PF('dlg2').hide()"  onsuccess="location.reload();" ajax="false"/>
+                        </div>
+                    </p:dialog> 
+                </h:form>
+
+                <p:confirmDialog message="¿¿#{etiq.preguntaLimpLista}??"
+                                 showEffect="bounce" hideEffect="explode" closable="false"
+                                 header="#{etiq.limpiar}" severity="alert" widgetVar="confLimp">
+                    <h:form>
+                        <p:commandButton value="#{etiq.aceptar}" actionListener="#{surtir.limpia()}" styleClass="button"
+                                         update=":busmedic" onclick="PF('confLimp').hide()"/>
+                        <p:commandButton value="#{etiq.cancelar}" onclick="PF('confLimp').hide()"/>
+                    </h:form>
+                </p:confirmDialog>
+
+            </ui:define>    
+        </ui:composition>
+    
+</html>   

@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+                <h:form class="centrar">
+                    <br/><br/>
+                    <p:growl id="msgs" showDetail="true" />
+                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+
+                    <p:tabView>
+                        <p:tab title="Registro de Dinero Autorizado para Compras">
+                            <center>
+                                <p:dataTable value="" id="dineroCaja" editable="true" style="width: 1100px" >
+
+                                    <f:facet name="header">
+                                        <h:outputLabel value="#{etiq.dineroAut}" />
+                                    </f:facet>
+
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="#{etiq.claveoperacion}"></p:column>
+                                            <p:column headerText="#{etiq.claverecuperacion}"></p:column>
+                                            <p:column headerText="#{etiq.clavecapasits}"></p:column>
+                                            <p:column headerText="#{etiq.clavecatastrofico}"></p:column>
+                                            <p:column headerText="#{etiq.mtto}" rowspan="2"></p:column>
+                                            <p:column headerText="#{etiq.distincion}" rowspan="2"></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="#{etiq.operacion}" />
+                                            <p:column headerText="#{etiq.recuperacion}" />
+                                            <p:column headerText="#{etiq.capasit}" />
+                                            <p:column headerText="#{etiq.catastrofico}" />
+                                        </p:row>
+                                    </p:columnGroup>
+
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton value="#{etiq.agreg}" icon="ui-icon-folder-open" onclick="PF('dlgDineroC').show()"/>
+                                    </f:facet>
+
+                                </p:dataTable><br/><br/>
+                            </center>
+                            
+                            <center>
+                                <p:dataTable value="" id="cajaDeRecup" editable="true" style="width: 1100px">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="#{etiq.recu}" />
+                                    </f:facet>
+
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="#{etiq.reposicion}" />
+                                            <p:column headerText="#{etiq.viaticos}" />
+                                        </p:row>
+                                    </p:columnGroup>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton value="#{etiq.agreg}" icon="ui-icon-folder-open" onclick="PF('dlgRepos').show()"/>
+                                    </f:facet>
+
+                                </p:dataTable>
+                            </center>
+
+
+                            <p:dialog id="dlgDineroCaja" widgetVar="dlgDineroC"  position="center" closable="true" dynamic="true" resizable="false"
+                                      appendTo="@(body)" modal="true" showEffect="explode" hideEffect="slide" height="330px" width="460px">
+
+                                <h:form id="pedido" class="centrar">
+                                    <p:growl id="msgs" showDetail="true" />
+                                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                                    <p:growl id="message" showDetail="true" />
+
+
+                                    <p:panelGrid style="width: 430px; border-style: groove; margin: 0">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; height: 32px; font-size: 14pt">
+                                                <h:outputLabel value="#{etiq.dineroParaCompras}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; width: 40%; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.dineroOperac}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.dineroRecuperacion}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.dineroCapasits}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.dineroCat}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.dineroMatto}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.dineroDistincion}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="text-align: center;" colspan="2">
+                                                <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" oncomplete="PF('dlgDineroC').hide()" >
+                                                    <p:ajax event="click" />
+                                                </p:commandButton>
+                                                <p:commandButton style="margin-left: 115px" value="#{etiq.volver}"  icon="ui-icon-arrowreturn-1-w" onclick="PF('dlgDineroC').hide()" />
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+
+                                </h:form>
+                            </p:dialog>
+
+                            <p:dialog id="dlgReposicion" widgetVar="dlgRepos"  position="center" closable="true" dynamic="true" resizable="false"
+                                      appendTo="@(body)" modal="true" showEffect="explode" hideEffect="slide" height="200px" width="460px">
+
+                                <h:form id="pedidorec" class="centrar">
+                                    <p:growl id="msgs" showDetail="true" />
+                                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                                    <p:growl id="message" showDetail="true" />
+
+
+                                    <p:panelGrid style="width: 430px; border-style: groove; margin: 0">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" colspan="2" style="text-align: left; height: 32px; font-size: 14pt">
+                                                <h:outputLabel value="Ingresar #{etiq.dineroRecuperacion}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.solicitud} de #{etiq.reposicion}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" style="text-align: left; font-style: oblique; font-size: 10pt">
+                                                <p:outputLabel value="#{etiq.solicitud} de #{etiq.viaticos}" />
+                                            </p:column>
+                                            <p:column style="text-align: left;" >
+                                                <h:outputLabel value="$ "/> <p:spinner value="" size="10" /> <!--<p:inputText type="numero" size="10" />-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="text-align: center;" colspan="2">
+                                                <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" oncomplete="PF('dlgRepos').hide()" >
+                                                    <p:ajax event="click" />
+                                                </p:commandButton>
+                                                <p:commandButton style="margin-left: 115px" value="#{etiq.volver}"  icon="ui-icon-arrowreturn-1-w" onclick="PF('dlgRepos').hide()" />
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </h:form>
+                            </p:dialog>
+                        </p:tab>
+
+                        <p:tab title="Compras Autorizadas">
+                            <center>
+                                <p:dataTable value="" id="dineroCajaAut" editable="true" style="width: 1100px" >
+                                    <f:facet name="header">
+                                        <h:outputLabel value="#{etiq.dineroAut}" />
+                                    </f:facet>
+
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="#{etiq.claveoperacion}"></p:column>
+                                            <p:column headerText="#{etiq.claverecuperacion}"></p:column>
+                                            <p:column headerText="#{etiq.clavecapasits}"></p:column>
+                                            <p:column headerText="#{etiq.clavecatastrofico}"></p:column>
+                                            <p:column headerText="#{etiq.mtto}" rowspan="2"></p:column>
+                                            <p:column headerText="#{etiq.distincion}" rowspan="2"></p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column headerText="#{etiq.operacion}" />
+                                            <p:column headerText="#{etiq.recuperacion}" />
+                                            <p:column headerText="#{etiq.capasit}" />
+                                            <p:column headerText="#{etiq.catastrofico}" />
+                                        </p:row>
+                                    </p:columnGroup>
+
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="" >
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:dataTable><br/>
+
+                                <p:dataScroller value="" var="cot" style="height: 500px;" >
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.cotizaciones} #{etiq.generales}" />
+                                    </f:facet>
+
+                                    <br/>
+                                    <p:dataTable value="" id="dineroCotBas" editable="true" style="width: 1200px; text-align: center;" var="oCotAntBas">
+                                        <f:facet name="header">
+                                            <h:outputLabel value="#{etiq.prodbasic}" />
+                                        </f:facet>
+
+                                        <p:ajax event="rowEdit" />
+                                        <p:ajax event="rowEditCancel" />
+
+                                        <p:columnGroup type="header" >
+                                            <p:row>
+                                                <p:column headerText="#{etiq.nodereq}" />
+                                                <p:column colspan="2">
+                                                    <f:facet name="header">
+                                                        <p:outputLabel value="#{etiq.necesidadesxdia}" />&nbsp;<p:outputLabel value="" />
+                                                    </f:facet>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.solicitado}" />
+                                                <p:column headerText="#{etiq.aprobado}" />
+                                                <p:column headerText="#{etiq.pu}" />
+                                                <p:column headerText="#{etiq.iva}"/>
+                                                <p:column headerText="#{etiq.totl}" />
+                                                <p:column headerText="#{etiq.clve} #{etiq.fcaja}" />
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column>
+                                            <h:outputText value="123" />
+                                        </p:column>
+
+                                        <p:column style="width: 2%">
+                                            <h:outputText value="1" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="Agua" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="6" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="2" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="1500" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="1" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="$3000" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="2" />
+                                        </p:column>
+
+                                        <p:columnGroup type="footer">
+                                            <p:row>
+                                                <p:column footerText="Total Básico: " style="text-align:right" colspan="6"/>
+                                                <p:column footerText="" />
+                                                <p:column />
+                                                <p:column />
+                                            </p:row>
+                                        </p:columnGroup>
+                                    </p:dataTable><br/><br/>
+
+                                    <p:dataTable value="" id="dineroCotApoyo" editable="true" style="width: 1200px; text-align: center;" var="oCotAntApoy"> 
+                                        <f:facet name="header">
+                                            <h:outputLabel value="#{etiq.recu}" />
+                                        </f:facet>
+
+                                        <p:ajax event="rowEdit" />
+                                        <p:ajax event="rowEditCancel" />
+
+                                        <p:columnGroup type="header" >
+                                            <p:row>
+                                                <p:column headerText="#{etiq.nodereq}" />
+                                                <p:column colspan="2">
+                                                    <f:facet name="header">
+                                                        <p:outputLabel value="#{etiq.necesidadesxdia}" />&nbsp;<p:outputLabel value="" />
+                                                    </f:facet>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.solicitado}" />
+                                                <p:column headerText="#{etiq.aprobado}" />
+                                                <p:column headerText="#{etiq.pu}" />
+                                                <p:column headerText="#{etiq.totl}" />
+                                                <p:column headerText="#{etiq.clve} #{etiq.fcaja}" />
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column>
+                                            <h:outputText value="" />
+                                        </p:column>
+
+                                        <p:column style="width: 2%">
+                                            <h:outputText value="1" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="Reposición" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="$3000" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="4" />
+                                        </p:column>
+
+                                    </p:dataTable><br/><br/>
+
+
+                                    <p:dataTable value="" id="dineroCotNorm" editable="true" style="width: 1200px; text-align: center;" var="oCotAntNorm">
+                                        <f:facet name="header">
+                                            <h:outputLabel value="#{etiq.prodreq}" />
+                                        </f:facet>
+
+                                        <p:ajax event="rowEdit" />
+                                        <p:ajax event="rowEditCancel" />
+
+                                        <p:columnGroup type="header" >
+                                            <p:row>
+                                                <p:column headerText="#{etiq.nodereq}" />
+                                                <p:column colspan="2">
+                                                    <f:facet name="header">
+                                                        <p:outputLabel value="#{etiq.necesidadesxdia}" />&nbsp;<p:outputLabel value="" />
+                                                    </f:facet>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.solicitado}" />
+                                                <p:column headerText="#{etiq.aprobado}" />
+                                                <p:column headerText="#{etiq.pu}" />
+                                                 <p:column headerText="#{etiq.iva}" />
+                                                <p:column headerText="#{etiq.totl}" />
+                                                <p:column headerText="#{etiq.clve} #{etiq.fcaja}" />
+                                                <p:column headerText="#{etiq.prioridad}" style="width: 11%"/>
+                                                <p:column headerText="#{etiq.descripcionmesa}" />
+                                                <p:column style="width:32px" />
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column>
+                                            <h:outputText value="785" />
+                                        </p:column>
+
+                                        <p:column style="width: 2%">
+                                            <h:outputText value="1" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="Coflex para lavabos" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="20" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="8" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="90" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="1" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="$720" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="3" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value=""/></f:facet>
+                                                <f:facet name="input">
+                                                    <p:selectOneMenu id="slColor" >
+                                                        <f:selectItem itemLabel="Selecciona Prioridad" />
+                                                        <f:selectItem itemLabel="Amarillo" itemValue="" />
+                                                        <f:selectItem itemLabel="Verde" itemValue="" />
+                                                        <f:selectItem itemLabel="Blanco" itemValue="" />
+                                                    </p:selectOneMenu>
+                                                </f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:rowEditor />
+                                        </p:column>
+
+                                        <p:columnGroup type="footer">
+                                            <p:row>
+                                                <p:column footerText="Total: " style="text-align:right" colspan="6"/>
+                                                <p:column footerText="" />
+                                                <p:column />
+                                                <p:column />
+                                                <p:column />
+                                                <p:column />
+                                                <p:column />
+                                            </p:row>
+                                        </p:columnGroup>
+                                    </p:dataTable>
+                                </p:dataScroller>
+
+                            </center>
+
+                        </p:tab>
+
+                    </p:tabView>
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+    
+</html>
+

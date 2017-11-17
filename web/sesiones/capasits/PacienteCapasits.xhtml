@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+       
+        <h:form id="frmPacCapasits">
+             <p:growl id="mensajes"  showDetail="true" /> 
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+                    
+             <h2><center><h:outputLabel value="#{etiq.registroPac}"/></center></h2>
+ <p:panelGrid style="margin-top:30px" id="paciente">             
+    <f:facet name="header">
+        <p:row>
+           <p:column colspan="6" styleClass="ui-widget-header"><center> 
+               <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+        </p:row>
+    </f:facet> 
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+            <p:column>  <p:inputText id="nombre" value="#{insPac.paci.nombres}" required="true" requiredMessage="INGRESAR NOMBRE(S)" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/>
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+            <p:column> <p:inputText id="ppaterno" value="#{insPac.paci.apPaterno}" required="true" requiredMessage="INGRESAR APELLIDO PATERNO" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+            <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+            <p:column><p:inputText id="pmaterno" value="#{insPac.paci.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+        </p:row>     
+        <p:row>
+            <p:column ><h:outputLabel value="#{etiq.sexo}"/> </p:column>
+            <p:column>
+                <p:selectOneRadio id="sexo" value="#{insPac.paci.sexos}" required="true" requiredMessage="INGRESAR SEXO, FALTA SELECIONAR SEXO">
+                    <f:selectItem itemLabel="Femenino " itemValue="F"/>
+                    <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                </p:selectOneRadio>
+            </p:column> 
+            <p:column><h:outputLabel  value="#{etiq.fechanac}"/> </p:column>
+            <p:column> <p:calendar value="#{insPac.paci.fechaNac}" id="nacimiento" pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="INGRESAR FECHA DE NACIMIENTO" locale="es">
+                </p:calendar>
+            </p:column>   
+            <p:column><h:outputLabel value="#{etiq.discapacitado}"/>
+                <p:selectBooleanCheckbox id="discapacitado" value="#{insPac.paci.discapacitado}"/> </p:column>
+            <p:column> <h:outputLabel value="#{etiq.indigena} "/>
+                <p:selectOneMenu id="indigena" value="#{insPac.etnic.perteneceGpoInd}">
+                    <f:selectItems value="#{insPac.etni}" />
+                </p:selectOneMenu>
+            </p:column> 
+        </p:row>
+        <p:row>
+            <p:column colspan="6" styleClass="ui-widget-header">
+                <center>  <h:outputLabel value="#{etiq.datosSegPop}"/> </center>
+             </p:column>    
+        </p:row>     
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.seguro}"/></p:column>
+            <p:column>
+                <p:selectOneMenu id="seguro" value="#{insPac.seg.tipoSeguro}">
+                 <p:ajax update="vigencia cvlseguro" /> 
+                 <f:selectItems value="#{insPac.seguros}"/>
+             </p:selectOneMenu>     
+            </p:column> 
+            <p:column colspan="2"><h:outputLabel value="#{etiq.fechaVencimientoSeguro}"/></p:column>
+            <p:column colspan="2"> <p:calendar disabled="#{insPac.habilita()}" value="#{insPac.seg.vigencia}" id="vigencia" pattern="dd/MM/yyyy" navigator="true" locale="es"> 
+                </p:calendar>
+            </p:column>    
+        </p:row>
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.cveSegPop}"/></p:column>
+            <p:column colspan="5">
+                <p:inputMask disabled="#{insPac.habilita()}" id="cvlseguro" value="#{insPac.seg.numero}" mask="9999999999-99"/>
+            </p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="6" styleClass="ui-widget-header">
+                <center>  <h:outputLabel value="#{etiq.otrosDatos}"/> </center>
+             </p:column>    
+        </p:row>
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.idSalvar}"/> </p:column>
+            <p:column>  <p:inputText id="id" value="#{insPac.paci.idNacional}"  required="true" requiredMessage="INGRESAR NUMERO DE ID SALVAR" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO ID"> 
+         
+                        </p:inputText>
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.exphrrb}"/></p:column>
+            
+            <p:column>
+                <!--
+                <p:inputText id="expediente" value="#{insPac.expe.numero}"  required="true" requiredMessage="INGRESAR NUMERO DE EXPEDIENTE HRRB" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO EXPEDIENTE HRRB"/>
+                -->
+                <p:selectOneMenu value="#{insPac.expe.numero}" requiredMessage="Debe indicar un número de expediente" required="true">
+                    <f:selectItem itemLabel="SELECCIONA NUMERO DE EXPEDIENTE" itemValue="" noSelectionOption="true" />
+                    <f:selectItems value="#{insPac.listaExpPendientesPorAbrir}" var="oEp"
+                                   itemLabel="#{oEp.numero}" itemValue="#{oEp.numero}"/>
+                </p:selectOneMenu>
+            </p:column>
+            
+            <p:column><h:outputLabel value="#{etiq.fechaDeIngreso}"/></p:column>
+            <p:column colspan="3"> <p:calendar value="#{insPac.paci.primerFechaIngreso}"  id="ingreso" pattern="dd/MM/yyyy"  navigator="true" required="true" requiredMessage="INGRESAR FECHA DE INGRESO" locale="es"/> 
+            </p:column> 
+        </p:row>    
+     <p:row>
+         <p:column styleClass="centrado_texto" colspan="6">
+            <p:commandButton  value="#{etiq.registrar}" icon="ui-icon-disk"  action="#{insPac.almacena()}" update="mensajes frmPacCapasits"/>
+            <p:commandButton type="reset" value="#{etiq.borrar}" />
+         </p:column>
+     </p:row>
+</p:panelGrid>            
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>

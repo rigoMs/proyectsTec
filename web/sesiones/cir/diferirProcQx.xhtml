@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.diferirQx}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <h:panelGrid class="frm_centrado" columns="4">
+                    <p:outputLabel id="fechaSolicitud" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar  id="fechaSol" 
+                                 value="#{oDiferirQx.procedimientos.fechaProgramada}"
+                                 locale="es" effect="explode" required="true" >
+                    </p:calendar>
+                    <p:commandButton id="btnBusFecha" icon="ui-icon-search" 
+                                     value="#{etiq.buscar}" 
+                                     actionListener="#{oDiferirQx.buscaProgramacionQx()}"
+                                     update="tablaPrograma btnDiferir"/>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable  id="tablaPrograma"
+                              value="#{oDiferirQx.listaProgramadas}" 
+                              var="oDiferir" rows="8" 
+                              emptyMessage="#{etiq.noDatos}"
+                              style="width: 1200px; visibility: #{oDiferirQx.visibilidad}" 
+                              rowKey="#{oDiferir.episodioMedico.paciente.folioPaciente}"
+                              selection="#{oDiferirQx.seleccionado}"
+                              styleClass="frm_centrado"> 
+                    <p:ajax event="rowSelectRadio"></p:ajax>
+                    <p:column selectionMode="single" style="width: 20px;"></p:column>
+                    <p:column style="width: 220px">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.paciente}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oDiferir.episodioMedico.paciente.nombreCompleto}"/>
+                    </p:column>     
+                    <p:column style="width: 80px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.fecha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oDiferir.fechaProgramada}"/>
+                    </p:column>
+                    <p:column style="width: 400px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.proceQx}"/>
+                        </f:facet>
+                        <h:outputText value="#{oDiferir.CIE9.descripcion}"/>
+                    </p:column>
+                    <p:column style="width: 60px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.expediente}"/>
+                        </f:facet>
+                        <h:outputText value="#{oDiferir.episodioMedico.paciente.expediente.numero}"/>
+                    </p:column>
+                    <p:column style="width: 100px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oDiferir.episodioMedico.paciente.seg.numero}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="btnDiferir" value="#{etiq.diferirQx}"
+                                         onclick="PF('DifQx').show();" type="button" 
+                                         style="visibility: #{oDiferirQx.visibilidad}">
+                    <p:ajax listener="#{oDiferirQx.llenaDatosProgramacion()}" update="datos_Proce"></p:ajax>
+                </p:commandButton>
+                <br/>
+                <p:dialog header="Diferir Procedimiento Qx" widgetVar="DifQx"
+                          showEffect="bounce" hideEffect="explode"
+                          width="700" resizable="false">
+                    <p:panelGrid id="datos_Proce" style="width: 650px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.nombreCompleto}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{oDiferirQx.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.segpop}"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{oDiferirQx.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.proceQx}"/>
+                            </p:column>
+                            <p:column colspan="4">
+                                <p:outputLabel value="#{oDiferirQx.procedimientos.CIE9.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.fecha}"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{oDiferirQx.procedimientos.fechaProgramada}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.hora}"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{oDiferirQx.procedimientos.fechaProgramada}">
+                                    <f:convertDateTime pattern="HH:mm"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.causaDiferir}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:selectOneMenu id="selCausa" value="#{oDiferirQx.procedimientos.valorCausaDifQx.claveParametro}">
+                                    <f:selectItem itemLabel="Elegir Causa" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems value="#{oDiferirQx.listaCausasDiferir}" var="oCausa" 
+                                                   itemLabel="#{oCausa.valor}" itemValue="#{oCausa.claveParametro}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4" styleClass="ui-widget-header">
+                                <p:commandButton value="Guardar" icon="ui-icon-disk" 
+                                                  actionListener="#{oDiferirQx.registraCausa()}">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid> 
+                </p:dialog>
+                
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus>
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

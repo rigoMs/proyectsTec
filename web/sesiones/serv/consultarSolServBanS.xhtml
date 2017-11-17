@@ -1,0 +1,542 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.ordenes} Banco de Sangre"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:tabView id="ordbs" dynamic="true" cache="true">
+                <p:ajax event="tabChange"/>
+                <p:tab title="#{etiq.solicitudProducto}" id="solprod">
+                    <h:form id="frmSol">
+                        <p:panelGrid styleClass="frm_centrado" columns="10">
+                            <p:outputLabel id="fecPacXFec" value="#{etiq.seleccioneFecha}" styleClass="mensaje"/>
+                            <p:calendar id="tFecSol" value="#{oBancoSan.fecSolicitud}" requiredMessage="Debe seleccionar una fecha" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBancoSan.rebotes}" update=":ordbs:frmSol:tblSolBS"/>
+                        </p:panelGrid>
+                    <br/>
+                    <p:dataTable id="tblSolBS" 
+                                 value="#{oBancoSan.solicitudes}" 
+                                 var="oSol"
+                                 emptyMessage="No hay datos"
+                                 paginator="true"
+                                 rows="10"
+                                 rowKey="#{oSol.idSolicitud}"
+                                 selection="#{oBancoSan.seleccionado}">      
+                        <p:ajax event="rowSelectRadio"></p:ajax>
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.solicitudProducto}"/>
+                        </f:facet>
+                        <p:column selectionMode="single" width="5%">
+                        </p:column>
+                        <p:column width="15%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nompac}"/>
+                            </f:facet>
+                             <h:outputText value="#{oSol.episodio.paciente.nombres} #{oSol.episodio.paciente.apPaterno} #{oSol.episodio.paciente.apMaterno}" />
+                        </p:column>
+                        <p:column width="10%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.numexpe}"/>
+                            </f:facet>
+                             <h:outputText value="#{oSol.episodio.paciente.expediente.numero}" />
+                        </p:column>
+                        <p:column width="15%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.medicoSol}"/>
+                            </f:facet>
+                             <h:outputText value="#{oSol.episodio.medicoTratante.nombres} #{oSol.episodio.medicoTratante.apPaterno} #{oSol.episodio.medicoTratante.apMaterno}" />
+                        </p:column>
+                        <p:column width="30%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.diagnostico}"/>
+                            </f:facet>
+                             <h:outputText value="#{oSol.episodio.diagIngreso.descripcionDiag}" />
+                        </p:column>
+                        <p:column width="10%">
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nivelUrgencia}"/>
+                            </f:facet>
+                             <h:outputText value="#{oSol.urgencia.valor}" styleClass="mensaje" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="btndetpro" value="Ver detalles" process="tblSolBS" icon="ui-icon-plus" actionListener="#{oBancoSan.detalleSolicitudProducto}" update=":frmtprod:panelDet :frmtprod:tblProd1" oncomplete="PF('dlgPaciente').show()" />
+                        </f:facet>
+                    </p:dataTable>
+                    </h:form>  
+                </p:tab>
+                <p:tab title="#{etiq.solTransAmb}" id="solamb">
+                    <h:form id="frmamb">
+                        <p:panelGrid styleClass="frm_centrado" columns="10">
+                            <p:outputLabel id="fecPacAmb" value="#{etiq.seleccioneFecha}" styleClass="mensaje"/>
+                            <p:calendar id="tFecSolAmb" value="#{oBancoSan.fecSolicitud}" requiredMessage="Debe seleccionar una fecha" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar> 
+                            <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oBancoSan.rebotesSolPend}" update=":ordbs:frmamb:tblPacAmb"/>
+                        </p:panelGrid>
+                        <br/>
+                        <p:dataTable id="tblPacAmb" 
+                                     value="#{oBancoSan.solAmbulatoria}" 
+                                     var="oAmb" 
+                                     emptyMessage="No hay datos"
+                                     paginator="true"
+                                     rows="10"
+                                     rowKey="#{oAmb.idSolicitud}"
+                                     selection="#{oBancoSan.selecAmbulatorio}">  
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.solTransAmb}"/>
+                        </f:facet>
+                        <p:column width="5%" selectionMode="single">
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nompac}"/>
+                            </f:facet>
+                            <h:outputText value="#{oAmb.episodio.paciente.nombres} #{oAmb.episodio.paciente.apPaterno} #{oAmb.episodio.paciente.apMaterno}" />
+                        </p:column>
+                         <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.numexpe}"/>
+                            </f:facet>
+                             <h:outputText value="#{oAmb.episodio.paciente.expediente.numero}" />
+                        </p:column>
+                         <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.medicoSol}"/>
+                            </f:facet>
+                            <h:outputText value="#{oAmb.episodio.medicoTratante.nombres} #{oAmb.episodio.medicoTratante.apPaterno} #{oAmb.episodio.medicoTratante.apMaterno}" />
+                        </p:column>
+                         <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.diagnostico}"/>
+                            </f:facet>
+                            <h:outputText value="#{oAmb.episodio.diagIngreso.descripcionDiag}" />
+                        </p:column>
+                         <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nivelUrgencia}"/>
+                            </f:facet>
+                            <h:outputText value="#{oAmb.urgencia.valor}" styleClass="mensaje" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="btndetamb" value="Ver detalles" process="tblPacAmb" icon="ui-icon-plus" actionListener="#{oBancoSan.detalleSolicitudProducto2}" update=":frmtamb:panelAmb :frmtamb:tblProd2" oncomplete="PF('dlgAmbulatorio').show()" />
+                        </f:facet>
+                    </p:dataTable>
+                    
+                   </h:form>
+                </p:tab>
+            </p:tabView>
+            <h:form id="frmtprod">
+                <p:growl id="msgprod" showDetail="true" />
+                <p:dialog header="Datos de la Solicitud" widgetVar="dlgPaciente"
+                      height="70%" width="80%" >
+                        <p:outputPanel id="panelDet">
+                            <p:panelGrid styleClass="frm_centrado">      
+                                <f:facet name="header">
+                                    <p:outputLabel value="Datos Generales del Paciente" styleClass="mensaje"/>
+                                </f:facet>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.nombres} #{oBancoSan.solSan.episodio.paciente.apPaterno} #{oBancoSan.solSan.episodio.paciente.apMaterno}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.expediente.numero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.area.descripcion}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.cama.numero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.edadNumero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.sexo}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.sexoP}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.transPrevias}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">   
+                                        <h:outputText value="#{oBancoSan.solSan.transPrevia}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                       <h:outputLabel value="#{etiq.fecUltimaTrans}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.fechaUltTrans}"/> 
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.embarazoPrevio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.embPrevios}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column rowspan="1" colspan="3">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.diagcie.descripcionDiag}"/> 
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="Hb: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.hb}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="H+o: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.ho}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                       <h:outputLabel value="Grupo: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.tipoSangre.valor}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="Rh: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.RH.valor}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="Tp: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.tp}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="TTp" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.TTp}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="">
+                                        <h:outputLabel value="No. Plaquetas: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.numPlaquetas} mil"/> 
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:outputLabel value="#{etiq.nivelUrgencia} " styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.urgencia.valor}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.medicoTratante.nombres} #{oBancoSan.solSan.episodio.medicoTratante.apPaterno} #{oBancoSan.solSan.episodio.medicoTratante.apMaterno}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:outputLabel value="#{etiq.fechaYhora} " styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.detalle.fechaSolicitud}" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            </p:outputPanel>
+                            <br/>
+                            <p:dataTable id="tblProd1"
+                                         value="#{oBancoSan.solSan.detalleHemoderivado}" 
+                                         var="oProd" 
+                                         rowKey="#{oProd.identificador}"
+                                         emptyMessage="Sin registros"
+                                         selection="#{oBancoSan.selec}">
+                                <p:ajax event="rowSelectRadio"></p:ajax>
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.datosProducto}" styleClass="mensaje"/>
+                                </f:facet>
+                                <p:column width="5%" selectionMode="single">
+                                </p:column>
+                                <p:column width="10%">
+                                    <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.clave}" styleClass="mensaje" />
+                                    </f:facet>   
+                                    <h:outputText value="#{oProd.productoH.clave}" />
+                                </p:column>
+                                <p:column width="30%">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.descripcion}" styleClass="mensaje" />
+                                    </f:facet>   
+                                    <h:outputText value="#{oProd.productoH.descripcion}" />
+                                </p:column>  
+                                 <p:column width="20%">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.unidad}" styleClass="mensaje"/>
+                                     </f:facet>
+                                     <h:outputText value="#{oProd.cantSolicitada}" />
+                                 </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.accion}" styleClass="mensaje"/>
+                                     </f:facet>
+                                    <p:commandButton value="Surtir" icon="ui-icon-check" process="tblProd1" actionListener="#{oBancoSan.modificarEstadoProducto(1)}" update=":frmtprod:msgprod tblProd1">
+                                        <p:ajax></p:ajax>
+                                    </p:commandButton>
+                                    <p:commandButton value="Eliminar" icon="ui-icon-close" process="tblProd1" actionListener="#{oBancoSan.modificarEstadoProducto(2)}" update=":frmtprod:msgprod tblProd1">
+                                        <p:ajax></p:ajax>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                    </p:dialog>
+            </h:form>
+            <h:form id="frmtamb">
+                <p:growl id="msgamb" showDetail="true" />
+                <p:dialog header="Datos de la Solicitud" widgetVar="dlgAmbulatorio"
+                      height="70%" width="80%" >
+                        <p:outputPanel id="panelAmb">
+                            <p:panelGrid styleClass="frm_centrado">      
+                                <f:facet name="header">
+                                    <p:outputLabel value="Datos Generales del Paciente" styleClass="mensaje"/>
+                                </f:facet>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.nombres} #{oBancoSan.solSan.episodio.paciente.apPaterno} #{oBancoSan.solSan.episodio.paciente.apMaterno}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.expediente.numero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.area.descripcion}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.cama.numero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.edadNumero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.sexo}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.sexoP}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.transPrevias}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">   
+                                        <h:outputText value="#{oBancoSan.solSan.transPrevia}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                       <h:outputLabel value="#{etiq.fecUltimaTrans}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.fechaUltTrans}"/> 
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.embarazoPrevio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.embPrevios}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column rowspan="1" colspan="3">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.paciente.diagcie.descripcionDiag}"/> 
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="Hb: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.hb}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="H+o: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.ho}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                       <h:outputLabel value="Grupo: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.tipoSangre.valor}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="Rh: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.RH.valor}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="Tp: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.tp}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="TTp" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.TTp}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="">
+                                        <h:outputLabel value="No. Plaquetas: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.numPlaquetas} mil"/> 
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:outputLabel value="#{etiq.nivelUrgencia} " styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.urgencia.valor}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.episodio.medicoTratante.nombres} #{oBancoSan.solSan.episodio.medicoTratante.apPaterno} #{oBancoSan.solSan.episodio.medicoTratante.apMaterno}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <p:outputLabel value="#{etiq.fechaYhora} " styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{oBancoSan.solSan.detalle.fechaSolicitud}" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            </p:outputPanel>
+                            <br/>
+                            <p:dataTable id="tblProd2"
+                                         value="#{oBancoSan.solSan.detalleHemoderivado}" 
+                                         var="oProd" 
+                                         rowKey="#{oProd.identificador}"
+                                         emptyMessage="Sin registros"
+                                         selection="#{oBancoSan.selec}">
+                                <p:ajax event="rowSelectRadio"></p:ajax>
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.datosProducto}" styleClass="mensaje"/>
+                                </f:facet>
+                                <p:column width="5%" selectionMode="single">
+                                </p:column>
+                                <p:column width="10%">
+                                    <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.clave}" styleClass="mensaje" />
+                                    </f:facet>   
+                                    <h:outputText value="#{oProd.productoH.clave}" />
+                                </p:column>
+                                <p:column width="30%">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.descripcion}" styleClass="mensaje" />
+                                    </f:facet>   
+                                    <h:outputText value="#{oProd.productoH.descripcion}" />
+                                </p:column>  
+                                 <p:column width="20%">
+                                     <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.unidad}" styleClass="mensaje"/>
+                                     </f:facet>
+                                     <h:outputText value="#{oProd.cantSolicitada}" />
+                                 </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                         <p:outputLabel value="#{etiq.accion}" styleClass="mensaje"/>
+                                     </f:facet>
+                                    <p:commandButton value="Surtir" icon="ui-icon-check" process="tblProd2" actionListener="#{oBancoSan.modificarEstadoProducto2(1)}" update=":frmtamb:msgamb tblProd2">
+                                        <p:ajax></p:ajax>
+                                    </p:commandButton>
+                                    <p:commandButton value="Eliminar" icon="ui-icon-close" process="tblProd2" actionListener="#{oBancoSan.modificarEstadoProducto2(2)}" update=":frmtamb:msgamb tblProd2">
+                                        <p:ajax></p:ajax>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                    </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

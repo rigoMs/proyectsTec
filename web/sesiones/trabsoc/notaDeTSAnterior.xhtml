@@ -1,0 +1,387 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.notasdetrbajosocialante}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                
+                  <!--Componenete de busqueda :P-->
+                <p:commandButton id="BuscarPacineT"  value="#{etiq.buscarPac}" icon="ui-icon-search"
+                    onclick="PF('BuscPacie').show(); "> 
+                </p:commandButton>  
+                <p:dialog widgetVar="BuscPacie" id="BuscPacie" width="1050" height="550">   
+        <p:panelGrid >
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarDatosBasicos}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="nom" style="text-transform:uppercase;" 
+                                 maxlength="50" size="39"
+                                 value="#{oBusqPacComunJB.paciente.nombres}" 
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="app" style="text-transform:uppercase;"
+                                 maxlength="50" size="39"
+                                 value="#{oBusqPacComunJB.paciente.apPaterno}" 
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="apm" 
+                                 maxlength="50" size="39"
+                                 value="#{oBusqPacComunJB.paciente.apMaterno}" style="text-transform:uppercase;"
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+            </p:row>                
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarPorExpediente}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.noExp}:"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:inputText styleClass="bordes" id="exp" 
+                                 value="#{oBusqPacComunJB.paciente.expediente.numero}" 
+                                 converterMessage="#{etiq.errCapturaCaractEsp}">
+                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                        <f:ajax render="mentExp" execute="@this" 
+                                event="valueChange" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <center>
+            <p:commandButton styleClass="bordes" 
+                            value="#{etiq.buscar}" 
+                            icon="ui-icon-search">
+                <p:ajax update="tablaPac selecc cancel" listener="#{oBusqPacComunJB.buscaPaciente}"/>
+            </p:commandButton>
+        </center>
+        <p:message for="exp" id="mentExp"/>
+        <br/><br/>
+        <div class="tabla_pacEnc">
+           <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                     paginatorPosition="both" rows="5" 
+
+                                     value="#{oBusqPacComunJB.listaPac}" 
+                                     emptyMessage="#{etiq.noRegistro}" 
+                                     style="visibility:#{oBusqPacComunJB.visibilidadTabla};"
+                                     rowKey="#{oPacEnc.apMaterno}"
+                                     selection="#{oBusqPacComunJB.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.pacEncontrados}"/>
+                            </f:facet>
+                            <p:column selectionMode="single">
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.nombres}"/>
+                            </p:column>
+                            <p:column style="width: 9%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.edadNumero}"/>
+                            </p:column>   
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.curp}"/>
+                            </p:column>
+                            <p:column style="width: 7%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.folioPaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                            </p:column>  
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                            </p:column>     
+                        </p:dataTable>
+        </div>  
+        
+        <p:commandButton value="#{etiq.seleccionar}" id="selecc" style="visibility:#{oBusqPacComunJB.boton};" icon="ui-icon-search">
+            <p:ajax listener="#{onotaDeTrabjSociaAnter.llenar()}" update="tablaDatos BuscPacie tablaNotaTS"/> 
+        </p:commandButton>   
+        
+           <p:commandButton value="#{etiq.cancelar}" id="cancel" icon="ui-icon-circle-close" style="visibility:#{oBusqPacComunJB.boton2};">
+               <p:ajax listener="#{onotaDeTrabjSociaAnter.limpiaboton()}"  update="tablaDatos BuscPacie tablaNotaTS"/>
+                    </p:commandButton>
+                </p:dialog>
+                
+             <br/> <br/>
+                <!--Componenete de busqueda :P-->
+                
+                
+                <p:panelGrid id="tablaDatos" style="visibility:#{onotaDeTrabjSociaAnter.visible};">
+                     <p:row>
+                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.datosDelPaciente}:"/></p:column>
+                    </p:row>
+                 <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}:"/></p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.nombres}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.apPaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.apMaterno}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.sexoP}"/>    
+                        </p:column> 
+
+                        <p:column>
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.edadNumero}"/>
+                        </p:column>
+
+                    </p:row>
+
+                    <p:row> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.sPop}"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nivSE}:"/></p:column> 
+                        <p:column styleClass="ui-widget-header" colspan="3"><p:outputLabel value="#{etiq.nExp}:"/></p:column> 
+                    </p:row>
+
+                    <p:row>          
+                        <p:column>
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.seg.numero}"/>
+                        </p:column>  
+                        <p:column>
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.nivelSocioEconomico.nivelAlcanzado.claveParametro}"/>
+                        </p:column> 
+                        <p:column colspan="3">
+                            <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.expediente.numero}"/>
+                        </p:column>
+                         
+
+                    </p:row> 
+                    
+                </p:panelGrid>
+                
+               
+               
+                    <p:dataTable id="tablaNotaTS" var="oEpiEn" paginator="true" style="visibility:#{onotaDeTrabjSociaAnter.visible};"
+                               paginatorPosition="both" rows="15" value="#{onotaDeTrabjSociaAnter.lista}"
+                                     emptyMessage="NO HAY REGISTROS" >
+                       <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.notasanteriores}"/>
+                       </f:facet>
+                      <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.fechaDeIngreso}"/>
+                                </f:facet>
+                        <h:outputText value="#{oEpiEn.fechaIngreso}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" />
+                        </h:outputText>
+                       </p:column>
+                       <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.fechaEgreso}"/>
+                                </f:facet>
+                           <h:outputText value="#{oEpiEn.altaHospitalaria}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy" />
+                           </h:outputText>
+                       </p:column> 
+                      <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.areas}"/>
+                                </f:facet>
+                          <h:outputText value="#{oEpiEn.areaServicioHRRB}"/>
+                       </p:column> 
+                        <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="EDAD"/>
+                                </f:facet>
+                            <h:outputText value="#{oEpiEn.paciente.edadNumero}"/>
+                       </p:column>
+                        <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="cama"/>
+                                </f:facet>
+                            <h:outputText value="#{oEpiEn.cama.numero}"/>
+                       </p:column> 
+                       <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.operaciones}"/>
+                                </f:facet> 
+                         <p:commandButton  oncomplete="PF('notats').show()" icon="ui-icon-search">
+                               <p:ajax listener="#{onotaDeTrabjSociaAnter.notasDePaciente(oEpiEn)}" update=":notaDes"></p:ajax>
+                                </p:commandButton>
+                       </p:column>                            
+                    </p:dataTable>  
+               </h:form> 
+            <p:dialog header="#{etiq.notaDeTrabajoSocia}" widgetVar="notats" id="notaDes"  
+                          showEffect="bounce" resizable="false" >
+                <h:form> 
+                    <p:panel  id="content" style="border-color:#ffffff; background-color:#ffffff;"> 
+                                  <p:panelGrid>
+                                      <p:row>
+                                          <p:column colspan="4" style="width:300px; border-color:#ffffff; background-color:#ffffff; border-bottom-color: #000000;">
+                                            <h:graphicImage value="/imgs/veracruz.png" style="width: 100px;" />   
+                                            <h:graphicImage value="/imgs/ss.jpg" style="width: 100px;" /> 
+                                          </p:column>
+                                          <p:column colspan="5" style="width:300px; border-color:#ffffff; background-color:#ffffff; border-bottom-color: #000000; text-align: center;">  
+                                               <h:outputText value="#{etiq.secretariadesalud}"/> <br/>
+                                              <h:outputText value="#{etiq.serviciosdesaluddeveracruz}"/> <br/>
+                                              <h:outputText value="#{etiq.direcciondeatencionmedica}"/> <br/>
+                                              <h:outputText value="#{etiq.hospitalReginalDeRioBlancoM}"/> 
+                                          </p:column>
+                                          <p:column colspan="3" style="width:300px; border-color:#ffffff; background-color:#ffffff; border-bottom-color: #000000;">
+                                              
+                                          </p:column>
+                                      </p:row>
+                                      <p:row>
+                                          <p:column styleClass="ui-widget-header"  colspan="12" style="border-color:#000000; text-align: center;"> 
+                                              <b> <h:outputText value="#{etiq.notadeTrabajoSocialM}"/> </b>
+                                          </p:column>
+                                      </p:row>
+                                      <p:row> 
+                                          <p:column colspan="12" style="border-left-color:#ffffff; border-right-color: #ffffff; border-bottom-color: #000000; background-color:#ffffff;">
+                                              &zwnj;
+                                          </p:column>
+                                      </p:row>
+                                      <p:row> 
+                                          <p:column colspan="8" style="border-color:#000000; background-color:#ffffff;">
+                                            <b>  <h:outputText value="#{etiq.NombreDelPaciente}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.nombreCompleto}"/>
+                                          </p:column>
+                                          <p:column colspan="2" style="border-color:#000000; background-color:#ffffff;" >
+                                            <b>  <h:outputText value="#{etiq.edadREF}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{onotaDeTrabjSociaAnter.notaTrabajoSocial.episodioMedico.paciente.edadNumero}"/>
+                                          </p:column>
+                                          <p:column  colspan="2" style="border-color:#000000; background-color:#ffffff;">
+                                            <b>  <h:outputText value="#{etiq.sexoM}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.sexoP}"/>
+                                          </p:column>
+                                      </p:row>
+                                      <p:row>
+                                             <p:column colspan="4" style="border-color:#000000; background-color:#ffffff;">
+                                                <b> <h:outputText value="#{etiq.numerodeExpediente}:"/>  </b>&nbsp;&nbsp;  <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.expediente.numero}"/>
+                                          </p:column>
+                                          <p:column colspan="4" style="border-color:#000000; background-color:#ffffff;">
+                                             <b> <h:outputText value="#{etiq.folioseguropopularM}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{onotaDeTrabjSociaAnter.paciente.seg.numero}"/>
+                                          </p:column>
+                                          <p:column  colspan="2" style="border-color:#000000; background-color:#ffffff;">
+                                             <b> <h:outputText value="#{etiq.servicioREF}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{onotaDeTrabjSociaAnter.notaTrabajoSocial.episodioMedico.areaServicioHRRB}"/>
+                                          </p:column>
+                                          <p:column  colspan="2" style="border-color:#000000; background-color:#ffffff;">
+                                             <b> <h:outputText value="#{etiq.camaM}:"/> </b>&nbsp;&nbsp;  <h:outputText value="#{onotaDeTrabjSociaAnter.notaTrabajoSocial.episodioMedico.cama.numero}"/>
+                                          </p:column>
+                                      </p:row>
+                                  </p:panelGrid>
+                                  <p:dataTable  style="width:925px; background-color:#ffffff;" id="NotasAnte" 
+                                               emptyMessage="NO HAY REGISTROS"
+                                               var="oNts"
+                                               value="#{onotaDeTrabjSociaAnter.listaNotas}" 
+                                               >
+                                      <p:column style="width:100px; background-color:#ffffff;">
+                                          <f:facet name="header">
+                                             <b> <h:outputLabel class="negrita" value="#{etiq.horayfechaM}"/></b>
+                                          </f:facet>
+                                          <h:outputText value="#{oNts.fechaRegistro}">
+                                          <f:convertDateTime pattern="dd-MM-yyyy hh:mm:ss" />
+                                          </h:outputText>
+                                      </p:column>
+                                      <p:column style="background-color:#ffffff;">
+                                          <f:facet name="header">
+                                              <h:outputLabel class="negrita" value="#{etiq.notadeTrabajoSocialM}"/><br/>
+                                             <h:outputLabel value="#{etiq.debecontenernombrets}" style="font-size:10px;"/> 
+                                          </f:facet>
+                                           <h:outputText value="#{oNts.nota}"/>
+                                      </p:column>
+                                  </p:dataTable>
+                                     </p:panel>
+                                 <p:commandButton value="#{etiq.imprimir}" icon="ui-icon-print" style=" margin-bottom: 20px;">
+                                 <p:printer target="content" /> 
+                                 </p:commandButton> 
+                    </h:form>
+            </p:dialog>
+              
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

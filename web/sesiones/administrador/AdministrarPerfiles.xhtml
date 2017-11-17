@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+
+                <p:growl id="ladridos" showDetail="true"/>
+
+                <p:ajaxStatus style=" position: absolute; bottom: 50%; left: 50%; " >
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+
+                <p:panel header="Perfiles">
+                    <h:form id="listaDePerfiles">
+                        <p:panel>
+                            <p:autoComplete id="inputPerfilesBusq" dropdown="true" maxResults="10" onkeyup="this.value = this.value.toUpperCase();"
+                                            queryDelay="300" size="50" minQueryLength="3" styleClass="bordes"
+                                            value="#{adminPerfiles.nombre}" completeMethod="#{adminPerfiles.completaPerfil}"
+                                            />
+                            <p:spacer width="40" />
+                            <p:commandButton id="buscarPerfil" value="#{etiq.buscar}" icon="ui-icon-search" update=":listaDePerfiles:tablaPerfiles"/>
+                            <p:spacer width="5" />
+                            <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-plus" oncomplete="PF('dialogModPerf').show()" 
+                                             update=":dialogModPerf" actionListener="#{adminPerfiles.crearPerfil()}">
+                                <f:setPropertyActionListener target="#{adminPerfiles.tituloVentana}" value="#{etiq.nuevo}" />
+                            </p:commandButton>
+                        </p:panel>
+                        <p:separator/>
+                        <p:dataTable id="tablaPerfiles" var="oPerfEnc" value="#{adminPerfiles.perfiles}" paginator="true" rows="15" lazy="true">
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.clave}" />
+                                </f:facet>
+                                <h:outputText value="#{oPerfEnc.clave}"/>
+                            </p:column>
+                            <p:column style="width: 60%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombrePerfil}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPerfEnc.descripcion}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="Acciones"/>
+                                </f:facet>
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil" oncomplete="PF('dialogModPerf').show()" 
+                                                 update=":dialogModPerf" actionListener="#{adminPerfiles.modificarPerfil(oPerfEnc)}" >
+                                    <f:setPropertyActionListener target="#{adminPerfiles.tituloVentana}" value="Modificar" />
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.eliminar}" icon="ui-icon-cancel" oncomplete="PF('dialogoBorrarPerfil').show()" 
+                                                 update=":dialogoBorrarPerfil" actionListener="#{adminPerfiles.preparaEliminar(oPerfEnc)}">
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+
+                <p:dialog id="dialogModPerf" widgetVar="dialogModPerf" closable="true" visible="false" resizable="false" dynamic="true" modal="true" >
+                    <f:facet name="header">
+                        <p:outputLabel value="#{adminPerfiles.tituloVentana}" />
+                    </f:facet>
+
+                    <h:form id="panelEdicionPerfil" rendered="#{adminPerfiles.renderEdicion}">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.nombre} *"/></p:column>
+                                <p:column>
+                                    <p:inputText maxlength="150" size="60" required="true" validatorMessage="Se requiere un nombre para el perfil"
+                                                 value="#{adminPerfiles.perfil.descripcion}" style="text-transform: uppercase;" />
+                                </p:column>
+
+                                <p:column rowspan="3">
+                                    <p:commandButton id="pojoSubmit" value="Guardar" style="margin-top:5px" action="#{adminPerfiles.guardarPerfil()}" 
+                                                     oncomplete="PF('dialogModPerf').hide()" update=":listaDePerfiles:tablaPerfiles :ladridos" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="#{etiq.clave} *" /></p:column>
+                                <p:column>
+                                    <p:inputText maxlength="10" required="true" value="#{adminPerfiles.perfil.clave}" 
+                                                 validatorMessage="Se requiere una clave" 
+                                                 readonly="#{adminPerfiles.noEditarClave}" style="text-transform: uppercase;"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:pickList id="PojoPickList" value="#{adminPerfiles.funciones}" var="funcion"
+                                                itemLabel="#{funcion.descripcion}" itemValue="#{funcion}"
+                                                converter="entityConverter" showCheckbox="true"
+                                                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains">
+
+                                        <f:facet name="sourceCaption">Funciones disponibles</f:facet>
+                                        <f:facet name="targetCaption">Funciones del perfil</f:facet>
+
+                                        <p:column>
+                                            <h:outputText value="#{funcion.descripcion}"/>
+                                        </p:column>
+                                        <p:column >
+                                            <h:outputText value="en"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{funcion.menu.descripcion}"/>
+                                        </p:column>
+                                    </p:pickList>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+
+                </p:dialog>
+
+                <p:dialog id="dialogoBorrarPerfil" widgetVar="dialogoBorrarPerfil" closable="true" visible="false" 
+                          resizable="false" dynamic="true" modal="true">
+                    <f:facet name="header" >
+                        <p:outputLabel value="#{etiq.confirmar}" />
+                    </f:facet>
+
+                    <h:form id="formEliminarPerfil" rendered="#{adminPerfiles.renderEliminar}">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:outputLabel value="#{etiq.preguntaEliminarPerfil} #{adminPerfiles.perfil.descripcion}?" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.eliminar}" action="#{adminPerfiles.eliminarPerfil()}" 
+                                                     oncomplete="PF('dialogoBorrarPerfil').hide()" update=":listaDePerfiles:tablaPerfiles :ladridos" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="#{etiq.cancelar}" onclick="PF('dialogoBorrarPerfil').hide()" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

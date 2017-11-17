@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!--ALBERTO-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org./TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq"/>
+            <ui:define name="cuerpo">
+                <div class="buscar">
+                    <h:form id="busqueda">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.generaHojaFrontal}"/></h3>
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel />
+                                    <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPac.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="app" value="#{oBuscarPac.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPac.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" update=":busqueda:destino:tblResultado">
+                                        <f:setPropertyActionListener target="#{oBuscarPac.paciente.opcionUrg}" value="#{0}"/>
+                                        <f:setPropertyActionListener target="#{frontal.confirmaBandera}" value="#{false}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>                                
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmLogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPac.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                                    </p:inputText>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" update=":busqueda:destino:tblResultado">
+                                        <f:setPropertyActionListener target="#{oBuscarPac.paciente.opcionUrg}" value="#{1}"/>
+                                        <f:setPropertyActionListener target="#{frontal.confirmaBandera}" value="#{false}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <br/>
+                        <div class="centrar">
+                            <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                                <f:setPropertyActionListener target="#{oBuscarPac.paciente.nombres}" value=""/>
+                                <f:setPropertyActionListener target="#{oBuscarPac.paciente.apPaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{oBuscarPac.paciente.apMaterno}" value=""/>
+                                <f:setPropertyActionListener target="#{oBuscarPac.paciente.expediente.numero}" value="#{0}"/>
+                            </p:commandButton>
+                        </div>
+                        <br/>
+                        <p:outputPanel id="destino" styleClass="centrar">
+                                <p:dataTable id="tblResultado" var="oPacEnc"
+                                            value="#{oBuscarPac.paciente.buscarPacienteDatos()}"
+                                            emptyMessage="#{etiq.noRegistro}" 
+                                            paginator="true" 
+                                            rows="4"                                            
+                                            rendered="#{not empty oBuscarPac.paciente.buscarPacienteDatos()}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                </f:facet>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.fechanac}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.fechaNac}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>                                
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.nombres}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.appat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.apPaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.apmat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.apMaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Ctrl"/>
+                                    </f:facet>
+                                    <p:commandButton id="btnDetalles"  icon="ui-icon-search"  value="Detalles"
+                                                     actionListener="#{frontal.cargarPaciente(oPacEnc.folioPaciente)}"
+                                                     update=":formulario :formulario:imprime01 :busqueda:msgs">                                        
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <br/><br/>
+                <div class="frm_centrado">
+                    <h:form id="formulario">                        
+                        <p:panelGrid styleClass="frm_centrado" id="imprime01" rendered="#{frontal.confirmaBandera}">
+                            <!--ENCABEZADO-->
+                                    <p:row>
+                                        <p:column colspan="8" style="border-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                            <p:row>
+                                                <p:column style="border-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                                    <h:graphicImage value="/imgs/encabezadoHojaFrontal.jpg" style="width: 898px; height: 157px;"/>
+                                                </p:column>                                                    
+                                            </p:row>
+                                        </p:column>
+                                    </p:row>                            
+                                <!--TERMINA ENCABEZADO-->
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; border-top-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.hospital1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{etiq.hrrb}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.nomPac3}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.nombreCompleto}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" style="border-left-color: #000000; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.edad1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.edadNumero}"/>
+                                    </p:column>
+                                    <p:column colspan="4" style="border-left-color: #ffffff; border-right-color: #000000; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.sex2}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.sexoP}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.estadocivil1}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.edoCivilStr}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.ocupacion1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.nivelSocioEco.valor}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.lugarorigen1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.calleNum}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.lugarresidencia1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.ciudad.descripcionCiu}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" style="border-left-color: #000000; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.fechaingreso1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{frontal.episodioMedico.fechaIngreso}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column colspan="4" style="border-left-color: #ffffff; border-right-color: #000000; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.servicio1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{frontal.episodioMedico.area.descripcion}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" style="border-left-color: #000000; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.nexpediente1}:"/>&nbsp;</b>
+                                        <p:outputLabel value="#{frontal.episodioMedico.paciente.expediente.numero}"/>
+                                    </p:column>
+                                    <p:column colspan="4" style="border-left-color: #ffffff; border-right-color: #000000; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.cam2}:"/>&nbsp;</b>
+                                         <p:outputLabel value="#{frontal.episodioMedico.cama.numero}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.diagnosticoIngresoo}:"/>&nbsp;</b>
+                                        <p:autoComplete id="completeDx" onkeypress="return validaCaracter(event);" queryDelay="1000"
+                                                        size="80" minQueryLength="3" value="#{frontal.episodioMedico.afePrincipal.CIE10.descripcionDiag}" effect="fade"
+                                                    completeMethod="#{frontal.cie10.completar}"
+                                                    onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300">
+                                            <p:ajax update="CIE10-1" event="itemSelect"/>
+                                        </p:autoComplete>&nbsp;
+                                        <p:outputLabel value="#{etiq.cie10}: "/>
+                                        <p:inputText id="CIE10-1" size="5" value="#{frontal.episodioMedico.afePrincipal.CIE10.clave}" readonly="true" styleClass="bordes"/>&nbsp;
+                                        <p:commandButton value="Agregar" icon="ui-icon-plus">
+                                            <p:ajax listener="#{frontal.registroDiagnostico()}" update=":formulario:tablaDiagFrontal :formulario:completeDx :formulario:CIE10-1 :busqueda:msgs"/>
+                                        </p:commandButton>
+                                    </p:column>                                    
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="padding: 0px; border-color: #000000; background-color: #ffffff; width: 898px;">
+                                        <p:dataTable id="tablaDiagFrontal" var="dxFrontal" value="#{frontal.diagCie10}" emptyMessage="#{etiq.notificacion9}">
+                                            <p:column headerText="#{etiq.diagnostico}:" styleClass="columnachica centrado_texto" style="width: 700px; background-color: #ffffff;">
+                                                <p:outputLabel value="#{dxFrontal.descripcionDiag}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cie10}:" styleClass="columnachica centrado_texto" style="width: 100px; background-color: #ffffff;">
+                                                <p:outputLabel value="#{dxFrontal.clave}"/>
+                                            </p:column>
+                                            <p:column headerText="Ctrl" styleClass="columnachica centrado_texto"  style="width: 98px; background-color: #ffffff;">
+                                                <p:commandButton value="#{etiq.borrar}" icon="ui-icon-trash">
+                                                    <p:ajax listener="#{frontal.borrarElementoCie10(dxFrontal)}" update="tablaDiagFrontal"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="padding: 0px; border-color: #000000; background-color: #ffffff; width: 898px;">
+                                        <p:dataTable id="dia01" value="#{frontal.listaDiagnosticos()}" var="odx" emptyMessage="#{etiq.notificacion9}">
+                                            <p:column headerText="#{etiq.diagnostico}" styleClass="columnachica centrado_texto" style="width: 800px;">
+                                                <p:outputLabel value="#{odx.descripcionDiag}"/>
+                                            </p:column>
+                                            <p:column headerText="#{etiq.cie10}:" styleClass="columnachica centrado_texto" style="width: 98px;">
+                                                <p:outputLabel value="#{odx.clave}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.plan1}:"/></b>&nbsp;
+                                        <p:inputText value="#{frontal.HFrontal.plan}" styleClass="bordes" style="text-transform: uppercase;" size="120" required="true" requiredMessage="#{etiq.notificacion46}">
+                                            <p:ajax event="valueChange"/>
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.interconsultasr1}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.HFrontal.interconsultas}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.critugiarealizada1}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.HFrontal.episodioMedico.proceRe1.CIE9.descripcion}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.dxegreso1}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.HFrontal.hospitalizacion.diagnosticosEgreso}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.fechaegreso1}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.HFrontal.episodioMedico.altaFisica}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color: #000000; background-color: #ffffff;">
+                                        <b><p:outputLabel value="#{etiq.mtratante1}:"/></b>&nbsp;
+                                        <p:outputLabel value="#{frontal.personalHospitalario.nombreCompleto}"/>&nbsp;&nbsp;
+                                        <p:outputLabel value="#{frontal.personalHospitalario.cedProf}"/>
+                                    </p:column>
+                                </p:row>
+                        </p:panelGrid>
+                        <p:panelGrid rendered="#{frontal.confirmaBandera}">
+                             <!--BOTONES GURADAR E IMPRIMIR-->
+                             <p:row>
+                                <p:column colspan="6" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">
+                                    <p:commandButton id="guardar" value="#{etiq.guard}" icon="ui-icon-disk" actionListener="#{frontal.guardaInformacion}" 
+                                                     validateClient="true" update="imprime01 :busqueda:msgs" process="@form"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+                <div>
+                    <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px">
+                        <f:facet name="start">
+                            <p:graphicImage value="/imgs/loading.gif"/>
+                        </f:facet>
+                    </p:ajaxStatus>
+                </div>
+            </ui:define>
+        </ui:composition>
+    
+</html>

@@ -1,0 +1,493 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"      
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">    
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div id="MovDPac">
+                    <h:form id="buscar">                        
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.movDPac}"/></h3>
+                        <p:accordionPanel styleClass="centrar" style=" width: 37%; font-weight: bold;">
+                            <p:tab title="#{etiq.buscarXfecha}" >
+                                <p:outputPanel styleClass="centrar">
+                                <p:panelGrid columns="3">    
+                                    <p:outputLabel for="ser" value="#{etiq.servicio}:"/>
+                                    <p:outputLabel for="fecPor" value="#{etiq.fecha}:"/>
+                                    <p:outputLabel/>
+                                    <p:selectOneMenu effect="puff" id="ser" value="#{oMovDiario.movimientoDiario.servicio.clave}"
+                                                     required="true" requiredMessage="ERROR, Selecciona un servicio">
+                                        <f:selectItem itemLabel="Elegir servicio" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{oMovDiario.mapServicio}"/>
+                                        <p:ajax event="valueChange"/>
+                                    </p:selectOneMenu>
+                                    <p:calendar value="#{oMovDiario.movimientoDiario.fechaMovimiento}" size="8"
+                                                id="fecPor" effect="puff" pattern="dd/MM/yyyy" locale="es" required="true" 
+                                                readonlyInput="true" showOn="button" requiredMessage="ERROR, Selecciona la Fecha">
+                                        <p:ajax event="dateSelect"/>
+                                    </p:calendar>
+                                    <p:commandButton value="Buscar" icon="ui-icon-search" actionListener="#{oMovDiario.consultarMovimiento}"
+                                                    update=":frm_centrado :frm_centrado:pgd1" >                                        
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                </p:outputPanel>
+                            </p:tab>
+                        </p:accordionPanel>
+                    </h:form>
+                    <br/>                        
+                    <h:form id="frm_centrado"> 
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>                        
+                        <p:panelGrid id="pgd1" style="width: 925px;" rendered="#{oMovDiario.render}">
+                            <p:row>
+                                <p:column  styleClass="ui-widget-header" style="text-align: right;width: 15%;">
+                                    <b> <p:outputLabel value="#{etiq.fecha}:"/></b>
+                                </p:column>
+                                <p:column colspan="2" style="" styleClass="ui-widget-header">
+                                    <h:outputText value="#{oMovDiario.movimientoDiario.fechaMovimiento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align:  center; " styleClass="ui-widget-header">
+                                    <b><p:outputLabel value="#{etiq.servicio}"/></b>
+                                </p:column>
+                                <p:column  style="width:25%;">
+                                    <h:outputText/> 
+                                </p:column>
+                                <p:column  style=" width: 25%;">
+                                    <h:outputText id="jefa" value="#{oMovDiario.movimientoDiario.jefaEnfermeria.nombreCompleto}"/>  
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align:  center; font-size: 12px;">
+                                    <h:outputText value="#{oMovDiario.movimientoDiario.servicio.descripcion}"/>
+                                </p:column>
+                                <p:column style="text-align: center; font-size: 12px;" styleClass="ui-widget-header">
+                                    <b> <p:outputLabel value="#{etiq.nomEnf}"/></b>
+                                </p:column>
+                                <p:column style="text-align:  center; font-size: 12px;" styleClass="ui-widget-header">
+                                    <b> <p:outputLabel value="#{etiq.nomEnJ}"/></b>
+                                </p:column>
+                            </p:row>                            
+                        </p:panelGrid>
+                        <br/>
+                        <p:panelGrid id="pgd2" style="width: 925px; " rendered="#{oMovDiario.render}">
+                            <p:row>
+                                <p:column style="padding: 0px; border-color: transparent;">
+                                    <p:dataTable emptyMessage="#{etiq.sinMsj}"  value="#{oMovDiario.arrMovimiento}" var="oM">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="2" headerText="#{etiq.camaM}" style="width: 4.5%; font-weight:  bold; font-size: 12px;" />
+                                                <p:column  rowspan="2" headerText="#{etiq.exp2}" style="width: 7.2%; font-weight:  bold; font-size: 12px;" />
+                                                <p:column rowspan="2" headerText="#{etiq.nombrePaMay}" style="width: 23%; font-weight:  bold; font-size: 12px;"/>
+                                                <p:column rowspan="2" headerText="#{etiq.horIng2}" style="width: 6%; font-weight:  bold; font-size: 12px;"/>
+                                                <p:column colspan="2" headerText="#{etiq.pase}" style="width: 16%; font-weight:  bold; font-size: 12px;"/>
+                                                <p:column colspan="2" headerText="#{etiq.gres}" style="width: 10%; text-align: center; font-weight:  bold; font-size: 12px;"/>
+                                                <p:column rowspan="2" headerText="#{etiq.diaEst}" style="width: 6.2%; font-weight:  bold; font-size: 12px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="#{etiq.de}" style="font-size: 11px;"/>
+                                                <p:column headerText="#{etiq.aa}" style="font-size: 11px;"/>
+                                                <p:column headerText="#{etiq.viv}" style="font-size: 11px;"/>
+                                                <p:column headerText="#{etiq.muer}" style="text-align: center; font-size: 11px;"/>                                     
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.episodio.cama.numero}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.episodio.paciente.expediente.numero}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.episodio.paciente.nombreCompleto}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.horaIngreso}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.paseDe}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.paseA}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.horaVivoStr}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.horaMuertoStr}" style="font-size: 12px;"/>
+                                        </p:column>
+                                        <p:column style=" border-color: black;">
+                                            <p:outputLabel value="#{oM.episodio.diasEstancia}" style="font-size: 12px;"/>
+                                        </p:column>
+                                         <p:columnGroup type="footer">
+                                             <p:row>
+                                                 <p:column colspan="3" style="text-align:right" footerText="#{etiq.total}" styleClass="ui-widget-header" />
+                                                 <p:column footerText="#{oMovDiario.totalIngreso}" style="font-size: 12px;"/>
+                                                 <p:column footerText="#{oMovDiario.totalPaseDe}" style="font-size: 12px;"/>
+                                                 <p:column footerText="#{oMovDiario.totalPaseA}" style="font-size: 12px;"/>
+                                                 <p:column footerText="#{oMovDiario.totalVivos}" style="font-size: 12px;"/>
+                                                 <p:column footerText="#{oMovDiario.totalMuertos}" style="font-size: 12px;"/>
+                                                 <p:column footerText="#{oMovDiario.totalDiasEstancia}" style="font-size: 12px;"/>
+                                             </p:row>
+                                         </p:columnGroup>                                                                            
+                                      </p:dataTable>
+                                </p:column>                                
+                            </p:row>                            
+                        </p:panelGrid>                        
+                        &nbsp;
+                        <p:panelGrid id="pgd3" style="width: 925px;" rendered="#{oMovDiario.render}">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="12" style="text-align: center; font-weight: bold; border-color: black;">
+                                        <p:outputLabel value="#{etiq.resumen}"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>                                
+                                <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px; width: 3.5%;">
+                                    <p:outputLabel value="#{etiq.estn}"/>
+                                </p:column> 
+                                <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px; width: 3%;">
+                                    <p:outputLabel value="#{etiq.ingre}"/>
+                                </p:column> 
+                                <p:column colspan="2" style="text-align: center;  border-color: black; font-size: 10px; width: 8%;">
+                                    <p:outputLabel value="#{etiq.pase}"/>
+                                </p:column> 
+                                <p:column colspan="2" style="text-align: center;  border-color: black; font-size: 10px; width: 8%">
+                                    <p:outputLabel value="#{etiq.gres}"/>
+                                </p:column> 
+                                <p:column rowspan="2" style="text-align: center;  border-color: black;font-size: 10px; width: 3.4%;">
+                                    <p:outputLabel value="#{etiq.diaEst}"/>
+                                </p:column> 
+                                <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px; width: 6%;">
+                                    <p:outputLabel value="#{etiq.exis}"/>
+                                </p:column> 
+                                <p:column rowspan="2" style="text-align: center;  border-color: black;font-size: 10px; width: 6%;">
+                                    <p:outputLabel value="#{etiq.ingEgre}"/>
+                                </p:column>
+                                <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px; width: 5%;">
+                                    <p:outputLabel value="#{etiq.totalPa}"/>
+                                </p:column> 
+                                <p:column colspan="2" style="text-align: center;  border-color: black;font-size: 10px; width: 8%;">
+                                    <p:outputLabel value="#{etiq.camas2}"/>
+                                </p:column>                                
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                    <p:outputLabel value="#{etiq.de}"/>
+                                </p:column> 
+                                <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                    <p:outputLabel value="#{etiq.aa}"/>
+                                </p:column> 
+                                <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                    <p:outputLabel value="#{etiq.viv}"/>
+                                </p:column> 
+                                <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                    <p:outputLabel value="#{etiq.muer}"/>
+                                </p:column> 
+                                <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                    <p:outputLabel value="#{etiq.total}"/>
+                                </p:column> 
+                                <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                    <p:outputLabel value="#{etiq.dis}"/>
+                                </p:column>                               
+                                
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.existenciaPacientes}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.totalIngreso}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.totalPaseDe}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.totalPaseA}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.totalVivos}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.totalMuertos}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.totalDiasEstancia}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.exis24Hrs}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.ingresoEgresoDia}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.totalPacientes}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.movimientoDiario.totalCamas}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{oMovDiario.camasDispo}" style="font-size: 11px; text-align: center;"/>
+                                </p:column>                                
+                            </p:row>
+                        </p:panelGrid>
+                        <p:panelGrid id="pgd4" rendered="#{oMovDiario.render}">
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-folder-open" 
+                                        value=" Abrir Para #{etiq.imprimir}" onclick="PF('imprimirMovPac').show()"
+                                        update=":MovPacImp"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>                        
+                    </h:form>                    
+                </div>
+                
+                <p:dialog modal="true" showEffect="puff" hideEffect="puff" header="" resizable="false" widgetVar="imprimirMovPac"
+                          height="600" width="1000">
+                    <h:form id="MovPacImp">
+                        <p:panel style="border-color: black; border-width: 2px; width: 99%;">                                 
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column  style=" height: 50px; border-color:  transparent; width: 12%">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-salud.jpg" width="120" height="45" align="right"/>
+                                    </p:column>
+                                    <p:column style=" width: 76%; text-align: center; border-color: transparent;">
+                                        <b><p:outputLabel value="#{etiq.servicioEstadoVeracruz}"/></b><br/>
+                                        <b><p:outputLabel value="#{etiq.hrrbM}"/></b>                                    
+                                    </p:column>
+                                    <p:column style="width : 12%; height: 50px;border-color: transparent;">
+                                        <img src="#{facesContext.externalContext.requestContextPath}/imgs/logo-hrrb.jpg" width="120" height="45"  align="left"/>
+                                    </p:column>
+                                </p:row>                                          
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:outputPanel style="width: 100%; text-align: center; font-size: 13pt;">
+                            <p:outputLabel value="#{etiq.movDPac}"/>
+                        </p:outputPanel>                        
+                        <p:outputPanel style="width: 100%;">
+                            <p:panelGrid style="width: 100%;">
+                                <p:row>
+                                    <p:column style="border-color: black;" colspan="3">
+                                        <p:outputLabel value="#{etiq.fecha}:"/>&nbsp;&nbsp;
+                                        <p:outputLabel value="#{oMovDiario.movimientoDiario.fechaMovimiento}" style="font-size: 12px;">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style=" width: 25%; text-align: center; border-bottom-color: transparent;
+                                              border-left-color: black; border-right-color: black;">
+                                         <b><p:outputLabel value="#{etiq.servicio}"/></b>
+                                    </p:column>
+                                    <p:column style="width: 37.5%; border-right-color: black;">
+                                        <p:outputLabel value="" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style=" width: 37.5%; border-right-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.movimientoDiario.jefaEnfermeria.nombreCompleto}" style="font-size: 11px;"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style=" width: 23%; text-align: center; border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.movimientoDiario.servicio.descripcion}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="width: 39.5%; font-size: 12px; border-color: black;">
+                                        <b> <p:outputLabel value="#{etiq.nomEnf}"/></b>
+                                    </p:column>
+                                    <p:column style=" width: 37.5%; font-size: 12px; border-color: black;">
+                                        <b> <p:outputLabel value="#{etiq.nomEnJ}"/></b>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>  
+                        </p:outputPanel>
+                        <div style=" margin-bottom: 5px;"/>
+                        <p:outputPanel style="width: 100%;">
+                            <p:dataTable emptyMessage="#{etiq.sinMsj}" value="#{oMovDiario.arrMovimiento}" var="oMv">
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="2" headerText="#{etiq.camaM}" style="width: 5%; font-weight:  bold; color: black; font-size: 12px;" />
+                                        <p:column  rowspan="2" headerText="#{etiq.expedientee}" style="width: 7.9%; font-weight:  bold; color: black; font-size: 10px;" />
+                                        <p:column rowspan="2" headerText="#{etiq.nombrePaMay}" style="width: 20%; font-weight:  bold; color: black; font-size: 12px;"/>
+                                        <p:column rowspan="2" headerText="#{etiq.horIng2}" style="width: 8%; font-weight:  bold; color: black; font-size: 12px;"/>
+                                        <p:column colspan="2" headerText="#{etiq.pase}" style="width: 15%; font-weight:  bold; color: black; font-size: 12px;"/>
+                                        <p:column colspan="2" headerText="#{etiq.gres}" style="width: 12.5%; text-align: center; font-weight:  bold; color: black; font-size: 12px;"/>
+                                        <p:column rowspan="2" headerText="#{etiq.diaEst}" style="width: 6.8%; font-weight:  bold; font-size: 10px; color: black;"/>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column headerText="#{etiq.de}" style="color: black; font-size: 11px;" />
+                                        <p:column headerText="#{etiq.aa}" style="color: black; font-size: 11px;" />
+                                        <p:column headerText="#{etiq.viv}" style="color: black; font-size: 11px;"/>
+                                        <p:column headerText="#{etiq.muer}" style="text-align: center; color: black; font-size: 11px;"/>                                     
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.episodio.cama.numero}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.episodio.paciente.expediente.numero}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.episodio.paciente.nombreCompleto}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.horaIngreso}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black; ">
+                                    <p:outputLabel value="#{oMv.paseDe}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.paseA}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.horaVivoStr}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.horaMuertoStr}" style="font-size: 11px;"/>
+                                </p:column>
+                                <p:column style=" border-color: black;">
+                                    <p:outputLabel value="#{oMv.episodio.diasEstancia}" style="font-size: 11px;"/>
+                                </p:column>
+                                 <p:columnGroup type="footer">
+                                     <p:row>
+                                         <p:column colspan="3" style="text-align:right; font-size: 12px; color: black; border-color: black;" footerText="#{etiq.total}" styleClass="ui-widget-header" />
+                                         <p:column footerText="#{oMovDiario.totalIngreso}"  style="border-color: black; font-size: 11px;" />
+                                         <p:column footerText="#{oMovDiario.totalPaseDe}" style="border-color: black; font-size: 11px;"/>
+                                         <p:column footerText="#{oMovDiario.totalPaseA}" style="border-color: black; font-size: 11px;"/>
+                                         <p:column footerText="#{oMovDiario.totalVivos}"  style="border-color: black; font-size: 11px;"/>
+                                         <p:column footerText="#{oMovDiario.totalMuertos}"  style="border-color: black; font-size: 11px;"/>
+                                         <p:column footerText="#{oMovDiario.totalDiasEstancia}"  style="border-color: black; font-size: 11px;"/>
+                                     </p:row>
+                                 </p:columnGroup>
+                            </p:dataTable>
+                        </p:outputPanel>
+                        <div style="margin-bottom: 6px;"/>
+                        <p:outputPanel style="width: 100%;" >
+                            <p:panelGrid style="width: 100%;">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="12" style="text-align: center; font-weight: bold; border-color: black; color: black;">
+                                            <p:outputLabel value="#{etiq.resumen}"/>
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>                                
+                                    <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.estn}"/>
+                                    </p:column> 
+                                    <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.ingre}"/>
+                                    </p:column> 
+                                    <p:column colspan="2" style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.pase}"/>
+                                    </p:column> 
+                                    <p:column colspan="2" style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.gres}"/>
+                                    </p:column> 
+                                    <p:column rowspan="2" style="text-align: center;  border-color: black;font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.diaEst}"/>
+                                    </p:column> 
+                                    <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.exis}"/>
+                                    </p:column> 
+                                    <p:column rowspan="2" style="text-align: center;  border-color: black;font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.ingEgre}"/>
+                                    </p:column>
+                                    <p:column rowspan="2" style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.totalPa}"/>
+                                    </p:column> 
+                                    <p:column colspan="2" style="text-align: center;  border-color: black;font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.camas2}"/>
+                                    </p:column>                                
+                                </p:row>
+                                <p:row>
+                                    <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.de}"/>
+                                    </p:column> 
+                                    <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.aa}"/>
+                                    </p:column> 
+                                    <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.viv}"/>
+                                    </p:column> 
+                                    <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.muer}"/>
+                                    </p:column> 
+                                    <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.total}"/>
+                                    </p:column> 
+                                    <p:column style="text-align: center;  border-color: black; font-size: 10px;">
+                                        <p:outputLabel value="#{etiq.dis}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.existenciaPacientes}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.totalIngreso}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.totalPaseDe}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.totalPaseA}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.totalVivos}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.totalMuertos}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.totalDiasEstancia}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="24" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.totalPacientes}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.movimientoDiario.totalCamas}" style="font-size: 11px;"/>
+                                    </p:column>
+                                    <p:column style="border-color: black;">
+                                        <p:outputLabel value="#{oMovDiario.camasDispo}" style="font-size: 11px;"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </h:form>
+                    <div style="margin-bottom: 3px;"/>
+                    <h:form>
+                         <p:panelGrid >
+                             <p:row>
+                                 <p:column>
+                                     <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                                         <p:printer target=":MovPacImp"/>
+                                     </p:commandButton>
+                                     &nbsp;
+                                    <p:commandButton icon="ui-icon-close" value="#{etiq.cerrar}" onclick="PF('imprimirMovPac').hide()"/>                                        
+                                 </p:column>
+                             </p:row>
+                         </p:panelGrid>
+                     </h:form>
+                </p:dialog>
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus> 
+            </ui:define>            
+        </ui:composition>
+</html>
+

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.mantener} #{etiq.cie9}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:panelGrid id="panel">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header">
+                            <p:outputLabel value="#{etiq.buscar} por Clave"/>
+                        </p:column>
+                        <p:column style="width: 20px">
+                            <p:inputText value="1" />
+                        </p:column>
+                        <p:column>
+                            <p:commandButton icon="ui-icon-search"/>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header">
+                            <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-plus"
+                                             id="btnNuCie" onclick="PF('nueCIE').show();"
+                                             type="button"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:dataTable class="frm_centrado" style="width: 700px" var="proCIE9"
+                             emptyMessage="Sin Datos" value="#{consultaCIE9.listaProcedimiento}" paginator="true"
+                             rows="10">
+                    <p:column style="width: 100px">
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.clave}"/>
+                        </f:facet>
+                        <h:outputText id="clvCIE9" value="#{proCIE9.clave}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.cie9}"/>
+                        </f:facet>
+                        <h:outputText  id="desCIE9" value="#{proCIE9.descripcion}"/>
+                    </p:column>
+                </p:dataTable>
+                <p:dialog header="Nuevo CIE-9" widgetVar="nueCIE"
+                          showEffect="bounce" hideEffect="explode"
+                          width="420" resizable="false">
+                    <p:panelGrid style="width: 400px" id="panelCie10">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.clave}"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="147852" disabled="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.cie10}"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="Extraer tejido"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" styleClass="ui-widget-header">
+                                <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>     
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

@@ -1,0 +1,839 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.ordenes} Patología"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">  
+            <p:tabView id="OrdServPat" dynamic="true" cache="true">
+                <p:ajax event="tabChange" listener="#{EstRealPat.cambiaEstado}"/>
+                <p:tab title="#{etiq.citologia} #{etiq.cervical}" id="tabCiCe" >
+                <h:form id="frmcitcerv">
+                    <p:growl id="msgvalpaccerv" showDetail="true" />
+                        <p:panelGrid styleClass="frm_centrado" columns="3">
+                            <p:outputLabel id="fecPacXFec" value="Fecha: " styleClass="mensaje"/>
+                            <p:calendar id="tFecCitCer" value="#{EstRealPat.fecha}" requiredMessage="Debe seleccionar una fecha" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar>
+                            <p:commandButton value="#{etiq.buscar}" actionListener="#{EstRealPat.rebotes}" update=":OrdServPat:frmcitcerv:tblLisCitCer :OrdServPat:frmcitcerv:tFecCitCer" icon="ui-icon-search"/>
+                        </p:panelGrid>
+                        <br/>
+                        <p:dataTable id="tblLisCitCer" 
+                                     var="oCitCer" 
+                                     value="#{EstRealPat.listaCC}" 
+                                     emptyMessage="No hay registros" 
+                                     paginator="true" 
+                                     rows="10"
+                                     rowKey="#{oCitCer.identificador}"
+                                     selection="#{EstRealPat.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.citologia} #{etiq.cervical}"/>
+                        </f:facet>
+                        <p:column selectionMode="single" width="5%">
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nompac}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitCer.episodio.paciente.nombres} #{oCitCer.episodio.paciente.apPaterno} #{oCitCer.episodio.paciente.apMaterno}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.fechaSol}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitCer.fechaSolicitud}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.citologia}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitCer.catGral.valor}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.medicoSol}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitCer.episodio.medicoTratante.nombres} #{oCitCer.episodio.medicoTratante.apPaterno} #{oCitCer.episodio.medicoTratante.apMaterno}" />
+                        </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton value="#{etiq.detalles}" process="tblLisCitCer" actionListener="#{EstRealPat.detalleCitCer}" update=":OrdServPat:frmcitcerv:pacCitCer :OrdServPat:frmcitcerv:msgvalpaccerv" oncomplete="PF('dlgCitcv').show()" icon="ui-icon-search"/>
+                                <p:commandButton value="#{etiq.recPie}" icon="ui-icon-plus" process="tblLisCitCer" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":OrdServPat:frmcitcerv:msgvalpaccerv :frmpx:btnpieza" oncomplete="PF('dlgPieza').show()" >
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.reporte} #{etiq.cervical}" icon="ui-icon-disk" process="tblLisCitCer" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":OrdServPat:frmcitcerv:msgvalpaccerv :frmrptcc:btngrepc" oncomplete="PF('dlgRepCitCerv').show()">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.entArchivo}" icon="ui-icon-folder-collapsed" process="tblLisCitCer" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":frmConf:btnsi" oncomplete="PF('dlgConfirma').show()">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                            </f:facet>
+                    </p:dataTable>
+                    
+                    <p:dialog header="Datos del Paciente" widgetVar="dlgCitcv"
+                            height="50%" width="70%" resizable="false" position="center" modal="true">
+                        <p:outputPanel id="pacCitCer">
+                            <p:panelGrid styleClass="frm_centrado" >    
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.nompac} " styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.nombres} #{EstRealPat.estPat.episodio.paciente.apPaterno} #{EstRealPat.estPat.episodio.paciente.apMaterno}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.numexpe} " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.numero}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.area.descripcion}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.diagcie.descripcionDiag}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.medicoTratante.nombres} #{EstRealPat.estPat.episodio.medicoTratante.apPaterno} #{EstRealPat.estPat.episodio.medicoTratante.apMaterno}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="Edad: " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.edadNumero}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.sexo}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.sexoP}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.cama.numero}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.fecPro} " styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.proceRe1.fechaRealizacion}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.fechaRecepcion}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.fechaRecepcion}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.estudio.claveStudio}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.citologia}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.tipoCitol.valor}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.sitGineco}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.situacion.valor}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.ivsa}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecGinecoObstetricos.IVSA} años"/>
+                                    </p:column>
+                                </p:row>
+                             </p:panelGrid>
+                        </p:outputPanel>
+                     </p:dialog>
+                </h:form>
+              </p:tab>
+                <p:tab title="#{etiq.citologia} #{etiq.deLiquidosCorporales}" id="tabLiCo">
+                    <h:form id="frmcitlc">
+                        <p:growl id="msgval" showDetail="true" />
+                        <p:panelGrid styleClass="frm_centrado" columns="3">
+                            <p:outputLabel id="fecPacXFec" value="Fecha: " styleClass="mensaje"/>
+                            <p:calendar id="tFecCitLic" value="#{EstRealPat.fecha}" requiredMessage="Debe seleccionar una fecha" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar>
+                            <p:commandButton value="Buscar" icon="ui-icon-search" update=":OrdServPat:frmcitlc:tblListCiLC :OrdServPat:frmcitlc:tFecCitLic" actionListener="#{EstRealPat.listaOrdenesDos}"/>
+                        </p:panelGrid>
+                        <br/>
+                         <p:dataTable id="tblListCiLC"
+                                    var="oCitLC" 
+                                    value="#{EstRealPat.listaCLC}" 
+                                    emptyMessage="No hay registros" 
+                                    paginator="true" 
+                                    rows="10"
+                                    rowKey="#{oCitLC.identificador}"
+                                    selection="#{EstRealPat.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.citologia} #{etiq.deLiquidosCorporales}"/>
+                        </f:facet>
+                        <p:column selectionMode="single" width="5%">
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nompac}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitLC.episodio.paciente.nombres} #{oCitLC.episodio.paciente.apPaterno} #{oCitLC.episodio.paciente.apMaterno}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.fechaSol}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitLC.fechaSolicitud}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.tipoProcedimiento}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitLC.catGral.valor}" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.medicoSol}"/>
+                            </f:facet>
+                            <h:outputText value="#{oCitLC.episodio.medicoTratante.nombres} #{oCitLC.episodio.medicoTratante.apPaterno} #{oCitLC.episodio.medicoTratante.apMaterno}" />
+                        </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton value="#{etiq.detalles}" process="tblListCiLC" update=":OrdServPat:frmcitlc:pacLicCor :OrdServPat:frmcitlc:msgval" actionListener="#{EstRealPat.detalleLiqCor}" oncomplete="PF('dlgCitlcn').show()" icon="ui-icon-search"/>
+                                <p:commandButton value="#{etiq.recPie}" icon="ui-icon-plus" process="tblListCiLC" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":OrdServPat:frmcitlc:msgval :frmpx:btnpieza" oncomplete="PF('dlgPieza').show()" >
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.reporte} #{etiq.liquidosCor}" process="tblListCiLC" icon="ui-icon-disk" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":OrdServPat:frmcitlc:msgval :frmRepLiq:btngrep" oncomplete="PF('dlgLicCor').show()">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.entArchivo}" icon="ui-icon-folder-collapsed" process="tblListCiLC" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":frmConf2:btnsi2" oncomplete="PF('dlgConfirma2').show()">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                            </f:facet>
+                    </p:dataTable>
+                    <p:dialog header="Datos del Paciente" widgetVar="dlgCitlcn"
+                            height="50%" width="70%" resizable="false" position="center" modal="true">
+                        <p:outputPanel id="pacLicCor">
+                            <p:panelGrid styleClass="frm_centrado">    
+                                   <p:row>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.paciente.nombres} #{EstRealPat.estPat.episodio.paciente.apPaterno} #{EstRealPat.estPat.episodio.paciente.apMaterno}" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.numero}"/>
+                                       </p:column>
+                                   </p:row>
+                                   <p:row>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.paciente.edadNumero}"/>
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.area.descripcion}"/>
+                                       </p:column>
+                                   </p:row>
+                                   <p:row>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.cama} " styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.cama.numero}"/>
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.sexo}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.paciente.sexoP}"/>
+                                       </p:column>
+                                   </p:row>
+                                   <p:row>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="3" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.paciente.diagcie.descripcionDiag}"/>
+                                       </p:column>
+                                   </p:row>
+                                   <p:row>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.medicoTratante.nombres} #{EstRealPat.estPat.episodio.medicoTratante.apPaterno} #{EstRealPat.estPat.episodio.medicoTratante.apMaterno}"/>
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                            <h:outputLabel value="#{etiq.fecPro} " styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.episodio.proceRe1.fechaRealizacion}"/>
+                                       </p:column>
+                                   </p:row>
+                                   <p:row>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.fechaRecepcion}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.fechaRecepcion}"/>
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.estudio.claveStudio}"/>
+                                       </p:column>
+                                   </p:row>
+                                   <p:row>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.tipoProcedimiento}" styleClass="mensaje" />
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.tipoCitol.valor}"/>
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputLabel value="#{etiq.sitioAnatomico}" styleClass="mensaje"/>
+                                       </p:column>
+                                       <p:column colspan="1" rowspan="1">
+                                           <h:outputText value="#{EstRealPat.estPat.sitAnatomico.valor}"/>
+                                       </p:column>
+                                   </p:row>
+                           </p:panelGrid>
+                        </p:outputPanel>
+                    </p:dialog>
+                    
+                 </h:form>
+                    
+                    <br/>
+                </p:tab>
+                <p:tab title="#{etiq.solBiopPzaQui}" id="tabBiPQ">
+                    <h:form id="frmbpq">
+                        <p:growl id="msgbiopsia" showDetail="true" />
+                        <p:panelGrid styleClass="frm_centrado" columns="3">
+                            <p:outputLabel id="fecPacXFec" value="Fecha: " styleClass="mensaje"/>
+                            <p:calendar id="tFecCita2"  value="#{EstRealPat.fecha}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                            </p:calendar>
+                            <p:commandButton value="Buscar" icon="ui-icon-search" update=":OrdServPat:frmbpq:tblLisBPQ :OrdServPat:frmbpq:tFecCita2" actionListener="#{EstRealPat.rebotesTres}" />
+                        </p:panelGrid>
+                        <br/>
+                        <p:dataTable id="tblLisBPQ" 
+                                     var="oBiop" 
+                                     value="#{EstRealPat.listaBPQ}" 
+                                     emptyMessage="No hay registros" 
+                                     paginator="true" 
+                                     rows="10"
+                                     rowKey="#{oBiop.identificador}"
+                                     selection="#{EstRealPat.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                        <f:facet name="header">
+                            <h:outputText value="#{etiq.solBiopPzaQui}"/>
+                        </f:facet>
+                            <p:column selectionMode="single" width="5%">
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.nompac}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBiop.episodio.paciente.nombres} #{oBiop.episodio.paciente.apPaterno} #{oBiop.episodio.paciente.apMaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.fechaSol}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBiop.fechaSolicitud}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.tiposBiopPzaQui}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBiop.catGral.valor}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.medicoSol}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oBiop.episodio.medicoTratante.nombres} #{oBiop.episodio.medicoTratante.apPaterno} #{oBiop.episodio.medicoTratante.apMaterno}" />
+                        </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton value="#{etiq.detalles}" icon="ui-icon-search" process="tblLisBPQ" update=":OrdServPat:frmbpq:pacBio :OrdServPat:frmbpq:msgbiopsia" actionListener="#{EstRealPat.detalleBioPQx}" oncomplete="PF('dlgCitbpq').show()"/>
+                                <p:commandButton value="#{etiq.recPie}" icon="ui-icon-plus" process="tblLisBPQ" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":OrdServPat:frmbpq:msgbiopsia :frmpx:btnpieza" oncomplete="PF('dlgPieza').show()" >
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.reporte} #{etiq.patologia} #{etiq.quirurgica}" icon="ui-icon-disk" process="tblLisBPQ" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":OrdServPat:frmbpq:msgbiopsia :frmrptbpq:btnRepBiop" oncomplete="PF('dlgPatQx').show()">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+
+                                <p:commandButton value="#{etiq.entArchivo}" icon="ui-icon-folder-collapsed" process="tblLisBPQ" actionListener="#{EstRealPat.validaSeleccionPaciente}" update=":frmConf3:btnsi3" oncomplete="PF('dlgConfirma3').show()">
+                                    <p:ajax></p:ajax>
+                                </p:commandButton>
+                            </f:facet>   
+                    </p:dataTable>
+
+                    <p:dialog header="Datos del Paciente" widgetVar="dlgCitbpq"
+                              height="90%" width="90%" position="center" resizable="false" modal="true">
+                        <p:outputPanel id="pacBio">
+                            <p:panelGrid>     
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.nombres} #{EstRealPat.estPat.episodio.paciente.apPaterno} #{EstRealPat.estPat.episodio.paciente.apMaterno}" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.numexpe}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.numero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.edad}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.edadNumero}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>            
+                                    <p:column colspan="1" rowspan="1">
+                                         <h:outputLabel value="#{etiq.cama}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.cama.numero}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.servicio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.area.descripcion}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.medicoTratante.nombres} #{EstRealPat.estPat.episodio.medicoTratante.apPaterno} #{EstRealPat.estPat.episodio.medicoTratante.apMaterno}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.fecPro}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.proceRe1.fechaRealizacion}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.fechaRecepcion}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.fechaRecepcion}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.claveEstudio}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.estudio.claveStudio}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.sexo}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.sexoP}"/>
+                                    </p:column>
+                                     <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.sitioAnatomico}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.sitAnatomico.valor}"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.tejidoExtraido}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.especimenMuestraTejido}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.tiposBiopPzaQui}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.tipoBiopPzaQx.valor}"/>
+                                    </p:column> 
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.fechaProxCons}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.fechaAproxSgteConsul}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.antPerPato}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="3" rowspan="1">
+                                        <h:outputLabel value="Alergias: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.alergias}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Cardiopatías:  " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.cardioPatias}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Cirugías: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.quirurgico}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Transfusiones:  " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.transfusion}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Diabetes: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.diabetico}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Enfermedades Cardiovasculares:  " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.cardioPatias}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Traumatismos:  " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.traumat}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Hipertensión Aterial:  " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecPatologicos.HTA}" styleClass="mensaje"/><br/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.antPerNoPato}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="3" rowspan="1">
+                                        <h:outputLabel value="Religión: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.religion}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Tabaquismo: " />
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.tabaquismoCad}" styleClass="mensaje"/>
+                                        <br/>
+                                        <h:outputLabel value="Escolaridad: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.escolaridad}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Ocupación: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.ocupacion}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Alcoholismo: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.alcoholismoCad}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Drogas: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.drogas}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Agua Potable: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.aguaPotableCad}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Electricidad: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.electricidadCad}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Drenaje: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.drenajeCad}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Animales: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.animales}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Tipo Casa Habitación: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.tipoCasaHab}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Servicio Sanitario: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.servSanitCad}" styleClass="mensaje"/><br/>
+                                        <h:outputLabel value="Otros: " /><h:outputText value="#{EstRealPat.estPat.episodio.paciente.expediente.antecNoPatologicos.otro}" styleClass="mensaje"/><br/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.padecimientoAct}" styleClass="mensaje"/>
+                                    </p:column>
+                                    <p:column colspan="5" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.paciente.diagcie.descripcionDiag}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="1" rowspan="1">
+                                        <h:outputLabel value="#{etiq.expFisica}" styleClass="mensaje" />
+                                    </p:column>
+                                    <p:column colspan="5" rowspan="1">
+                                        <h:outputText value="#{EstRealPat.estPat.episodio.notaMedHrrb.exploracionFisica}" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                  </p:dialog>
+                </h:form>
+                    
+            </p:tab>
+    </p:tabView>
+            <h:form id="frmRepLiq">
+                <p:growl id="msgliq" showDetail="true" />
+                     <p:dialog header="Información del Reporte" widgetVar="dlgLicCor"
+                                  height="60%" width="60%" resizable="false" modal="true">          
+                          <p:panelGrid columns="2">
+                              <p:row>
+                                  <p:column>
+                                      <h:outputText value="#{etiq.tipoProcedimiento}" styleClass="mensaje"/>
+                                  </p:column>  
+                              </p:row>
+                              <p:row>
+                                  <p:column>
+                                      <p:selectOneMenu id="omProcedimientos" value="#{EstRealPat.estPat.tipoProcedimiento.claveParametro}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="" />
+                                            <f:selectItems value="#{EstRealPat.listaProcedimientos}" var="tPro" itemLabel="#{tPro.tipoProcedimiento.valor}" itemValue="#{tPro.tipoProcedimiento.claveParametro}" />
+                                            <p:ajax></p:ajax>
+                                        </p:selectOneMenu>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column>
+                                      <h:outputText value="#{etiq.materialEnviado}" styleClass="mensaje"/>
+                                  </p:column> 
+                              </p:row>
+                              <p:row>
+                                   <p:column>
+                                        <p:inputTextarea id="txtMatEnv" cols="50" value="#{EstRealPat.estPat.materialEnviado}">
+                                            <p:ajax></p:ajax>
+                                        </p:inputTextarea>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column>
+                                        <h:outputText value="#{etiq.descTecnica}" styleClass="mensaje"/>
+                                  </p:column> 
+
+                              </p:row>
+                              <p:row>
+                                    <p:column>
+                                        <p:inputTextarea id="txtDesTec" cols="50" value="#{EstRealPat.estPat.descripcionTecnica}">
+                                             <p:ajax></p:ajax>
+                                        </p:inputTextarea>
+                                    </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column>
+                                        <h:outputText value="#{etiq.descMicros}" styleClass="mensaje"/>
+                                  </p:column> 
+                              </p:row>
+                              <p:row>
+                                   <p:column>
+                                        <p:inputTextarea id="txtDesMic" cols="50" value="#{EstRealPat.estPat.descripMicro}">
+                                            <p:ajax></p:ajax>
+                                        </p:inputTextarea>
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column>
+                                        <p:outputLabel value="#{etiq.fechaInc}" styleClass="mensaje"/>
+                                  </p:column> 
+                              </p:row>
+                              <p:row>
+                                   <p:column>
+                                       <p:calendar id="tFecInc" value="#{EstRealPat.fecInclusion}" requiredMessage="Debe seleccionar una fecha" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                            <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />  
+                                        </p:calendar> 
+                                  </p:column>
+                              </p:row>
+                              <p:row>
+                                  <p:column>
+                                      <p:outputLabel value="#{etiq.fecPro}" styleClass="mensaje"/>
+                                  </p:column> 
+                              </p:row>
+                              <p:row>
+                                   <p:column>
+                                       <p:calendar id="tFecPro" value="#{EstRealPat.fecProcedimiento}" requiredMessage="Debe seleccionar una fecha" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                                            <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                                        </p:calendar> 
+                                  </p:column>
+                              </p:row>
+                              <p:row></p:row> 
+                              <p:row>
+                                  <p:commandButton id="btngrep" disabled="#{EstRealPat.showButton}" value="Guardar" icon="ui-icon-disk" actionListener="#{EstRealPat.modificarDatosSolLiqCor}" update="msgliq txtMatEnv txtDesTec txtDesMic tFecInc tFecPro"/>
+                                  <p:commandButton value="Cerrar" icon="ui-icon-close" oncomplete="PF('dlgDatos').hide()"/>
+                              </p:row> 
+
+                          </p:panelGrid>
+                      </p:dialog>
+            </h:form>
+            <h:form id="frmrptcc">
+                <p:growl id="msgcerv" showDetail="true" />
+                    <p:dialog header="#{etiq.reporte} #{etiq.citologia} #{etiq.cervical}" widgetVar="dlgRepCitCerv"
+                                  height="400" resizable="false" modal="true">
+                        <h:panelGrid columns="2" styleClass="frm_centrado">
+                            <h:outputText value="#{etiq.tipoCitologia}" styleClass="mensaje"/>
+                            <p:selectOneMenu id="OMTipCit" value="#{EstRealPat.estPat.tipoCitol.claveParametro}">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                <f:selectItems value="#{EstRealPat.listaTipoCitologia}" var="oCit" itemLabel="#{oCit.tipoCitol.valor}" itemValue="#{oCit.tipoCitol.claveParametro}" />
+                                <p:ajax></p:ajax>
+                            </p:selectOneMenu>
+                            <h:outputText value="#{etiq.citologia}"  styleClass="mensaje"/>
+                            <p:selectOneMenu id="OMAdeCit" value="#{EstRealPat.estPat.citAdecuada}">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                <f:selectItem itemLabel="ADECUADA" itemValue="1"/>
+                                <f:selectItem itemLabel="NO ADECUADA" itemValue="0"/>
+                                <p:ajax></p:ajax>
+                            </p:selectOneMenu>
+                            <h:outputText value="#{etiq.porque}"  styleClass="mensaje"/>
+                            <p:inputTextarea id="txtArPorq1" cols="50" value="#{EstRealPat.estPat.razonCitolAdecuada}">
+                                <p:ajax></p:ajax>
+                            </p:inputTextarea>
+                            <h:outputText value="#{etiq.cateGeneral}"  styleClass="mensaje"/>
+                            <p:selectOneMenu id="OMCatGen" value="#{EstRealPat.estPat.catGral.claveParametro}">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                <f:selectItems value="#{EstRealPat.listaCatGeneral}" var="oCat" itemLabel="#{oCat.catGral.valor}" itemValue="#{oCat.catGral.claveParametro}" />
+                                <p:ajax></p:ajax>
+                            </p:selectOneMenu>
+                            <h:outputText value="#{etiq.porque}"  styleClass="mensaje"/>
+                            <p:inputTextarea id="txtArPorq2" cols="50" value="#{EstRealPat.estPat.razonPosNeg}">
+                                 <p:ajax></p:ajax>
+                            </p:inputTextarea>
+                            <h:outputText value="#{etiq.notasOComen}"  styleClass="mensaje"/>
+                            <p:inputTextarea id="txtANotas" cols="50" value="#{EstRealPat.estPat.notas}">
+                                 <p:ajax></p:ajax>
+                            </p:inputTextarea>
+                            <br/>
+                            <p:row>
+                                <p:commandButton id="btngrepc" value="Guardar" icon="ui-icon-disk" actionListener="#{EstRealPat.modificarDatosSolCitCer}" disabled="#{EstRealPat.showButton}" update="msgcerv OMTipCit OMAdeCit txtArPorq1 OMCatGen txtArPorq2 txtANotas"/>
+                                <p:commandButton value="Cerrar" icon="ui-icon-close" oncomplete="PF('dlgRepCitCerv').hide()"/>
+                            </p:row>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+            <h:form id="frmrptbpq">
+                <p:growl id="msgbpq" showDetail="true" />
+            <p:dialog header="#{etiq.reporte} #{etiq.dePatQx}" widgetVar="dlgPatQx"
+                  height="400" resizable="false" modal="true">
+                <h:panelGrid columns="2" styleClass="frm_centrado">
+                    <h:outputText value="#{etiq.descMacros}" styleClass="mensaje"/>
+                    <p:inputTextarea cols="50" id="txtADesMac" value="#{EstRealPat.estPat.descripMacro}">
+                        <p:ajax></p:ajax>
+                    </p:inputTextarea>
+                    <h:outputText value="#{etiq.descMicros}" styleClass="mensaje"/>
+                    <p:inputTextarea cols="50" id="txtADesMic" value="#{EstRealPat.estPat.descripMicro}">
+                        <p:ajax></p:ajax>
+                    </p:inputTextarea>
+                    <h:outputText value="#{etiq.diagnostico}" styleClass="mensaje"/>
+                    <p:inputTextarea id="txtADx" cols="50" value="#{EstRealPat.estPat.impresionDiagnostica}">
+                        <p:ajax></p:ajax>
+                    </p:inputTextarea>
+                    <p:outputLabel value="#{etiq.fechaInc}" styleClass="mensaje"/>
+                    <p:calendar id="tFecIncl1" value="#{EstRealPat.estPat.fechaInclusion}"  effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                         <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                    </p:calendar>
+                    <p:outputLabel value="#{etiq.fecPro}" styleClass="mensaje"/>
+                    <p:calendar id="tFecProc1"  value="#{EstRealPat.estPat.fechaProcedimiento}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                         <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                    </p:calendar>
+                    <br/>
+                    <p:row>
+                        <p:commandButton id="btnRepBiop" value="Guardar" disabled="#{EstRealPat.showButton}" actionListener="#{EstRealPat.modificarDatosSolBiopsia}" icon="ui-icon-disk" update="msgbpq txtADesMac txtADesMic txtADx tFecIncl1 tFecProc1"/>
+                        <p:commandButton value="Cerrar" icon="ui-icon-cancel" oncomplete="PF('dlgPatQx').hide()"/>
+                    </p:row>
+                </h:panelGrid>
+
+            </p:dialog>
+        </h:form>
+        <h:form id="frmpx">
+            <p:growl id="msgrecibep" showDetail="true" />
+        <p:dialog header="#{etiq.anadirPieza}" widgetVar="dlgPieza"
+                  height="30%" width="30%" position="center" resizable="false" modal="true">
+            <p:panelGrid columns="2" styleClass="frm_centrado">
+                <p:outputLabel value="#{etiq.noEstudio}" styleClass="mensaje"/>
+                <p:inputText id="txtNoEst1" value="#{EstRealPat.estPat.numeroEstudio}">
+                    <p:ajax></p:ajax>
+                </p:inputText>
+                <p:outputLabel value="#{etiq.tipoEspecimen}" styleClass="mensaje"/>
+                <p:inputText id="txtEsp1" value="#{EstRealPat.estPat.especimenMuestraTejido}">
+                    <p:ajax></p:ajax>
+                </p:inputText>
+                <p:outputLabel value="#{etiq.fechaRecepcion}" styleClass="mensaje"/>
+                <p:calendar id="cFecRec" value="#{EstRealPat.estPat.fechaRecepcion}" effect="fold" locale="es" disabledWeekends="true" pattern="dd/MM/yy" required="true"  readonlyInput="true">
+                    <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator" />
+                </p:calendar>
+            </p:panelGrid>
+            <h:panelGrid columns="2" styleClass="frm_centrado">
+                <p:commandButton id="btnpieza" actionListener="#{EstRealPat.modificarRecepcionPieza}" disabled="#{EstRealPat.showButton}" value="Guardar" icon="ui-icon-disk" update="msgrecibep txtNoEst1 txtEsp1 cFecRec"/>
+                <p:commandButton value="Cerrar" id="btnCancel1" icon="ui-icon-cancel" oncomplete="PF('dlgPieza').hide()"/>
+            </h:panelGrid>
+        </p:dialog>
+        </h:form>
+            
+            <h:form id="frmConf">
+                <p:growl id="msgconf" showSummary="true" />
+                <p:dialog widgetVar="dlgConfirma" modal="true">
+                    <h:panelGrid columns="2" styleClass="frm_centrado">
+                        <p:row>
+                            <h:outputText value="¿Deséa confirmar la entrega? Nota: Una vez confirmada la entrega la solicitud actual no podrá ser visualizada en esta lista" styleClass="mensaje" />
+                        </p:row>
+                        <p:row></p:row>
+                        <p:row>
+                            <p:commandButton id="btnsi" value="SI" icon="ui-icon-check" actionListener="#{EstRealPat.modificarFechaEntrega}" disabled="#{EstRealPat.showButton}" update="msgconf :OrdServPat:frmcitcerv:tblLisCitCer" oncomplete="PF('dlgConfirma').hide()"/>
+                            <p:commandButton value="NO" icon="ui-icon-close" oncomplete="PF('dlgConfirma').hide()" />
+                        </p:row>
+                        <p:row></p:row>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <h:form id="frmConf2">
+                <p:growl id="msgconf2" showSummary="true" />
+                <p:dialog widgetVar="dlgConfirma2" modal="true">
+                    <h:panelGrid columns="2" styleClass="frm_centrado">
+                        <p:row>
+                            <h:outputText value="¿Deséa confirmar la entrega? Nota: Una vez confirmada la entrega la solicitud actual no podrá ser visualizada en esta lista" styleClass="mensaje" />
+                        </p:row>
+                        <p:row></p:row>
+                        <p:row>
+                            <p:commandButton id="btnsi2" value="SI" icon="ui-icon-check" actionListener="#{EstRealPat.modificarFechaEntrega2}" disabled="#{EstRealPat.showButton}" update="msgconf2 :OrdServPat:frmcitlc:tblListCiLC" oncomplete="PF('dlgConfirma2').hide()"/>
+                            <p:commandButton value="NO" icon="ui-icon-close" oncomplete="PF('dlgConfirma2').hide()" />
+                        </p:row>
+                        <p:row></p:row>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <h:form id="frmConf3">
+                <p:growl id="msgconf3" showSummary="true" />
+                <p:dialog widgetVar="dlgConfirma3" modal="true">
+                    <h:panelGrid columns="2" styleClass="frm_centrado">
+                        <p:row>
+                            <h:outputText value="¿Deséa confirmar la entrega? Nota: Una vez confirmada la entrega la solicitud actual no podrá ser visualizada en esta lista" styleClass="mensaje" />
+                        </p:row>
+                        <p:row></p:row>
+                        <p:row>
+                            <p:commandButton id="btnsi3" value="SI" icon="ui-icon-check" actionListener="#{EstRealPat.modificarFechaEntrega3}" disabled="#{EstRealPat.showButton}" update="msgconf3 :OrdServPat:frmbpq:tblLisBPQ" oncomplete="PF('dlgConfirma3').hide()"/>
+                            <p:commandButton value="NO" icon="ui-icon-close" oncomplete="PF('dlgConfirma3').hide()" />
+                        </p:row>
+                        <p:row></p:row>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+        
+    </ui:define>         
+</ui:composition>
+
+</html>

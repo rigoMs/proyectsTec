@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">
+           <div>
+           <br/>
+           <h:form>
+               <p:growl id="messages" showDetail="true"/>
+               <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+               <h2 class="centrado_texto"><h:outputLabel value="#{etiq.reservarCita}"/></h2>
+               <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+            <p:panelGrid styleClass="frm_centrado centrado_texto">
+              <f:facet name="header">
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header encabezados"><h:outputLabel value="#{etiq.datosPaciente}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.nombres}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.appat}:"/></p:column>
+                    <p:column><h:outputLabel value="#{etiq.apmat}:"/></p:column>    
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                </p:row>
+               </f:facet>                
+                <p:row>
+                    <p:column><h:outputLabel value="#{oCita.numeroExpediente}"/></p:column>
+                    <p:column><p:inputText id="nom" value="#{oCita.datos.paciente.nombres}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="app" value="#{oCita.datos.paciente.apPaterno}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="apm" value="#{oCita.datos.paciente.apMaterno}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="fNac" value="#{oCita.datos.paciente.fechaNac}" readonly="true"/></p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tel}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.segpop}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.vigenciaSegPop}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.pais}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:inputText id="sexo" value="#{oCita.datos.paciente.sexoP}" readonly="true"/></p:column>                    
+                    <p:column><p:inputText id="tel" value="#{oCita.datos.paciente.telefono}" size="15" readonly="true"/></p:column>
+                    <p:column><p:inputText id="segp" value="#{oCita.datos.seguro.numero}" size="15" readonly="true"/></p:column>
+                    <p:column><p:inputText id="vsegp" value="#{oCita.datos.seguro.vigencia}" size="15" readonly="true"/></p:column>
+                    <p:column ><p:inputText id="pais" value="#{oCita.datos.paciente.otroPais}" readonly="true"/></p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.municipio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.localidad}:"/></p:column>
+                    
+                </p:row>
+                <p:row>
+                    <p:column><p:inputText id="estado" value="#{oCita.datos.estado.descripcionEdo}" readonly="true"/></p:column>
+                    <p:column colspan="2"><p:inputText id="municipio" value="#{oCita.datos.municipio.descripcionMun}" readonly="true"/></p:column>
+                    <p:column colspan="2"><p:inputText id="localidad" value="#{oCita.datos.ciudad.descripcionCiu}" readonly="true"/></p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header encabezados"><h:outputLabel value="#{etiq.datosDeCita}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.tiempoAproxCita}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:selectOneMenu styleClass="bordes textover" id="areaServicio" value="#{oCita.cita.areaServicio.clave}" required="true" requiredMessage="Debe Seleccionar Un Área">
+                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                            <f:selectItems value="#{oCita.listaAreaCE}" var="AreaCE" 
+                                           itemLabel="#{AreaCE.descripcion}" itemValue="#{AreaCE.clave}"/>
+                        </p:selectOneMenu>                           
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:inputMask styleClass="bordes textover" id="NumApro" mask="9?9" maxlength="2" size="2" value="#{oCita.cita.numAprox}" required="true" requiredMessage="Debe Ingresar Un Número"/>
+                        <p:selectOneMenu styleClass="bordes textover" id="tiempoAprox" value="#{oCita.cita.tiempoAproxP}" required="true" requiredMessage="Debe Seleccionar un Tiempo Aproximado">
+                            <f:selectItem itemLabel="SELECCIONA" itemValue="" />
+                            <f:selectItems value="#{oCita.listaTiempoAprox}" var="tiemAprox" 
+                                           itemLabel="#{tiemAprox.valor}" itemValue="#{tiemAprox.claveParametro}#{tiemAprox.tipoParametro}"/>
+                        </p:selectOneMenu>   
+                    </p:column>
+                </p:row>
+                <p:row><p:column colspan="5"></p:column></p:row>
+                <p:row>
+                    <p:column colspan="3" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.diagnostico}: "/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.causes}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cie10}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:autoComplete id="diag" queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                        value="#{oCita.epiMed.diagIngreso.descripcionDiag}" completeMethod="#{oCita.epiMed.diagIngreso.completar}" effect="fade"
+                                        onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" required="true" onkeypress="return validaCaracter(event);" requiredMessage="Debe Ingresar Un Diagnostico">
+                            <p:ajax update="cie10 causes" event="itemSelect"/>                                            
+                        </p:autoComplete>  
+                    </p:column>
+                    <p:column><p:inputText id="causes" value="#{oCita.epiMed.diagIngreso.clave2CE}" readonly="true"/></p:column>
+                    <p:column><p:inputText id="cie10" value="#{oCita.epiMed.diagIngreso.clave1CE}" readonly="true" required="true"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column styleClass="centrado_texto" colspan="5">
+                        <p:commandButton value="#{etiq.reservar}" action="#{oCita.guardar()}" icon="ui-icon-disk" ajax="false" validateClient="true">
+                            <f:setPropertyActionListener target="#{oHospCODE.estado}" value="#{true}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+
+            </h:form>
+
+            <br/>
+            <br/>
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>            
+           </div>
+          </ui:define> 
+        </ui:composition>
+    
+</html>

@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+<ui:define name="cuerpo">
+<f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+    <h2 class="centrado_texto"><p:outputLabel id="titModPac" value="#{etiq.modificarExp}"/></h2>
+    <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>      
+    <div class="centrado_texto">
+    <h:form id="frmInicio">
+        <p:growl id="messages" showDetail="true"/>      
+        <p:panelGrid styleClass="frm_centrado">
+            <f:facet name="header">
+                <p:row><p:column colspan="4" styleClass="encabezados" ><p:outputLabel id="titDatPer" value="#{etiq.datosExp}"/></p:column></p:row>
+                <p:row>
+                    <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="nomb" value="#{etiq.nombres}:"/></p:column>
+                    <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="app" value="#{etiq.appat}:"/></p:column>
+                    <p:column><p:outputLabel id="apm" value="#{etiq.apmat}:"/></p:column>
+                    <p:column><h:outputLabel class="requerido" value="*"/><p:outputLabel id="sexo" value="#{etiq.sexo}:"/></p:column>
+                </p:row>
+            </f:facet>
+            <p:row>
+                <p:column>
+                    <p:inputText id="tNomb"  value="#{oModExp.pac.nombres}"  onkeypress="return validaCaracter(event);" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el nombre">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax update="ment3" event="keyup"/>
+                    </p:inputText>
+                    <p:message for="tNomb" id="ment3" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="tApp" value="#{oModExp.pac.apPaterno}"  onkeypress="return validaCaracter(event);" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Apellido Paterno">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax update="ment4" event="keyup"/>
+                    </p:inputText>
+                    <p:message for="tApp" id="ment4" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="tApm" value="#{oModExp.pac.apMaterno}"  onkeypress="return validaCaracter(event);" onkeyup="this.value=this.value.toUpperCase();">
+                        <f:validator validatorId="mx.gob.hrrb.validadores.NombresValidador"/>
+                        <p:ajax update="ment5" event="keyup" />
+                    </p:inputText>
+                    <p:message for="tApm" id="ment5" />
+                </p:column>
+                <p:column>
+                    <p:selectOneRadio id="tSexo" value="#{oModExp.pac.sexoP}" required="true" requiredMessage="Falta el Sexo">
+                        <f:selectItem itemLabel="Masculino" itemValue="M" />
+                        <f:selectItem itemLabel="Femenino" itemValue="F" />
+                    </p:selectOneRadio>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="4"></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="fechaNac" value="#{etiq.fechanac}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="edad" value="#{etiq.edad}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="telefono" value="#{etiq.tel}:"/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel id="status" value="#{etiq.programa}:"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputMask id="tFechaNac" mask="99/99/9999"  value="#{oModExp.pac.fechaNacTexto}" required="true" requiredMessage="Falta Fecha de Nacimiento">
+                        <p:ajax update="Tedad mentFechaNac" event="valueChange"/>
+                        <f:validator validatorId="mx.gob.hrrb.validadores.FechasNacValidator"/>
+                    </p:inputMask>          
+                </p:column>
+                <p:column>
+                    <p:outputLabel id="Tedad" value="#{oModExp.pac.calculaEdad()}"></p:outputLabel>
+                </p:column>
+                <p:column>
+                    <p:inputText id="tTelefono" onkeypress="return validaCaracter(event);" value="#{oModExp.pac.telefono}" validatorMessage="El teléfono debe contener solo caracteres numéricos" maxlength="13" required="true" requiredMessage="Falta Numero de Teléfono">
+                        <f:validateLongRange minimum="0"/>
+                        <f:ajax render="mentTel" execute="@this" event="valueChange" />
+                    </p:inputText>
+                </p:column>
+                <p:column >
+                    <p:selectOneMenu value="#{oModExp.pac.expediente.programa.clave}">
+                        <f:selectItem itemLabel="PROGRAMA" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oModExp.listaProgramas}" var="oProg"
+                                       itemLabel="#{oProg.descripcion}" itemValue="#{oProg.clave}"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row><p:column colspan="4"></p:column></p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="pais" value="#{etiq.pais}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="entidad" value="#{etiq.entidad}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="municipio" value="#{etiq.municipio}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="localidad" value="#{etiq.localidad}:"/></p:column> 
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputText id="tPais" onkeypress="return validaCaracter(event);" value="#{oModExp.pac.otroPais}" required="true" style="text-transform: uppercase">
+                        <p:ajax update="tEntidad tMunicipio tLocalidad tCp" event="valueChange"/>
+                    </p:inputText>
+                </p:column>        
+                <p:column>
+                    <p:selectOneMenu id="tEntidad" value="#{oModExp.pac.estado.claveEdo}" disabled="#{oModExp.habilitaListas()}" required="true">
+                        <p:ajax update="tMunicipio"/>  
+                        <f:selectItems value="#{oModExp.listaEstados}" var="oEdo" 
+                                       itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"></f:selectItems>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column>
+                    <p:selectOneMenu id="tMunicipio" value="#{oModExp.pac.municipio.claveMun}"  disabled="#{oModExp.habilitaListas()}" required="true">
+                        <p:ajax update="tLocalidad"/>  
+                        <f:selectItems value="#{oModExp.listaMunicipios}" var="oMun" 
+                                       itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"></f:selectItems>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column >
+                    <p:selectOneMenu id="tLocalidad" value="#{oModExp.pac.ciudad.claveCiu}"  disabled="#{oModExp.habilitaListas()}">
+                        <p:ajax update="tCp"/>
+                        <f:selectItems value="#{oModExp.listaCiudades}" var="oCiu"
+                                       itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"></f:selectItems>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row><p:column colspan="4"></p:column></p:row>
+            <p:row>
+                <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="domicilio" value="#{etiq.domicilio}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="colonia" value="#{etiq.colonia}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="cp" value="#{etiq.cp}:"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="2" >
+                    <p:inputText onkeypress="return validaCaracter(event);" id="tDomicilio" value="#{oModExp.pac.calleNum}" size="70" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="Falta el Domicilio"/>
+                </p:column>
+                <p:column>
+                    <p:inputText id="tColonia" value="#{oModExp.pac.colonia}" onkeyup="this.value=this.value.toUpperCase();"  onkeypress="return validaCaracter(event);" />
+                </p:column>
+                <p:column>
+                    <!--<p:inputMask id="tCp" mask="99999"  value="#{oModExp.pac.codigoPos}" disabled="#{oModExp.habilitaListas()}">
+                        <p:ajax update="tEntidad tMunicipio tLocalidad" event="valueChange"/> 
+                    </p:inputMask> -->
+                    <p:selectOneMenu disabled="#{oModExp.habilitaListas()}" id="tCp" value="#{oModExp.pac.ciudadCP.cp}">
+                        <f:selectItems value="#{oModExp.listaCP}" var="oCP"
+                                       itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                    </p:selectOneMenu>
+                </p:column>
+            </p:row>
+            <p:row><p:column colspan="4" ></p:column></p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="segPop" value="#{etiq.segpop}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><p:outputLabel id="vigSegPop" value="#{etiq.vigenciaSegPop}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="expediente" value="#{etiq.noExp}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="prog" value="#{etiq.status}:"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputMask id="tSegpop" mask="9999999999-99"  value="#{oModExp.pac.seg.numero}" requiredMessage="Debe ingresar el número de seguro popular" required="#{oModExp.requiereNumero()}">
+                        <p:ajax update="tVigSegPop" event="valueChange"/>
+                    </p:inputMask>
+                </p:column>
+                <p:column >
+                    <p:inputMask id="tVigSegPop" mask="99/99/9999" value="#{oModExp.pac.seg.vigenciaTexto}" requiredMessage="Debe ingresar la vigencia del seguro popular" required="#{oModExp.requiereVigencia()}">
+                        <p:ajax update="mentVig tSegpop" event="valueChange"/>
+                        <f:validator validatorId="mx.gob.hrrb.validadores.vigenciaSegPopUrgsValidator"/>
+                    </p:inputMask>
+                </p:column>
+                <p:column>
+                    <p:inputText value="#{oModExp.pac.expediente.numero}" id="numExp" converterMessage="El numero no puede ser superior a 2147483647" requiredMessage="Debe ingresar un numero de Expediente Válido" required="true" styleClass="bordes">
+                        <f:ajax event="valueChange" render="men numExp" execute="@this" resetValues="true"/>
+                        <f:validateLongRange id="val" maximum="2147483647" minimum="0"/>
+                    </p:inputText>
+                    <p:message for="numExp" id="men"/>
+                </p:column>
+                <p:column><p:outputLabel value="#{oModExp.pac.expediente.statusExpediente}"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel id="servicio" value="#{etiq.areaServicio}:"/></p:column>
+                <p:column colspan="1" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+                <p:column colspan="1"></p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="2">
+                    <p:selectOneMenu id="areas" value="#{oModExp.pac.expediente.servicioIngreso.clave}" requiredMessage="Debe indicar un area de servicio" required="true">
+                        <f:selectItem itemLabel="SERVICIO" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oModExp.pac.expediente.servicioIngreso.listaAreasExp}" var="oAE" 
+                                       itemLabel="#{oAE.descripcion}" itemValue="#{oAE.clave}"/>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column colspan="1"><p:inputMask value="#{oModExp.pac.curp}" mask="aaaa999999aaaaaa99" required="false" style="text-transform: uppercase" /></p:column>
+                <p:column colspan="1"><p:commandButton value="#{etiq.modiArch}" icon="ui-icon-circle-arrow-n" onclick="PF('dlgArch').show()"/></p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="4"><p:commandButton id="btnmodpac" value="#{etiq.guardar}" icon="ui-icon-disk" action="#{oModExp.modificaPacExp()}" validateClient="true" ajax="false"/></p:column>
+            </p:row>
+        </p:panelGrid>
+       <p:message for="tFechaNac" id="mentFechaNac"></p:message>
+       <p:message for="tVigSegPop" id="mentVig"></p:message>
+       <p:message for="tTelefono" id="mentTel"></p:message>
+    </h:form>
+    <p:dialog header="#{etiq.subirArch}" widgetVar="dlgArch" showEffect="puff" hideEffect="bounce"
+              resizable="false" closable="true" modal="true" height="150" width="1000" style="text-align: center">
+        <h:form id="frmArch" enctype="multipart/form-data">
+            <p:panelGrid>
+                <p:row>
+                    <p:column  styleClass="ui-widget-header"><p:outputLabel value="#{etiq.polElec}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.credINE}:"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column > <!-- rendered="#{oExp.renderizaPolizaSP}"  -->
+                       <p:fileUpload id="fuPDFpoliza"
+                         fileUploadListener="#{oModExp.cargaPDFpoliza}"
+                         allowTypes="/(\.|\/)(pdf)$/"
+                         mode="advanced"
+                         fileLimit="1"
+                         sizeLimit="1232896" update=":frmInicio:messages">
+                       </p:fileUpload>
+                   </p:column>
+                   <p:column>
+                       <p:fileUpload id="fuPDFine"
+                         fileUploadListener="#{oModExp.cargaPDFine}"
+                         allowTypes="/(\.|\/)(pdf)$/"
+                         mode="advanced"
+                         fileLimit="1"
+                         sizeLimit="1232896" update=":frmInicio:messages">
+                       </p:fileUpload>
+                   </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+        <f:facet name="start">  
+            <p:graphicImage value="/imgs/loading.gif" />  
+        </f:facet>    
+    </p:ajaxStatus> 
+  </div>
+</ui:define>         
+</ui:composition>
+</html>

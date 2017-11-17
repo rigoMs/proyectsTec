@@ -1,0 +1,610 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <div>
+                    <h:form id="frm-bspacd">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                        <h3 class="centrado_texto"><h:outputLabel value="#{etiq.buscaPacDialis}"/></h3>
+                        <p:outputPanel style=" width: 870px;" styleClass="centrar">
+                                   <p:accordionPanel>
+                                       <p:tab title="#{etiq.buscarDatosBasicos}">
+                                           <p:panelGrid columns="4" >
+                                               <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                               <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                               <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                               <h:outputLabel />
+                                               <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPaciente.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>                        
+                                               <p:inputText styleClass="bordes" id="app" value="#{oBuscarPaciente.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                               <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPaciente.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                               <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search"  update=":frm-bspacd:outIdent:tablaPac" ajax="false">
+                                                   <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{0}"/>
+                                               </p:commandButton>
+                                           </p:panelGrid>
+                                       </p:tab>
+                                       <p:tab title="#{etiq.buscarPorExpediente}">
+                                           <p:panelGrid columns="3" styleClass="frmlogin">
+                                               <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                               <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPaciente.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                                                   <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                                   <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                                               </p:inputText>
+                                               <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" update=":frm-bspacd:outIdent:tablaPac"  ajax="false">
+                                                   <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{1}"/>
+                                               </p:commandButton>
+                                           </p:panelGrid>
+                                           <p:message for="exp" id="mentExp"></p:message>
+                                       </p:tab>
+                                   </p:accordionPanel>                            
+                        </p:outputPanel> 
+                        <br/> 
+                        <p:outputPanel id="outIdent" style="width: 1300px;" styleClass="centrar">
+                             <div class="centrar">
+                                 <p:accordionPanel>
+                                       <p:tab title="#{etiq.buscarDatosBasicos}">
+                                            <p:dataTable paginator="true" rows="4"  id="tablaPac" var="oPacEnc" value="#{oBuscarPaciente.paciente.buscarPacienteDatos()}" emptyMessage="#{etiq.noRegistro}" rendered="#{not empty oBuscarPaciente.paciente.buscarPacienteDatos()}" >
+                                                <f:facet name="header">
+                                                    <h:outputText value="#{etiq.pacEncontra}"/>
+                                                </f:facet>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.apPaterno}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.apMaterno}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.nombres}"/>
+                                                </p:column>
+                                                <p:column style="width: 9%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.fechaNac}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.curp}"/>
+                                                </p:column>
+                                                <p:column style="width: 7%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.edadNumero}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                                        </f:facet>
+                                                    <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                                                </p:column>
+                                                <p:column style="width: 10%">
+                                                    <f:facet name="header">
+                                                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                                    </f:facet>
+                                                    <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                                                </p:column>
+                                                <p:column>                                         
+                                                    <p:commandButton icon="ui-icon-folder-open" value="#{etiq.seleccionar}">                
+                                                        <p:ajax listener="#{oDialisisPac.cargaPaciente(oPacEnc.folioPaciente, oPacEnc.claveEpisodio)}" update=":hojaDialisis"/>
+                                                     </p:commandButton>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                   <p:commandButton icon="ui-icon-folder-open" value="#{etiq.ocultar}" update=":frm-bspacd:outIdent">
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.nombres}" value=""/>
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.apPaterno}" value=""/>
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.apMaterno}" value=""/>
+                                                       <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.folioPaciente}" value="#{0}"/>
+                                                   </p:commandButton>
+                                                </f:facet>
+                                            </p:dataTable>
+                                       </p:tab>
+                                 </p:accordionPanel>
+                             </div>
+                         </p:outputPanel> 
+                    </h:form>
+                </div>
+                
+                <div class="centrar">
+                    <h:form id="hojaDialisis">
+                        <br/><br/>
+                        <p:growl id="msgs" showDetail="true"></p:growl>
+                        <!--<f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>-->                        
+                        
+                        <p:panelGrid style=" width: 1300px; text-align: left;" rendered="#{oDialisisPac.render}">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="6" styleClass="centrado_texto">
+                                       <h:outputLabel value="#{etiq.hojaDialisis}"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column colspan="3" style="border-color: black; border-right-color: transparent; border-bottom-color: transparent; width: 39%;">
+                                    <b><p:outputLabel value="#{etiq.nombreM}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.episodioMedico.paciente.nombreCompleto}"/>
+                              </p:column>
+                              <p:column style="border-color: black; border-right-color: transparent; border-bottom-color: transparent; width: 10%">
+                                  <b><p:outputLabel value="#{etiq.camaM}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.episodioMedico.cama.numero}"/>
+                              </p:column>
+                              <p:column style="border-color: black; border-right-color: transparent; border-bottom-color: transparent; width: 20%;">
+                                  <b><p:outputLabel value="#{etiq.noExpediente}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.episodioMedico.paciente.expediente.numero}"/>
+                              </p:column>
+                              <p:column style="border-color: black; border-bottom-color: transparent;">
+                                  <b><p:outputLabel value="#{etiq.ser}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.episodioMedico.area.descripcion}"/>
+                              </p:column>
+                            </p:row>
+                            <p:row>
+                              <p:column style="border-color: black; border-right-color: transparent;">
+                                  <b><p:outputLabel value="#{etiq.fechaa1}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.fechaActual}"/>
+                              </p:column>
+                              <p:column style="border-color: black; border-right-color: transparent;">
+                                  <b><p:outputLabel value="#{etiq.noHoja}:"/></b>&nbsp;&nbsp;<p:outputLabel value="1"/>
+                              </p:column>
+                              <p:column style="border-color: black; border-right-color: transparent;">
+                                  <b><p:outputLabel value="#{etiq.eda2}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.episodioMedico.paciente.edadNumero}"/>
+                              </p:column>
+                                <p:column style="border-color: black; border-right-color: transparent; width: 8%">
+                                    <b><p:outputLabel value="#{etiq.sex2}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.episodioMedico.paciente.sexoP}"/>
+                              </p:column>
+                                <p:column colspan="2" style="border-color: black;">
+                                    <b><p:outputLabel value="#{etiq.diagnst}:"/></b>&nbsp;&nbsp;<p:outputLabel value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.episodioMedico.diagIngreso.descripcionDiag}"/>
+                              </p:column>
+                            </p:row>                         
+                            
+                        </p:panelGrid>
+                        <br/>
+                        <p:panelGrid id="imprimir2" style="width: 1320px;" rendered="#{oDialisisPac.render}">
+                            <p:row>
+                                <p:column style="border-color: transparent; border-bottom-color:  darkgray;">
+                                    <p:dataTable id="tablaDialisis" value="#{oDialisisPac.listaDialisisPrueba}" var="oDiaDatos" emptyMessage="#{etiq.noDialisisPa}"
+                                                 paginator="true" rows="10" selectionMode="single"  selection="#{oDialisisPac.modificar}" rowKey="#{oDiaDatos.noRecam}">
+                                        <p:column style="width: 3%;" headerText="#{etiq.noRecam}">
+                                            <p:outputLabel value="#{oDiaDatos.noRecam}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.volumenIng}">
+                                            <p:outputLabel value="#{oDiaDatos.volumenIngresa}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.horaIngreso}">
+                                            <p:outputLabel value="#{oDiaDatos.SHoraInicIngreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.termIgre}">
+                                            <p:outputLabel value="#{oDiaDatos.SHoraFinIngreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.tiempoCavidad}">
+                                            <p:outputLabel value="#{oDiaDatos.STiempoCavidad}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.iniEgreso}">
+                                            <p:outputLabel value="#{oDiaDatos.SHoraInicEgreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.terminaEgreso}">
+                                            <p:outputLabel value="#{oDiaDatos.SHoraFinEgreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.volumenEgresa}">
+                                            <p:outputLabel value="#{oDiaDatos.volumenEgresa}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.balanceParcial}">
+                                            <p:outputLabel value=""/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.balanceTotal}">
+                                            <p:outputLabel value=""/>
+                                        </p:column>
+                                        <p:column style="width: 30%;" headerText="#{etiq.medicamentos}">
+                                            <p:outputLabel value="#{oDiaDatos.medicamentos.descripcion}"/>
+                                        </p:column>
+                                        <p:column style="width: 12%" headerText="#{etiq.enfermera}">
+                                            <p:outputLabel value=""/>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <div class="centrar">
+                                                <!--oncomplete="PF('dialisis').show()"-->
+                                                <p:commandButton  icon="ui-icon-folder-open"
+                                                              value="#{etiq.agregarDials}" actionListener="#{oDialisisPac.instanciarArrayDialisis}"
+                                                              update=":dis:tblDialisisAgre" oncomplete="PF('dialisis').show()">                                                
+                                                  </p:commandButton>
+                                                  &nbsp;&nbsp;
+                                                  <p:commandButton  icon="ui-icon-pencil" value="Modificar Dialisis" process="tablaDialisis" 
+                                                                    actionListener="#{oDialisisPac.modificarDialisis}" update=":hojaDialisis:msgs"
+                                                                    disabled="#{oDialisisPac.disable}">                                                
+                                                  </p:commandButton>
+                                            </div>
+                                        </f:facet>                                        
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>                            
+                        </p:panelGrid>
+                        <br/>
+                        <!-- indicaciones medicas-->
+                        <p:outputPanel id="plIndcacion" style="width: 1320px;" >
+                            <p:dataTable value="" var="" emptyMessage="" id="tbIndicaciones" rendered="#{oDialisisPac.rendered}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.indicM}"/>
+                                </f:facet>
+                                <p:column style="width: 2%;" headerText="#{etiq.n1}">
+                                    <p:outputLabel value=""/>
+                                </p:column>
+                                <p:column style="width: 98%;" headerText="#{etiq.indiM}">
+                                    <p:outputLabel value=""/>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton value="#{etiq.agregar} Indicacion Medica" icon="ui-icon-folder-open" onclick="PF('indicacion').show()">
+                                   
+                                    </p:commandButton>
+                                </f:facet>
+                            </p:dataTable>
+                        </p:outputPanel>
+                        <!--panelGrid de las observaciones  de enfermeria-->
+                        <br/>
+                        <div class="centrar">
+                            <p:outputPanel id="plObse" style="width: 1320px;" >
+                                <p:dataTable id="observa" var="oBser" emptyMessage="#{etiq.sinObs}" rendered="#{oDialisisPac.rendered}">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.enfermeriaObserva}"/>
+                                    </f:facet>
+                                    <p:column headerText="#{etiq.primerTurno}">
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.secondTurno}">
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.tercerTurno}">
+                                        <p:outputLabel value=""/>
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <div class="centrar">
+                                            <p:commandButton oncomplete="PF('AgreObser').show()" value="#{etiq.agreObs}" icon="ui-icon-folder-open"
+                                                             update=":obse:turnos" actionListener="#{oDialisisPac.CargarTurnos}">                                                
+                                            </p:commandButton> 
+                                            &nbsp;
+                                                <!--<p:commandButton value="Print" type="button" icon="ui-icon-print">
+                                                    <p:printer target="imprimir2" />
+                                                </p:commandButton>
+                                                -->
+                                            </div>      
+                                    </f:facet>      
+                                </p:dataTable>
+                            </p:outputPanel>
+                                       
+                        </div>
+                        
+                    </h:form>
+                </div>
+                
+                <!--dialogo para agregar dialisis a apacientes  header="#{etiq.dialisisAgregar}"-->
+                <p:dialog modal="true" showEffect="puff"  hideEffect="puff" resizable="false" widgetVar="dialisis" header="#{etiq.dialisisAgregar}" height="550" width="1100">
+                    <div class="centrar">
+                        <h:form id="dis">
+                            <p:panelGrid style="width: 750px;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.noRecam}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.volumenIng}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.horaIngreso}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.termIgre}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:spinner value="#{oDialisisPac.agregarDialisis.noRecam}" min="1"  max="32" size="4"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText size="7" value="#{oDialisisPac.agregarDialisis.volumenIngresa}" converterMessage="ERROR, Volumen de Ingreso no Aceptado">
+                                            <f:validateLongRange maximum="9999" minimum="0"/>
+                                            <f:ajax event="valueChange" execute="@this" render=":hojaDialisis:msgs"/>
+                                        </p:inputText>                                        
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar id="horaIgre" value="#{oDialisisPac.agregarDialisis.horaIniciaIngreso}" pattern="HH:mm" timeOnly="true" size="9"  />
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar id="termi" value="#{oDialisisPac.agregarDialisis.horaFinIngreso}" pattern="HH:mm" timeOnly="true" size="9"  />
+                                    </p:column>
+                                </p:row>
+                                
+                                 <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.tiempoCavidad}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.iniEgreso}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.terminaEgreso}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                        <p:outputLabel  value="#{etiq.volumenEgresa}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:calendar id="tiepmCa" value="#{oDialisisPac.agregarDialisis.tiempoCavidad}" pattern="HH:mm" timeOnly="true" size="9"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar id="ti" value="#{oDialisisPac.agregarDialisis.horaIniciaEgreso}" pattern="HH:mm" timeOnly="true" size="9"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar id="tie" value="#{oDialisisPac.agregarDialisis.horaFinEgreso}" pattern="HH:mm" timeOnly="true" size="9"/> 
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{oDialisisPac.agregarDialisis.volumenEgresa}" converterMessage="ERROR, Volumen de egreso no aceptado" size="7">
+                                            <f:validateLongRange minimum="0" maximum="9999"/>
+                                            <f:ajax event="valueChange" execute="@this" render=":hojaDialisis:msgs"/>
+                                        </p:inputText>                                        
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.medicamentos}"/>
+                                    </p:column>
+                                    
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4">
+                                        <p:selectOneMenu value="#{oDialisisPac.agregarDialisis.medicamentos.descripcion}" effect="puff">
+                                            <f:selectItem itemLabel="Selecicona Un medicamento" itemValue=""/>
+                                            <f:selectItem itemLabel="Paracetamol 500mg " itemValue="Paracetamos 500mg"/>
+                                            <f:selectItem itemLabel="Ampisilina" itemValue="Ampisilina"/>
+                                        </p:selectOneMenu>                                                                                 
+                                    </p:column>
+                                    
+                                </p:row>
+                                <f:facet name="footer">
+                                    <p:row>
+                                        <p:column colspan="4" >
+                                            <div class="centrar">
+                                                <p:commandButton  value="#{etiq.agra}" icon="ui-icon-plus" actionListener="#{oDialisisPac.AgregarDialisisArray}"
+                                                                  update=":dis:tblDialisisAgre :hojaDialisis:msgs">                                                    
+                                                </p:commandButton>                                                
+                                            </div>                                            
+                                        </p:column>                                            
+                                            
+                                    </p:row>
+                                </f:facet>
+                            </p:panelGrid>
+                            <div style="margin-bottom: 10px;"/>
+                            <p:outputPanel id="tblPanel" style="width: 100%;" styleClass="centrar">
+                                <p:dataTable id="tblDialisisAgre" value="#{oDialisisPac.listaDialisis}" var="oDiaAgre" emptyMessage=""
+                                             paginator="true" rows="5" selectionMode="single"  selection="#{oDialisisPac.eliminar}" rowKey="#{oDiaAgre.noRecam}">
+                                    <p:column style="width: 3%;" headerText="#{etiq.noRecam}">
+                                        <p:outputLabel value="#{oDiaAgre.noRecam}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.volumenIng}">
+                                            <p:outputLabel value="#{oDiaAgre.volumenIngresa}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.horaIngreso}">
+                                            <p:outputLabel value="#{oDiaAgre.SHoraInicIngreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.termIgre}">
+                                            <p:outputLabel value="#{oDiaAgre.SHoraFinIngreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.tiempoCavidad}">
+                                            <p:outputLabel value="#{oDiaAgre.STiempoCavidad}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.iniEgreso}">
+                                            <p:outputLabel value="#{oDiaAgre.SHoraInicEgreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.terminaEgreso}">
+                                            <p:outputLabel value="#{oDiaAgre.SHoraFinEgreso}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.volumenEgresa}">
+                                            <p:outputLabel value="#{oDiaAgre.volumenEgresa}"/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.balanceParcial}">
+                                            <p:outputLabel value=""/>
+                                        </p:column>
+                                        <p:column style="width: 6%;" headerText="#{etiq.balanceTotal}">
+                                            <p:outputLabel value=""/>
+                                        </p:column>
+                                        <p:column style="width: 30%;" headerText="#{etiq.medicamentos}">
+                                            <p:outputLabel value="#{oDiaAgre.medicamentos.descripcion}"/>
+                                        </p:column> 
+                                    <f:facet name="footer">
+                                        <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk"
+                                                         actionListener="#{oDialisisPac.guardarDialisis}" update=":hojaDialisis:msgs :hojaDialisis:tablaDialisis" > <!-- :hojaDialisis:tbIndicaciones :hojaDialisis:observa-->                                           
+                                        </p:commandButton>
+                                        &nbsp;&nbsp;
+                                        <p:commandButton icon="ui-icon-trash" value="#{etiq.eliminar}" process="tblDialisisAgre"
+                                                         update=":dis:tblDialisisAgre :hojaDialisis:msgs" actionListener="#{oDialisisPac.eliminarRecambio}" >                                            
+                                        </p:commandButton>
+                                    </f:facet>
+                                </p:dataTable>
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+                </p:dialog>
+                
+                <p:dialog modal="true" widgetVar="AgreObser" header="#{etiq.obseAgre}" showEffect="puff" hideEffect="puff" resizable="false">
+                    <div class="centrar">
+                        <h:form id="obse">
+                            <p:panelGrid style=" width: 750px;">
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 10%;">
+                                        <p:outputLabel value="#{etiq.turno}" for="turnos"/>
+                                    </p:column> 
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.obserEn}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:selectOneMenu value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.turno.clave}" id="turnos" required="true" requiredMessage="ERROR, Selcciona un turno">
+                                            <f:selectItem itemLabel="Selecciona el Turno" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{oDialisisPac.turnos}" var="oTur" itemLabel="#{oTur.descripcion}" itemValue="#{oTur.clave}"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="turnos" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputTextarea value="#{oDialisisPac.detalleDialisis.cabeceraDialisis.observacionT1}" cols="80" rows="3" onkeyup="this.value=this.value.toUpperCase();" required="true" requiredMessage="ERROR, Escribe la Observacion"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" styleClass="ui-widget-header"><!-- oncomplete="PF('AgreObser').hide()"-->
+                                        <p:commandButton update=" :hojaDialisis:msgs"
+                                                         value="#{etiq.guardar}" icon="ui-icon-disk" actionListener="#{oDialisisPac.guardarObservacion}">                                               
+                                        </p:commandButton> 
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </h:form>
+                    </div>
+                </p:dialog> 
+                
+                <p:dialog widgetVar="indicacion" showEffect="puff" hideEffect="puff" resizable="false" header="AGREGAR INDICACION MEDICA" modal="true" height="200">
+                    <h:form id="frmind">
+                        <p:panelGrid style=" width: 750px;">
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center;">
+                                    <p:outputLabel value="#{etiq.indicM}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.indiM}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputTextarea cols="70" rows="3" value="#{oDialisisPac.indicacionMedica.indicacion}" 
+                                                     onkeyup="this.value=this.value.toUpperCase()" required="true" 
+                                                     requiredMessage="ERROR, Dedes escribir la indicación"/>                    
+                                </p:column>                                
+                            </p:row> 
+                            <p:row>
+                                <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; margin:  0 auto;">
+                                    <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" 
+                                                     actionListener="#{oDialisisPac.agregarIndicacionMedica}" update=":hojaDialisis:msgs" >                                        
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog modal="true" showEffect="puff"  hideEffect="puff" resizable="false"
+                          widgetVar="dialisisModificar" header="#{etiq.modDialisis}">
+                    <h:form id="mofDialisis">
+                        <p:panelGrid style="width: 750px;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.noRecam}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.volumenIng}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.horaIngreso}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.termIgre}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:spinner value="#{oDialisisPac.modificar.noRecam}" min="1"  max="32" size="4" disabled="true"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText size="7" value="#{oDialisisPac.modificar.volumenIngresa}" converterMessage="ERROR, Volumen de Ingreso no Aceptado">
+                                        <f:validateLongRange maximum="9999" minimum="0"/>
+                                        <f:ajax event="valueChange" execute="@this" render=":hojaDialisis:msgs"/>
+                                    </p:inputText>                                        
+                                </p:column>
+                                <p:column>
+                                    <p:calendar id="horaIgre" value="#{oDialisisPac.modificar.horaIniciaIngreso}" pattern="HH:mm" timeOnly="true" size="9"  />
+                                </p:column>
+                                <p:column>
+                                    <p:calendar id="termi" value="#{oDialisisPac.modificar.horaFinIngreso}" pattern="HH:mm" timeOnly="true" size="9"  />
+                                </p:column>
+                            </p:row>
+
+                             <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.tiempoCavidad}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.iniEgreso}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.terminaEgreso}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 15%;">
+                                    <p:outputLabel  value="#{etiq.volumenEgresa}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:calendar id="tiepmCa" value="#{oDialisisPac.modificar.tiempoCavidad}" pattern="HH:mm" timeOnly="true" size="9"/>
+                                </p:column>
+                                <p:column>
+                                    <p:calendar id="ti" value="#{oDialisisPac.modificar.horaIniciaEgreso}" pattern="HH:mm" timeOnly="true" size="9"/>
+                                </p:column>
+                                <p:column>
+                                    <p:calendar id="tie" value="#{oDialisisPac.modificar.horaFinEgreso}" pattern="HH:mm" timeOnly="true" size="9"/> 
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{oDialisisPac.modificar.volumenEgresa}" converterMessage="ERROR, Volumen de egreso no aceptado" size="7">
+                                        <f:validateLongRange minimum="0" maximum="9999"/>
+                                        <f:ajax event="valueChange" execute="@this" render=":hojaDialisis:msgs"/>
+                                    </p:inputText>                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4" styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.medicamentos}"/>
+                                </p:column>
+
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="4" styleClass="centrar">
+                                    <p:selectOneMenu value="#{oDialisisPac.modificar.medicamentos.descripcion}" effect="puff">
+                                        <f:selectItem itemLabel="Selecicona Un medicamento" itemValue=""/>
+                                        <f:selectItem itemLabel="Paracetamol 500mg " itemValue="Paracetamos 500mg"/>
+                                        <f:selectItem itemLabel="Ampisilina" itemValue="Ampisilina"/>
+                                    </p:selectOneMenu>                                                                                 
+                                </p:column>
+
+                            </p:row>
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" >
+                                        <div class="centrar">
+                                            <p:commandButton  value="#{etiq.agra}" icon="ui-icon-plus" actionListener="#{oDialisisPac.guardarModoficarDialisis}"
+                                                              update=":hojaDialisis:msgs">                                                    
+                                            </p:commandButton>                                                
+                                        </div>                                            
+                                    </p:column>                                            
+
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>                        
+                    </h:form>
+                </p:dialog>
+                
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif" />
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+</html>
+

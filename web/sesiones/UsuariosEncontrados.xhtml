@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <br/><br/>
+
+            <p:growl id="mensajesGrowl" showDetail="true"/>
+
+            <h:form id="resultados">
+                <p:tabView dynamic="true" cache="true" id="tabViewPers">
+                    <p:tab title="#{etiq.personalConUsu}" id="tabPac">
+
+                        <div class="tabla_pacEnc" id="divPac">
+                            <p:dataTable id="tablaPac" widgetVar="tablaPac" var="oUsuEnc" value="#{oEdicionUsu.usuarios}" 
+                                         filteredValue="#{oEdicionUsu.usuariosFiltro}" paginator="true" rows="15">
+                                <f:facet name="header">
+                                    <h:outputText value="#{etiq.usuEncontrados}"/>
+                                </f:facet>
+
+                                <p:column headerText="#{etiq.cuenta}" style="width: 7.5%" filterBy="#{oUsuEnc.idUsuario}" 
+                                          filterMatchMode="contains" filterFunction="#{oEdicionUsu.filterByUpperCase}" >
+                                    <h:outputText value="#{oUsuEnc.idUsuario}"/>
+                                </p:column>
+
+                                <p:column headerText="#{etiq.nombreCompleto}" style="width: 15%" filterBy="#{oUsuEnc.personal.nombreCompleto}"
+                                          filterMatchMode="contains" filterFunction="#{oEdicionUsu.filterByUpperCase}">
+                                    <h:outputText value="#{oUsuEnc.personal.nombreCompleto}"/>
+                                </p:column>                  
+
+                                <p:column headerText="#{etiq.noTarjeta}" style="width: 5%" filterBy="#{oUsuEnc.personal.noTarjeta}"
+                                          filterMatchMode="contains" filterStyle="text-transform: initial;" >
+                                    <h:outputText value="#{oUsuEnc.personal.noTarjeta}"/>
+                                </p:column>                        
+
+                                <p:column headerText="#{etiq.fechanac}" style="width: 7.5%" >
+                                    <h:outputText value="#{oUsuEnc.personal.fechaNac}"/>
+                                </p:column>
+                                
+                                <p:column headerText="#{etiq.perfil}" style="width: 5%" filterBy="#{oUsuEnc.cvePerfil}" filterFunction="#{oEdicionUsu.filterByUpperCase}" >
+                                    <h:outputText value="#{oUsuEnc.cvePerfil}"/>
+                                </p:column>
+
+                                <p:column headerText="#{etiq.operacion}" style="width: 10%">
+                                    <p:commandButton value="#{etiq.modificar}" action="#{oEdicionUsu.modifica()}" ajax="false" icon="ui-icon-pencil">
+                                        <f:setPropertyActionListener target="#{oEdicionUsu.ope}" value="m" />
+                                        <f:setPropertyActionListener target="#{oEdicionUsu.idUsu}" value="#{oUsuEnc.idUsuario}" />
+                                        <f:setPropertyActionListener target="#{oEdicionUsu.usu.idUsuario}" value="#{oUsuEnc.idUsuario}" />
+                                        <f:setPropertyActionListener target="#{oEdicionUsu.usu.personal.noTarjeta}" value="#{oUsuEnc.personal.noTarjeta}" />
+                                        <f:setPropertyActionListener target="#{oEdicionUsu.buscado}" value="#{false}" />
+                                        <f:setPropertyActionListener target="#{oEdicionUsu.nuevo}" value="false" />
+                                    </p:commandButton>
+                                    <p:commandButton value="#{etiq.eliminar}" actionListener="#{oEdicionUsu.eliminaUsuario(oUsuEnc,oBuscarUsu.usuario.idUsuario2)}" 
+                                                     icon="ui-icon-close"  validateClient="true" update=":mensajesGrowl :resultados" >
+                                        <p:confirm header="#{etiq.confirmar}" message="#{etiq.preguntaEliminarUsuario}?"
+                                                   icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>     
+                        </div>
+
+
+                        <br/><br/>  
+                        <center><p:commandButton value="#{etiq.volver}" styleClass="centrar" 
+                                                 action="Inicio" icon="ui-icon-arrowreturnthick-1-w" ajax="false"/>
+                            &nbsp;
+                            <p:commandButton value="Recargar tablas" styleClass="centrar" 
+                                             update=":resultados:tabViewPers:tablaPac :resultados:tabViewPers:tablaPersonal" 
+                                             onclick="PF('tablaPac').clearFilters(); PF('tablaPersonal').clearFilters();"
+                                             actionListener="#{oEdicionUsu.recargaListas()}" icon="ui-icon-arrowreturnthick-1-w" resetValues="true"/>
+                            &nbsp;
+                            <p:commandButton value="#{etiq.registrar} #{etiq.nuevo} #{etiq.usuario}" styleClass="centrar"
+                                             action="#{oEdicionUsu.ingresa()}" icon="ui-icon-plus" ajax="false">
+                                <f:setPropertyActionListener target="#{oEdicionUsu.ope}" value="a" />
+                                <f:setPropertyActionListener target="#{oEdicionUsu.idUsu}" value="" />
+                                <f:setPropertyActionListener target="#{oEdicionUsu.buscado}" value="#{false}" />
+                                <f:setPropertyActionListener target="#{oEdicionUsu.nuevo}" value="true" />
+                            </p:commandButton>               
+                        </center>
+
+                    </p:tab>
+
+                    <p:tab title="#{etiq.personalSinUsu}" id="tabPersEnc">
+                        <p:dataTable id="tablaPersonal" widgetVar="tablaPersonal" var="oPersEnc" value="#{oEdicionUsu.persSinUsuario}" 
+                                     editable="true" filteredValue="#{oEdicionUsu.persSinUsuarioFiltro}" paginator="true" rows="20" >
+
+                            <p:ajax event="rowEdit" listener="#{oEdicionUsu.edicionPerSinUsu}" update=":mensajesGrowl" />
+
+                            <p:column headerText="#{etiq.noTarjeta}" style="width: 5%" filterBy="#{oPersEnc.noTarjeta}"
+                                      filterMatchMode="contains" filterStyle="text-transform: initial;" >
+                                <h:outputText value="#{oPersEnc.noTarjeta}"/>
+                            </p:column>  
+                            <p:column headerText="#{etiq.nombreCompleto}" style="width: 20%" filterBy="#{oPersEnc.nombreCompleto}"
+                                      filterMatchMode="contains" filterFunction="#{oEdicionUsu.filterByUpperCase}">
+                                <h:outputText value="#{oPersEnc.nombreCompleto}"/>
+                            </p:column>                  
+
+                            <p:column headerText="#{etiq.fechanac}" style="width: 7.5%" >
+                                <h:outputText value="#{oPersEnc.fechaNac}"/>
+                            </p:column>
+                            <p:column style="width: 10%" headerText="#{etiq.areas}" filterFunction="#{oEdicionUsu.filterByUpperCase}"
+                                      filterMatchMode="contains" filterBy="#{oPersEnc.statusDesc}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{oPersEnc.statusDesc}"/></f:facet>
+                                    <f:facet name="input">
+                                        <h:selectOneMenu value="#{oPersEnc.status}">
+                                            <f:selectItem itemLabel="SIN AREA" itemValue="" />
+                                            <f:selectItems value="#{oEdicionUsu.listaAreas}" var="oAre" 
+                                                           itemLabel="#{oAre.valor}" itemValue="#{oAre.claveParametro}#{oAre.tipoParametro.trim()}"/>
+                                        </h:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column style="width: 2%;" headerText="editar">
+                                <p:rowEditor />
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+            <p:commandButton value="#{etiq.siM}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+            <p:commandButton value="#{etiq.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+        </p:confirmDialog>
+        </ui:define> 
+    </ui:composition>
+</html>

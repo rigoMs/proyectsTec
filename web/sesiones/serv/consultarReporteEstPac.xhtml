@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporteEstPac}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="buscar">
+            <h:form>
+                <p:accordionPanel>
+                <p:ajax event="tabChange" listener="#{oBuscarPac.requerir}" update="@this, nom app exp" />
+                <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                    <p:panelGrid columns="3" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <p:inputText styleClass="bordes" id="nom" value="#{EstRealLab.nombre}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{EstRealLab.apPaterno}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{EstRealLab.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        
+                    </p:panelGrid>
+                </p:tab>        
+                <p:tab title="#{etiq.buscarPorExpediente}"  id="tabE">
+                    <p:panelGrid columns="2" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                        <p:inputText styleClass="bordes" id="exp" value="#{EstRealLab.numExpe}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" required="#{oBuscarPac.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                            <f:validateLongRange minimum="0" maximum="9999999999"/>
+                            <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                        </p:inputText>
+                    </p:panelGrid>
+                    <p:message for="exp" id="mentExp"></p:message>
+                </p:tab>
+               </p:accordionPanel>  
+                <br/>
+                <p:panelGrid columns="5" styleClass="frmlogin">
+                        <h:outputLabel class="negrita" value="#{etiq.fechade}"/>
+                        <p:calendar id="fechaIni2"  effect="fold" required="#{EstRealLab.fechaIni}" requiredMessage="Debe seleccionar una fecha de inicio" onkeypress="return validaCaracter(event)" value="#{EstRealLab.fecIni}" locale="es" readonlyInput="true">
+                            <p:ajax event="dateSelect" update="fechaFin2"/>
+                        </p:calendar>
+                        <h:outputLabel class="negrita" value="#{etiq.afecha}"/>
+                        <p:calendar id="fechaFin2"  effect="fold" required="#{EstRealLab.fechaFin}" requiredMessage="Debe seleccionar una fecha"  value="#{EstRealLab.fecFin}" onkeypress="return validaCaracter(event)" mindate="#{EstRealLab.fecIni}" locale="es" readonlyInput="true">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                        </p:calendar> 
+                        <p:commandButton styleClass="bordes" 
+                                         value="#{etiq.buscar}" 
+                                         icon="ui-icon-search" 
+                                         actionListener="#{EstRealLab.rebotes}" 
+                                         update=":frmEstudios:tblLisPacLab">
+                        </p:commandButton>
+                </p:panelGrid>
+               </h:form>
+            </div>
+        <h:form id="frmEstudios">
+                <br/>
+                <p:dataTable id="tblLisPacLab" 
+                             var="oPacLab" 
+                             value="#{EstRealLab.estPacientesLab}" 
+                             paginator="true"
+                             rows="10"
+                             emptyMessage="#{etiq.sinRegistros}">
+                <f:facet name="header">
+                    <p:outputLabel value="#{etiq.datosEstudio}" styleClass="mensaje"/>
+                </f:facet>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacLab.episodio.paciente.nombres} #{oPacLab.episodio.paciente.apPaterno} #{oPacLab.episodio.paciente.apMaterno}" />
+                </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.numexpe}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacLab.episodio.paciente.expediente.numero}" />
+                 </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.estudioSol}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacLab.estRealizado.estudio.concepto}" />
+                </p:column>
+                <p:column width="20%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.diagnostico}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacLab.episodio.paciente.diagcie.descripcionDiag}" />
+                </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.fechaSol}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacLab.estRealizado.fechaSolicitud}" />
+                </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.servicio}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacLab.episodio.area.descripcion}" />
+                </p:column>
+                <p:column width="10%">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.medicoSol}" styleClass="mensaje"/>
+                    </f:facet>
+                    <h:outputText value="#{oPacLab.episodio.medicoTratante.nombres} #{oPacLab.episodio.medicoTratante.apPaterno} #{oPacLab.episodio.medicoTratante.apMaterno}" />
+                </p:column>
+            </p:dataTable>
+            </h:form>
+           <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        
+        
+    </ui:define>         
+</ui:composition>
+
+</html>

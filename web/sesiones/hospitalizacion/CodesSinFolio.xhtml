@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+          <ui:define name="cuerpo">     
+           <br/><br/>
+            <h:form id="resultados">
+                 <p:growl id="messages" showDetail="true"/>
+                 <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                 <h2 class="centrar"><h:outputLabel value="#{etiq.asigFolHosp} #{etiq.hojaHospitalizacion}"/></h2><br/>
+                <div class="tabla_pacEnc">
+              <p:dataTable id="tablaPac" var="oCODEEnc" value="#{oSinFolio.hosp.buscarCODESFaltaFolio()}" widgetVar="tablaSinFolio"
+                           emptyMessage="No Hay Hojas De Hospitalización Sin Folio" filteredValue="#{oSinFolio.filtroHospitalizacion}">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.pacEncontrados}"/>
+                </f:facet>
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.ingreso}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.fechaIngresoHos}"/>
+                </p:column>
+        
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.paciente.nombres}"/>
+                </p:column>
+        
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.paciente.apPaterno}"/>
+                </p:column>        
+        
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.paciente.apMaterno}"/>
+                </p:column>
+        
+                <p:column style="width: 7%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.paciente.edadNumero}"/>
+                </p:column>        
+                        
+                <p:column style="width: 10%">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.expediente.numero}"/>
+                </p:column>                     
+                        
+                  <p:column filterBy="#{oCODEEnc.episodioMedico.areaServicioHRRB}" filterMatchMode="contains">
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.servicio}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.episodioMedico.areaServicioHRRB}"/>
+                </p:column>       
+
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.egreso}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.episodioMedico.altaHospitalaria}"/>
+                </p:column>                        
+                        
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputLabel class="negrita" value="#{etiq.medico}"/>
+                    </f:facet>
+                    <h:outputText value="#{oCODEEnc.episodioMedico.medicoTratante.nombres}"/>
+                </p:column>
+
+                   <p:column style="width: 10%">
+                    <p:commandButton value="#{etiq.seleccionar}" action="HojaCode" ajax="false">
+                        <f:setPropertyActionListener target="#{oCode.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oCode.folioPac}" value="#{oCODEEnc.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oCode.numHospitalizacion}" value="#{oCODEEnc.numIngresoHos}" />
+                        <f:setPropertyActionListener target="#{oCode.numeroExpediente}" value="#{oCODEEnc.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oCode.episodio}" value="#{oCODEEnc.episodioMedico.claveEpisodio}" />
+                        <f:setPropertyActionListener target="#{oCode.buscado}" value="#{false}" />
+                        <f:setPropertyActionListener target="#{oCode.bloqueado}" value="#{false}"/>
+                        <f:setPropertyActionListener target="#{oCode.tipo}" value="#{1}"/>
+                                   
+                        <f:setPropertyActionListener target="#{oEstancia.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oEstancia.folioPac}" value="#{oCODEEnc.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oEstancia.episodio}" value="#{oCODEEnc.episodioMedico.claveEpisodio}" />
+                        <f:setPropertyActionListener target="#{oEstancia.numHospitalizacion}" value="#{oCODEEnc.numIngresoHos}" />
+                        <f:setPropertyActionListener target="#{oEstancia.buscado}" value="#{false}"/>
+                        <f:setPropertyActionListener target="#{oEstancia.bloqueado}" value="#{true}"/>
+                        <f:setPropertyActionListener target="#{oEstancia.leido}" value="#{false}"/>
+                        
+                        <f:setPropertyActionListener target="#{oDefuncion.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oDefuncion.folioPac}" value="#{oCODEEnc.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oDefuncion.episodio}" value="#{oCODEEnc.episodioMedico.claveEpisodio}" />
+                        <f:setPropertyActionListener target="#{oDefuncion.numHospitalizacion}" value="#{oCODEEnc.numIngresoHos}" />
+                        <f:setPropertyActionListener target="#{oDefuncion.buscado}" value="#{false}"/>
+                        <f:setPropertyActionListener target="#{oDefuncion.bloqueado}" value="#{false}"/>
+                        
+                        <f:setPropertyActionListener target="#{oAtnObs.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oAtnObs.numHospitalizacion}" value="#{oCODEEnc.numIngresoHos}" />
+                        <f:setPropertyActionListener target="#{oAtnObs.numeroExpediente}" value="#{oCODEEnc.expediente.numero}" />
+                        <f:setPropertyActionListener target="#{oAtnObs.buscado}" value="#{false}"/>
+                        <f:setPropertyActionListener target="#{oAtnObs.bloqueado}" value="#{true}"/>
+                        
+                        <f:setPropertyActionListener target="#{oLesion.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oLesion.folioPac}" value="#{oCODEEnc.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oLesion.claveEpisodio}" value="#{oCODEEnc.episodioMedico.claveEpisodio}" />
+                        <f:setPropertyActionListener target="#{oLesion.numIngresoHosp}" value="#{oCODEEnc.numIngresoHos}" />
+                        <f:setPropertyActionListener target="#{oLesion.buscado}" value="#{false}"/>
+                        <f:setPropertyActionListener target="#{oLesion.bloqueado}" value="#{true}"/>
+                        
+                        <f:setPropertyActionListener target="#{oHospPsi.ope}" value="m" />
+                        <f:setPropertyActionListener target="#{oHospPsi.folioPac}" value="#{oCODEEnc.paciente.folioPaciente}" />
+                        <f:setPropertyActionListener target="#{oHospPsi.numHospitalizacion}" value="#{oCODEEnc.numIngresoHos}" />
+                        <f:setPropertyActionListener target="#{oHospPsi.buscado}" value="#{false}" />   
+                        <f:setPropertyActionListener target="#{oHospPsi.bloqueado}" value="#{true}"/>
+                    </p:commandButton>
+                       </p:column>
+                </p:dataTable>      
+            </div>
+            
+            
+               <br/><br/>  
+
+               </h:form>
+                     <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                         <f:facet name="start">
+                             <p:graphicImage value="/imgs/loading.gif"/>
+                         </f:facet>
+                     </p:ajaxStatus>           
+          </ui:define> 
+        </ui:composition>
+    
+</html>

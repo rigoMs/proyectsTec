@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+     <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+
+      <ui:define name="cuerpo">
+      <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+      <div class="cambiocon">
+        <h:form>
+            <br/><br/>
+                <p:panelGrid styleClass="frm_centrado centrado_texto">
+                  <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="4"><p:outputLabel id="titCitSer" value="#{etiq.citasAutorizadas}" /></p:column>
+                    </p:row>
+                  </f:facet> 
+
+                     <p:row>
+                        <p:column>
+                            <p:outputLabel id="fecInicio" styleClass="textover mensaje" value="#{etiq.fechaInicial}:" />                            
+                        </p:column>
+                        <p:column>
+                            <p:calendar  id="tFecInicio" value="#{oCitasAu.cita.fechaIni}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Inicial es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy"  readonlyInput="true">
+                                <p:ajax event="dateSelect" update="tFecFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel id="fecFin" styleClass="textover mensaje" value="#{etiq.fechaFinal}:" />                            
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="tFecFin" value="#{oCitasAu.cita.fechaFin}" effect="fold" locale="es" required="true"  requiredMessage="Error: La Fecha Final es incorrecta"  disabledWeekends="true" pattern="dd/MM/yy" mindate="#{oCitasAu.cita.fechaIni}"  readonlyInput="true">
+                                
+                            </p:calendar>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4"><p:commandButton value="#{etiq.consultar}" icon="ui-icon-search" update="tablaConsulCitas"/></p:column>
+                    </p:row>   
+                </p:panelGrid>
+              <br/><br/>
+              <p:dataTable id="tablaConsulCitas" styleClass="frm_centrado" var="oCitasSer" value="#{oCitasAu.cita.buscarCitasAutorizadas()}" emptyMessage="#{etiq.noCitas}">
+                <f:facet name="header">
+                    <p:outputLabel id="titProgCon" value="#{etiq.citasAutorizadas}"/>
+                </f:facet>
+ 
+                <p:column headerText="#{etiq.nombreCompleto}" style="width: 30%">
+                    <h:outputText value="#{oCitasSer.paciente.apPaterno} #{oCitasSer.paciente.apMaterno} #{oCitasSer.paciente.nombres}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.fechaCita}" styleClass="centrado_texto columnamed">
+                    <h:outputText value="#{oCitasSer.fechaCita}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="#{etiq.horaCita}" styleClass="centrado_texto columnamed">
+                    <h:outputText value="#{oCitasSer.fechaCita}">
+                        <f:convertDateTime pattern="HH:mm"/>
+                    </h:outputText>
+                </p:column>
+                  
+                <p:column headerText="#{etiq.tel}" styleClass="centrado_texto columnamed">
+                    <h:outputText value="#{oCitasSer.paciente.telefono}"/>
+                </p:column>
+                
+                <p:column headerText="#{etiq.servicio}" styleClass="centrado_texto columnadiez">
+                    <h:outputText value="#{oCitasSer.areaServicio.descripcion}"/>
+                </p:column>                 
+                
+                <p:column headerText="#{etiq.usuario}" styleClass="centrado_texto columnamed">
+                    <h:outputText value="#{oCitasSer.idUsuario}"/>
+                </p:column>
+   
+            </p:dataTable>  
+            </h:form>
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus> 
+          </div>
+          </ui:define>  
+     </ui:composition>
+</html>

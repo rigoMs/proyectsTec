@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.reporteQx}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="frm_busqueda">
+                 <h:panelGrid class="frm_centrado" columns="4">
+                    <p:outputLabel id="fechaSolicitud" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar  id="fechaSol" value="#{oReporteQx.procedimientos.fechaProgramada}"
+                                 locale="es" required="true"  requiredMessage="Selecciona Una Fecha">
+                    </p:calendar>
+                    <p:commandButton id="btnBusFecha" icon="ui-icon-search" actionListener="#{oReporteQx.buscaProgramacion}"
+                                     value="#{etiq.buscar}" update=":frm_Edicion:tabla_Datos">
+                    </p:commandButton>
+                 </h:panelGrid>
+            </h:form>
+            <br/>
+            <h:form id="frm_Edicion">
+                <p:dataTable  id="tabla_Datos" 
+                              value="#{oReporteQx.listaProgramacion}"
+                              var="oReporte"
+                              style="visibility: #{oReporteQx.visibilidad}; width: 1850px" 
+                              emptyMessage="#{etiq.noProgramacion}"
+                              styleClass="frm_centrado" 
+                              editable="true" editMode="cell">
+                    <p:ajax event="cellEdit" listener="#{oReporteQx.editaCantidad}" 
+                            update=":frm_Edicion:messages" />
+                    <p:column  headerText="#{etiq.medAnes}">
+                        <h:outputLabel value="#{oReporte.anestesio.nombreCompleto}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.medCir}">
+                        <h:outputText value="#{oReporte.cirujano.nombreCompleto}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.resid}">
+                        <h:outputLabel value="#{oReporte.residente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.proceQx}">
+                        <h:outputLabel value="#{oReporte.CIE9.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.qxP}" width="3%">
+                        <h:outputLabel value="#{oReporte.quirofanos.nombre}"/>  
+                    </p:column>
+                    <p:column headerText="#{etiq.anestesia}" width="3%">
+                        <h:outputLabel value="#{oReporte.anestEspecifica.descripcion}"/>  
+                    </p:column>
+                    <p:column headerText="#{etiq.hora}" width="3%">
+                        <h:outputText value="#{oReporte.valorHorarioQx.valor}" />
+                    </p:column>
+                    <p:column headerText="#{etiq.paciente}">
+                        <h:outputText value="#{oReporte.episodioMedico.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.expediente}">                        
+                        <h:outputText value="#{oReporte.episodioMedico.paciente.expediente.numero}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.observaciones}">
+                        <h:outputText value="#{oReporte.episodioMedico.paciente.sexoP} - #{oReporte.episodioMedico.paciente.edadNumero} SP.#{oReporte.episodioMedico.paciente.seg.numero}"/>
+                    </p:column>
+                    <p:column style=" width: 120px">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:outputLabel value="#{oReporte.valorTipoQx.valor}" /></f:facet>
+                            <f:facet name="input">
+                                <p:selectOneMenu value="#{oReporte.valorTipoQx.valor}" style=" width: 100px;">
+                                    <f:selectItems value="#{oReporteQx.listaTiposQx}" var="oTipo" 
+                                                   itemLabel="#{oTipo.valor}" itemValue="#{oTipo.valor}" />
+                                    <p:ajax></p:ajax>
+                                </p:selectOneMenu>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}" >
+                        <p:ajax listener="#{oReporteQx.almacena()}" process="@this"
+                                        update=":frm_Edicion:tabla_Datos :frm_Edicion:messages" />
+                        </p:commandButton>
+                        &nbsp;&nbsp;
+                        <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}"></p:commandButton>
+                        &nbsp;&nbsp;
+                        <p:commandButton icon="ui-icon-calculator" value="Genera estadistica" style="visibility: #{oReporteQx.visibilidad}"></p:commandButton>
+                    </f:facet>
+                </p:dataTable>
+                <p:growl id="messages" showDetail="true" />
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.control} #{etiq.hojaPagoExterno}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form id="busquedaPac">
+              
+                    <p:panelGrid columns="4" >
+                        <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                        <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>                        
+                        <h:outputLabel />
+                        <p:inputText styleClass="bordes" id="nom" value="#{EstRealPat.nombre}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>                        
+                        <p:inputText styleClass="bordes" id="app" value="#{EstRealPat.apPaterno}" onkeyup="this.value=this.value.toUpperCase();"  required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                        <p:inputText styleClass="bordes" id="apm" value="#{EstRealPat.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                        <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" action="#{EstRealPat.listaPacienteExterno}" update=":frmFicha:" >
+                        </p:commandButton>
+                    </p:panelGrid>
+       
+            <br/>
+            </h:form>
+            <h:form id="frmFicha">
+                <p:dataTable id="tblpacext"
+                             value="#{EstRealPat.pacExt}" 
+                             var="oExt" 
+                             emptyMessage="#{etiq.sinRegistros}"
+                             rowKey="#{oExt.identificador}" 
+                             selection="#{EstRealPat.seleccionado}">
+                    <p:ajax event="rowSelectRadio"></p:ajax>
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.datosFicha}" styleClass="mensaje"/>
+                    </f:facet>
+                    <p:column selectionMode="single" width="5%">
+                    </p:column>
+                    <p:column width="40%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nompac}" styleClass="mensaje"/>
+                        </f:facet>
+                        <h:outputText value="#{oExt.episodio.paciente.nombres} #{oExt.episodio.paciente.apPaterno} #{oExt.episodio.paciente.apMaterno}" />
+                    </p:column>
+                    <p:column width="25%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.espeQx}" styleClass="mensaje"/>
+                        </f:facet>
+                        <h:outputText value="#{oExt.especimenMuestraTejido}" />
+                    </p:column>
+                    <p:column width="15%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.fechaRecepcion}" styleClass="mensaje"/>
+                        </f:facet>
+                        <h:outputText value="#{oExt.fechaRecepcion}" />
+                    </p:column>    
+                    <p:column width="15%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.fechaEntRes}" styleClass="mensaje"/>
+                        </f:facet>
+                        <h:outputText value="#{oExt.fechaProgramado}" />
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton process="tblpacext" value="Ver detalles" icon="ui-icon-plus" actionListener="#{EstRealPat.detallePacExterno}" update=":frmFicha:pacExt" oncomplete="PF('dlgPacExt').show()" />
+                    </f:facet>
+                </p:dataTable>
+                <p:dialog header="Ficha de Entrega de estudios" widgetVar="dlgPacExt" 
+                          height="60%" width="60%" resizable="false" modal="true">
+                    <p:outputPanel id="pacExt">
+                        <p:panelGrid id="pgFicha" styleClass="frm_centrado">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="2" rowspan="1">
+                                        <h:outputText value="#{etiq.fichaPacExt}" />
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{etiq.nompac}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealPat.estPat.episodio.paciente.nombres} #{EstRealPat.estPat.episodio.paciente.apPaterno} #{EstRealPat.estPat.episodio.paciente.apMaterno}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{etiq.espeQx}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealPat.estPat.especimenMuestraTejido}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{etiq.fechaRecepcion}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealPat.estPat.fechaRecepcion}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{etiq.fechaEntRes}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealPat.estPat.fechaProgramado}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{etiq.nombreQuienEnt}" styleClass="mensaje" />
+                                </p:column>
+                                <p:column colspan="1" rowspan="1">
+                                    <h:outputText value="#{EstRealPat.estPat.nombreQuienEntregaMuestra}" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>   
+                        <p:commandButton value="Imprimir" icon="ui-icon-print">
+                                <p:printer target=":frmFicha:pgFicha" />
+                        </p:commandButton>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+        
+    </ui:define>        
+</ui:composition>
+
+</html>

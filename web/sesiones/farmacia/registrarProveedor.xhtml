@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.registrar} #{etiq.proveedor}"/>
+        </h2>
+       
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <center>
+                    <h:form id="formR" > 
+                        <p:growl id="msg" sticky="true" showDetail="true"/> 
+                        <p:dialog id="dlgRegistrarProve" widgetVar="dlgRP" position="center" closable="false" dynamic="true" resizable="false"
+                                  appendTo="@(body)" modal="true">
+                            <center>
+                                <h3 class="centrado_texto">
+                                    <p:outputLabel 
+                                       value="#{etiq.proveedor} "/>
+                                </h3>
+                                <h:form>
+                                    <p:panelGrid id="panelDatos">
+                                        <p:row>        
+                                    <p:column>
+                                            <p:outputLabel value="#{etiq.id} " />
+                                    </p:column>
+                                    <p:column>
+                                            <p:inputText  id="txtID" value="#{oProveedorJB.currentProveedor.id}"   disabled="#{oProveedorJB.disDatos}" >
+                                                <p:ajax event="change" listener="#{oProveedorJB.listaProveedor}" update="txtNombre txtID :formR:msg"/>
+                                            </p:inputText>        
+                                    </p:column>
+                                            
+                                    <p:column>
+                                        <p:outputLabel value="#{etiq.nombre} " />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id ="txtNombre" value="#{oProveedorJB.currentProveedor.nombre}">
+                                                    <p:ajax /></p:inputText>
+                                    </p:column>
+                                             
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                        <p:outputLabel value="Folio Fiscal" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id ="txtFolio" value="#{oProveedorJB.currentProveedor.folioFiscal}">
+                                                    <p:ajax /></p:inputText>
+                                    </p:column>
+                                            <p:column>
+                                                <p:outputLabel for="txtRFC" value="RFC" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id ="txtRFC" value="#{oProveedorJB.currentProveedor.RFC}">
+                                                    <p:ajax /></p:inputText>
+                                    </p:column>
+                                            
+                                        </p:row>
+                                    </p:panelGrid>
+                                    
+                                    <br/><br/><p:commandButton value="#{etiq.guardar}">
+                                        <p:ajax listener="#{oProveedorJB.guarda()}"  update=":formR:msg :formR:RegistrarProveedor"/>
+                                    </p:commandButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <p:commandButton value="#{etiq.volver}" oncomplete="PF('dlgRP').hide()"/>
+                              
+                                </h:form>
+                            </center>
+                        </p:dialog>
+                        <p:dataTable   id="RegistrarProveedor" rows="5" editable="true" paginator="true" paginatorPosition="bottom" var="oP"
+                                       style="width: 1200px" value="#{oProveedorJB.listaProveedor}" selection="#{oProveedorJB.selectedProveedor}"  rowKey="#{oP.id}" >
+                             <p:ajax event="rowSelectRadio"/>
+                            <p:column selectionMode="single"/>
+                            <p:column headerText="#{etiq.id} " >
+                                <p:outputLabel value="#{oP.id}" />
+                               
+                            </p:column >
+                            
+                            <p:column headerText="#{etiq.nombre}">
+                                <p:outputLabel value="#{oP.nombre}"/>
+                            </p:column>
+                            
+                            <p:column headerText="RFC">
+                                <p:outputLabel value="#{oP.RFC}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Folio Fiscal">
+                                <p:outputLabel value="#{oP.folioFiscal}"/>
+                            </p:column>
+                            
+                            
+                            <f:facet name="footer">
+                                <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-pencil" oncomplete="PF('dlgRP').show()">
+                                  <p:ajax update=":formR:msg :formR:dlgRegistrarProve" listener="#{oProveedorJB.confNuevo()}"/>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.eliminar}" icon="ui-icon-pencil" >
+                                  <p:ajax update=":formR:msg :formR:dlgRegistrarProve" listener="#{oProveedorJB.confProveedor(1)}"/>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil" >
+                                    <p:ajax update=":formR:msg :formR:dlgRegistrarProve" listener="#{oProveedorJB.confProveedor(2)}" />
+                                </p:commandButton>
+                                
+                                  
+                            </f:facet>
+                            <f:facet name="header">                              
+                                <p:outputLabel value="#{etiq.administrar} #{etiq.proveedor}"></p:outputLabel>
+                            </f:facet>
+                        </p:dataTable> 
+                    </h:form></center>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

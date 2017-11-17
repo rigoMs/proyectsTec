@@ -1,0 +1,615 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.recetaMed}"/>
+                </h2>
+                <!--
+                Colocar en caso de mensajes de atributos requeridos
+                <div class="msjrequerido">
+                    <h:outputLabel value="("/>
+                    <h:outputLabel class="requerido" value="*"/>
+                    <h:outputLabel  value=")"/>
+                    <h:outputLabel value="#{etiq.campo}"/>
+                </div>
+                -->
+                <br/>
+                <div class="centrado_texto">
+                    <h:form id="recetaPaciente">
+
+                        <p:accordionPanel id="apBusPacRec">
+                            <p:tab title="#{etiq.buscarpacs}">
+
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="4"><h:outputText value="#{etiq.buscarDatosBasicos}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.nombres}:"/></p:column>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.appat}:"/></p:column>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.apmat}:"/></p:column>
+                                        <p:column></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="nom" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oRegRecPac.episodioMedico.paciente.nombres}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="app" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oRegRecPac.episodioMedico.paciente.apPaterno}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="apm" 
+                                                         maxlength="50" size="39"
+                                                         value="#{oRegRecPac.episodioMedico.paciente.apMaterno}"
+                                                         style="text-transform:uppercase;"
+                                                         onkeypress="return validaCaracter(event);">
+                                                <p:ajax/>
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update="tablaPac" listener="#{oRegRecPac.buscaPacienteAtenMed()}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column colspan="3"><h:outputText value="#{etiq.buscarPorExpediente}"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column><h:outputLabel class="negrita" value="#{etiq.noExp}:"/></p:column>
+                                        <p:column>
+                                            <p:inputText styleClass="bordes" id="exp"
+                                                         value="#{oRegRecPac.episodioMedico.expediente.numero}"
+                                                         converterMessage="#{etiq.errCapturaCaractEsp}">
+                                                <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                                <f:ajax execute="@this" event="valueChange" />
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton styleClass="bordes" 
+                                                             value="#{etiq.buscar}" 
+                                                             icon="ui-icon-search">
+                                                <p:ajax update="tablaPac" listener="#{oRegRecPac.buscaPacienteAtenMed()}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <br/><br/>
+
+                                <div class="tabla_pacEnc">
+                                    <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                                 paginatorPosition="both" rows="5" 
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport}  {NextPageLink} {LastPageLink}"
+                                                 value="#{oRegRecPac.epiMed}" 
+                                                 emptyMessage="#{etiq.noRegistro}" 
+                                                 style="visibility:#{oRegRecPac.visibilidadTabla};"
+                                                 rowKey="#{oPacEnc.paciente.folioPaciente}"
+                                                 selection="#{oRegRecPac.seleccionado}">
+                                        <p:ajax event="rowSelectRadio"></p:ajax>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{etiq.pacEncontrados}"/>
+                                        </f:facet>
+                                        <p:column selectionMode="single">
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.apPaterno}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.apMaterno}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.nombres}"/>
+                                        </p:column>
+                                        <p:column style="width: 9%">
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.fechaNac}"/>
+                                        </p:column>   
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.curp}"/>
+                                        </p:column>
+                                        <p:column style="width: 7%">
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.edadNumero}"/>
+                                        </p:column> 
+                                        <p:column style="width: 10%">
+                                            <f:facet name="header">
+                                                <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                            </f:facet>
+                                            <h:outputText value="#{oPacEnc.paciente.expediente.numero}"/>
+                                        </p:column>  
+                                        <f:facet name="footer">
+                                            <p:commandButton value="#{etiq.llenarReceta}">
+                                                <p:ajax listener="#{oRegRecPac.llenadoDatosPersonales}" update="tablaPac :recetaPaciente:recetaMed :ImpresionReceta"></p:ajax>
+                                            </p:commandButton>
+                                        </f:facet>
+                                    </p:dataTable>      
+                                </div>            
+                                <br/>   
+
+                            </p:tab>
+                        </p:accordionPanel>
+
+                        <!--*********************************************************************************-->
+
+                        <p:tabView widgetVar="Receta Médica" id="recetaMed" effect="fade" style="visibility:#{oRegRecPac.visible};">
+                            <p:tab title="#{etiq.recetaMed}">
+
+                                <h:form id="form1">
+                                    <p:growl id="msg" showDetail="true"/>
+                                    
+                                    <p:panelGrid id="regReceta" >
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" colspan="7"><h:outputText value="#{etiq.regRecMed}"/></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.clave}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.nombre}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.presentacion}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.dosis}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.viaAdmin}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.frecuencia}"/></p:column>
+                                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.duracion}"/></p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column><p:inputText id="claveMed" value="#{oRegRecPac.medicamento.claveMedicamento}" size="10" readonly="true"><p:ajax></p:ajax></p:inputText></p:column> 
+                                            <p:column>
+                                                <p:autoComplete id="nombreMed"  onkeypress="return validaCaracter(event);"  queryDelay="1000" size="40" minQueryLength="3" required="true" styleClass="bordes"
+                                                                value="#{oRegRecPac.medicamento.nombre}" completeMethod="#{oRegRecPac.medicamento.completarMed}" effect="fade"
+                                                                onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300" requiredMessage="Debe ingresar un nombre de medicamento">
+                                                    <p:ajax listener="#{oRegRecPac.buscaMedicamento()}" update="claveMed presentMed" event="itemSelect"/>
+                                                </p:autoComplete>
+                                            </p:column>
+                                            <p:column><p:inputText id="presentMed" value="#{oRegRecPac.medicamento.presentacion}" readonly="true"><p:ajax></p:ajax></p:inputText></p:column>
+                                            <p:column><p:inputText value="#{oRegRecPac.detalleRecHRRB.dosis}" size="5"><p:ajax></p:ajax></p:inputText></p:column>
+                                            <p:column>
+                                                <p:selectOneMenu styleClass="bordes textover" id="viaMed" value="#{oRegRecPac.detalleRecHRRB.via.valor}" requiredMessage="Debe Seleccionar Una Vía de Administración">
+                                                    <f:selectItem itemLabel="SELECCIONA" itemValue=""/>
+                                                    <f:selectItems value="#{oRegRecPac.listaVia}" var="Via"
+                                                                   itemLabel="#{Via.valor}" itemValue="#{Via.valor}"/>
+                                                    <p:ajax/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column><p:inputText value="#{oRegRecPac.detalleRecHRRB.frecuencia}" size="5" ><p:ajax></p:ajax></p:inputText></p:column>
+                                            <p:column><p:inputText value="#{oRegRecPac.detalleRecHRRB.duracion}" size="5" ><p:ajax></p:ajax></p:inputText></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="7">
+                                                <p:commandButton value="#{etiq.agregar}" icon="ui-icon-plus" >
+                                                    <p:ajax listener="#{oRegRecPac.registroReceta()}" update="tablaReceta :ImpresionReceta:tablaReceta2 regReceta msg"></p:ajax>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:row>                        
+                                    </p:panelGrid>
+                                    <br/>
+                                    <p:panelGrid id="formatoReceta">
+                                        <f:facet name="header">
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.datosDelPaciente}"/></p:column>
+                                            </p:row>
+                                        </f:facet>
+                                        <p:row>
+                                            <p:column colspan="4"></p:column>
+                                            <p:column><p:outputLabel value="#{etiq.fechaYhora}:"/></p:column>
+                                            <p:column>
+                                                <h:outputLabel value="#{oRegRecPac.fechaActual}"><f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="America/Mexico_City"/></h:outputLabel>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column><h:outputLabel value="#{etiq.noExp}:"/></p:column>
+                                            <p:column><h:outputLabel value="#{oRegRecPac.episodioMedico.paciente.expediente.numero}"/></p:column>
+                                            <p:column><h:outputLabel value="#{etiq.nombreCompleto}:"/></p:column>
+                                            <p:column><h:outputLabel value="#{oRegRecPac.episodioMedico.paciente.nombreCompleto}"/></p:column>
+                                            <p:column><h:outputLabel value="#{etiq.edad}:"/></p:column>
+                                            <p:column><h:outputLabel  value="#{oRegRecPac.episodioMedico.paciente.edadNumero}"/></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column><h:outputLabel value="#{etiq.segpop}:"/></p:column>
+                                            <p:column colspan="2"><h:outputLabel  value="#{oRegRecPac.episodioMedico.paciente.seg.numero}" /></p:column>
+                                            <p:column><h:outputLabel value="#{etiq.servicio}:"/></p:column>
+                                            <p:column colspan="2"><h:outputText  value="#{oRegRecPac.episodioMedico.area.descripcion}" /></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column><h:outputLabel value="#{etiq.medico}:"/></p:column>
+                                            <p:column colspan="2"><h:outputText  value="#{oRegRecPac.medFirm.nombreCompleto}" /></p:column>
+                                            <p:column><h:outputLabel value="#{etiq.cedulaProf}:"/></p:column>
+                                            <p:column colspan="2"><h:outputText  value="#{oRegRecPac.medFirm.cedProf}" /></p:column>      
+                                        </p:row>
+                                        <p:row>
+                                            <p:column><h:outputLabel value="#{etiq.diagnostico}:"/></p:column>
+                                            <p:column colspan="5"><h:outputText  value="#{oRegRecPac.episodioMedico.diagIngreso.descripcionDiag}" /></p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column colspan="6">
+                                                <p:dataTable id="tablaReceta" var="Receta" value="#{oRegRecPac.rec}" style="visibility:#{oRegRecPac.visibilidadReceta}">
+                                                    <f:facet name="header">
+                                                        <p:outputLabel id="titVac" value="Receta del paciente"/>
+                                                    </f:facet>
+                                                    <p:column headerText="#{etiq.clave}:" styleClass="columnachica centrado_texto" style="width:10%;">
+                                                        <h:outputText value="#{Receta.medicamento.claveMedicamento}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.nombre}:" styleClass="columnachica centrado_texto" style="width:35%;">
+                                                        <h:outputText value="#{Receta.medicamento.nombre}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.presentacion}:" styleClass="columnachica centrado_texto" style="width:10%;">
+                                                        <h:outputText value="#{Receta.medicamento.presentacion}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.dosis}:" styleClass="columnachica centrado_texto" style="width:7%;">
+                                                        <h:outputText value="#{Receta.dosis}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.viaAdmin}:" styleClass="columnachica centrado_texto" style="width:10%;">
+                                                        <h:outputText value="#{Receta.via.valor}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.frecuencia}:" styleClass="columnachica centrado_texto" style="width:10%;">
+                                                        <h:outputText value="#{Receta.frecuencia}"/>
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.duracion}:" styleClass="columnachica centrado_texto" style="width:8%;">
+                                                        <h:outputText value="#{Receta.duracion}"/>
+                                                    </p:column>
+                                                    <p:column headerText="" styleClass="columnachica centrado_texto" style="width:10%;">
+                                                        <p:commandButton  value="#{etiq.borrar}" id="btnBorrar" icon="ui-icon-trash">
+                                                            <p:ajax listener="#{oRegRecPac.borrarElemento(Receta)}" update="tablaReceta btnGuardar"></p:ajax>
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                        <p:commandButton  value="Guardar" icon="ui-icon-disk" id="btnGuardar">
+                                                            <p:ajax listener="#{oRegRecPac.guardar()}" update="tablaReceta :recetaPaciente:recetaMed:form1:msg"></p:ajax>
+                                                        </p:commandButton>
+                                                        <p:commandButton value="Formato de impresión"  icon="ui-icon-note" type="button" onclick="PF('dlgImpReceta').show();"></p:commandButton>
+                                                    </f:facet>
+                                                </p:dataTable>   
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </h:form>  
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                    
+                    <!--*********************************************************************************-->
+                    
+                    <p:dialog header="Receta Médica" widgetVar="dlgImpReceta" width="1200" height="600" resizable="false" modal="true">
+                        <h:form id="ImpresionReceta">
+                            <p:panelGrid styleClass="frm_centrado" style="width:1050px;" id="docum">
+                                <p:row>
+                                    <p:column colspan="14" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; width:75px;"></p:column>
+                                    <p:column style="width:100px; border-color:#ffffff; background-color:#ffffff; border-right-color:#000000; width:75px;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000;">
+                                        <h:graphicImage value="/imgs/logo-salud.jpg" style="width: 100px;"/> 
+                                    </p:column>
+                                    <p:column colspan="3" style="border-color:#ffffff; background-color:#ffffff;">
+                                        <h:graphicImage value="/imgs/logo-adelante.jpg" style="width: 100px;"/> 
+                                    </p:column>
+                                    <p:column colspan="6" style="border-color:#ffffff; background-color:#ffffff; text-align:center;">
+                                        <h:outputLabel value="SECRETARIA DE SALUD"/><br/>
+                                        <h:outputLabel value="SERVICIOS DE SALUD DE VERACRUZ"/><br/>
+                                        <h:outputLabel value="RECETA INDIVIDUAL"/>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff;">
+                                        <h:graphicImage value="/imgs/logo-segpop.jpg" style="width: 100px;"/> 
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff;">
+                                        <h:graphicImage value="/imgs/repss-logo.jpg" style="width: 100px;"/> 
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000;">
+                                        <h:graphicImage value="/imgs/logo-oportunidades.png" style="width: 100px;"/> 
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="14" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; font-style:italic;">
+                                        <b><h:outputLabel value="HOSPITAL REGIONAL RIO BLANCO"/></b>
+                                    </p:column>
+                                    <p:column colspan="7" style="border-color:#ffffff; background-color:#ffffff;">
+                                        <h:outputLabel value="Entronque Autopista Orizaba/Puebla Km 2, Río Blanco, Ver."/>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000;">
+                                        <h:outputLabel value="Licencia Sanitaria: 1138000001"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="14" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="Nombre del paciente"/>
+                                    </p:column>
+                                    <p:column colspan="5" style="border-color:#ffffff; background-color:#ffffff; border-bottom-color:#000000; border-top-color:#000000; font-size:11px;">
+                                        <h:outputText value="#{oRegRecPac.episodioMedico.paciente.nombreCompleto}" />
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-top-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="Edad:"/>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-bottom-color:#000000; border-top-color:#000000; font-size:11px;">
+                                        <h:outputText  value="#{oRegRecPac.episodioMedico.paciente.edadNumero}" />
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-top-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="Expediente:"/>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-bottom-color:#000000; border-top-color:#000000; font-size:11px;">
+                                        <h:outputText  value="#{oRegRecPac.episodioMedico.paciente.expediente.numero}" />
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-top-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="Fecha:"/>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000; font-size:11px;">
+                                        <h:outputText  value="#{oRegRecPac.fechaActual}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="America/Mexico_City"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="4" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000;"></p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; font-size:9px; text-align:center;">
+                                        <h:outputLabel value="FOLIO"/>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000;"></p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; font-size:9px; text-align:center;">
+                                        <h:outputLabel value="IDENTIFICADOR"/>
+                                    </p:column>
+                                    <p:column colspan="10" style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="SEGURO POPULAR"/>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-top-color:#000000;" colspan="6">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[0]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[1]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[2]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[3]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[4]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[5]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[6]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[7]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[8]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[9]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000;">
+                                                    <h:outputLabel value="-"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[11]}"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                                    <h:outputLabel value="#{oRegRecPac.seguroDesglosado[12]}"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-top-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="SERVICIO:"/>
+                                    </p:column>
+                                    <p:column colspan="3" style="border-color:#ffffff; background-color:#ffffff; border-bottom-color:#000000; border-top-color:#000000; font-size:11px;">
+                                        <h:outputText value="#{oRegRecPac.episodioMedico.area.descripcion}" />
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000; font-size:11px;">
+                                                    <h:outputLabel value="C.EXT."/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000; font-size:11px;">
+                                                    <h:outputText value="#{oRegRecPac.area1}" />
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000; font-size:11px;">
+                                                    <h:outputLabel value="HOSP"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000; font-size:11px;">
+                                                    <h:outputText value="#{oRegRecPac.area2}" />
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000; font-size:11px;">
+                                                    <h:outputLabel value="URG"/>
+                                                </p:column>
+                                                <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000; font-size:11px;">
+                                                    <h:outputText value="#{oRegRecPac.area3}" />
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="14" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000; text-align:center;">
+                                        <h:outputLabel value="CLAVE"/>
+                                    </p:column>
+                                    <p:column colspan="12" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000; text-align:center;">
+                                        <h:outputLabel value="NOMBRE DEL MEDICAMENTO"/>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000; text-align:center;">
+                                        <h:outputLabel value="CANTIDAD SURTIDA"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000;"></p:column>
+                                    <p:column colspan="12" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000; font-size:9px; text-align:center;">
+                                        <h:outputLabel value="DEBERA ANOTAR EL NOMBRE GENERICO DEL MEDICAMENTO, PRESENTACION, DOSIS, VIA DE ADMINISTRACION, FRECUENCIA, TIEMPO DE DURACION DEL TRATAMIENTO Y NUMERO DE PIEZAS RECETADAS"/>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-top-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="13" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;">
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:column>
+                                                    <p:dataTable id="tablaReceta2" var="Receta" value="#{oRegRecPac.rec}" style="visibility:#{oRegRecPac.visibilidadReceta}">
+                                                        <p:column headerText="#{etiq.clave}:" styleClass="columnachica centrado_texto" style="font-size:10px; width:20px;">
+                                                            <h:outputText value="#{Receta.medicamento.claveMedicamento}"/>
+                                                        </p:column>
+                                                        <p:column headerText="#{etiq.nombre}:" styleClass="columnachica centrado_texto" style="font-size:10px; width:50px;">
+                                                            <h:outputText value="#{Receta.medicamento.nombre}"/>
+                                                        </p:column>
+                                                        <p:column headerText="#{etiq.presentacion}:" styleClass="columnachica centrado_texto" style="font-size:10px; width:50px;">
+                                                            <h:outputText value="#{Receta.medicamento.presentacion}"/>
+                                                        </p:column>
+                                                        <p:column headerText="#{etiq.dosis}:" styleClass="columnachica centrado_texto" style="font-size:10px; width:20px;">
+                                                            <h:outputText value="#{Receta.dosis}"/>
+                                                        </p:column>
+                                                        <p:column headerText="#{etiq.viaAdmin}:" styleClass="columnachica centrado_texto" style="font-size:10px; width:30px;">
+                                                            <h:outputText value="#{Receta.via.valor}"/>
+                                                        </p:column>
+                                                        <p:column headerText="#{etiq.frecuencia}:" styleClass="columnachica centrado_texto" style="font-size:10px; width:20px;">
+                                                            <h:outputText value="#{Receta.frecuencia}"/>
+                                                        </p:column>
+                                                        <p:column headerText="#{etiq.duracion}:" styleClass="columnachica centrado_texto" style="font-size:10px; width:20px;">
+                                                            <h:outputText value="#{Receta.duracion}"/>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                    <p:column style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="IMPRESIÓN DIAGNOSTICA:"/>
+                                    </p:column>
+                                    <p:column colspan="11" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-right-color:#000000;">
+                                        <h:outputLabel value=""/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="14" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000; font-size:11px; text-align:center;">
+                                        <h:outputLabel value="#{oRegRecPac.medFirm.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column colspan="3" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000; font-size:11px; text-align:center;">
+                                        <h:outputLabel value="#{oRegRecPac.medFirm.cedProf}"/>
+                                    </p:column>
+                                    <p:column colspan="4" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000; text-align:center;">
+                                        <h:outputLabel value=""/>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="5" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000; font-size:11px; text-align:center;">
+                                        <h:outputLabel value="Nombre completo y firma del médico"/>
+                                    </p:column>
+                                    <p:column colspan="3" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000; font-size:11px; text-align:center;">
+                                        <h:outputLabel value="Cédula profesional"/>
+                                    </p:column>
+                                    <p:column colspan="4" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000; font-size:11px; text-align:center;">
+                                        <h:outputLabel value="Nombre y firma de recibido de medicamentos"/>
+                                    </p:column>
+                                    <p:column colspan="2" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000; font-size:11px;">
+                                        <h:outputLabel value="SELLO DE LA"/><br/>
+                                        <h:outputLabel value="UNIDAD"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="8" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-top-color:#000000; font-size:11px; text-align:center;">
+                                        <h:outputText value="ESTA RECETA NO ES VALIDA PARA PRESCRIPCION DE ESTUPEFACIENTES(GRUPO I)" />
+                                    </p:column>
+                                    <p:column colspan="6" style="border-color:#ffffff; background-color:#ffffff; border-right-color:#000000; border-top-color:#000000; font-size:11px; text-align:center;">
+                                        <h:outputText value="SIGA LAS INDICACIONES DEL MEDICO AL PIE DE LA LETRA, ES POR SU SALUD" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="14" style="border-color:#ffffff; background-color:#ffffff; border-left-color:#000000; border-bottom-color:#000000; border-right-color:#000000;"></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:commandButton value="#{etiq.imprimir}" id="botonimp" icon="ui-icon-print" style=" margin-bottom: 20px;">
+                                <p:printer target="docum" />
+                            </p:commandButton> 
+                        </h:form>
+                    </p:dialog>
+                    
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+</html>

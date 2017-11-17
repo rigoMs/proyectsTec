@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+        
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+
+                <h:form class="centrar">
+
+                    <br/><br/>
+                    <p:growl id="msgs" showDetail="true" />
+                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+
+
+                    <p:tabView>
+                        <p:tab title="Verificar Existencia de producto">
+                            <h:form>
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <h:outputLabel value="#{etiq.desdet} #{etiq.prod}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"/>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <p:autoComplete value="" id="prod" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" />
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid><br/><br/>
+
+                                <p:dataTable id="tblProd">
+                                    <p:column headerText="#{etiq.clavemat}">
+                                        <h:outputText value="" />
+                                    </p:column>
+
+                                    <p:column headerText="#{etiq.nombre}">
+                                        <h:outputText value="" />
+                                    </p:column>
+
+                                    <p:column headerText="#{etiq.tipoalmac}">
+                                        <h:outputText value="" />
+                                    </p:column>
+
+                                    <p:column headerText="#{etiq.existactual}">
+                                        <h:outputText value="" />
+                                    </p:column>
+
+                                    <p:column headerText="#{etiq.presentacion}">
+                                        <h:outputText value="" />
+                                    </p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+                        
+                        <p:tab title="Realizar Requisicion">
+                            <h:form>
+                                <h2 style="text-align: center; font-size: 14pt; font-style: oblique;"><h:outputLabel value="#{etiq.reqInt}"/></h2>
+                                <center>
+                                    <p:dataTable id="dtPartPres" value="#{oRequiInt.listaPartidas}" var="oPart" style="width: 850px">
+
+                                        <f:facet name="header">
+                                            <h:outputLabel value="#{etiq.partidaprobxarea} " /><h:outputText value="" />
+                                        </f:facet>
+
+                                        <p:column headerText="#{etiq.clve}" style="width: 30%">
+                                            <h:outputText value="#{oPart.cvePart}" />
+                                        </p:column>
+                                        <p:column headerText="#{etiq.desdet}" style="">
+                                            <h:outputText value="#{oPart.descPart}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </center>
+                                <br/><br/>
+
+                                <p:panelGrid styleClass="frm_centrado" style="width:1200px; border-style: double; text-align: left;">
+
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="4" style="text-align: center;">
+                                            <h:outputLabel value="#{etiq.reqInt}"/>
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column  styleClass="ui-widget-header" rowspan="2" style="width:200px">
+                                            <h:outputLabel class="negrita" value="#{etiq.depsol}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" rowspan="2" style="width:380px">
+                                            <h:outputText />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="width:150px">
+                                            <h:outputLabel class="negrita" value="#{etiq.fecsol}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                            <h:outputText />
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <h:outputLabel class="negrita" value="#{etiq.fol}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                            <h:outputText />
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="4">
+                                            <p:dataTable id="dtReqInt" value="" editable="true" var="oReI"
+                                             style="width: 1170px" selection="" rowKey="">
+                                                <p:columnGroup type="header" >
+                                                    <p:row>
+                                                        <p:column headerText="#{etiq.partida}" rowspan="2"/>
+                                                        <p:column headerText="#{etiq.desdet}" rowspan="2" />
+                                                        <p:column headerText="#{etiq.und}" rowspan="2"/>
+                                                        <p:column headerText="#{etiq.cantd}" colspan="2" />
+                                                    </p:row>
+
+                                                    <p:row>
+                                                        <p:column headerText="#{etiq.solicitado}" />
+                                                        <p:column headerText="#{etiq.aprobado}" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" colspan="4">
+                                            <h:outputLabel value="#{etiq.justSolic}" />
+                                            <h:outputText />
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <p:panelGrid styleClass="frm_centrado" style="width:1200px; border-style: double">
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="height: 100px">
+                                            <h:outputText /><br/>
+                                            <h:outputLabel value="#{etiq.solicjefdep}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="height: 100px">
+                                            <h:outputText /><br/>
+                                            <h:outputLabel value="#{etiq.reccoordrecmat}" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header"   style="height: 100px">
+                                            <h:outputText /><br/>
+                                            <h:outputLabel value="#{etiq.autsubadm}" />
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header" style="border-color: transparent" colspan="3">
+                                            <h3 class="textoIzq"><h:outputLabel style="font-size: 10pt" value="#{etiq.notaReq}" /></h3>
+                                            <h4 style="text-align: right"><h:outputLabel  style="font-size: 8pt" value="#{etiq.claveR}" /></h4>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <p:panelGrid styleClass="frm_centrado" style="width:1200px; border-style: double; text-align: left;">
+                                    <p:row>
+                                        <p:column colspan="2" styleClass="ui-widget-header" style="text-align: center; border-bottom-color: transparent">
+                                            <p:commandButton value="#{etiq.agreg}" icon="ui-icon-folder-open" onclick="PF('dlgReq').show()"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </h:form>
+                        </p:tab>
+                    </p:tabView>
+
+                </h:form>
+                
+                
+                <p:dialog id="dlgReqInt" widgetVar="dlgReq"  position="center" closable="true" dynamic="true" resizable="false"
+                                          appendTo="@(body)" modal="true" showEffect="explode" hideEffect="slide" height="380px" width="1200px">
+
+                    <h:form id="requisicion" class="centrar">
+                    <br/>
+                        <p:growl id="msgs" showDetail="true" />
+                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                        <p:growl id="message" showDetail="true" />
+
+                        <p:panelGrid id="dtReqI" style="width: 1550px; border-style: solid">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="2" style="text-align: center;">
+                                    <h:outputLabel value="#{etiq.reqInt}"/>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column  styleClass="ui-widget-header" style="width: 50%; text-align: left; margin: 0">
+                                    <h:outputLabel class="negrita" value="#{etiq.depsol}" />
+                                </p:column>
+                                <p:column style="width: 50%; text-align: left; margin: 0">
+                                    <h:outputText value="" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" colspan="2">
+                                    <p:panelGrid style="width: 1520px">
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" >
+                                                <h:outputLabel value="#{etiq.partidapr}" /><br/>
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" >
+                                                <h:outputLabel value="#{etiq.tipoprod}" />
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 20%">
+                                                <h:outputLabel value="#{etiq.desdet}" /><br/>
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header">
+                                                <h:outputLabel value="#{etiq.caractprod}" /><br/>
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header">
+                                                <h:outputLabel value="#{etiq.und}" /><br/>
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 4%">
+                                                <h:outputLabel value="#{etiq.solicitado}" /><br/>
+                                            </p:column>
+                                            <p:column styleClass="ui-widget-header" style="width: 5%"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:autoComplete value="" dropdown="true" size="8" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="tipoprod" value="" effect="fold" editable="true">
+                                                    <f:selectItem itemLabel="Selecciona:" itemValue="" />
+                                                    <f:selectItems value="" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="desdetart" value="" effect="fold" editable="true">
+                                                    <f:selectItem itemLabel="Selecciona:" itemValue=""/>
+                                                    <f:selectItems value="" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText value="" id="txtcaract" size="32"/>
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:spinner value="" size="6" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:commandButton value="#{etiq.agreg}" icon="ui-icon-plus" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column styleClass="ui-widget-header" colspan="8">
+                                                <p:dataTable id="tablaReqInt" var="ReqInt" value="" >
+                                                    <p:column headerText="#{etiq.partida}" >
+                                                        <h:outputText />
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.desdet}" >
+                                                        <h:outputText />
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.und}" >
+                                                        <h:outputText />
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.solicitado}" >
+                                                        <h:outputText />
+                                                    </p:column>
+                                                    <p:column headerText="#{etiq.aprobado}" >
+                                                        <h:outputText value=".........."/>
+                                                    </p:column>
+                                                    <p:column headerText="" styleClass="ui-widget-header">
+                                                        <p:commandButton value="#{etiq.borrar}" id="btnBorrarReq" icon="ui-icon-trash" />
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 50%; text-align: left; margin: 0">
+                                    <h:outputLabel value="#{etiq.justSolic}" />
+                                </p:column>
+                                <p:column style="text-align: left; margin: 0">
+                                    <p:inputText size="40" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 50%; text-align: left; margin: 0">
+                                    <h:outputLabel value="#{etiq.solicjefdep}" />
+                                </p:column>
+                                <p:column style="text-align: left; margin: 0">
+                                    <h:outputText value="" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                    <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" oncomplete="PF('dlgReq').hide()"/>
+
+                                    <p:commandButton value="#{etiq.volver}"  icon="ui-icon-arrowreturn-1-w" oncomplete="PF('dlgReq').hide()" style="margin-left: 350px;"/>
+                                </p:column>
+                            </p:row>
+
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                    <f:facet name="start">  
+                        <p:graphicImage value="/imgs/loading.gif" />  
+                    </f:facet>    
+                </p:ajaxStatus>
+
+            </div>
+        </ui:define>
+    </ui:composition>
+        
+    
+</html>

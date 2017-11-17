@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+   
+        
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar">
+
+                <h:form class="centrar">
+
+                    <br/><br/>
+                    <p:growl id="msgs" showDetail="true" />
+                    <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+
+
+                    <p:tabView style="width: 1400px;">
+                        <p:tab title="Recibir DNA Material de Curación">
+                            <h:form id="demandaNA" > 
+                                <p:growl id="mensajes" showDetail="true" />                                       
+
+                                <p:panelGrid style="margin-top:20px; width: 1000px">
+
+                                    <f:facet name="header">                                 
+                                        <p:row>
+                                            <p:column colspan="30">
+                                                <h:outputLabel value="#{etiq.TotalMaterialNoSurtido}"/>
+                                            </p:column>
+                                        </p:row>
+                                    </f:facet>     
+
+                                    <p:row> 
+                                        <p:column>
+                                            <p:dataTable value="" id="tblDemanda" paginator="true" rows="10" paginatorPosition="bottom"  >
+
+                                                <p:column headerText="Fecha" width="15">
+                                                    <h:outputLabel value=""/>                                             
+                                                </p:column> 
+                                                <p:column headerText="#{etiq.clave}" width="30">
+                                                    <h:outputLabel value=""/>                                             
+                                                </p:column>                                         
+                                                <p:column headerText="#{etiq.nombre}" width="50" >
+                                                    <h:outputLabel value=""/>                                             
+                                                </p:column>                                         
+                                                <p:column headerText="Area" width="40" >
+                                                    <h:outputLabel value="" />
+                                                </p:column>    
+                                                <p:column headerText="#{etiq.CantidadNoSurtidaS}" width="20">                                             
+                                                    <h:outputLabel value=""/>
+                                                </p:column> 
+
+                                                <f:facet name="footer">
+                                                    <p:commandButton value="#{etiq.agreg}" icon="ui-icon-pencil" onclick="PF('dlgDnaAlmac').show()" />
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>                                
+                                </p:panelGrid> 
+
+                                <p:dialog id="dlgDnaAlmacen" widgetVar="dlgDnaAlmac"  position="center" closable="true" dynamic="true" resizable="false"
+                                                appendTo="@(body)" modal="true" showEffect="explode" hideEffect="slide" height="350px" width="950px" >
+
+                                    <h:form id="requisicion" class="centrar">
+                                        <br/>
+                                        <p:growl id="msgs" showDetail="true" />
+                                        <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq" />
+                                        <p:growl id="message" showDetail="true" />
+
+                                        <p:panelGrid styleClass="frm_centrado" columns="5" >                                      
+                                            <p:outputLabel value="Fecha:" id="fechaIni1"  styleClass="mensaje"/>
+                                            <p:calendar id="fechaIni"  effect="explode"  required="true" placeholder="dd/mm/aa" showOn="button" />
+                                            <p:outputLabel id="fechaFin1" value="A: " styleClass="mensaje"/>
+                                            <p:calendar id="fechaFin"  effect="explode" required="true" placeholder="dd/mm/aa"  showOn="button" /> 
+                                            <p:commandButton value="Buscar" icon="ui-icon-search"/>
+                                        </p:panelGrid>
+                                        <br/> 
+
+
+                                        <p:panelGrid style="margin-top:20px; width: 900px">
+
+                                            <f:facet name="header">                                 
+                                                <p:row>
+                                                    <p:column colspan="30">
+                                                        <h:outputLabel value="#{etiq.TotalMaterialNoSurtido}"/>
+                                                    </p:column>
+                                                </p:row>
+                                            </f:facet>     
+
+                                            <p:row> 
+                                                <p:column>
+                                                    <p:dataTable value="" id="tblDemanda" >
+
+                                                        <p:column headerText="Fecha" width="15">
+                                                            <h:outputLabel value=""/>                                             
+                                                        </p:column> 
+                                                        <p:column headerText="#{etiq.clave}" width="30">
+                                                            <h:outputLabel value=""/>                                             
+                                                        </p:column>                                         
+                                                        <p:column headerText="#{etiq.nombre}" width="40" >
+                                                            <h:outputLabel value=""/>                                             
+                                                        </p:column>                                         
+                                                        <p:column headerText="Area" width="40" >
+                                                            <h:outputLabel value="" />
+                                                        </p:column>    
+                                                        <p:column headerText="#{etiq.CantidadNoSurtidaS}" width="20">                                             
+                                                            <h:outputLabel value=""/>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </p:column>
+                                            </p:row> 
+                                            <p:row>
+                                                <p:column styleClass="ui-widget-header" style="text-align: center;" colspan="2">
+                                                    <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" oncomplete="PF('dlgDnaAlmac').hide()"/>
+
+                                                    <p:commandButton value="#{etiq.volver}"  icon="ui-icon-arrowreturn-1-w" oncomplete="PF('dlgDnaAlmac').hide()" style="margin-left: 350px;"/>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </h:form>
+                                </p:dialog>
+
+                            </h:form>
+                        </p:tab>
+                        <p:tab title="Cotizacion DNA Materal de Curación">
+                            <h:form>
+                                <h2 style="text-align: center; font-size: 14pt; font-family: cursive;"><h:outputLabel value="#{etiq.cotizacionmatcurac}" /></h2>
+                                <br/>
+                                <center>
+                                    <p:dataTable value="" id="tblBRequi" var="" style="width: 580px; margin-left: 180px">
+                                        <p:column headerText="#{etiq.nodesem}">
+                                            <h:outputText value="10" />
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:commandButton value="#{etiq.buscar}"  icon="ui-icon-search"/>
+                                        </p:column>
+                                    </p:dataTable><br/><br/>
+                                </center><br/>
+
+                                <p:dataTable id="tablaCotizacDNAAlm" value="" editable="true" var="oDnaAlm"
+                                                 selection="" rowKey="">
+
+                                    <p:column headerText="#{etiq.clve}">
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column headerText="#{etiq.nombre}">
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column headerText="#{etiq.CantidadNoSurtidaS}">
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column headerText="#{etiq.tipodemanda}">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="" /></f:facet>
+                                            <f:facet name="input"><p:inputText value="" size="6"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.pu}">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="" /></f:facet>
+                                            <f:facet name="input"><h:outputLabel value="$ "/><p:spinner value="" size="6" /></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.cantasurtir}">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="" /></f:facet>
+                                            <f:facet name="input"><p:spinner value="" size="6" /></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.iva}" style="width: 6%">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="" /></f:facet>
+                                            <f:facet name="input"><p:spinner value="" size="4" /></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="#{etiq.prectot}">
+                                        <h:outputText value="" />
+                                    </p:column>
+                                    <p:column style="width:32px">
+                                        <p:rowEditor />
+                                    </p:column>
+
+                                </p:dataTable>
+                            </h:form>
+                        </p:tab>
+
+                    </p:tabView>
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+    
+</html>

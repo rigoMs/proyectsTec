@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">  
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo"><br/><br/>
+            <p:tabView dynamic="true" cache="true">
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+                <p:tab title="#{etiq.buscarConsulta}">
+                    <h:form id="frmeti">
+                        <p:growl id="mensajes"  showDetail="true" />
+                        <h2><center><h:outputLabel value="#{etiq.buscarConsulta}"/></center></h2>
+                        <p:panelGrid style="margin-top:30px" id="buscapac"> 
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column><center><h:outputLabel value="#{etiq.buscarPac}"/> </center></p:column>   
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column> <h:outputLabel value="#{etiq.id} "/>
+                                    <p:inputText id="id1" value="#{bConsAdmin.pac.idNacional}"  required="true" requiredMessage="INGRESAR NUMERO DE ID SALVAR"/> 
+                                    <p:commandButton value="#{etiq.buscar}" action="#{bConsAdmin.bus()}" update="citas mensajes">
+                                    </p:commandButton> 
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable var="agend" value="#{bConsAdmin.listaCitas}" id="citas" style="width:80%">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.citas}"/>
+                            </f:facet>
+                            <p:column>
+                                <f:facet name="header"> 
+                                    <h:outputLabel value="#{etiq.paciente}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.pacienteCapa.nombreCompleto}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel  value="#{etiq.fecha}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.fechaCita}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header"> 
+                                    <h:outputLabel value="#{etiq.hora}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.horaAlmacenada}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header"> 
+                                    <h:outputLabel value="#{etiq.consultorio}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.noconsult.nomConsultorio}"/>
+                            </p:column>
+                        </p:dataTable>   
+                        <p:commandButton value="#{etiq.limpiar}" action="#{bConsAdmin.cierra()}" update="citas buscapac"/>
+                    </h:form>  
+                </p:tab>
+                <p:tab title="Historial de consultas">
+                    <h:form id="frmhc">
+                        <p:growl id="mensajesc"  showDetail="true" />
+                        <h2><center><h:outputLabel value="#{etiq.buscarConsulta}"/></center></h2>
+                        <p:panelGrid style="margin-top:30px" id="buscapac"> 
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="2"><center><h:outputLabel value="#{etiq.buscarPac}"/> </center></p:column>   
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column> <h:outputLabel value="Fecha inicio "/>
+                                    <p:calendar value="#{cHC.cit.fechaIni}" pattern="yyyy/MM/dd" required="true" locale="es" navigator="true" immediate="true" requiredMessage="REGISTRAR FECHA INICIAL"/>
+                                </p:column>
+                                <p:column> <h:outputLabel value="Fecha final "/>
+                                    <p:calendar value="#{cHC.cit.fechaFin}" pattern="yyyy/MM/dd" required="true" locale="es" navigator="true" requiredMessage="REGISTRAR FECHA FINAL"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2"><center> <h:outputLabel value="#{etiq.id} "/>
+                                    <p:inputText id="id1" value="#{cHC.pac.idNacional}"  required="true" requiredMessage="INGRESAR NUMERO DE ID SALVAR"/> 
+                                    <p:commandButton value="#{etiq.buscar}" action="#{cHC.bus()}" update="citas mensajesc">
+                                    </p:commandButton> </center>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable var="agend" value="#{cHC.listaCitas}" id="citas" style="width:80%">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.citas}"/>
+                            </f:facet>
+                            <p:column>
+                                <f:facet name="header"> 
+                                    <h:outputLabel value="#{etiq.paciente}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.pacienteCapa.nombreCompleto}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel  value="#{etiq.fecha}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.fechaCita}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header"> 
+                                    <h:outputLabel value="#{etiq.hora}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.horaAlmacenada}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header"> 
+                                    <h:outputLabel value="#{etiq.consultorio}"/>
+                                </f:facet>
+                                <h:outputText value="#{agend.noconsult.nomConsultorio}"/>
+                            </p:column>
+                        </p:dataTable>   
+                        <p:commandButton value="#{etiq.limpiar}" action="#{cHC.cierra()}" update="citas buscapac"/>
+                    </h:form>     
+                </p:tab>
+            </p:tabView>
+        </ui:define>
+    </ui:composition>
+</html>

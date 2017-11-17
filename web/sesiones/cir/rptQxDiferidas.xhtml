@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:body>    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.mantener} #{etiq.catalogo}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div style="text-align: left;">
+                    <h:form>
+                        <p:outputLabel for="date" value="#{etiq.año}: " />
+                        <p:inputMask id="date" value="#{oRepRecMes.anio}" mask="2099" style="width: 35px;" onkeypress="#{oRepRecMes.cargaListaXMes()}"></p:inputMask>
+                    </h:form>
+                </div>   
+                <div style="text-align: left;">
+                    <h:form>
+                        <p:growl id="msgs" showDetail="true"/>  
+                        <p:outputLabel value="#{etiq.mes}: " />
+                        <p:selectOneMenu id="meses" value="#{oRepRecMes.mesBusqueda}" required="true" requiredMessage="Seleccione Mes">
+                            <f:selectItem itemLabel="seleccione Mes"/>
+                            <f:selectItem itemLabel="Enero" itemValue="01" />
+                            <f:selectItem itemLabel="Febrero" itemValue="02" />
+                            <f:selectItem itemLabel="Marzo" itemValue="03" />
+                            <f:selectItem itemLabel="Abril" itemValue="04" />
+                            <f:selectItem itemLabel="Mayo" itemValue="05" />
+                            <f:selectItem itemLabel="Junio" itemValue="06" />
+                            <f:selectItem itemLabel="Julio" itemValue="07" />
+                            <f:selectItem itemLabel="Agosto" itemValue="08" />
+                            <f:selectItem itemLabel="Septiembre" itemValue="09" />
+                            <f:selectItem itemLabel="Octubre" itemValue="10" />
+                            <f:selectItem itemLabel="Noviembre" itemValue="11" />
+                            <f:selectItem itemLabel="Diciembre" itemValue="12" />
+                        </p:selectOneMenu>&nbsp;&nbsp;   &nbsp;&nbsp; 
+                        <p:commandButton value="#{etiq.buscar}" 
+                                actionListener="#{oRepRecMes.cargaListaXMes()}" 
+                                update=":reporte:tblRepMes msgs :totalRec"/>
+                    </h:form>
+                </div>
+                <div style="text-align: right;">
+                    <h:form id="totalRec">
+                        <h:outputLabel value="#{etiq.totalRecetas} = "/>
+                        <h:outputLabel value="#{oRepRecMes.totalRecetas}"/>&nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;&nbsp; 
+                    </h:form>
+                </div> 
+                <br/>
+        <div class="centrado_texto">
+            <h:form id="reporte">
+                            <p:dataTable var="oMed"
+                                     value="#{oRepRecMes.listafinal}"  
+                                     id="tblRepMes"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}"
+                                     style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.informMedSurtXMes} #{etiq.del} "/>
+                                <h:outputLabel value="#{oRepRecMes.fechas}"/> 
+                            </f:facet>
+                            <p:column headerText="#{etiq.clave}" width="35%">
+                                <h:outputLabel value="#{oMed.clave}"/>
+                            </p:column>                
+                            <p:column headerText="#{etiq.nombre}" width="120%">                  
+                                <h:outputLabel value="#{oMed.nombre}"/>                      
+                            </p:column>
+                            <p:column headerText="26" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtseis}"/>                      
+                            </p:column>
+                            <p:column headerText="27" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtsiete}"/>                      
+                            </p:column>
+                            <p:column headerText="28" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtocho}"/>                      
+                            </p:column> 
+                            <p:column headerText="29" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtnueve}"/>                      
+                            </p:column>
+                            <p:column headerText="30" width="20%">                  
+                                <h:outputLabel value="#{oMed.tr}"/>                      
+                            </p:column>
+                            <p:column headerText="31" width="20%">                  
+                                <h:outputLabel value="#{oMed.truno}"/>                      
+                            </p:column>
+                            <p:column headerText="1" width="20%">                  
+                                <h:outputLabel value="#{oMed.uno}"/>                      
+                            </p:column>
+                            <p:column headerText="2" width="20%">                  
+                                <h:outputLabel value="#{oMed.dos}"/>                      
+                            </p:column>
+                            <p:column headerText="3" width="20%">                  
+                                <h:outputLabel value="#{oMed.tres}"/>                      
+                            </p:column>
+                            <p:column headerText="4" width="20%">                  
+                                <h:outputLabel value="#{oMed.cuatro}"/>                      
+                            </p:column>
+                            <p:column headerText="5" width="20%">                  
+                                <h:outputLabel value="#{oMed.cinco}"/>                      
+                            </p:column>
+                            <p:column headerText="6" width="20%">                  
+                                <h:outputLabel value="#{oMed.seis}"/>                      
+                            </p:column>
+                            <p:column headerText="7" width="20%">                  
+                                <h:outputLabel value="#{oMed.siete}"/>                      
+                            </p:column>
+                            <p:column headerText="8" width="20%">                  
+                                <h:outputLabel value="#{oMed.ocho}"/>                      
+                            </p:column>
+                            <p:column headerText="9" width="20%">                  
+                                <h:outputLabel value="#{oMed.nueve}"/>                      
+                            </p:column>
+                            <p:column headerText="10" width="20%">                  
+                                <h:outputLabel value="#{oMed.dz}"/>                      
+                            </p:column>
+                            <p:column headerText="11" width="20%">                  
+                                <h:outputLabel value="#{oMed.once}"/>                      
+                            </p:column>
+                            <p:column headerText="12" width="20%">                  
+                                <h:outputLabel value="#{oMed.doce}"/>                      
+                            </p:column>
+                            <p:column headerText="13" width="20%">                  
+                                <h:outputLabel value="#{oMed.trece}"/>                      
+                            </p:column>
+                            <p:column headerText="14" width="20%">                  
+                                <h:outputLabel value="#{oMed.catorce}"/>                      
+                            </p:column>
+                            <p:column headerText="15" width="20%">                  
+                                <h:outputLabel value="#{oMed.quince}"/>                      
+                            </p:column>
+                            <p:column headerText="16" width="20%">                  
+                                <h:outputLabel value="#{oMed.dzseis}"/>                      
+                            </p:column>
+                            <p:column headerText="17" width="20%">                  
+                                <h:outputLabel value="#{oMed.dzsiete}"/>                      
+                            </p:column>
+                            <p:column headerText="18" width="20%">                  
+                                <h:outputLabel value="#{oMed.dzocho}"/>                      
+                            </p:column>
+                            <p:column headerText="19" width="20%">                  
+                                <h:outputLabel value="#{oMed.dznueve}"/>                      
+                            </p:column>
+                            <p:column headerText="20" width="20%">                  
+                                <h:outputLabel value="#{oMed.vt}"/>                      
+                            </p:column>
+                            <p:column headerText="21" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtuno}"/>                      
+                            </p:column>
+                            <p:column headerText="22" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtdos}"/>                      
+                            </p:column>
+                            <p:column headerText="23" width="20%">                  
+                                <h:outputLabel value="#{oMed.vttres}"/>                      
+                            </p:column>
+                            <p:column headerText="24" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtcuatro}"/>                      
+                            </p:column>
+                            <p:column headerText="25" width="20%">                  
+                                <h:outputLabel value="#{oMed.vtcinco}"/>                      
+                            </p:column>                           
+                            <p:column headerText="SubTotal" width="50%">                  
+                                <h:outputLabel value="#{oMed.subTotal}"/>                      
+                            </p:column>
+                            <f:facet name="footer">                    
+                                <h:outputLabel  value="#{etiq.totalMesSurt}  :"/>  <h:outputLabel value="#{oRepRecMes.totalMedicSurtidos}"/>   
+                            </f:facet>
+                        </p:dataTable>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.resultestuesp}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+              <p:growl id="msgs2" showDetail="true" />  
+                <!--Componenete de busqueda :P-->
+                <p:commandButton id="BuscarPacineT"  value="#{etiq.buscarPac}" icon="ui-icon-search" 
+                    onclick="PF('BuscPacie').show(); "> 
+                </p:commandButton>  
+                <p:dialog widgetVar="BuscPacie" id="BuscPacie" width="1050" height="550">   
+        <p:panelGrid >
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarDatosBasicos}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                </p:column>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="nom" 
+                                 maxlength="50" size="39" style="text-transform:uppercase;"
+                                 value="#{oBusqPacComunJB.paciente.nombres}" 
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="app" 
+                                 maxlength="50" size="39" style="text-transform:uppercase;"
+                                 value="#{oBusqPacComunJB.paciente.apPaterno}" 
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <p:inputText styleClass="bordes" id="apm" 
+                                 maxlength="50" size="39" style="text-transform:uppercase;"
+                                 value="#{oBusqPacComunJB.paciente.apMaterno}" 
+                                 onkeypress="return validaCaracter(event);">
+                        <p:ajax/>
+                    </p:inputText>
+                </p:column>
+            </p:row>                
+            <p:row>
+                <p:column colspan="3" styleClass="ui-widget-header">
+                    <h:outputText value="#{etiq.buscarPorExpediente}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel class="negrita" value="#{etiq.noExp}:"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:inputText styleClass="bordes" id="exp" 
+                                 value="#{oBusqPacComunJB.paciente.expediente.numero}" 
+                                 converterMessage="#{etiq.errCapturaCaractEsp}">
+                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                        <f:ajax render="mentExp" execute="@this" 
+                                event="valueChange" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <center>
+            <p:commandButton styleClass="bordes" 
+                            value="#{etiq.buscar}" 
+                            icon="ui-icon-search">
+                <p:ajax update="tablaPac selecc cancel" listener="#{oBusqPacComunJB.buscaPaciente}"/>
+            </p:commandButton>
+        </center>
+        <p:message for="exp" id="mentExp"/>
+        <br/><br/>
+        <div class="tabla_pacEnc">
+           <p:dataTable id="tablaPac" var="oPacEnc" paginator="true"
+                                     paginatorPosition="both" rows="5" 
+
+                                     value="#{oBusqPacComunJB.listaPac}" 
+                                     emptyMessage="#{etiq.noRegistro}" 
+                                     style="visibility:#{oBusqPacComunJB.visibilidadTabla};"
+                                     rowKey="#{oPacEnc.apMaterno}"
+                                     selection="#{oBusqPacComunJB.seleccionado}">
+                            <p:ajax event="rowSelectRadio"></p:ajax>
+                            <f:facet name="header">
+                                <h:outputText value="#{etiq.pacEncontrados}"/>
+                            </f:facet>
+                            <p:column selectionMode="single">
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.nombres}"/>
+                            </p:column>
+                            <p:column style="width: 9%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.edad}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.edadNumero}"/>
+                            </p:column>   
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.curp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.curp}"/>
+                            </p:column>
+                            <p:column style="width: 7%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.folioAdmision}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.folioPaciente}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.municipio}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.municipio.descripcionMun}"/>
+                            </p:column>  
+                            <p:column style="width: 10%">
+                                <f:facet name="header">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                </f:facet>
+                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                            </p:column>     
+                        </p:dataTable>
+        </div>  
+        
+        <p:commandButton value="#{etiq.seleccionar}" id="selecc" style="visibility:#{oBusqPacComunJB.boton};" icon="ui-icon-search">
+            <p:ajax listener="#{oRegistResultEstudiEspeci.llenar()}" update="BuscPacie TablaDatos Dialogo1 lugarDeestudio boton1 tipodeEstudi"/> 
+        </p:commandButton>  
+        
+        <p:commandButton value="#{etiq.cancelar}" id="cancel" icon="ui-icon-circle-close" style="visibility:#{oBusqPacComunJB.boton2};">
+            <p:ajax listener="#{oRegistResultEstudiEspeci.limpiaboton()}"  update="BuscPacie TablaDatos Dialogo1 lugarDeestudio boton1 tipodeEstudi"/>
+        </p:commandButton>
+                </p:dialog>
+                
+             <br/> <br/>
+                <!--Componenete de busqueda :P-->
+                
+                <p:panelGrid styleClass="frm_centrado" id="TablaDatos" style="visibility:#{oRegistResultEstudiEspeci.visible};">
+                    <p:row>
+                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.datosDelPaciente}:"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tipohospitalizacionurgencia}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.edad}:"/></p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.nombres}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.apPaterno}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.apMaterno}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.sexoP}"/>    
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.tipopac}"/>
+                        </p:column>
+
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.edadNumero}"/>
+                        </p:column>
+
+                    </p:row>
+
+                    <p:row> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.numeroDe} #{etiq.sPop}"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nivSE}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.noCam}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nExp}:"/></p:column> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.servicios}:"/></p:column>  
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.causes}:"/></p:column>
+                    </p:row>
+
+                    <p:row>  
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.seg.numero}"/>
+                        </p:column>  
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.nivelSocio}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.episodioMedico.cama.numero}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.paciente.expediente.numero}"/>
+                        </p:column> 
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.episodioMedico.area.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.episodioMedico.diagIngreso.causes.clave}"/>
+                        </p:column>
+
+                    </p:row>
+                    <p:row> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechaDeIngreso}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.horaDeIngreso}:"/></p:column>
+                        <p:column styleClass="ui-widget-header" colspan="4"><p:outputLabel value="#{etiq.nombrede} #{etiq.trabajadorasocial}:"/></p:column> 
+                    </p:row>
+                    <p:row> 
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.episodioMedico.FIngreso}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.episodioMedico.fechaIngreso}">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/> 
+                            </h:outputText>
+                        </p:column>
+                        <p:column colspan="4">
+                            <h:outputText value="#{oRegistResultEstudiEspeci.personalFirmado.nombreCompleto}"/>
+                        </p:column>
+
+                    </p:row>
+
+                </p:panelGrid> 
+                <h3>
+                    <p:outputLabel value="#{etiq.resultestuesp}:" id="Dialogo1" style="visibility:#{oRegistResultEstudiEspeci.visible};"/>
+                </h3>
+                <p:panelGrid id="tipodeEstudi" style="visibility:#{oRegistResultEstudiEspeci.visible};">
+                    <p:row> 
+                            <p:column colspan="4" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.tipoDeEstudio}:"/></p:column> 
+                    </p:row>
+                    <p:row> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.descripcion}:"/></p:column> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.costo}:"/></p:column>
+                    </p:row>
+                    <p:row> 
+                        <p:column>
+                            <h:outputText value="#{oRegistResultEstudiEspeci.estudioEspLab.descripcion}"/>
+                        </p:column>  
+                        <p:column>
+                            <p:column><p:inputText size="30" id="costo12" value="#{oRegistResultEstudiEspeci.servicioRealizadoT.costoUnitACobrar}">
+                                 <f:validateDoubleRange minimum="0.00" maximum="100000.00"/> 
+                                 <p:ajax/>
+                                </p:inputText> 
+                            </p:column>   
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> <br/>
+               
+                <p:panelGrid id="lugarDeestudio" style="visibility:#{oRegistResultEstudiEspeci.visible};">
+                    <p:row> 
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.lugar}:"/></p:column>
+                        <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.fecha}:"/></p:column> 
+                    </p:row>
+                    <p:row> 
+                        <p:column>  
+                            <p:inputText size="30" value="#{oRegistResultEstudiEspeci.estudioEspLab.labdestino}" onkeyup="this.value=this.value.toUpperCase();">
+                                <p:ajax/>
+                            </p:inputText>
+                        </p:column> 
+                        <p:column>
+                            <p:outputLabel for="datetime1" value="#{etiq.fechadeenvio}:" />
+                            <p:calendar id="datetime1" value="#{oRegistResultEstudiEspeci.estudioEspLab.fechaEnvio}" pattern="MM/dd/yyyy HH:mm:ss" mindate="#{oRegistResultEstudiEspeci.todayDate}" > 
+                            </p:calendar>
+                        </p:column>
+                          <p:column> 
+                            <p:outputLabel for="datetime2" value="#{etiq.fechaDeResultado}:" />
+                            <p:calendar id="datetime2" value="#{oRegistResultEstudiEspeci.estudioEspLab.fechaResult}" pattern="MM/dd/yyyy HH:mm:ss" mindate="#{oRegistResultEstudiEspeci.todayDate}" > 
+                            </p:calendar>
+                        </p:column> 
+                    </p:row> 
+                </p:panelGrid> <br/> 
+                <p:commandButton value="#{etiq.guardar}" icon="ui-icon-disk" id="boton1" style="visibility:#{oRegistResultEstudiEspeci.visible};"
+                                 action="#{oRegistResultEstudiEspeci.registraEstudioEspecial()}" ajax="false" validateClient="true" update="msgs2"/>
+                 
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

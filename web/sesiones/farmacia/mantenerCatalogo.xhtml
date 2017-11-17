@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.mantener} #{etiq.catalogo}"/>
+        </h2>
+       
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <center>
+                    <h:form id="formR" > 
+                        <p:growl id="msg" sticky="true" showDetail="true"/> 
+                        <p:dialog id="dlgCatMed" widgetVar="dlgCM"  position="center" closable="false" dynamic="true" resizable="false"
+                                  appendTo="@(body)" modal="true" >
+                            <center>
+                                <h3>Administracion de Medicamentos</h3>
+                                <h:form id="hola">
+                                    <p:panelGrid id="panelDatos">
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="#{etiq.clave}" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtClave" value="#{oEdicMed.currentMedicamento.clave}">
+                                                    <p:ajax update="txtCB txtClave :formR:msg"/></p:inputText>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="Codigo de Barra"  />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtCB"  value="#{oEdicMed.currentMedicamento.codBarras}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>    
+                                            <p:column>
+                                           <p:outputLabel value="Nombre" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtNombre" value="#{oEdicMed.currentMedicamento.nombre}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                             
+                                            <p:column>
+                                           <p:outputLabel value="Sustancia Activa" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtSustancia" value="#{oEdicMed.currentMedicamento.sustanciaActiva}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                        
+                                         </p:row>
+                                        <p:row>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="Forma Farmaceutica"  />
+                                           </p:column>
+                                            <p:column>
+                                                <h:selectOneMenu id="cmbFf" value="#{oEdicMed.currentMedicamento.formaFarmaceutica.tipoParametro}">
+                                                     <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                                     <f:selectItems value="#{oEdicMed.formaFarm}" var="oFF" itemLabel="#{oFF.valor}" itemValue="#{oFF.tipoParametro}"/>
+                                                   
+                                                     <p:ajax />
+                                                 </h:selectOneMenu>
+                                            </p:column>
+                                                
+                                           
+                                            <p:column>
+                                           <p:outputLabel value="Presentacion" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtPresentacion" value="#{oEdicMed.currentMedicamento.presentacion}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                           
+                                             </p:row>
+                                        
+                                   <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="Descripcion" />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtDescripcion" value="#{oEdicMed.currentMedicamento.descripcion}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="Concentracion"  />
+                                           </p:column>
+                                            <p:column>
+                                                <p:inputText id ="txtConcentracion"  value="#{oEdicMed.currentMedicamento.concentracion}">
+                                                    <p:ajax /></p:inputText>
+                                            </p:column>
+                                        </p:row>
+                                        
+                                        
+                                        <p:row>
+                                            <p:column>
+                                           <p:outputLabel value="Grupo Terapeutico" />
+                                           </p:column>
+                                            <p:column>
+                                                <h:selectOneMenu id="cmbGT" value="#{oEdicMed.currentMedicamento.grupoTerapeutico.tipoParametro}">
+                                                     <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                                     <f:selectItems value="#{oEdicMed.grupoTerapeutico}" var="oGT" itemLabel="#{oGT.valor}" itemValue="#{oGT.tipoParametro}"/>
+                                                   
+                                                     <p:ajax />
+                                                 </h:selectOneMenu>
+                                            </p:column>
+                                            
+                                            <p:column>
+                                           <p:outputLabel value="Nivel Atencion"  />
+                                           </p:column>
+                                            <p:column>
+                                                <h:selectOneMenu id="cmbNA"  value="#{oEdicMed.currentMedicamento.nivelAtencion.tipoParametro}">
+                                                     <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                                     <f:selectItems value="#{oEdicMed.nivelAtencion}" var="oNA" itemLabel="#{oNA.valor}" itemValue="#{oNA.tipoParametro}"/>
+                                                   
+                                                     <p:ajax update=":formR:msg"/>
+                                                 </h:selectOneMenu>
+                                            </p:column>
+                                        </p:row>
+                                       
+                                       
+                                    </p:panelGrid>
+                                    
+                                    <br/><br/><p:commandButton value="#{etiq.guardar}">
+                                        <p:ajax update=":formR:msg :formR:dtCatMedicamentos" listener="#{oEdicMed.guarda()}"/>
+                                    </p:commandButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <p:commandButton value="#{etiq.volver}" oncomplete="PF('dlgCM').hide()"/>
+                              
+                                </h:form>
+                            </center>
+                        </p:dialog>
+                        <p:dataTable   id="dtCatMedicamentos" rows="5" editable="true" paginator="true" paginatorPosition="bottom"  var="oCM"
+                                       style="width: 100%" value="#{oEdicMed.listaMedicamento}"  selection="#{oEdicMed.selectedMedicamento}" rowKey="#{oCM.clave}" >
+                            <p:ajax event="rowSelectRadio"/>
+                            <p:column selectionMode="single" style="width: 5%"/>
+                            
+                            <p:column headerText="#{etiq.clave}" >
+                                <p:outputLabel value="#{oCM.clave}" />
+                               
+                            </p:column >
+                            
+                            <p:column headerText="Codigo Barra">
+                                <p:outputLabel value="#{oCM.codBarras}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.nombre}">
+                                <p:outputLabel value="#{oCM.nombre}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Sustancia Activa">
+                                <p:outputLabel value="#{oCM.sustanciaActiva}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Forma Farmaceutica">
+                                <p:outputLabel value="#{oCM.formaFarmaceutica.valor}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.presentacion}">
+                                <p:outputLabel value="#{oCM.presentacion}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.concentracion}">
+                                <p:outputLabel  value="#{oCM.concentracion}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{etiq.grupoTera}">
+                                <p:outputLabel value="#{oCM.grupoTerapeutico.valor}"/>
+                            </p:column>
+                            
+                            <f:facet name="footer">
+                                 <p:commandButton value="#{etiq.nuevo}" icon="ui-icon-pencil" oncomplete="PF('dlgCM').show()">
+                                     <p:ajax update=":formR:msg :formR:dlgCatMed" listener="#{oEdicMed.confNuevo()}"/>
+                                  
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.eliminar}" icon="ui-icon-pencil" >
+                                  <p:ajax update=":formR:msg :formR:dlgCatMed" listener="#{oEdicMed.confProveedor(1)}"/>
+                                </p:commandButton>
+                                <p:commandButton value="#{etiq.modificar}" icon="ui-icon-pencil" >
+                              <p:ajax update=":formR:msg :formR:dlgCatMed" listener="#{oEdicMed.confProveedor(2)}"/>
+                                </p:commandButton>
+                                
+                                  
+                            </f:facet>
+                            <f:facet name="header">                              
+                                <p:outputLabel value="#{etiq.administrar} #{etiq.medicamentos}"></p:outputLabel>
+                            </f:facet>
+                        </p:dataTable> 
+                    </h:form></center>
+            
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

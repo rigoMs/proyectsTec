@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+            <h:form class="centrar">
+                <br/>
+                <p:growl id="messages" showDetail="true"/>
+                <div style=" margin: 0 auto; text-align: center; clear: both; height: 140px; margin-top: -50px;">
+                    <img src="#{facesContext.externalContext.requestContextPath}/imgs/EncabezadoReporteTurno.jpg" 
+                         align="middle" style="border: 0"/>
+                </div>
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                <h3 style="margin-top: 0px; margin-bottom: 10px;"><h:outputLabel value="SECRETARÍA DE SALUD DEL ESTADO DE VERACRUZ"/></h3>
+                <h3 style="margin-top: 0px; margin-bottom: 10px;"><h:outputLabel value="HOSPITAL REGIONAL RÍO BLANCO"/></h3>
+                <h3 style="margin-top: 0px; margin-bottom: 10px;"><h:outputLabel value="#{etiq.graficas}"/><h:outputLabel value=" #{etiq.hospitalizacion}"/></h3>
+                <br/>     
+                     <p:chart type="bar" model="#{oGraPed.barModel}" id="gra1" style="height:200px; width: 100%; margin: 0 auto;"/>
+                     <br/><br/>
+                     <p:chart type="line" model="#{oGraPed.lineModel}" id="gra2" style="height:200px; width: 100%; margin: 0 auto;"/>
+                     
+                     <br/><br/>
+  
+            </h:form>
+                    
+            <h:form id="resultados">
+                <div class="tabla_descripcion">
+                <p:dataTable id="tablaDes" var="oDescripcion" value="#{oGraPed.hospitalizacion}" emptyMessage="Sin Afecciones" style="#{oGraPed.estilo}">
+                <f:facet name="header">
+                    <h:outputText value="#{etiq.principales} #{etiq.afeccionesTratadas}"/>
+                </f:facet>                
+                
+                <p:column headerText="#{etiq.cie10}" style="width:20%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.clave}"/>
+                </p:column> 
+                
+                <p:column headerText="#{etiq.diagnostico}" style="width:50%">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.descripcionDiag}"/>
+                </p:column>                           
+
+                <p:column headerText="#{etiq.hombres}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.cantidadH}"/>
+                </p:column> 
+                
+                <p:column headerText="#{etiq.mujeres}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.cantidadM}"/>
+                </p:column>        
+                
+                <p:column headerText="#{etiq.total}" style="width:10%; text-align: center;">
+                    <h:outputText value="#{oDescripcion.episodioMedico.afePrincipal.CIE10.total}"/>
+                </p:column>                 
+                </p:dataTable>
+                </div>
+               </h:form>                                
+            
+</html>

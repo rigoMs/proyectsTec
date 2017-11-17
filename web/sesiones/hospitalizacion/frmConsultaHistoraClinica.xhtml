@@ -1,0 +1,671 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">    
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq."/>
+        <ui:define name="cuerpo">
+            <div class="buscar">
+                <h:form id="busqueda">
+                    <br/><br/>
+                    <p:growl id="msgs" showDetail="true"/>
+                    <h3 class="centrado_texto"><h:outputLabel value="#{etiq.consultaHistoriaClinca}"/></h3>
+                    <p:accordionPanel>
+                        <p:tab title="#{etiq.buscarDatosBasicos}">
+                            <p:panelGrid columns="4">
+                                <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                <h:outputLabel />
+                                <p:inputText styleClass="bordes" id="nom" value="#{historiaclinica.historiaClinica.episodioMedico.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                <p:inputText styleClass="bordes" id="app" value="#{historiaclinica.historiaClinica.episodioMedico.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                <p:inputText styleClass="bordes" id="apm" value="#{historiaclinica.historiaClinica.episodioMedico.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{historiaclinica.buscaHistoriaClinicaPaciente(0)}" 
+                                                update=":busqueda:destino:tblResultado">                                        
+                                    <f:setPropertyActionListener target="#{historiaclinica.muestraPantalla}" value="#{false}"/> 
+                                </p:commandButton>
+                            </p:panelGrid>                                
+                        </p:tab>
+                        <p:tab title="#{etiq.buscarPorExpediente}">
+                            <p:panelGrid columns="3" styleClass="frmLogin">
+                                <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                <p:inputText styleClass="bordes" id="exp" value="#{historiaclinica.historiaClinica.episodioMedico.paciente.expediente.numero}" converterMessage="ERROR: NO SE PERMITEN LETRAS, SÍMBOLOS NI NÚMEROS MENORES A CERO">
+                                    <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                    <f:ajax render="mentExp" execute="@this" event="valueChange"/>
+                                </p:inputText>
+                                <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false" actionListener="#{historiaclinica.buscaHistoriaClinicaPaciente(1)}"
+                                                update=":busqueda:destino:tblResultado">                                        
+                                    <f:setPropertyActionListener target="#{historiaclinica.muestraPantalla}" value="#{false}"/> 
+                                </p:commandButton>
+                            </p:panelGrid>
+                            <p:message for="exp" id="mentExp"></p:message>
+                        </p:tab>
+                    </p:accordionPanel>
+                    <br/>
+                    <div class="centrar">
+                        <p:commandButton styleClass="bordes" value="#{etiq.limpiarC}" icon="ui-icon-refresh" update="busqueda" ajax="false">
+                            <f:setPropertyActionListener target="#{historiaclinica.historiaClinica.episodioMedico.paciente.nombres}" value=""/>
+                            <f:setPropertyActionListener target="#{historiaclinica.historiaClinica.episodioMedico.paciente.apPaterno}" value=""/>
+                            <f:setPropertyActionListener target="#{historiaclinica.historiaClinica.episodioMedico.paciente.apMaterno}" value=""/>
+                            <f:setPropertyActionListener target="#{historiaclinica.historiaClinica.episodioMedico.paciente.expediente.numero}" value="#{0}"/>
+                            <f:setPropertyActionListener target="#{historiaclinica.muestraPantalla}" value="#{false}"/> 
+                        </p:commandButton>
+                    </div>
+                    <br/>
+                    <p:outputPanel id="destino" styleClass="centrar">
+                        <div class="centrar">
+                            <p:dataTable id="tblResultado" var="oPacEnc"
+                                         value="#{historiaclinica.arrHistoriaClinica}"
+                                            emptyMessage="#{etiq.noRegistro}" 
+                                            paginator="true" 
+                                            rows="4"                                                
+                                            rendered="#{not empty historiaclinica.arrHistoriaClinica}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="#{etiq.pacEncontra}"/>
+                                </f:facet>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.fechanac}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.fechaNac}"/>
+                                </p:column>                                
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.nombres}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.nombres}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.appat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.apPaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="#{etiq.apmat}"/>
+                                    </f:facet>
+                                    <p:outputLabel value="#{oPacEnc.episodioMedico.paciente.apMaterno}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Ctrl"/>
+                                    </f:facet>
+                                   <p:commandButton id="btnDetalles" icon="ui-icon-plusthick" value="Detalles">
+                                       <p:ajax listener="#{historiaclinica.cargaDatosPacienteHistoria(oPacEnc.episodioMedico.paciente.folioPaciente, oPacEnc.episodioMedico.paciente.claveEpisodio, oPacEnc.episodioMedico.paciente.expediente.numero)}" 
+                                               update=":fcontenedor :fcontenedor:tabcontenedor :busqueda:msgs"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </div>                                
+                    </p:outputPanel>
+                </h:form>
+            </div>
+            <br/><br/>
+            <div class="frm_centrado" >
+                <h:form class="centrar" id="fcontenedor">                 
+                    <p:tabView id="tabcontenedor" rendered="#{historiaclinica.muestraPantalla}" dynamic="true">
+                        <p:tab title="#{etiq.historiaClinica00}">                                
+                        <p:panelGrid styleClass="frm_centrado" id="hClinica00">
+                            <!--ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/encabezadoHistoriaClinica.jpg" style="width: 898px; height: 157px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row>                                    
+                             <p:row>
+                                 <p:column colspan="6" style="text-align: center; border-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff; font-weight: bold; font-size: large;">
+                                     <p:outputLabel value="#{etiq.historiaclinica1}"/>
+                                 </p:column>
+                            </p:row>
+                            <!--TERMINA ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="6" style="text-align: left; font-weight: bold; font-size: larger; border-left-color: #000000; border-right-color: #000000; border-top-color: #000000;  border-bottom-color: #ffffff; background-color: #ffffff">
+                                    <p:outputLabel value="#{etiq.fichaidentificacion1}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="font-size: medium; border-left-color: #000000; border-right-color: #000000; border-bottom-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff; text-align: justify;">
+                                    <p:outputLabel value="#{etiq.servicio1}:"/>&nbsp;
+                                    <p:outputLabel style="text-decoration: underline; color: #000000;" value="#{historiaclinica.historiaClinica.episodioMedico.areaServicioHRRB}"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.fechaa1}:"/>&nbsp;
+                                    <p:outputLabel style="text-decoration: underline; color: #000000" value="#{historiaclinica.historiaClinica.episodioMedico.fechaIngreso}">
+                                         <f:convertDateTime dateStyle="short" pattern="dd/MM/yyyy HH:mm:ss"/>
+                                    </p:outputLabel>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.expedienteclinicico1}:"/>&nbsp;
+                                    <p:outputLabel style="text-decoration: underline; color: #000000;" value="#{historiaclinica.historiaClinica.episodioMedico.expediente}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="font-size: medium; border-left-color: #000000; border-right-color: #000000; border-bottom-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff; text-align: justify;">
+                                    <p:outputLabel value="#{etiq.noombre}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.nombreCompleto}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.folioseguro1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.seguro.numero}" style="text-decoration: underline; color: #000000;"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="font-size: medium; border-left-color: #000000; border-right-color: #000000; border-bottom-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff; text-align: justify;">
+                                    <p:outputLabel value="#{etiq.eda2}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.edadNumero}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.sex2}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.sexoP}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.fechanaciemiento1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.fechaNac}" style="text-decoration: underline; color: #000000;">
+                                        <f:convertDateTime dateStyle="short" pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.estadocivil1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.edoCivilStr}" style="text-decoration: underline; color: #000000;"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="font-size: medium; border-left-color: #000000; border-right-color: #000000; border-bottom-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff; text-align: justify;">
+                                    <p:outputLabel value="#{etiq.domicilio1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.calleNum}" style="text-decoration: underline; color: #000000;"/>                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="font-size: medium; border-left-color: #000000; border-right-color: #000000; border-bottom-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff; text-align: justify;">
+                                    <p:outputLabel value="#{etiq.local}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.colonia}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.municipio1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.ciudadCP.ciudad.municipio.descripcionMun}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.hespañol1}"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.etnicidad.hablaEspaniolP}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column  colspan="6" style="font-size: medium; border-left-color: #000000; border-right-color: #000000; border-bottom-color: #000000; border-top-color: #ffffff; background-color: #ffffff; text-align: justify;">
+                                    <p:outputLabel value="#{etiq.ocupacion1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.expediente.antecNoPatologicos.ocupacion}"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.informante1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.familiarCercano.nombresFam}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.motivoconsulta1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 50px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.motivoConsulta}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.padecimientoactual1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 280px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.padecimientoAct}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.manejorecibido1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 50px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.manejoRecibido}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.interrogatorio1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 280px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.interrogatorio}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/pieHistoriaclinica.jpg" style="width: 898px; height: 20px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row> 
+                            <br/>
+                        </p:panelGrid>
+                        <!--Botones guargar e imprimir-->
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;">
+                                    <!--<p:commandButton value="Guardar" icon="ui-icon-disk" validateClient="true">
+                                        <p:ajax listener="" update="msg4" process="@this"/>
+                                    </p:commandButton>
+                                    <p:messages id="msg4"/>-->
+                                    <p:commandButton value="Imprimir" type="button" onclick="" icon="ui-icon-print" disabled="false">                                    
+                                        <p:printer target="hClinica00" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>                                
+                        <!--**************************-->                                
+                    </p:tab>
+                    <p:tab title="#{etiq.historiaClinica01}">                            
+                        <p:panelGrid styleClass="frm_centrado" id="hClinica01">
+                           <!--ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/cabezaHistoriaclinica2.jpg" style="width: 898px; height: 20px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row>                                    
+                            <p:row>
+                                 <p:column colspan="6" style="text-align: center; border-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff; font-weight: bold; font-size: large;">
+                                     <p:outputLabel value="#{etiq.historiaclinica1}"/>
+                                 </p:column>
+                            </p:row>
+                            <!--TERMINA ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.antecedentes1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 240px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.expediente.antecHeredoFamiliares.otros}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.antecedentesnopatologicos1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 240px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.expediente.antecNoPatologicos.otro}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.antecedentesginecobstetricos1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 240px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.antecgineco}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.antecedentespatologicos1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style="vertical-align: text-top; text-align: left; width: 898px; height: 240px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.expediente.antecPatologicos.otro}"/>
+                                </p:column>
+                            </p:row> 
+                            <p:row>
+                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/pieHistoriaclinica.jpg" style="width: 898px; height: 20px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row> 
+                            <br/>
+                        </p:panelGrid>
+                        <!--Botones guargar e imprimir-->
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;">
+                                    <!--<p:commandButton value="Guardar" icon="ui-icon-disk" validateClient="true">
+                                        <p:ajax listener="" update="msg3" process="@this"/>
+                                    </p:commandButton>
+                                    <p:messages id="msg3"/>-->
+                                    <p:commandButton value="Imprimir" type="button" onclick="" icon="ui-icon-print" disabled="false">                                    
+                                        <p:printer target="hClinica01" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>                            
+                        <!--**************************-->                            
+                    </p:tab>
+                    <p:tab title="#{etiq.historiaClinica02}">                            
+                        <p:panelGrid styleClass="frm_centrado" id="hClinica02">
+                            <!--ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/cabezaHistoriaclinica3.jpg" style="width: 898px; height: 20px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row>                                    
+                            <p:row>
+                                 <p:column colspan="7" style="text-align: center; border-color: #ffffff; background-color: #ffffff; font-weight: bold; font-size: large;">
+                                     <p:outputLabel value="#{etiq.historiaclinica1}"/>
+                                 </p:column>
+                            </p:row>
+                            <!--TERMINA ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="7" style="text-align: left; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <b><p:outputLabel value="#{etiq.exploracionfisica1}"/></b>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.signosvitalessomatometria1}:"/>                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="vertical-align: text-top; text-align: left; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #ffffff; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.peso1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.peso}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.talla2}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.paciente.talla}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.imc1}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.calculaIMC}" style="text-decoration: underline; color: #000000;">
+                                        <f:convertNumber pattern="00.00"/>
+                                    </p:outputLabel>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.fc}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.signosVitales.FC}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.fr}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.signosVitales.FR}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.ta}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.signosVitales.TA}" style="text-decoration: underline; color: #000000;"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{etiq.temp}:"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.signosVitales.temp}" style="text-decoration: underline; color: #000000;"/>
+                                </p:column>
+                            </p:row>                                
+                            <p:row>
+                                <p:column colspan="7" style="border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.inspecciongeneral1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7"  style="vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.inspeccionGeneral}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.cabezacuello1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7"  style="vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.cabezaCue}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.torax1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7"  style="vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.torax}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.abdomen1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7"  style="vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.abdomen}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #000000; border-bottom-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.genitales1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7"  style="vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.genitales}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/pieHistoriaclinica.jpg" style="width: 898px; height: 20px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row> 
+                        </p:panelGrid>                            
+                        <!--Botones guargar e imprimir-->
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;">
+                                    <!--<p:commandButton value="Guardar" icon="ui-icon-disk" validateClient="true">
+                                        <p:ajax listener="" update="msg2" process="@this"/>
+                                    </p:commandButton>
+                                    <p:messages id="msg2"/>-->
+                                    <p:commandButton value="Imprimir" type="button" onclick="" icon="ui-icon-print" disabled="false">                                    
+                                        <p:printer target="hClinica02" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        <!--**************************-->
+                    </p:tab>                            
+                        <p:tab title="#{etiq.historiaClinica03}">                            
+                            <p:panelGrid styleClass="frm_centrado" id="hClinica03">
+                            <!--ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/cabezaHistoriaclinica4.jpg" style="width: 898px; height: 20px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row>                                    
+                            <p:row>
+                                 <p:column colspan="6" style="text-align: center; border-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff; font-weight: bold; font-size: large;">
+                                     <p:outputLabel value="#{etiq.historiaclinica1}"/>
+                                 </p:column>
+                            </p:row>
+                            <!--TERMINA ENCABEZADO-->
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.extremidades1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.extremidades}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.pielanexos1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.pielAnexos}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.sistemanervioso1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.nerviosoSentidos}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.estudioslaboratorio1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.resultadoEstudios}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.decripciondiagnostico1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 20px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.resultadoEstudios}"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.cie10.descripcionDiag}"/>&nbsp;&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.cie10.claveCIE10}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; border-top-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #000000; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.plan1}:"/>&nbsp;                                        
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6"  style=" vertical-align: text-top; text-align: left; width: 898px; height: 170px; border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;">
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.hosptilatazacion.plan}"/>&nbsp;                                    
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="width: 915px; border-left-color: #ffffff; border-right-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;"/>
+                            </p:row>
+                            <p:row>
+                                <p:column style=" border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #000000; border-right-color: #ffffff; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.elaboro1}:"/>&nbsp;                                        
+                                </p:column>
+                                <p:column colspan="2" style=" border-top-color: #000000; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; text-align: left; background-color: #ffffff;">                                    
+                                    <p:outputLabel value="#{historiaclinica.personalHospitalario.nombreCompleto}"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.personalHospitalario.cedProf}"/>
+                                </p:column>
+                                <p:column style="border-top-color: #000000; border-bottom-color: #ffffff; border-left-color: #ffffff; border-right-color: #ffffff; text-align: left; font-weight: bold; background-color: #ffffff;">
+                                    <p:outputLabel value="#{etiq.superviso1}:"/>&nbsp;                                        
+                                </p:column>
+                                <p:column colspan="2" style="border-top-color: #000000; border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #000000; text-align: left; background-color: #ffffff;">                                    
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.medicoTratante.nombreCompleto}"/>&nbsp;
+                                    <p:outputLabel value="#{historiaclinica.historiaClinica.episodioMedico.medicoTratante.cedProf}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-left-color: #000000; border-right-color: #000000; border-top-color: #ffffff; border-bottom-color: #000000; background-color: #ffffff;"/>                                
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                                <h:graphicImage value="/imgs/pieHistoriaclinica.jpg" style="width: 898px; height: 20px;"/>
+                                            </p:column>                                                    
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:column>
+                            </p:row> 
+                        </p:panelGrid>                        
+                        <!--Botones guargar e imprimir-->
+                            <p:row>
+                                <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;">
+                                    <!--<p:commandButton value="Guardar" icon="ui-icon-disk" validateClient="true">
+                                        <p:ajax listener="" update="msg1" process="@this"/>
+                                    </p:commandButton>-->
+                                    <p:commandButton value="Imprimir" type="button" onclick="" icon="ui-icon-print" disabled="false">                                    
+                                        <p:printer target="hClinica03" />
+                                    </p:commandButton>
+                                    <!--<p:messages id="msg1"/>-->
+                                </p:column>
+                            </p:row>
+                        <!--**************************-->   
+                    </p:tab>
+                </p:tabView>               
+            </h:form>
+            </div>
+            <div>
+                <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif"/>
+                    </f:facet>
+                </p:ajaxStatus>
+            </div>
+        </ui:define>
+    </ui:composition>            
+    
+</html>

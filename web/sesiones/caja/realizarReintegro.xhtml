@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.realizarReintegro}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:dialog id="dlgRegPago" widgetVar="dlgRR"
+                          position="center" closable="false" 
+                          dynamic="true" resizable="false"
+                          appendTo="@(body)" modal="true" width="40%">
+                    <center>
+                        <h:form>
+                            <p:panelGrid style="width: 100%;">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="4"><center> 
+                                            <h:outputText value="#{etiq.recCuotasRec}"/>
+                                            <br/>
+                                            <h:outputText value="#{etiq.folioNo}"/>
+                                            </center>
+                                        </p:column>   
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.fecha}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="16-09-2015"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{etiq.hora}:"></h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="12:42"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{etiq.nombrePaciente}:"></h:outputText>
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <h:outputText value="Daniel López Rosas"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{etiq.domicilio}:"></h:outputText>
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <h:outputText value="Omealca, Veracruz. Carretera La Conduza"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:dataTable emptyMessage="#{etiq.emptydataTable}">
+                                <p:column headerText="#{etiq.clave}">
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                                <p:column headerText="#{etiq.concepto}">
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                                <p:column headerText="#{etiq.costo}">
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                            </p:dataTable>
+                            <br/><br/>
+                            <p:dataTable emptyMessage="#{etiq.emptydataTable}">
+                                <f:facet name="header">
+                                    <h:outputText value="REINTEGRO"></h:outputText>
+                                </f:facet>
+                                <p:column headerText="#{etiq.clave}">
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                                <p:column headerText="#{etiq.concepto}">
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                                <p:column headerText="#{etiq.costo}">
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:row>
+                                        <p:column colspan="4" styleClass="ui-widget-header">
+                                            <center> 
+                                                <p:commandButton value="#{etiq.regresar}" oncomplete="PF('dlgRR').hide()">
+                                                </p:commandButton>
+                                                <p:commandButton value="#{etiq.realizarReintegro}" oncomplete="PF('dlgRR').hide()">
+                                                </p:commandButton>
+                                            </center>
+                                        </p:column>   
+                                    </p:row>
+                                </f:facet>
+                            </p:dataTable> 
+                        </h:form>
+                    </center>
+                </p:dialog>
+                <p:dataTable value="#{oRealizarRtgr.recibos}" var="oRec" emptyMessage="#{etiq.emptydataTable}">
+                    <f:facet name="header">
+                        <p:outputLabel id="titVac" value="#{etiq.reintegrosAut}"/>
+                    </f:facet>
+                    <p:column width="20">
+                        
+                    </p:column>
+                    <p:column headerText="#{etiq.folio}">
+                        <h:outputText value="#{oRec.folio}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.montoReintegro}">
+                        <h:outputText value="#{oRec.montoReintegro}"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.nombrePaciente}">
+                        <h:outputText value="#{oRec.cuenta.episodio.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <f:facet  name="footer" >
+                        <p:commandButton value="#{etiq.detalles}" oncomplete="PF('dlgRR').show()">
+                        </p:commandButton>
+                    </f:facet>
+                </p:dataTable>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

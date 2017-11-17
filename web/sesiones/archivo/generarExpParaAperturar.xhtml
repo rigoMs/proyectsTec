@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+        <ui:define name="cuerpo">
+            <div class="centrar" >
+                <h:form class="centrado_texto" id="frmInicio" >
+                <br/>
+                <p:growl id="msgs" showDetail="true" />
+                <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                <div style=" text-align: center"><h3><h:outputLabel value="#{etiq.genFolio}"/></h3></div>
+                <p:panelGrid style="width: 600px" styleClass="centrar">
+                    <p:row >
+                        <p:column styleClass="ui-widget-header" ><h:outputLabel style="font-weight: bold;" value="#{etiq.noExp}"/></p:column>                             
+                        <p:column styleClass="ui-widget-header" ><h:outputLabel style="font-weight: bold;" value="#{etiq.lugarApertura}"/></p:column>
+                        <p:column styleClass="ui-widget-header" ><h:outputLabel style="font-weight: bold;" value="#{etiq.fecha}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column > 
+                            <p:inputText value="#{oExpAper.exp.numero}" id="numExp" converterMessage="El numero no puede ser superior a 2147483647" requiredMessage="Debe ingresar un numero de Expediente Válido" required="true" styleClass="bordes">
+                                <f:ajax event="valueChange" render="men numExp" execute="@this" resetValues="true"/>
+                                <f:validateLongRange maximum="2147483647" minimum="0"/>
+                            </p:inputText>
+                            <p:message for="numExp" id="men"/>
+                       </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="lugarAper" value="#{oExpAper.exp.lugarApertura.tipoParametro}" requiredMessage="Debe seleccionar lugar de apertura" required="true">
+                                <f:selectItem itemLabel="LUGAR DE APERTURA" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{oExpAper.listaLugarAperturaExp}" var="oLugAper"
+                                               itemLabel="#{oLugAper.valor}" itemValue="#{oLugAper.tipoParametro}#{oLugAper.claveParametro}"/>
+                                <p:ajax event="valueChange" listener="#{oExpAper.buscaLugarApertura()}" update="frmInicio"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{oExpAper.fecha}">
+                                <f:convertDateTime pattern="dd-MM-yyyy HH:mm" type="Date" timeZone="America/Mexico_City"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3" >
+                            <p:commandButton icon="ui-icon-folder-open" value="#{etiq.generar}" validateClient="true">
+                               <p:ajax listener="#{oExpAper.agregaElemento()}" update=":frmDatos :frmDatos:dtDatos :frmDatos:b1 :frmInicio :frmInicio:msgs :frmImpresion"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <br/>
+            </h:form>
+            <h:form id="frmDatos" >
+                <p:dataTable id="dtDatos" value="#{oExpAper.arrExp}" styleClass="centrar" rendered="#{not empty oExpAper.arrExp}"
+                             var="regNew" emptyMessage="NO SE HAN AGREGADO EXPEDIENTES" style="width: 600px;">
+                    <p:column headerText="#{etiq.noExp}"><p:outputLabel value="#{regNew.numero}"/></p:column>
+                    <p:column headerText="#{etiq.abriren}"><p:outputLabel value="#{regNew.lugarApertura.valor}"/></p:column>
+                    <p:column headerText="#{etiq.cal}"><p:outputLabel value="#{etiq.prestado}"/></p:column>
+                    <p:column headerText="#{etiq.status}"><p:outputLabel value="#{etiq.aperPent}"/></p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="b1" rendered="#{not empty oExpAper.arrExp}" icon="ui-icon-disk" value="#{etiq.guardar}" actionListener="#{oExpAper.registrar()}" update="frmDatos :frmInicio:msgs"/>
+                <!-- <p:commandButton id="b2" rendered="#{not empty oExpAper.arrExp}" type="button" icon="ui-icon-print" value="#{etiq.vistaImpr}" onclick="PF('dlgImpresion').show()"/> -->
+            </h:form>
+            <p:dialog header="Permiso para aperturar expedientes" widgetVar="dlgImpresion" showEffect="bounce" hideEffect="bounce"
+                      resizable="true" modal="true" height="400px" width="1100px" style="text-align: center">
+                <h:form id="frmImpresion">
+                    <p:panelGrid styleClass="frm_centrado" id="pgPrint" style="width:1000px;background-color: #ffffff;" >
+                        <p:row >
+                            <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                                <h:graphicImage  value="/imgs/logo-salud.jpg" style="width: 100%;"/>
+                            </p:column>
+                            <p:column colspan="5" style="background-color: #ffffff; text-align: center;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                                <h1><h:outputText value="#{etiq.hrrb}"/></h1>  
+                                <h2><h:outputText value="#{etiq.siece}"/></h2>
+                            </p:column>
+                            <p:column colspan="1" style="background-color: #ffffff;border-top-color:#ffffff; border-right-color:#ffffff ;border-left-color: #ffffff;">
+                                <h:graphicImage  value="/imgs/logo-hrrb.jpg" style="width: 100%"/>
+                            </p:column>
+                        </p:row>       
+                        <p:row>
+                            <p:column colspan="7" styleClass="ui-widget-header" style="text-align: center;">
+                                <p:outputLabel value="#{etiq.generarExp}  "/>
+                                <p:outputLabel value="#{oExpAper.fecha}">
+                                    <f:convertDateTime parent="dd-MM-yyyy HH:mm"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>                           
+                        <p:row>
+                            <p:column colspan="7" style="background-color: #ffffff; border-right-color:#ffffff ;border-left-color: #ffffff; border-bottom-color:#ffffff;">
+                                <p:dataTable id="dtDatos" value="#{oExpAper.arrExp}" style="background-color: #ffffff;" styleClass="centrar" 
+                                            var="regNew" emptyMessage="NO SE HAN AGREGADO EXPEDIENTES">
+                                   <p:column headerText="#{etiq.noExp}" style="background-color: #ffffff; text-align: center"><p:outputLabel value="#{regNew.numero}"/></p:column>
+                                   <p:column headerText="#{etiq.abriren}" style="background-color: #ffffff;text-align: center"><p:outputLabel value="#{regNew.lugarApertura.valor}"/></p:column>
+                                   <p:column headerText="#{etiq.cal}" style="background-color: #ffffff;text-align: center"><p:outputLabel value="#{etiq.prestado}"/></p:column>
+                                   <p:column headerText="#{etiq.status}" style="background-color: #ffffff;text-align: center"><p:outputLabel value="#{etiq.aperPent}"/></p:column>
+                               </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}">
+                        <p:printer target="pgPrint"/>
+                    </p:commandButton>
+                </h:form>
+            </p:dialog>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                <f:facet name="start"> <p:graphicImage value="/imgs/loading.gif" />  </f:facet>    
+            </p:ajaxStatus>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

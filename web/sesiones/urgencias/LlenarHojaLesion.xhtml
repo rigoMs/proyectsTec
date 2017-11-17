@@ -1,0 +1,930 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+      <div class="centrar">
+          
+        <h2><p:outputLabel value="#{etiq.hojaLesion}"/></h2>
+        <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+        <br></br>
+        <h:form id="datosAfectado" class="centrar">
+        <p:tabView effect="fade" effectDuration="slow">
+        <div class="centrar">
+            <p:tab title="#{etiq.datosGeneral}" >
+                 <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+                    <p:growl id="messages" showDetail="true"/>
+                    <p:panelGrid>
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="14">
+                                    <h:outputLabel value="#{etiq.datosGeneral}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="7">
+                                    <p:outputLabel value="#{etiq.unidadMed}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="Hospital Regional Rio Blanco"></p:outputLabel>
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column colspan="7">
+                                    <p:outputLabel value="#{etiq.CLUES}"/>
+                                    </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.nuiyu}"></p:outputLabel>
+                                </p:column>
+                                
+                            </p:row>
+                                <p:row>
+                                <p:column colspan="7">
+                                    <p:outputLabel value="#{etiq.folio}"/>
+                                </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="#{etiq.nuiyu}"></p:outputLabel>
+                                </p:column>
+                            </p:row>
+                            
+                            
+                            
+                        </f:facet>
+                        
+                    </p:panelGrid>
+            </p:tab>
+            
+          <p:tab title="#{etiq.datosAfectado}"> 
+                   
+                    <p:panelGrid> 
+                    
+                        
+                        <f:facet name="header">
+                        <p:row>
+           <!--*************************************DATOS DEL AFECTADO*****************************************
+           ****************************************************************************************************-->
+                            <p:column colspan="7">
+                           <h:outputLabel value="#{etiq.datosAfectado}"/>
+                           </p:column>
+                       </p:row>
+                    </f:facet> 
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.entidad1}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                 <p:outputLabel id="appat" value="#{oHojaLesion.paciente.apPaterno}" />
+                             </p:column>
+                             <p:column>
+                                 <p:outputLabel id="apmat" value="#{oHojaLesion.paciente.apMaterno}" />
+                             </p:column>
+                            <p:column>
+                                <p:outputLabel id="nombre" value="#{oHojaLesion.paciente.nombres}">
+                                      </p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                 <p:selectOneRadio id="sexo" value="#{oHojaLesion.paciente.sexoP}" disabled="true">
+                                    <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                    <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                    <p:ajax update="emb" event="valueChange"/>
+                                </p:selectOneRadio>
+                             </p:column>
+
+                            <p:column><p:outputLabel id="curp" value="#{oHojaLesion.paciente.curp}" /></p:column>
+                      
+                            <p:column>
+                                <p:outputLabel id="fechaNac"  value="#{oHojaLesion.paciente.fechaNacTexto}" >
+                                </p:outputLabel>
+                             </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="ent1" value="#{oHojaLesion.hojaLesiones.lesion.estadoNac.claveEdo}" required="true" requiredMessage="Debe indicar un Estado" disabled="true">
+                         <p:ajax  event="change"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHojaLesion.listaEstadoNac}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="7"><p:outputLabel value="#{etiq.escolari}"/><br></br></p:column> 
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.escolaridad}:"/></p:column>    
+                            <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.sabeLeerEsc}:"/></p:column>     
+                            <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.escoSel}:"/>    </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:selectOneRadio id="esc" value="#{oHojaLesion.hojaLesiones.escolaridad.claveParametro}" requiredMessage="Debe elegir la escolaridad del paciente" required="true">
+                                    <f:selectItems value="#{oHojaLesion.listaEscolaridad}" var="esc"
+                                                   itemLabel="#{esc.valor}" itemValue="#{esc.claveParametro}#{esc.tipoParametro}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:selectOneRadio id="leer" value="#{oHojaLesion.hojaLesiones.sabeLeerEscribir}" requiredMessage="Debe indicar si el paciente sabe leer y escribir" required="true">
+                                    <f:selectItem itemLabel="SI" itemValue="S" />
+                                    <f:selectItem itemLabel="NO" itemValue="N" />
+                                </p:selectOneRadio>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:selectOneRadio id="escosele" value="#{oHojaLesion.hojaLesiones.tipoEsco}" requiredMessage="Debe indicar si el paciente sabe leer y escribir" required="true">
+                                    <f:selectItem itemLabel="Completa" itemValue="C" />
+                                    <f:selectItem itemLabel="Incompleta" itemValue="I" />
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="7"><p:outputLabel value="#{etiq.edad}:"/> <br></br> </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="7"><p:outputLabel value="#{etiq.edadCumplida}:"/> <br></br> </p:column>  
+                             
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="7">
+                                <p:outputLabel value="#{oHojaLesion.paciente.edadNumero}"/>
+                            </p:column>
+                           
+                        </p:row>
+                            
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="4"><p:outputLabel value="#{etiq.derechohabiente}:"/> <br></br> </p:column>
+                            <p:column styleClass="ui-widget-header" colspan="1"><p:outputLabel value="#{etiq.gratuidad}:"/> <br></br> </p:column>
+                            <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.afiliacion}:"/></p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:selectOneRadio id="tder" value="#{oHojaLesion.paciente.seg.unaDer}" columns="6"   layout="grid" disabled="true">
+                                    <f:selectItems value="#{oHojaLesion.listaDerechobiente}" var="der1" 
+                                                   itemLabel="#{der1.valor}" itemValue="#{der1.claveParametro.trim()}"/>
+
+                               </p:selectOneRadio>
+                            </p:column>
+                             <p:column colspan="1">
+                                <p:selectOneRadio id="grt"  requiredMessage="Debe indicar si el paciente sabe leer y escribir" required="true">
+                                    <f:selectItem itemLabel="Si" itemValue="S" />
+                                    <f:selectItem itemLabel="No" itemValue="N" />
+                                </p:selectOneRadio>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:inputText styleClass="bordes" id="itSePop" readonly="true" size="13" value="#{oHojaLesion.paciente.seg.numero}"/> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="7"><p:outputLabel value="#{etiq.etnia}:"/></p:column>  
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.Seconsiderain}"/></p:column>
+                            <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.HablaLenguaindi}"/></p:column>
+                            <p:column styleClass="ui-widget-header" colspan="4"><p:outputLabel value="#{etiq.cual}"/></p:column>
+                        </p:row>
+                        <p:row>
+                           <p:column colspan="2">
+                               <p:selectOneRadio id="pgi" value="#{oHojaLesion.paciente.etnicidad.pertenenciaGpoIndStr}" disabled="true" layout="pageDirection" >
+                                   <f:selectItems value="#{oHojaLesion.listaPertGpoIndigena}" var="pert"
+                                         itemLabel="#{pert.valor}" itemValue="#{pert.tipoParametro.trim()}#{pert.claveParametro.trim()}"/>
+                      </p:selectOneRadio>
+                  </p:column>
+                  
+                  <p:column colspan="2">
+                      <p:selectOneRadio id="heli" value="#{oHojaLesion.paciente.etnicidad.hablaLenguaIndStr}"  disabled="true" layout="pageDirection">
+                          <f:selectItems value="#{oHojaLesion.listaPertGpoIndigena}" var="heleng"
+                                         itemLabel="#{heleng.valor}" itemValue="#{heleng.tipoParametro.trim()}#{heleng.claveParametro.trim()}"/>
+                          <p:ajax update="nomLeng" event="valueChange"/>
+                  </p:selectOneRadio>
+                  </p:column>
+                 
+                 <p:column colspan="4">
+                     <p:selectOneMenu id="nomLeng" value="#{oHojaLesion.paciente.etnicidad.claveLengua}" disabled="true" >
+                         <f:selectItems value="#{oHojaLesion.paciente.etnicidad.listaLenguasIndigenas}" var="nLeng" 
+                                        itemLabel="#{nLeng.descripcionLengua}" itemValue="#{nLeng.claveLengua}"/>
+                  </p:selectOneMenu>
+                  </p:column>
+                            
+                        </p:row>
+                        
+                        <p:row>
+                            
+                            <p:column  colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.expediente}:"/></p:column>
+                            <p:column  colspan="2" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.puerperio}:"/></p:column>
+                            <p:column  colspan="4" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.dificul}:"/></p:column>
+                            <!--p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.pacEmbarazada}:"/></p:column-->
+                            
+                            
+                        </p:row>
+                        
+                        <p:row>
+                            
+                            
+                            <p:column colspan="2">
+                                <p:outputLabel value="#{oHojaLesion.paciente.expediente.numero}" />
+                            </p:column>
+                            
+                            <p:column colspan="2">
+                                <p:selectOneRadio id="emb" value="#{oHojaLesion.hojaLesiones.esEmbarazada}" disabled="#{oHojaLesion.disEmbarazada()}" requiredMessage="Debe indicar si la paciente está embarazada" required="#{oHojaLesion.reqEmbarazada()}" >
+                                    <f:selectItem itemLabel="SI" itemValue="S" />
+                                    <f:selectItem itemLabel="NO" itemValue="N" />
+                                </p:selectOneRadio>
+                            </p:column>
+                            
+                            <p:column colspan="4">
+                            <p:selectOneRadio id="dp" value="#{oHojaLesion.paciente.discapacitado}" required="true" requiredMessage="Debe indicar si el paciente es discapacitado">
+                                    <f:selectItem itemLabel="SI" itemValue="true" />
+                                    <f:selectItem itemLabel="NO" itemValue="false" />
+                                </p:selectOneRadio>
+                        </p:column>
+                            
+                            
+                            
+                        </p:row>
+                        
+                        
+                        <p:row>
+                            <p:column colspan="7" styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.referencia}"/>
+                            </p:column> 
+                            
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" colspan="4"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.referidoPor}:"/></p:column>
+                            <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.cualRe}:"/></p:column>
+                        </p:row>
+                        <p:row>
+                          <p:column colspan="4">
+                              <p:selectOneRadio id="RefP" value="#{oHojaLesion.hojaLesiones.atencion.referidoPor.claveParametro}" requiredMessage="Debe indicar la referencia del paciente" required="true" layout="grid" columns="3" >
+                                <f:selectItems value="#{oHojaLesion.usuarioReferido}" var="sRefPor"
+                                                   itemLabel="#{sRefPor.valor}" itemValue="#{sRefPor.claveParametro}#{sRefPor.tipoParametro}"/>
+                                <p:ajax update="entuni nomuni" event="valueChange"/>
+                                </p:selectOneRadio>
+                          </p:column>
+                            
+                        <p:column>
+                            <p:selectOneMenu id="entuni" value="#{oHojaLesion.hojaLesiones.lesion.estadoUni.claveEdo}" required="true" requiredMessage="Debe indicar un Estado" disabled="#{oHojaLesion.habilitaEstado()}">
+                            <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHojaLesion.listaEstadoUni}" var="oEdouni" 
+                                        itemLabel="#{oEdouni.descripcionEdo}" itemValue="#{oEdouni.claveEdo}"/>
+                         <p:ajax update="nomuni" event="valueChange"/>
+                        </p:selectOneMenu>
+                 </p:column>   
+                         
+                       <p:column>
+                           <p:selectOneMenu id="nomuni" value="#{oHojaLesion.paciente.referencia.clave}" disabled="#{oHojaLesion.habilitaUmedic()}">
+                               <f:selectItems  var="nuni" value="#{oHojaLesion.listaReferencia}"
+                                               itemLabel="#{nuni.descripcion}" itemValue="#{nuni.clave}"/>
+                  </p:selectOneMenu>
+                  </p:column>
+                            
+                            
+                        </p:row>
+        <!--p:row>
+                            <p:column colspan="7" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.domiOcurrencia}:"/></p:column>
+                        </p:row-->
+        <!--p:row>
+                
+                            
+                            
+                <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.entidad}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.municipio}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.localidad}:"/><br/></p:column>
+                 
+             </p:row-->             
+        <!--p:row>
+                 
+                  <p:column colspan="2">
+                      <p:inputText size="60" onkeypress="return validaCaracter(event);"  id="dom" value="#{oHojaLesion.hojaLesiones.lesion.domicilioOcurrencia}"  maxlength="100" requiredMessage="Debe indicar el domicilio" required="true" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="ent" value="#{oHojaLesion.hojaLesiones.lesion.estado.claveEdo}" required="true" requiredMessage="Debe indicar un Estado">
+                         <p:ajax update="mun" event="change"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHojaLesion.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+                 <p:column colspan="2">      
+                     <p:selectOneMenu id="mun" value="#{oHojaLesion.hojaLesiones.lesion.municipio.claveMun}" requiredMessage="Debe indicar un Municipio" required="true" >
+                            <p:ajax update="localidad" event="valueChange"/>
+                            <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oHojaLesion.listaMunicipios}" var="oMun" 
+                                           itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                           </p:selectOneMenu>
+                     </p:column>
+                    
+                     <p:column colspan="2">
+                         <p:selectOneMenu id="localidad" value="#{oHojaLesion.hojaLesiones.lesion.ciudad.claveCiu}" requiredMessage="Debe indicar una localidad" required="true">
+                            
+                            <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oHojaLesion.listaCiudades}" var="oCiu"
+                                           itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                           </p:selectOneMenu>
+                    </p:column>
+
+                </p:row-->
+                        
+                        
+                    </p:panelGrid>
+                
+              </p:tab>
+              <!--***********************************DATOS DEL EVENTO*********************************************
+              ***************************************************************************************************-->
+            <p:tab title="#{etiq.datosEvento}" >
+                <p:panelGrid>
+                <p:row>
+                    <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.fechaOcurrencia}:"/></p:column>
+                    <p:column colspan="3" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.hora}:"/><br/></p:column>
+                    <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.diaFestivo}:"/><br/></p:column>
+                    
+                </p:row> 
+                
+                    <p:row>
+                        <p:column colspan="2">
+                             <p:calendar mask="9999/99/99" readonlyInput="true" effect="fold" maxdate="#{oHojaLesion.fechaHoy}" required="true" requiredMessage="Debe indicar la fecha de ocurrencia"  value="#{oHojaLesion.hojaLesiones.lesion.fechaOcurrencia}" locale="es">
+                            </p:calendar>
+                        </p:column>
+                        
+                       
+                        <p:column colspan="3">
+                            <p:inputMask id="tHora" mask="99:99" size="7" value="#{oHojaLesion.hojaLesiones.lesion.horaOcurrencia}" required="true" requiredMessage="Debe ingresar la hora de ocurrencia">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.HorasUrgsValidator"/>
+                                <f:ajax render="mentHora" execute="@this" event="valueChange"/>
+                            </p:inputMask>
+                            <p:message for="tHora" id="mentHora"/>
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:selectOneRadio id="df" value="#{oHojaLesion.hojaLesiones.lesion.diaFestivo}" required="true" requiredMessage="Debe Ingresar si fue dia festivo">
+                                    <f:selectItem itemLabel="SI" itemValue="S" />
+                                    <f:selectItem itemLabel="NO" itemValue="N" />
+                                </p:selectOneRadio>
+                        </p:column>
+                        
+                        
+                    </p:row>
+                   <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel />
+                            <p:outputLabel value="#{etiq.LugOcu}" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel class="requerido" value="*"/>
+                            <p:outputLabel value="#{etiq.sitioOcurrencia}" />
+                        </p:column>
+                      <p:column styleClass="ui-widget-header" colspan="1"><h:outputLabel value="#{etiq.otrolugo}"/></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column colspan="5">
+                                <p:selectOneRadio id="sitOc" value="#{oHojaLesion.hojaLesiones.lesion.sitioOcurrencia.clave}" layout="grid" columns="5" required="true" requiredMessage="Debe indicar un sitio de ocurrencia">
+                                    <f:selectItems value="#{oHojaLesion.hojaLesiones.lesion.sitioOcurrencia.buscarSitioOcurrenciaHojaLesion()}" var="sitio"
+                                                   itemLabel="#{sitio.descripcion}" itemValue="#{sitio.clave}"/>
+                                    <p:ajax update="otlug" event="valueChange"/>
+                                </p:selectOneRadio>
+                            </p:column >
+                      <p:column colspan="1">
+                        <p:inputText id="otlug" value="#{oHojaLesion.hojaLesiones.lesion.otroLugarO}" disabled="#{oHojaLesion.habilitaOtroLugO()}" maxlength="30"/>
+                        </p:column>
+                        
+                    </p:row>
+                    <p:row>
+                       <p:column colspan="1" styleClass="ui-widget-header">
+		                  <h:outputLabel styleClass="requerido" value="*" />
+		                  <p:outputLabel id="tipoVialidad" value="#{etiq.tipoVialidad}:" />
+		       </p:column>
+                       <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                       <p:column colspan="1"  styleClass="ui-widget-header"><h:outputLabel  value="#{etiq.numExt}:"/><br/></p:column>
+                       <p:column colspan="1" styleClass="ui-widget-header"><h:outputLabel  value="#{etiq.numInt}:"/><br/></p:column>
+                       <p:column colspan="1" styleClass="ui-widget-header">
+                                   <h:outputLabel styleClass="requerido" value="*" />
+                                   <p:outputLabel id="tipoAsenta" value="#{etiq.tipoAsentamiento}:" />
+                       </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu id="tTipoVialidad" value="#{oHojaLesion.hojaLesiones.lesion.tipoVialidad.cveTipoVial}" required="true"
+                                      filter="true"
+                                     requiredMessage="Se necesita el tipo de vialidad">
+                        <p:ajax />
+                        <f:selectItem itemLabel="TIPO VIALIDAD" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oHojaLesion.listaTipoVialidad}" var="oTipoVial"
+                                       itemLabel="#{oTipoVial.descripcion}" itemValue="#{oTipoVial.cveTipoVial}" />
+                    </p:selectOneMenu>
+		</p:column>
+                        <p:column colspan="2">
+                     <!--numero exterior revision no estoy seguro de esto-->
+                     <p:inputText id="nomcol" value="#{oHojaLesion.hojaLesiones.lesion.calleNum}"  maxlength="10"/>
+                 </p:column>
+                        <p:column colspan="1">
+                     <!--numero exterior revision no estoy seguro de esto-->
+                     <p:inputText id="numExt" value="#{oHojaLesion.hojaLesiones.lesion.numExterior}"  maxlength="10"/>
+                 </p:column>
+                    <p:column colspan="1">
+                     <!--numero exterior revision no estoy seguro de esto-->
+                     <p:inputText id="numInt" value="#{oHojaLesion.hojaLesiones.lesion.numInterior}"  maxlength="10"/>
+                 </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="tTipoAsenta" value="#{oHojaLesion.hojaLesiones.lesion.tipoAsentamiento.cveAsenta}" required="true"
+                                      filter="true"
+                                     requiredMessage="Se necesita el tipo de Asentamiento">
+                        <p:ajax />
+                        <f:selectItem itemLabel="TIPO ASENTAMIENTO" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{oHojaLesion.listaTipoAsentamiento}" var="oTipoAsenta"
+                                       itemLabel="#{oTipoAsenta.descripcion}" itemValue="#{oTipoAsenta.cveAsenta}" />
+                    </p:selectOneMenu>
+		</p:column>
+                    
+                    </p:row>
+                    <p:row>
+                        
+                <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.colonia}:"/><br/></p:column>
+                <p:column colspan="1" styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/>
+                                                                    <h:outputLabel value="#{etiq.pais}:"/><br/>
+                </p:column>
+                <p:column colspan="1" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/><br/></p:column>
+                <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.municipio}:"/><br/></p:column>
+                    
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                     <p:inputText size="10" id="colonia"  onkeypress="return validaCaracter(event);" maxlength="100" required="false" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                        <p:column>
+                            <p:inputText value="#{oHojaLesion.paciente.pais}" size="15" onkeypress="return validaCaracter(event);" maxlength="20" required="true" requiredMessage="Debe ingresar un país" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                        <f:ajax render="ent mun localidad codp" event="keyup" />
+                        <!--<p:ajax update="enti muni loc codp" event="valueChange"/>-->
+                     </p:inputText>
+                          <p:inputText id="numpa" value="12345" size="4"/>
+                 </p:column>
+                        <p:column>
+                     <p:selectOneMenu id="ent" value="#{oHojaLesion.hojaLesiones.lesion.estado.claveEdo}" required="true" requiredMessage="Debe indicar un Estado">
+                         <p:ajax update="mun numest" event="change"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHojaLesion.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                         
+                        </p:selectOneMenu>
+                          <p:inputText id="numest" value="#{oHojaLesion.hojaLesiones.lesion.estado.claveEdo}" disabled="true" size="4"/>
+                 </p:column>
+                        
+                        <p:column colspan="2">      
+                     <p:selectOneMenu id="mun" value="#{oHojaLesion.hojaLesiones.lesion.municipio.claveMun}" requiredMessage="Debe indicar un Municipio" required="true" >
+                            <p:ajax update="localidad" event="valueChange"/>
+                            <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oHojaLesion.listaMunicipios}" var="oMun" 
+                                           itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                     <p:ajax update="nummun" event="valueChange"/>     
+                     </p:selectOneMenu>
+                          <p:inputText id="nummun" value="#{oHojaLesion.hojaLesiones.lesion.municipio.claveMun}" disabled="true" size="4"/>
+                            </p:column>                       
+                    </p:row>
+                    
+                    <p:row>
+                    <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.localidad}:"/><br/></p:column>
+                
+                    <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cp}:"/><br/></p:column>     
+                </p:row>
+                    <p:row>
+                        
+                        <p:column colspan="4">
+                         <p:selectOneMenu id="localidad" value="#{oHojaLesion.hojaLesiones.lesion.ciudad.claveCiu}" requiredMessage="Debe indicar una localidad" required="true">
+                            <p:ajax update="codp" event="valueChange"/>
+                            <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{oHojaLesion.listaCiudades}" var="oCiu"
+                                           itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                            <p:ajax update="numloc" event="valueChange"/>
+                           </p:selectOneMenu>
+                          <p:inputText id="numloc" value="#{oHojaLesion.hojaLesiones.lesion.ciudad.claveCiu}" disabled="true" size="4"/>
+                    </p:column>
+                        <p:column colspan="2">      
+                            <p:selectOneMenu id="codp" value="#{oHojaLesion.paciente.ciudadCP.cp}" >
+                         <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oHojaLesion.listaCP}" var="oCP" 
+                                        itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                    </p:row>
+                   
+                    
+                    <p:row>
+                
+                
+                        <p:column styleClass="ui-widget-header" colspan="7"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.intencionalidad}" /></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column colspan="7">
+                                <p:selectOneRadio id="int" value="#{oHojaLesion.hojaLesiones.lesion.intencionalidad.clave}" required="true" requiredMessage="Debe indicar una intencionalidad">
+                                    <f:selectItems value="#{oHojaLesion.hojaLesiones.lesion.intencionalidad.buscarIntencionHojaLesion()}" var="inten"
+                                                   itemLabel=" #{inten.descripcion}" itemValue="#{inten.clave}"/>
+                                    <p:ajax update="tipoVio casvio" event="valueChange"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="7"><p:outputLabel value="#{etiq.respTipoViolencia}" /></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column colspan="7">
+                                <p:selectOneRadio id="tipoVio" value="#{oHojaLesion.hojaLesiones.lesion.tipoViolencia.claveParametro}" requiredMessage="Debe indicar el tipo de violencia" required="#{oHojaLesion.requiereTipoViolencia()}" disabled="#{oHojaLesion.habilitaTipoViolencia()}">
+                                    <f:selectItems value="#{oHojaLesion.listaTipoViolencia}" var="tv"
+                                                   itemLabel="#{tv.valor}" itemValue="#{tv.claveParametro}#{tv.tipoParametro}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.agenteLesion}" /></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column colspan="6">
+                                <p:selectOneRadio id="aglesion" value="#{oHojaLesion.hojaLesiones.lesion.agenteLesion.claveParametro}" required="true" requiredMessage="Debe indicar un agente de lesión" layout="grid" columns="5">
+                                    <f:selectItems value="#{oHojaLesion.hojaLesiones.lesion.agenteLesion.buscarAgenteLesion()}" var="agLes"
+                                                   itemLabel="#{agLes.valor}" itemValue="#{agLes.claveParametro}#{agLes.tipoParametro}"/>
+                                    <p:ajax update="cauLes usoeq" event="valueChange"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                    </p:row>
+                    <p:row>
+                         <p:column colspan="3" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.violAutoinflingido}" /></p:column>
+                         <p:column colspan="4" styleClass="ui-widget-header" ><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.pacBajoEfectos}" /></p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:selectOneRadio id="casvio" value="#{oHojaLesion.hojaLesiones.lesion.casoEventoAuto}" requiredMessage="Debe indicar si el caso es de violencia o evento autoinflingido" disabled="#{oHojaLesion.habilitaEventoauto()}" required="#{oHojaLesion.requiereEventoAuto()}">
+                                    <f:selectItem itemLabel="ÚNICA VEZ" itemValue="U" />
+                                    <f:selectItem itemLabel="REPETIDO" itemValue="R" />
+                                </p:selectOneRadio>
+                        </p:column>
+                        <p:column colspan="4">
+                            <p:selectOneRadio id="pbe" value="#{oHojaLesion.hojaLesiones.lesion.pacBajoEfectos.claveParametro}" requiredMessage="Debe indicar si el paciente usó drogas" required="true">
+                                <f:selectItems value="#{oHojaLesion.listaPacBajoEfectos}" var="pefe"
+                                                   itemLabel="#{pefe.valor}" itemValue="#{pefe.claveParametro}#{pefe.tipoParametro}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                    </p:row>
+                    
+                    
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.causaVehiculo}" /></p:column>
+                        <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.eqSeguridad}" /></p:column>
+                        <p:column styleClass="ui-widget-header" colspan="2"><p:outputLabel value="#{etiq.eqSeguridadUsado}" /></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{etiq.lesionadoEs}"/><br/>
+                                <p:selectOneRadio id="cauLes" value="#{oHojaLesion.hojaLesiones.lesion.siVehiculo.claveParametro}" disabled="#{oHojaLesion.habilitaSiVehiculo()}" requiredMessage="Debe indicar que era el lesionado en caso de acciente de vehiculo" required="#{oHojaLesion.requiereSiVehiculo()}" layout="grid" columns="5">
+                                    <f:selectItems value="#{oHojaLesion.causaAccidente}" var="cauLes"
+                                                   itemLabel="#{cauLes.valor}" itemValue="#{cauLes.claveParametro}#{cauLes.tipoParametro}"/>
+                                     
+                                </p:selectOneRadio>
+                            </p:column>
+                        
+                        <p:column colspan="2">
+                            <p:selectOneRadio id="usoeq" value="#{oHojaLesion.hojaLesiones.lesion.equipoSeguridad.claveParametro}" layout="grid" columns="5" requiredMessage="Debe indicar si el paciente usó equipo de seguridad"  disabled="#{oHojaLesion.habilitaSiVehiculo()}" required="#{oHojaLesion.requiereSiVehiculo()}">
+                                <f:selectItems value="#{oHojaLesion.usoEquipo}" var="usoqe"
+                                                   itemLabel="#{usoqe.valor}" itemValue="#{usoqe.claveParametro}#{usoqe.tipoParametro}"/>
+                                <p:ajax update="nomeq" event="valueChange"/>
+                            </p:selectOneRadio>
+                        </p:column>
+                        
+                        <p:column colspan="2">
+                            <p:selectOneRadio id="nomeq" value="#{oHojaLesion.hojaLesiones.lesion.nomEqSeguridad.claveParametro}" disabled="#{oHojaLesion.habilitaNombreEquipoSeguridad()}" requiredMessage="Debe indicar el nombre del equipo de seguridad" required="#{oHojaLesion.requiereNombreEquipoSeguridad()}" layout="grid" columns="5">
+                                <f:selectItems value="#{oHojaLesion.equipoNombre}" var="nomequi"
+                                                   itemLabel="#{nomequi.valor}" itemValue="#{nomequi.claveParametro}#{nomequi.tipoParametro}"/>
+                                </p:selectOneRadio>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.areaGrave}" /></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column colspan="6">
+                                <p:selectOneRadio id="areAn" value="#{oHojaLesion.hojaLesiones.lesion.areaAnatomicaGrave.claveParametro}" required="true" requiredMessage="Debe indicar el área anatómica grave" layout="grid" columns="10">
+                                    <f:selectItems value="#{oHojaLesion.hojaLesiones.lesion.areaAnatomicaGrave.buscarAreaAnatomica()}" var="arAn"
+                                                   itemLabel="#{arAn.valor}" itemValue="#{arAn.claveParametro}#{arAn.tipoParametro}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.consecuenciaResultante}" /></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column colspan="6">
+                                <p:selectOneRadio id="conRes" value="#{oHojaLesion.hojaLesiones.lesion.consecuenciaResultante.claveParametro}" required="true" requiredMessage="Debe indicar la consecuencia resultante" layout="grid" columns="11">
+                                    <f:selectItems value="#{oHojaLesion.hojaLesiones.lesion.consecuenciaResultante.buscarConsecuenciaResultante()}" var="cRes"
+                                                   itemLabel="#{cRes.valor}" itemValue="#{cRes.claveParametro}#{cRes.tipoParametro}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.atnPrehospitalaria}" /></p:column>
+                        <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.tiempoTraslado}" /></p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:selectOneRadio id="atnPH" value="#{oHojaLesion.hojaLesiones.lesion.atnPreHospitalaria}" required="true" requiredMessage="Debe indicar si el paciente recibio atención prehospitalaria">
+                                    <f:selectItem itemLabel="SI" itemValue="true" />
+                                    <f:selectItem itemLabel="NO" itemValue="false" />
+                            </p:selectOneRadio>
+                         </p:column>
+                        <p:column colspan="3">
+                            <p:inputMask id="tiempTrasl" mask="99:99" size="7" value="#{oHojaLesion.hojaLesiones.lesion.tiempoTraslado}" required="true" requiredMessage="Debe ingresar el tiempo de traslado a la unidad médica">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.HorasUrgsValidator"/>
+                                <f:ajax render="mentHoraTr" execute="@this" event="valueChange"/>
+                            </p:inputMask>
+                            <p:message for="tiempTrasl" id="mentHoraTr"/>
+                        </p:column>
+                    </p:row>        
+                </p:panelGrid>
+            </p:tab>
+              
+              <!-- *****************************AGRESOR   ESTA SE MUEVE A EVENTO************************************
+              ************************************++++++++++++++++++++++++++++++++++*+++++++++++++++++++++++++++++++-->
+            
+            <p:tab title="#{etiq.agresor}">
+                <p:panelGrid>
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.agresor}:"/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.edad}:"/><br/></p:column>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.sexo}:"/><br/></p:column>
+                    <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel value="#{etiq.parentescoAfectado}:"/><br/></p:column>
+                </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:selectOneRadio id="tipAgr" value="#{oHojaLesion.hojaLesiones.agresor.tipoAgresor}">
+                                    <f:selectItem itemLabel="#{etiq.unico}" itemValue="1" />
+                                    <f:selectItem itemLabel="#{etiq.masDeUno}" itemValue="2" />
+                                     <p:ajax update="edadag sexoag parenRes agreEfe" event="valueChange"/>
+                            </p:selectOneRadio>
+                         </p:column>
+                        
+                        <p:column>
+                            <p:inputMask mask="9?99" id="edadag" disabled="#{oHojaLesion.habilitaDatosAgresor()}" requiredMessage="Debe ingresar la edad del agresor" required="#{oHojaLesion.requiereDatosAgresor()}" value="#{oHojaLesion.hojaLesiones.agresor.edadAgresor}"/>
+                         </p:column>
+                        
+                          <p:column>
+                              <p:selectOneRadio id="sexoag" value="#{oHojaLesion.hojaLesiones.agresor.sexoAgresor}" requiredMessage="Debe ingresar el sexo del agresor" required="#{oHojaLesion.requiereDatosAgresor()}" disabled="#{oHojaLesion.habilitaDatosAgresor()}">
+                                    <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                    <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                </p:selectOneRadio>
+                          </p:column>
+                        
+                        <p:column colspan="3">
+                            <p:selectOneRadio id="parenRes" value="#{oHojaLesion.hojaLesiones.agresor.parentescoConAfectado.claveParametro}" requiredMessage="Debe ingresar el parentesco del agresor con el afectado" disabled="#{oHojaLesion.habilitaDatosAgresor()}" required="#{oHojaLesion.requiereDatosAgresor()}" layout="grid" columns="11">
+                                <f:selectItems value="#{oHojaLesion.parentescoAgresor}" var="pAg"
+                                                   itemLabel="#{pAg.valor}" itemValue="#{pAg.claveParametro}#{pAg.tipoParametro}"/>
+                                </p:selectOneRadio>
+                        </p:column>
+                    </p:row>
+                    
+                 <p:row>
+                     <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel value="#{etiq.sospBajoEfectos}:"/></p:column>
+                </p:row>
+                <p:row>
+                        <p:column colspan="6">
+                            <p:selectOneRadio id="agreEfe" value="#{oHojaLesion.hojaLesiones.agresor.agresorBajoEfecto.claveParametro}" requiredMessage="Debe indicar si el agresor se encontraba bajo efectos de drogas" required="#{oHojaLesion.requiereDatosAgresor()}" layout="grid" columns="11" disabled="#{oHojaLesion.habilitaDatosAgresor()}">
+                                <f:selectItems value="#{oHojaLesion.bajoEfectos}" var="befe"
+                                                   itemLabel="#{befe.valor}" itemValue="#{befe.claveParametro}#{befe.tipoParametro}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                </p:row>
+                </p:panelGrid>
+            </p:tab>
+              
+              <!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+              +++++++++++++++++++++++++++++++++++++++ATENCION+++++++++++++++++++++++++++++++++++++++
+              +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            
+            <p:tab title="#{etiq.atencion}">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.fecha}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.hora}:"/></p:column>
+                        <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.servicioAtn}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tiempoEstancia}:"/></p:column>
+                   </p:row>   
+                    
+                    <p:row>
+                        <p:column>
+                            <p:calendar mask="9999/99/99" readonlyInput="true" effect="fold" maxdate="#{oHojaLesion.fechaHoy}" required="true" requiredMessage="Debe indicar la fecha de atención"  value="#{oHojaLesion.hojaLesiones.atencion.fechaAtencion}" locale="es">
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:inputMask id="hrAten" mask="99:99" size="7" value="#{oHojaLesion.hojaLesiones.atencion.horaAtencion}" required="true" requiredMessage="Debe indicar la hora de atención">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.HorasUrgsValidator"/>
+                                <f:ajax render="mentHoraA" execute="@this" event="valueChange"/>
+                            </p:inputMask>
+                            <p:message for="hrAten" id="mentHoraA"/>
+                        </p:column>
+                        
+                        <p:column colspan="3">
+                            <p:selectOneRadio id="servAtn" value="#{oHojaLesion.hojaLesiones.atencion.servicioAtencion.claveParametro}" required="true" requiredMessage="Debe indicar un servicio de atención" layout="grid" columns="11">
+                                <f:selectItems value="#{oHojaLesion.servAtencion}" var="sAtn"
+                                                   itemLabel="#{sAtn.valor}" itemValue="#{sAtn.claveParametro}#{sAtn.tipoParametro}"/>
+                                </p:selectOneRadio>
+                        </p:column>
+                        
+                        <p:column>
+                            <p:inputMask id="hrUrgs" mask="99:99" size="7" value="#{oHojaLesion.hojaLesiones.atencion.horaLesionUrgs}">
+                                <f:validator validatorId="mx.gob.hrrb.validadores.HorasUrgsValidator"/>
+                                <f:ajax render="mentHoraUrgs" execute="@this" event="valueChange"/>
+                            </p:inputMask>
+                            <p:message for="hrUrgs" id="mentHoraUrgs"/>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" colspan="6"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.tipoAtencion}:"/></p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="6">
+                            <p:selectOneRadio id="tipoAtn" value="#{oHojaLesion.hojaLesiones.atencion.tipoAtencion.claveParametro}" required="true" requiredMessage="Debe elegir un tipo de atención" layout="grid" columns="11">
+                                <f:selectItems value="#{oHojaLesion.tipoAtencion}" var="stipA"
+                                                   itemLabel="#{stipA.valor}" itemValue="#{stipA.claveParametro}#{stipA.tipoParametro}"/>
+                                </p:selectOneRadio>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        
+                        <p:column styleClass="ui-widget-header" colspan="3"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.destinoDespAtn}:"/></p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        
+                        <p:column colspan="3">
+                            <p:selectOneRadio id="destino" value="#{oHojaLesion.hojaLesiones.atencion.destinoDespAtencion.claveParametro}" requiredMessage="Debe elegir un destino después de la atención" required="true" layout="grid" columns="3">
+                                <f:selectItems value="#{oHojaLesion.destinoDespuesAtn}" var="destDes"
+                                                   itemLabel="#{destDes.valor}" itemValue="#{destDes.claveParametro}#{destDes.tipoParametro}"/>
+                                </p:selectOneRadio>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="6" styleClass="ui-widget-header"><p:outputLabel value="#{etiq.diagFinales}"/></p:column>
+                    </p:row>
+             
+             <p:row>
+                 
+                 <p:column>
+                     <p:outputLabel value="1.-"/><h:outputLabel class="requerido" value="*"/>
+                 </p:column>
+                 
+                 <p:column colspan="4"><p:autoComplete id="diag1" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" required="true" requiredMessage="Debe ingresar al menos una afección" styleClass="bordes"
+                                                       value="#{oHojaLesion.admisionUrgs.afePrincipal.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oHojaLesion.admisionUrgs.afePrincipal.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" 
+                                                       disabled="#{oHojaLesion.habilita(0)}" validatorMessage="Debe ingresar al un diagnóstico">
+                                            <p:ajax update="CIE10-1 diag2 diag3 CIE10-3 CIE10-4 diag4" event="itemSelect"/>
+                                      </p:autoComplete>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel value="#{etiq.cie10}: " />
+                     <p:inputText id="CIE10-1" value="#{oHojaLesion.admisionUrgs.afePrincipal.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+                 
+             </p:row>
+             
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="2.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4"><p:autoComplete id="diag2" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                       value="#{oHojaLesion.admisionUrgs.afeSegunda.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oHojaLesion.admisionUrgs.afeSegunda.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oHojaLesion.habilita(1)}" >
+                                            <p:ajax update="CIE10-2 diag3" event="itemSelect"/>
+                                            <p:ajax update="CIE10-2 diag3" event="blur"/>
+                                       </p:autoComplete>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel value="#{etiq.cie10}: " />
+                    <p:inputText id="CIE10-2" value="#{oHojaLesion.admisionUrgs.afeSegunda.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+             
+             </p:row>
+             
+            <p:row>
+                 <p:column>
+                     <p:outputLabel value="3.-"/>
+                 </p:column>
+                 
+                 <p:column colspan="4"><p:autoComplete id="diag3" onkeypress="return validaCaracter(event);"  queryDelay="1000" size="100" minQueryLength="3" styleClass="bordes"
+                                                       value="#{oHojaLesion.admisionUrgs.afeTercera.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oHojaLesion.admisionUrgs.afeTercera.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oHojaLesion.habilita(2)}" >
+                                            <p:ajax update="CIE10-3" event="itemSelect"/>
+                                            <p:ajax update="CIE10-3" event="blur"/>
+                                       </p:autoComplete>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel value="#{etiq.cie10}: " />
+                    <p:inputText id="CIE10-3" value="#{oHojaLesion.admisionUrgs.afeTercera.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                 </p:column>
+             </p:row>
+                    
+             <p:row>
+                 <p:column>
+                     <p:outputLabel value="Reselección AF. P."/>
+                 </p:column>
+                 
+                 <p:column colspan="4"><p:autoComplete id="diag4" onkeypress="return validaCaracter(event);" queryDelay="1000" required="true" size="100" minQueryLength="3" styleClass="bordes"
+                                                       value="#{oHojaLesion.admisionUrgs.afeResAP.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oHojaLesion.admisionUrgs.afeResAP.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300" disabled="#{oHojaLesion.habilita(3)}">
+                                            <p:ajax update="CIE10-4" event="itemSelect"/>
+                                       </p:autoComplete>
+                </p:column>
+                 
+                 <p:column>
+                         <p:outputLabel value="#{etiq.cie10}: " />
+                        <p:inputText id="CIE10-4" value="#{oHojaLesion.admisionUrgs.afeResAP.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                </p:column>
+             </p:row>
+             
+             
+             <p:row>
+                 <p:column colspan="6" styleClass="ui-widget-header">
+                     <p:outputLabel value="#{etiq.causaExterna}"/>
+                 </p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column></p:column>
+                 <p:column colspan="4"><p:autoComplete id="diag5" size="100" onkeypress="return validaCaracter(event);" queryDelay="1000" minQueryLength="3" styleClass="bordes" requiredMessage="Debe indicar una casusa externa"
+                                                       value="#{oHojaLesion.admisionUrgs.afeCuarta.CIE10.descripcionDiag}" 
+                                                       completeMethod="#{oHojaLesion.admisionUrgs.afeCuarta.CIE10.completar}" effect="fade"
+                                                       onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300">
+                                            <p:ajax update="CIE10-5" event="itemSelect"/>
+                                       </p:autoComplete>
+                </p:column>
+                 
+                 <p:column>
+                         <p:outputLabel value="#{etiq.cie10}: " />
+                        <p:inputText id="CIE10-5" value="#{oHojaLesion.admisionUrgs.afeCuarta.CIE10.claveCIE10}" size="5"  readonly="true" styleClass="bordes"/>
+                </p:column>
+             </p:row>
+             
+             <p:row>
+                 <p:column colspan="3" styleClass="ui-widget-header">
+                     <h:outputLabel class="requerido" value="*"/><p:outputLabel value="#{etiq.avisoMP}"/>
+                 </p:column>
+                 <p:column colspan="3" styleClass="ui-widget-header">
+                 </p:column>
+             </p:row>
+             <p:row>
+                 <p:column colspan="3">
+                     <p:selectOneRadio value="#{oHojaLesion.hojaLesiones.atencion.ministerioPublico}" required="true" requiredMessage="Debe indicar si se dió aviso al ministerio público">
+                         <f:selectItem itemLabel="SI" itemValue="S"/>
+                         <f:selectItem itemLabel="NO" itemValue="N"/>
+                     </p:selectOneRadio>
+                 </p:column>
+                 <p:column colspan="3"></p:column>
+             </p:row>
+                </p:panelGrid>
+            </p:tab>
+         </div>
+         </p:tabView>
+            <br/>
+            <div class="centrar">
+                <p:commandButton value="#{etiq.guardarCambios}" action="#{oHojaLesion.insertaHojaLesion()}" validateClient="true" ajax="false" icon="ui-icon-disk"/>
+                </div>
+         </h:form>
+          <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>        
+   </div> 
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>

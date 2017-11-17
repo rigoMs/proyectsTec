@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+    <div class="centrar">
+        <h:form class="centrar" id="frmInicio">
+            <br/>
+            <p:growl id="msgs" showDetail="true" />
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+            <h3><h:outputLabel value="#{etiq.admExpDep}"/></h3>
+            <p:tabView dynamic="true" cache="false" id="tabViewDepurar">
+                <p:tab title="#{etiq.depurar} #{etiq.expedientes}" id="tabDepExp">
+                    <p:dataTable id="dtExpADep" var="oRpt"
+                                 value="#{oExpParaDep.listaExpParaDepurar}"
+                                 filteredValue="#{oExpParaDep.listFiltered}"
+                                 paginator="true"
+                                 rows="20"
+                                 emptyMessage="#{etiq.noRegistros}"
+                                 styleClass="centrar"
+                                 rendered="true">
+                        <f:facet name="header" >
+                            <h:outputLabel value="#{etiq.expedientes} a #{etiq.depurar}"/>
+                        </f:facet>
+                        <p:column filterBy="#{oRpt.paciente.expediente.numero}" filterMatchMode="exact" style="width: 12%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.noExp}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.paciente.expediente.numero}"/>
+                        </p:column>
+                        <p:column style="width: 15%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.pacien}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.paciente.nombreCompleto}"/>
+                        </p:column>
+                        <p:column style="width: 8%" >
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechanacimiento}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.paciente.fechaNac}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column style="width: 6%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.edad}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.paciente.edadNumero}"/>
+                        </p:column>
+                        <p:column style="width: 10%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechaApertura}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.paciente.expediente.fechaApertura}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column style="width: 5%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.sexo}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.paciente.sexoP}"/>
+                        </p:column> 
+                        <p:column style="width: 12%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.curp}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.paciente.curp}"/>
+                        </p:column>
+                       <p:column style="width: 8%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.ultimavez}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.fechaIngreso}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column style="width: 9%">
+                           <!-- <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.depurar}"/> </f:facet> -->
+                            <p:commandButton style="text-align: center" value="#{etiq.depurar}"  icon="ui-icon-circle-close">
+                                <p:ajax listener="#{oExpParaDep.registrarDepuracion(oRpt.paciente.expediente.numero)}" update=":frmInicio :frmInicio:tabViewDepurar:tabDepExp :frmInicio:tabViewDepurar:tabConsExpDep :frmInicio:msgs"/>
+                                </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::  -->
+                <p:tab title="#{etiq.consultar} #{etiq.expDepurados}" id="tabConsExpDep">
+                    <p:tabView dynamic="true" cache="false" id="tabViewExpDepurados">
+                        <!-- <p:ajax event="tabChange" listener="#{oExpParaDep.renderizar}"/> -->
+                        <p:tab title="#{etiq.por} #{etiq.año}" id="tabExpDep1">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column style="text-align: center" styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; " value="#{etiq.accesar} #{etiq.año}"/></p:column>
+                                    <p:column>
+                                        <p:inputText id="año" value="#{oExpParaDep.año}" size="6" required="true" 
+                                                     requiredMessage="Debe ingresar el año">
+                                           <f:ajax execute="@this" event="valueChange"/>
+                                       </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <f:facet name="footer">
+                                    <p:row>
+                                        <p:column colspan="2" styleClass="centrar">
+                                            <p:commandButton type="buttom" style="text-align: center" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true"
+                                                             actionListener="#{oExpParaDep.buscaExpDepuradosPorFecha()}" update=":frmInicio :frmInicio:tabViewDepurar:tabConsExpDep :frmInicio:msgs" >
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable id="dtExpDepurados" var="oRpt"
+                                         value="#{oExpParaDep.listaExpDepuradosPorAño}"
+                                         widgetVar="tableDep"
+                                         paginator="true"
+                                         rows="20"
+                                         emptyMessage="#{etiq.noRegistros}"
+                                         styleClass="centrar"
+                                         rendered="#{not empty oExpParaDep.listaExpDepuradosPorAño}">
+                                <p:column headerText="#{etiq.noExp}" styleClass=" centrado_texto" filterBy="#{oRpt.paciente.expediente.numero}" filterMatchMode="exact" style="width: 12%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.noExp}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.pacien}" style="width: 15%" styleClass="textoIzq">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.pacien}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.nombreCompleto}"/>
+                                </p:column>
+                                <p:column headerText="#{etiq.fechanacimiento}" styleClass=" centrado_texto" style="width: 10%" >
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechanacimiento}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.fechaNac}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{etiq.edad}" styleClass=" centrado_texto" style="width: 6%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.edad}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.edadNumero}"/>
+                                </p:column>
+                                <p:column style="width: 10%" styleClass=" centrado_texto">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechaApertura}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.expediente.fechaApertura}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="width: 5%" styleClass=" centrado_texto">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.sexo}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.sexoP}"/>
+                                </p:column> 
+                                <p:column style="width: 12%" styleClass=" centrado_texto">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.curp}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.curp}"/>
+                                </p:column>
+                               <p:column style="width: 8%" styleClass=" centrado_texto">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.ultimavez}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.fechaIngreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="width: 8%" styleClass=" centrado_texto">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechDepuracion}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.expediente.fechaDepuracion}">
+                                       <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:dataTable>
+                            <br/>
+                            <div  class="centrado_texto">
+                                <p:commandButton rendered="#{not empty oExpParaDep.listaExpDepuradosPorAño}" value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                                    <p:dataExporter type="xls" target="dtExpDepurados" fileName="Expedientes_depurados #{oExpParaDep.año}" postProcessor="#{oExpParaDep.postProcessXLS}"/>
+                                </p:commandButton>
+                            </div>
+                        </p:tab>
+                        <p:tab title="#{etiq.todos}" id="tabExpDep2">
+                            <p:dataTable id="dtExpDepurados2" var="oRpt"
+                                         value="#{oExpParaDep.listaExpDepurados}"
+                                         filteredValue="#{oExpParaDep.listFiltered3}"
+                                         widgetVar="tableDep2"
+                                         paginator="true"
+                                         rows="20"
+                                         emptyMessage="#{etiq.noRegistros}"
+                                         styleClass="centrar"
+                                         rendered="true">
+                                <p:column filterBy="#{oRpt.paciente.expediente.numero}" filterMatchMode="exact" style="width: 12%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.noExp}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.expediente.numero}"/>
+                                </p:column>
+                                <p:column style="width: 15%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.pacien}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.nombreCompleto}"/>
+                                </p:column>
+                                <p:column style="width: 8%" >
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechanacimiento}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.fechaNac}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="width: 6%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.edad}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.edadNumero}"/>
+                                </p:column>
+                                <p:column style="width: 10%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechaApertura}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.expediente.fechaApertura}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="width: 5%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.sexo}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.sexoP}"/>
+                                </p:column> 
+                                <p:column style="width: 12%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.curp}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.curp}"/>
+                                </p:column>
+                               <p:column style="width: 8%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.ultimavez}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.fechaIngreso}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column style="width: 8%">
+                                    <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechDepuracion}"/> </f:facet>
+                                    <p:outputLabel value="#{oRpt.paciente.expediente.fechaDepuracion}">
+                                       <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:dataTable>
+                            <br/>
+                            <div  class="centrado_texto">
+                                <p:commandButton rendered="#{not empty oExpParaDep.listaExpDepurados}" value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false" >
+                                    <p:dataExporter type="xls" target="dtExpDepurados2" fileName="Rpt_Expedientes_depurados" postProcessor="#{oExpParaDep.postProcessXLS2}"/>
+                                </p:commandButton>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+                </p:tab>
+            </p:tabView>
+            <br/><br/>
+        </h:form>
+    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">
+        <f:facet name="start">
+            <p:graphicImage value="/imgs/loading.gif" />
+        </f:facet>
+    </p:ajaxStatus>
+    </div>
+    </ui:define>
+    </ui:composition>
+</html>

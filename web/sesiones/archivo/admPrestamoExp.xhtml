@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+    <div class="centrar">
+        <h:form class="centrar" id="frmInicio">
+            <br/>
+            <p:growl id="msgs" showDetail="true" />
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core/hrrb_labels" var="etiq"/>
+            <div style=" text-align: center"><h3><h:outputLabel value="#{etiq.admPresExp}"/></h3></div>
+            <p:tabView dynamic="true" id="tabRegPres" cache="false">
+                <p:tab title="#{etiq.regPres}" id="tabPres">
+                   <!-- <div style=" text-align: center"><h:outputLabel style="font-weight: bold;" value="#{etiq.regPres}"/></div> -->
+                    <p:accordionPanel style="width: 800px" styleClass="centrar" id="apBusca" dynamic="true">
+                        <p:ajax event="tabChange" listener="#{oBuscarPac.requerir}" update="@this, nom app exp" />
+                        <p:tab title="#{etiq.buscarDatosBasicos}" id="tabN">
+                            <p:panelGrid columns="4">
+                                <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                <p:column></p:column>
+                                <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPac.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" 
+                                             required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Nombre" onkeypress="return validaCaracter(event);"/>
+                                <p:inputText styleClass="bordes" id="app" value="#{oBuscarPac.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" 
+                                             required="#{oBuscarPac.nom}" requiredMessage="Debe Ingresar Apellido Paterno" onkeypress="return validaCaracter(event);"/>
+                                <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPac.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" 
+                                             onkeypress="return validaCaracter(event);"/>
+                                <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true" update=":frmInicio :frmInicio:tabRegPres:tabPres :frmInicio:msgs">
+                                    <f:setPropertyActionListener target="#{oBuscarPac.paciente.opcionUrg}" value="#{0}"/>
+                                </p:commandButton>
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="#{etiq.buscarPorExpediente}" id="tabE">
+                            <p:panelGrid columns="3" styleClass="frmlogin">
+                                <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPac.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero" 
+                                             required="#{oBuscarPac.exp}" requiredMessage="Debe Ingresar un Número de Expediente">
+                                    <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                    <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                                </p:inputText>
+                                <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" validateClient="true" update=":frmInicio :frmInicio:tabRegPres:tabPres :frmInicio:msgs">
+                                    <f:setPropertyActionListener target="#{oBuscarPac.paciente.opcionUrg}" value="#{1}"/>
+                                </p:commandButton>
+                            </p:panelGrid>
+                            <p:message for="exp" id="mentExp"></p:message>
+                        </p:tab>
+                    </p:accordionPanel>
+                    <br/>
+                    <br/>
+                    <p:dataTable id="dtDatos"
+                                 var="oPacNew" paginator="true" rows="15"
+                                 value="#{oBuscarPac.paciente.buscarExp()}"
+                                 emptyMessage="#{etiq.noRegistro}"
+                                 rendered="#{not empty oBuscarPac.paciente.buscarExp()}" styleClass="centrar">
+                        <p:column style="width: 100px" >
+                            <f:facet name="header" > <h:outputText style="font-weight: bold; " value="#{etiq.noExp}"/> </f:facet>
+                            <p:outputLabel value="#{oPacNew.expediente.numero}"/>
+                        </p:column>
+                        <p:column style="width: 180px" >
+                            <f:facet name="header" > <h:outputText  style="font-weight: bold; " value="#{etiq.nombre}"/> </f:facet>
+                            <p:outputLabel style="text-indent: 20px" value="#{oPacNew.nombreCompleto}"/>
+                        </p:column> 
+                        <p:column style="width: 100px" >
+                            <f:facet name="header" > <h:outputText style="font-weight: bold" value="#{etiq.fechanac}"/> </f:facet>
+                            <p:outputLabel value="#{oPacNew.fechaNac}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column style="width: 90px">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold" value="#{etiq.edad}"/> </f:facet>
+                            <p:outputLabel value="#{oPacNew.edadNumero}"/>
+                        </p:column>
+                        <p:column style="width: 50px">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.sexo}"/> </f:facet>
+                            <p:outputLabel value="#{oPacNew.sexoP}"/>
+                        </p:column>
+                        <p:column style="width: 110px">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.curp}"/> </f:facet>
+                            <p:outputLabel value="#{oPacNew.curp}"/>
+                        </p:column>
+                        <p:column style="width: 200px">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.municipio}"/> </f:facet>
+                            <p:outputLabel value="#{oPacNew.municipio.descripcionMun}"/>
+                        </p:column>
+                        <p:column style="width: 100px" >
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value=""/> </f:facet>
+                            <p:commandButton oncomplete="PF('dlgModal').show();"
+                                             value="#{etiq.seleccionar}" icon="ui-icon-check">
+                                <p:ajax listener="#{oAdmPresExp.actualizaPac(oPacNew.folioPaciente, oPacNew.expediente.numero)}" update=":frmRegPres"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+                <p:tab title="#{etiq.regDev}" id="tabDev">
+                   <!-- <h:outputLabel style="font-weight: bold;" value="#{etiq.regDev}"/>
+                    <br/> -->
+                    <p:dataTable id="dtDevExp" var="oRpt"
+                                 value="#{oAdmPresExp.listaExpPrestados}"
+                                 filteredValue="#{oAdmPresExp.filteredPresExp}"
+                                 paginator="true"
+                                 rows="10"
+                                 emptyMessage="#{etiq.noRegistros}"
+                                 styleClass="centrar" style="width: 1200px"
+                                 rendered="true">
+                        <p:column filterBy="#{oRpt.exp.numero}" style="width: 12%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.noExp}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.exp.numero}"/>
+                        </p:column>
+                        <p:column style="width: 19%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.pacien}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.exp.paciente.nombreCompleto}"/>
+                        </p:column>
+                        <p:column style="width: 10%" >
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechanac}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.exp.paciente.fechaNac}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" type="Date"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column style="width: 7%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.edad}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.exp.paciente.edadNumero}"/>
+                        </p:column> 
+                        <p:column style="width: 5%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.sexo}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.exp.paciente.sexoP}"/>
+                        </p:column> 
+                        <p:column style="width: 10%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.fechaYhora} #{etiq.prestamo}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.fechaPres}">
+                                <f:convertDateTime pattern="dd-MM-yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                            </p:outputLabel>
+                        </p:column> 
+                        <p:column style="width: 15%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.ubicacion}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.serUbicacion.descripcion}"/>
+                        </p:column>
+                        <p:column style="width: 15%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.presto}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.personalEntrega.nombreCompleto}" />
+                        </p:column> 
+                        <p:column style="width: 15%">
+                            <f:facet name="header" > <h:outputText style="font-weight: bold;" value="#{etiq.solicito}"/> </f:facet>
+                            <p:outputLabel value="#{oRpt.personalRecibe.nombreCompleto}" />
+                        </p:column>
+                        <p:column style="width: 5%">
+                            <p:commandButton style="text-align: center" icon="ui-icon-check">
+                                <p:ajax listener="#{oAdmPresExp.regDevolucion(oRpt.folioPresExp, oRpt.exp.numero)}" update=":frmInicio :frmInicio:msgs"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+            <br/>
+        </h:form>
+        <!-- Dialogo para REGISTRAR datos del prestamo de expediente :::::::::::::::::::::::::::::::::::::::-->
+        <p:dialog header="#{etiq.ingresarDatos}" widgetVar="dlgModal"
+                  showEffect="bounce" hideEffect="explode"
+                  height="270" resizable="false" closable="true">
+            <h:form id="frmRegPres">
+                    <p:panelGrid style="width: 900px">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.pacien}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.edad}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.sexo}"/></p:column>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.noExp}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column ><h:outputLabel value="#{oAdmPresExp.pac.nombreCompleto}"/></p:column>
+                            <p:column><h:outputLabel value="#{oAdmPresExp.pac.edadNumero}"/></p:column>
+                            <p:column ><h:outputLabel value="#{oAdmPresExp.pac.sexoP}"/></p:column> 
+                            <p:column ><h:outputLabel value="#{oAdmPresExp.pac.expediente.numero}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.fechaYhora} #{etiq.prestamo}"/></p:column>
+                            <p:column styleClass="ui-widget-header" ><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.entrega}"/></p:column>
+                            <p:column colspan="2" styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.servicio}"/></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column >
+                                <p:outputLabel value="#{oAdmPresExp.fecha}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy hh:mm a" type="Date" timeZone="America/Mexico_City"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column><h:outputLabel value="#{oAdmPresExp.presExp.personalFirm.nombreCompleto}"/></p:column>
+                            <p:column colspan="2">
+                                <p:selectOneMenu id="areas" value="#{oAdmPresExp.presExp.serUbicacion.clave}" 
+                                                 requiredMessage="Debe indicar un area de servicio" required="true">
+                                    <f:selectItem itemValue="" itemLabel="Area de servicio" noSelectionOption="true"/>
+                                    <f:selectItems value="#{oAdmPresExp.listaPrestamoServicioExp}" var="oPS" 
+                                                   itemLabel="#{oPS.descripcion}" itemValue="#{oPS.clave}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4" styleClass="ui-widget-header"><h:outputLabel style="font-weight: bold; text-align: left" value="#{etiq.recExpPres}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:selectOneMenu value="#{oAdmPresExp.claveBusca}" effect="puff" 
+                                                 requiredMessage="Debe indicar el tipo de personal" required="true">
+                                    <p:ajax event="change" listener="#{oAdmPresExp.onPersonalChange()}" update="pers"/>
+                                    <f:selectItem itemLabel="Elige Tipo de personal" itemValue="" noSelectionOption="true" />
+                                    <f:selectItem itemValue="1" itemLabel="#{etiq.medico}"/>
+                                    <f:selectItem itemValue="2" itemLabel="#{etiq.residente}"/>
+                                    <f:selectItem itemValue="3" itemLabel="#{etiq.enfermera}"/>
+                                    <f:selectItem itemValue="4" itemLabel="#{etiq.otro}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:selectOneMenu id="pers" value="#{oAdmPresExp.presExp.personalRecibe.noTarjeta}" effect="puff" 
+                                                 disabled="#{oAdmPresExp.disable}" filter="true" filterMatchMode="startsWith"
+                                                 requiredMessage="Debe indicar el nombre del personal" required="true">
+                                    <f:selectItem itemLabel="#{etiq.nomPersonal}" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{oAdmPresExp.listaPersonalExpPres}" var="oAE" 
+                                                   itemLabel="#{oAE.nombreCompleto}" itemValue="#{oAE.noTarjeta}"/>
+                                    <p:ajax event="valueChange"/>
+                                 </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:commandButton value="#{etiq.regPres}" style="text-align: center" icon="ui-icon-disk"
+                                                 actionListener="#{oAdmPresExp.insertarPrestamo()}" styleClass="bordes"
+                                                 validateClient="true" update=":frmInicio :frmInicio:msgs">
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+        </p:dialog>
+        <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+        </p:ajaxStatus>
+    </div>
+    </ui:define>
+    </ui:composition>
+</html>

@@ -1,0 +1,409 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">   
+    
+         <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <f:loadBundle basename="mx/gob/hrrb_labels" var="etiq"/>
+            <ui:define name="cuerpo">
+                <h:form id="frm-bspact">
+                    <p:growl id="msgs" showDetail="true"></p:growl>                    
+                    <h3 class="centrado_texto"><h:outputLabel value="NOTA PREOPERATORIA"/></h3>
+                    <p:outputPanel style=" width: 60%;" styleClass="centrar">
+                        <p:accordionPanel>
+                            <p:tab title="#{etiq.buscarDatosBasicos}">
+                                <p:panelGrid columns="4" >
+                                    <h:outputLabel class="negrita" value="#{etiq.nombres}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.appat}:"/>
+                                    <h:outputLabel class="negrita" value="#{etiq.apmat}:"/>
+                                    <h:outputLabel />
+                                    <p:inputText styleClass="bordes" id="nom" value="#{oBuscarPaciente.paciente.nombres}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>                        
+                                    <p:inputText styleClass="bordes" id="app" value="#{oBuscarPaciente.paciente.apPaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:inputText styleClass="bordes" id="apm" value="#{oBuscarPaciente.paciente.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" onkeypress="return validaCaracter(event);"/>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false"
+                                                     update=":frm-bspact :frm-bspact:AC:tablaPac :frm_nota">
+                                        <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{0}"/>
+                                        <f:setPropertyActionListener target="#{oNoPrepe.render}" value="#{false}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>
+                            </p:tab>
+                            <p:tab title="#{etiq.buscarPorExpediente}">
+                                <p:panelGrid columns="3" styleClass="frmlogin">
+                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                    <p:inputText styleClass="bordes" id="exp" value="#{oBuscarPaciente.paciente.expediente.numero}" converterMessage="Error: No se permiten letras, símbolos ni números menores a cero">
+                                        <f:validateLongRange minimum="0" maximum="9999999999"/>
+                                        <f:ajax render="mentExp" execute="@this" event="valueChange" />
+                                    </p:inputText>
+                                    <p:commandButton styleClass="bordes" value="#{etiq.buscar}" icon="ui-icon-search" ajax="false"
+                                                     update=":frm-bspact :frm-bspact:AC:tablaPac :frm_nota">
+                                        <f:setPropertyActionListener target="#{oBuscarPaciente.paciente.opcionUrg}" value="#{1}"/>
+                                        <f:setPropertyActionListener target="#{oNoPrepe.render}" value="#{false}"/>
+                                    </p:commandButton>
+                                </p:panelGrid>
+                                <p:message for="exp" id="mentExp"></p:message>
+                            </p:tab>
+                        </p:accordionPanel>                            
+                    </p:outputPanel> 
+                    <br/> 
+                    <p:outputPanel id="outIdent" style="width: 99%;" styleClass="centrar">
+                         <div class="centrar">
+                             <p:accordionPanel id="AC" rendered="#{not empty oBuscarPaciente.paciente.buscarPacientesConExpediente()}">
+                                   <p:tab title="#{etiq.pacEncontra}">
+                                        <p:dataTable paginator="true" rows="4"  id="tablaPac" var="oPacEnc" 
+                                                     value="#{oBuscarPaciente.paciente.buscarPacientesConExpediente()}" 
+                                                     emptyMessage="#{etiq.noRegistro}" 
+                                                     rendered="#{not empty oBuscarPaciente.paciente.buscarPacientesConExpediente()}" >
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputLabel class="negrita" value="#{etiq.appat}"/>
+                                                </f:facet>
+                                                <h:outputText value="#{oPacEnc.apPaterno}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputLabel class="negrita" value="#{etiq.apmat}"/>
+                                                </f:facet>
+                                                <h:outputText value="#{oPacEnc.apMaterno}"/>
+                                            </p:column>
+                                            <p:column>
+                                                <f:facet name="header">
+                                                    <h:outputLabel class="negrita" value="#{etiq.nombres}"/>
+                                                </f:facet>
+                                                <h:outputText value="#{oPacEnc.nombres}"/>
+                                            </p:column>
+                                            <p:column style="width: 9%">
+                                                <f:facet name="header">
+                                                    <h:outputLabel class="negrita" value="#{etiq.fechanac}"/>
+                                                </f:facet>
+                                                <h:outputText value="#{oPacEnc.fechaNac}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column style="width: 10%">
+                                                <f:facet name="header">
+                                                    <h:outputLabel class="negrita" value="#{etiq.noExp}"/>
+                                                </f:facet>
+                                                <h:outputText value="#{oPacEnc.expediente.numero}"/>
+                                            </p:column>
+                                            <p:column style="width: 20%;">   
+                                                <p:commandButton icon="ui-icon-plus" value="Nota">
+                                                    <p:ajax listener="#{oNoPrepe.nuevaNotaPreoperatoria2(oPacEnc)}" update=":frm_nota :frm_nota:p1 :frm_nota:p2"/>
+                                                </p:commandButton>&nbsp;
+                                                <p:commandButton icon="	ui-icon-search" value="Buscar Notas" >                               
+                                                    <p:ajax listener="#{oNoPrepe.buscaNotasPreoperatoriasAgregadas(oPacEnc)}" update=":oNotas" oncomplete="PF('NotasP').show()"/>
+                                                 </p:commandButton>                                                
+                                            </p:column>                                        
+                                        </p:dataTable>
+                                   </p:tab>
+                             </p:accordionPanel>
+                         </div>
+                     </p:outputPanel> 
+                </h:form>
+                <div style="margin-bottom: 6px"/>
+                <h:form id="frm_nota">
+                    <p:growl id="msgs" showDetail="true"></p:growl>
+                    <p:panelGrid style="margin-bottom: 3px;" id="p1" rendered="#{oNoPrepe.render}">
+                        <p:row>
+                            <p:column colspan="8" styleClass="ui-widget-header" style="text-align: center;"><p:outputLabel value="#{etiq.notaPreoperatoria}"/></p:column>
+                        </p:row>
+                        <p:row>                          
+                            <p:column  styleClass="ui-widget-header" style="text-align: center; width: 13%;">
+                                <p:outputLabel value="Nombre del paciente"/>
+                            </p:column>
+                            <p:column style=" width:  25%;">
+                                <p:outputLabel value="#{oNoPrepe.nota.epiMed.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column  styleClass="ui-widget-header" style="text-align: center; width: 3.5%;">
+                                <p:outputLabel value="Edad:"/>
+                            </p:column>
+                            <p:column style=" width: 7%;">
+                                <p:outputLabel value="#{oNoPrepe.nota.epiMed.paciente.edadNumero}"/>
+                            </p:column>
+                            <p:column  styleClass="ui-widget-header" style="text-align: center; width: 3.5%;">
+                                <p:outputLabel value="Sexo:"/>
+                            </p:column>
+                            <p:column style="width: 5%;">
+                                <p:outputLabel value="#{oNoPrepe.nota.epiMed.paciente.sexoP}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header" style="width: 9%;">
+                                <p:outputLabel value="Fecha realización:"/>
+                            </p:column>
+                            <p:column style="width: 13%;">
+                                <p:outputLabel value="#{oNoPrepe.nota.fechaRealStr}"/> 
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="8" styleClass="ui-widget-header"/>
+                        </p:row>                                
+                    </p:panelGrid>
+                    <p:panelGrid id="p2" rendered="#{oNoPrepe.render}">            
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" style="width: 19%;">
+                                <p:outputLabel value="#{etiq.medico}:"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu value="#{oNoPrepe.nota.medicoSupervisor.noTarjeta}" required="true" 
+                                                 requiredMessage="Seleccione un  medico" disabled="#{oNoPrepe.readOnly}" > 
+                                    <f:selectItem itemLabel="SELECCIONE" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{oNoPrepe.listMedico}" var="oMedpreoperatorio" 
+                                                   itemLabel="#{oMedpreoperatorio.nombreCompleto}"
+                                                   itemValue="#{oMedpreoperatorio.noTarjeta}"/>
+                                    <p:ajax event="valueChange" update=":frm_nota:cedula8" listener="#{oNoPrepe.buscaCedulaProfecional}"/>
+                                </p:selectOneMenu>
+                             </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.cedulaProf}:"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel id="cedula8" value="#{oNoPrepe.nota.medicoSupervisor.cedProf}" />
+                            </p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.cirugia}:"/></p:column>
+                            <p:column style="width: 10%;">
+                                <p:autoComplete id="complete1" onkeypress="return validaCaracter(event);" queryDelay="1000" readonly="#{oNoPrepe.readOnly}" disabled="#{oNoPrepe.readOnly}"
+                                                   size="50" minQueryLength="3" styleClass="bordes"  value="#{oNoPrepe.nota.procedimientosRealizados.CIE9.descripcion}" 
+                                                   completeMethod="#{oNoPrepe.nota.procedimientosRealizados.CIE9.completar}" required="true"
+                                                   onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300" requiredMessage="Selecciona una cirugía">
+                                    <p:ajax listener="#{oNoPrepe.nota.procedimientosRealizados.CIE9.nuevo()}" update=":frm_nota:cie9 :frm_nota:msgs"  event="itemSelect"/>
+                                    </p:autoComplete>                                        
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="#{etiq.fecha}:"/>
+                            </p:column>
+                            <p:column style="text-align: center;">
+                                <p:calendar value="#{oNoPrepe.nota.fechaCirugia}" locale="es" mindate="#{oNoPrepe.nota.fechaRealizacion}" 
+                                            size="7" disabled="#{oNoPrepe.readOnly}" pattern="dd/MM/yyyy" required="true" requiredMessage="Selecciona una fecha">
+                                    <p:ajax event="dateSelect" listener="#{oNoPrepe.habilitaHora}" update=":frm_nota:horaPreope"/>
+                                </p:calendar>                                                        
+                            </p:column>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.hora}:"/></p:column>
+                            <p:column style="text-align: center;">
+                                <p:calendar id="horaPreope" value="#{oNoPrepe.nota.horaCirugia}" timeOnly="true" pattern="HH:mm" locale="es"
+                                            disabled="#{oNoPrepe.disable}" size="7" required="true" requiredMessage="Selecciona ala hora de la cirugía">
+                                    <p:ajax event="dateSelect"/>
+                                </p:calendar>
+                            </p:column>
+                            <p:column colspan="1" styleClass="ui-widget-header">
+                                <p:outputLabel value="CIE-9"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="cie9" value="#{oNoPrepe.nota.procedimientosRealizados.CIE9.clave}" readonly="true" size="7" />                                
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" style="padding: 1px;">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel value="#{etiq.diagnosticoPreoperatorio}:"/>
+                                        </p:column>
+                                        <p:column colspan="3">
+                                            <p:autoComplete id="complete2" onkeypress="return validaCaracter(event);" queryDelay="1000" readonly="#{oNoPrepe.readOnly}"
+                                                            size="80" minQueryLength="3" styleClass="bordes"  value="#{oNoPrepe.nota.diagnosticoPreoperatorio.descripcionDiag}" 
+                                                            completeMethod="#{oNoPrepe.nota.diagnosticoPreoperatorio.completar}" disabled="#{oNoPrepe.readOnly}"
+                                                            onkeyup="this.value = this.value.toUpperCase();" scrollHeight="300" required="#{oNoPrepe.required}" requiredMessage="Seleccione un diagnóstico">
+                                                <p:ajax update=":frm_nota:etiqueta01 :frm_nota:msgs" event="itemSelect"/>
+                                            </p:autoComplete>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="#{etiq.cie10}:"/>
+                                            <p:inputText id="etiqueta01" size="5" readonly="true" value="#{oNoPrepe.nota.diagnosticoPreoperatorio.claveCIE10}" styleClass="bordes"/>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="text-align: center;" styleClass="ui-widget-header">
+                                            <p:outputLabel value="Diagnostico(s) o problemas clinicos"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="6" style="padding: 1px;">
+                                            <p:dataTable id="dia01" value="#{oNoPrepe.arrNotasAgregadas}" var="odx" emptyMessage="UN NO HAY DIAGNOSTICOS AGREGADOS">
+                                                <p:column headerText="#{etiq.diagnostico}" styleClass="columnachica sentrado_texto" style="width: 70%;">
+                                                    <p:outputLabel value="#{odx.diagnosticoPreoperatorio.descripcionDiag}"/>
+                                                </p:column>
+                                                <p:column headerText="#{etiq.cie10}:" styleClass="columnachica centrado_texto" style="width: 15%;">
+                                                    <p:outputLabel value="#{odx.diagnosticoPreoperatorio.clave}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center;">
+                                <p:outputLabel value="#{etiq.signosVitales}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" style="padding: 1px;">
+                                <p:panelGrid style="width: 100%;">
+                                    <p:row>
+                                        <p:column style="" styleClass="ui-widget-header">
+                                            <p:outputLabel value="Tensión Arterial:"/>
+                                        </p:column>
+                                         <p:column>
+                                             <p:inputText id="TencionArterial1" value="#{oNoPrepe.nota.signos.TA}" size="8" placeholder="000/000"
+                                                          validator="mx.gob.hrrb.validadores.ValidaEntradaTA" readonly="#{oNoPrepe.nota.editarTA}">                                        
+                                                <f:ajax event="valueChange" execute="@this" render=":frm_nota:msgs"/>                                              
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header">
+                                            <p:outputLabel for="pulso" value="Pulso:"/>
+                                        </p:column>
+                                         <p:column>
+                                             <p:inputText id="pulso" value="#{oNoPrepe.nota.signos.pulso}" size="8" readonly="#{oNoPrepe.nota.editarPulso}" >
+                                                <f:ajax event="valueChange" execute="@this" render=":frm_nota:msgs"/>  
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column style="" styleClass="ui-widget-header">
+                                            <p:outputLabel for="temp1" value="Temperatura:"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="temp1" value="#{oNoPrepe.nota.signos.temp}" size="8" readonly="#{oNoPrepe.nota.editarTemp}" 
+                                                         converterMessage="ERROR,La Temperatura debe ser mayor a 30 y menor a 42 Grados">                                       
+                                                <f:validateDoubleRange minimum="30.00" maximum="42.00"/>
+                                                <f:ajax event="valueChange" execute="@this" render=":frm_nota:msgs"/>  
+                                            </p:inputText>
+                                        </p:column>
+                                        <p:column style="" styleClass="ui-widget-header">
+                                            <p:outputLabel for="frecResp1" value="Respiraciones:"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="frecResp1" value="#{oNoPrepe.nota.signos.FR}" size="8" readonly="#{oNoPrepe.nota.editarFR}" 
+                                                         converterMessage="ERROR, La frecuencia respiratoria debe ser menor a 70 mayor a 9">                                        
+                                                <f:validateLongRange minimum="9" maximum="70"/>
+                                                <f:ajax event="valueChange" execute="@this" render=":frm_nota:msgs"/>  
+                                            </p:inputText>
+                                        </p:column>
+                                    </p:row>                                    
+                                </p:panelGrid>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" styleClass="ui-widget-header"/>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="Resumen de interrogatorio:" /></p:column>
+                            <p:column colspan="5" style=" margin: 0 auto; text-align: center;">
+                                <p:inputTextarea styleClass="bordes" value="#{oNoPrepe.nota.interrogacion}" onkeyup="this.value=this.value.toUpperCase()" cols="120">
+                                    <p:ajax event="valueChange"/>
+                                </p:inputTextarea>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="Resumen de estudios en los servicios auxiliares de diagnostico y tratamiento:" /></p:column>
+                            <p:column colspan="5" style=" margin: 0 auto; text-align: center;">
+                                <p:inputTextarea styleClass="bordes" value="#{oNoPrepe.nota.resumenEstudios}" onkeyup="this.value=this.value.toUpperCase()" cols="120">
+                                    <p:ajax event="valueChange"/>
+                                </p:inputTextarea>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.planTerapeuticoPreoperatorio}:" /></p:column>
+                            <p:column colspan="5" style=" margin: 0 auto; text-align: center;">
+                                <p:inputTextarea styleClass="bordes" value="#{oNoPrepe.nota.PLanTerapeuticoPreoperatorio}" onkeyup="this.value=this.value.toUpperCase()" cols="120">
+                                    <p:ajax event="valueChange"/>
+                                </p:inputTextarea>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.planQuirurgico}:" /></p:column>
+                            <p:column colspan="5" style=" margin: 0 auto; text-align: center;">
+                                <p:inputTextarea styleClass="bordes" value="#{oNoPrepe.nota.planQuirurgico}" onkeyup="this.value=this.value.toUpperCase()" cols="120">
+                                    <p:ajax event="valueChange"/>
+                                </p:inputTextarea>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.riesgoQuirurgico}:" /></p:column>
+                            <p:column colspan="5" style=" margin: 0 auto; text-align: center;">
+                                <p:inputTextarea styleClass="bordes" value="#{oNoPrepe.nota.riesgoQuirurgico}" onkeyup="this.value=this.value.toUpperCase()" cols="120">
+                                    <p:ajax event="valueChange"/>
+                                </p:inputTextarea>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header"><p:outputLabel value="Cuidados:" /></p:column>
+                            <p:column colspan="5" style=" margin: 0 auto; text-align: center;">
+                                <p:inputTextarea styleClass="bordes" value="#{oNoPrepe.nota.cuidadosPlanTerapeuticoPreoperatorio}" onkeyup="this.value=this.value.toUpperCase()" cols="120" rows="2">
+                                    <p:ajax event="valueChange"/>
+                                </p:inputTextarea>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" styleClass="ui-widget-header" style="margin: 0 auto; text-align: center;">
+                                <p:commandButton value="#{oNoPrepe.nombreBoton}" icon="#{oNoPrepe.icon}" validateClient="true" 
+                                                 actionListener="#{oNoPrepe.metodoGuardarOModificar}" update=":frm_nota:msgs :frm_nota">
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+                
+                <p:dialog widgetVar="NotasP"  showEffect="puff" hideEffect="puff" modal="true" resizable="false">
+                    <h:form id="oNotas">
+                        <p:panelGrid style="width: 500px; margin-bottom: 6px;">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 70%; text-align: center;">
+                                    <p:outputLabel value="#{etiq.nombres}"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 25%; text-align: center;">
+                                    <p:outputLabel value="#{etiq.noExp}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="text-align: center;">
+                                    <p:outputLabel value="#{oNoPrepe.nota.epiMed.paciente.nombreCompleto}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <p:outputLabel value="#{oNoPrepe.nota.epiMed.paciente.expediente.numero}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:outputPanel style="width: 600px;" styleClass="centrar">
+                            <p:dataTable value="#{oNoPrepe.arrNotas}" var="oN" emptyMessage="" id="tbl"
+                                         paginator="true" rows="3">
+                                <p:column headerText="Clave" style="width: 13%;">
+                                    <p:outputLabel value="#{oN.procedimientosRealizados.CIE9.clave}"/>
+                                </p:column>
+                                <p:column headerText="Cirugia">
+                                    <p:outputLabel value="#{oN.procedimientosRealizados.CIE9.descripcion}"/>
+                                </p:column>
+                                <p:column headerText="*" style="width: 18%;">
+                                    <p:commandButton icon="ui-icon-folder-open" value="Mod.Nota">
+                                        <p:ajax listener="#{oNoPrepe.BuscaInfomacionNota(oN)}" update=":frm_nota :frm_nota:p1 :frm_nota:p2" 
+                                                oncomplete="PF('NotasP').hide()"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel> 
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-plus" value="Nueva Nota">
+                                        <p:ajax listener="#{oNoPrepe.nuevaNotaPreoperatoria()}" update=":frm_nota :frm_nota:p1 :frm_nota:p2" 
+                                                oncomplete="PF('NotasP').hide()"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:ajaxStatus style="width: 64px; height: 64px; position: fixed; right: 5px; bottom: 5px;">
+                    <f:facet name="start">
+                        <p:graphicImage value="/imgs/loading.gif"/>
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+         </ui:composition>
+    
+    
+</html>
+

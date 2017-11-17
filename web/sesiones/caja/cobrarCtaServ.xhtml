@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+            value="#{etiq.cobrar} #{etiq.cuenta}/#{etiq.servicio}"/>
+        </h2>
+        <p:dialog height="450" width="900" 
+                  modal="true" id="dlgCompBusq" header="#{etiq.buscarPac}"  
+                  widgetVar="dlgCompBusqWidVar"  
+                  showEffect="clip" hideEffect="fold" >  
+            <h:form id="busqueda">
+                <center>
+                    <ui:include src="../compbusq/compBusqPac.xhtml"></ui:include> 
+                    <p:separator/>
+                    <p:commandButton value="Seleccionar"
+                                 onclick="PF('dlgCompBusqWidVar').hide()" 
+                                 action="#{oAutReintegroJB.llenar}"
+                                 icon="ui-icon-search">
+                    </p:commandButton>
+                    <p:commandButton value="Cancelar"
+                                 onclick="PF('dlgCompBusqWidVar').hide()" 
+                                 action="#{oBusqPacComunJB.inicializar}"
+                                 icon="ui-icon-circle-close" />
+                </center>
+            </h:form> 
+        </p:dialog>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <p:dialog id="dlgRegPago" widgetVar="dlgRegP"
+                      position="center" closable="false" 
+                      dynamic="true" resizable="false"
+                      appendTo="@(body)" modal="true" height="450px" width="600px">
+                <center>
+                    <h:form id="formDlg">
+                        <p:panelGrid id="panelDt">
+                            <f:facet name="header">
+                                <p:row>
+                                   <p:column colspan="6" styleClass="ui-widget-header">
+                                        <center> 
+                                            <h:outputText value="#{etiq.cuentaCorrienteEgresoHosp}" rendered="#{oCobrarCtaServ.renCuenta}"/>
+                                        </center>
+                                   </p:column>   
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{etiq.folioNo}"></h:outputText>
+                                </p:column>         
+                                <p:column colspan="3">
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel class="negrita" value="#{etiq.nombrePaciente}:"/>
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:outputLabel value="Daniel L&oacute;pez Rosas"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.domicilio}:"/>
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:outputLabel value="Carr La Conduza Carretera de PEMEX s/n Col Centro 94900 Omealca, Ver."/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.noExp}:"/>
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:outputLabel value="10008000"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{oCobrarCtaServ.renCuenta}">
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.fechaIngr}:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="31/08/2015"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.hora}:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="09:45:24"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{oCobrarCtaServ.renCuenta}">
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.fechaEgreso}:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="01/09/2015"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.hora}:"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="14:45:24"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{etiq.segPopAfiliacion}:"/>
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:outputLabel value="131313"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable emptyMessage="#{etiq.emptydataTable}">
+                            <f:facet name="header"> 
+                                <h:outputText value="#{etiq.liqConceptos}"/>
+                            </f:facet>
+                            <p:column headerText="#{etiq.servPrestados}" width="25%" >
+                                <h:outputText></h:outputText>
+                            </p:column>
+                            <p:column headerText="#{etiq.cubiertoPor} #{etiq.paciente}"  width="25%">
+                                <h:outputText></h:outputText>
+                            </p:column>
+                            <p:column headerText="#{etiq.cubiertoPor} #{etiq.segpop}"  width="25%">
+                                <h:outputText></h:outputText>
+                            </p:column>
+                            <p:column headerText="#{etiq.cubiertoPor} #{etiq.programa}"  width="25%">
+                                <h:outputText></h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                        <p:panelGrid style="width: 100%">
+                            <p:row>
+                                <p:column style="width: 25%;"><h:outputText value="#{etiq.sumaServ}"/></p:column>
+                                <p:column style="width: 25%;"><h:outputText value=""/></p:column>
+                                <p:column style="width: 25%;"><h:outputText value=""/></p:column>
+                                <p:column style="width: 25%;"><h:outputText value=""/></p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:panelGrid style="width: 100%">
+                            <p:row>
+                                <p:column style="width: 25%;"><h:outputText value="#{etiq.cuentaTotal}"/></p:column>
+                                <p:column><h:outputText value=""/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="#{etiq.subsidioPac}"/></p:column>
+                                <p:column><h:outputText value=""/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="#{etiq.totalPagar}"/></p:column>
+                                <p:column><h:outputText value=""/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="#{etiq.segPopular}"/></p:column>
+                                <p:column><h:outputText value=""/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column><h:outputText value="#{etiq.exento}"/></p:column>
+                                <p:column><h:outputText value=""/></p:column>
+                            </p:row>
+                            <f:facet name="footer">
+                                <p:row >
+                                   <p:column colspan="4" styleClass="ui-widget-header">
+                                       <center> 
+                                    <p:commandButton value="#{etiq.regresar}" oncomplete="PF('dlgRegP').hide()">
+                                    </p:commandButton>
+                                    <p:commandButton value="#{etiq.cobrar}" oncomplete="PF('dlgRegP').hide()">
+                                    </p:commandButton>
+                                    </center>
+                                   </p:column>   
+                                </p:row>
+                            </f:facet> 
+                        </p:panelGrid>                   
+                        <br></br>
+                    </h:form>
+                </center>
+            </p:dialog>
+            <h:form>
+                <center>
+                <p:commandButton value="Seleccionar paciente"
+                                 action="#{oBusqPacComunJB.inicializar}"
+                                 oncomplete="PF('dlgCompBusqWidVar').show();" 
+                                 icon="ui-icon-search" />
+                </center>
+            </h:form>
+            <h:form>
+                <br/>
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{etiq.cobrar}:"></p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneRadio value="#{oCobrarCtaServ.ctaoServ}">
+                                <p:ajax update=":form:dtCuentas :formDlg:panelDt" listener="#{oCobrarCtaServ.ctaoServ()}"></p:ajax>
+                                <f:selectItem itemLabel="#{etiq.cuenta}" itemValue="1"></f:selectItem>
+                                <f:selectItem itemLabel="#{etiq.servicio}" itemValue="2"></f:selectItem>
+                            </p:selectOneRadio>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+            <br/>
+            <h:form id="form">              
+                <p:dataTable id="dtCuentas"  rows="5" emptyMessage="#{etiq.emptydataTable}">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.cuentas}"/>
+                    </f:facet>
+                    <p:column width="20">
+                        
+                    </p:column>
+                    <p:column headerText="#{etiq.cuenta}" width="50" rendered="#{oCobrarCtaServ.renCuenta}">
+                        <h:outputText value="113344"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.nombrePaciente}">
+                        <h:outputText value="Daniel" />
+                    </p:column>
+                    <p:column headerText="#{etiq.appat}">
+                        <h:outputText value="L&oacute;pez" />
+                    </p:column>
+                    <p:column headerText="#{etiq.apmat}">
+                        <h:outputText value="Rosas" />
+                    </p:column>
+                    <p:column headerText="#{etiq.totalPagar}">
+                        <h:outputText value="10999.00" />
+                    </p:column>
+                    <f:facet  name="footer" >
+                        <p:commandButton value="#{etiq.detalles}" oncomplete="PF('dlgRegP').show()">
+                        </p:commandButton>
+                    </f:facet>
+                </p:dataTable>                 
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</html>

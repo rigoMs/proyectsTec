@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <h:form id="frmmedico">
+            <p:growl id="mensajes"  showDetail="true" />
+            <f:loadBundle basename="mx/gob/hrrb/modelo/core.hrrb_labels" var="etiq"/>
+             <h2><center><h:outputLabel value="#{etiq.altaMedico}"/></center></h2>
+             
+          <p:panelGrid style="margin-top:30px">
+    <f:facet name="header">
+        <p:row>
+           <p:column colspan="6" styleClass="ui-widget-header"><center> 
+               <h:outputText value="#{etiq.datosPersonal}"/> </center></p:column>   
+        </p:row>
+    </f:facet> 
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.nombre}"/></p:column> 
+            <p:column>  <p:inputText id="nombre" value="#{oAddMedCapa.med.nombres}"  required="true" requiredMessage="INGRESAR NOMBRE(S)" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/>
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.appat}"/></p:column>
+            <p:column> <p:inputText id="ppaterno" value="#{oAddMedCapa.med.apPaterno}"   required="true" requiredMessage="INGRESAR APELLIDO PATERNO" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+            <p:column><h:outputLabel value="#{etiq.apmat}"/></p:column>
+            <p:column><p:inputText id="pmaterno" value="#{oAddMedCapa.med.apMaterno}" onkeyup="this.value=this.value.toUpperCase();" validator="mx.gob.hrrb.validadores.NombresValidador"/></p:column>
+        </p:row>     
+        <p:row>
+            <p:column ><h:outputLabel value="#{etiq.sexo}"/> </p:column>
+            <p:column>
+                <p:selectOneRadio id="sexo" value="#{oAddMedCapa.med.sexos}" required="true" requiredMessage="INGRESAR SEXO, FALTA SELECIONAR SEXO">
+                    <f:selectItem itemLabel="Femenino " itemValue="F"/>
+                    <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                </p:selectOneRadio>
+            </p:column> 
+            <p:column><h:outputLabel  value="#{etiq.fechanac}"/> </p:column>
+            <p:column> <p:calendar value="#{oAddMedCapa.med.fechaNac}" id="nacimientom" pattern="dd/MM/yyyy" navigator="true" required="true" requiredMessage="INGRESAR FECHA DE NACIMIENTO" locale="es">
+                </p:calendar>
+            </p:column>   
+            <p:column><h:outputLabel value="#{etiq.curp}"/></p:column>
+            <p:column><p:inputMask id="tCurp" mask="aaaa999999aaaaaa99" required="false" value="#{oAddMedCapa.med.curp}" style="text-transform: uppercase;"/></p:column>
+        </p:row>
+        <p:row>
+            <p:column colspan="6" styleClass="ui-widget-header">
+                <center>  <h:outputLabel value="#{etiq.otrosDatos}"/> </center>
+             </p:column>    
+        </p:row>
+        <p:row>       
+            <p:column><p:outputLabel id="noTarjeta" value="#{etiq.noTarjeta}:"/></p:column>
+            <p:column><p:inputText id="tNoTarjeta" value="#{oAddMedCapa.med.noTarjeta}" required="true" requiredMessage="INGRESAR EL NO. DE TRAJETA" converterMessage="SOLO SE ACEPTAN NUMEROS EN EL CAMPO NO. DE TARJETA"/></p:column>
+            <p:column><p:outputLabel id="especialidad" value="#{etiq.especialidad}:"/></p:column>
+            <p:column>
+                <p:selectOneMenu id="tEspecialidad" value="#{oAddMedCapa.med.especialidad}" required="true"> 
+                    <f:selectItems value="#{oAddMedCapa.listaEspecialidad}"></f:selectItems>
+                </p:selectOneMenu>
+            </p:column>
+            <p:column><h:outputLabel value="#{etiq.puesto}"/></p:column>
+            <p:column>
+                <p:selectOneMenu id="puesto" value="#{oAddMedCapa.med.claveActividad}">
+                <f:selectItem itemLabel="MÉDICO GENERAL" itemValue="32"/>
+                <f:selectItem itemLabel="ODONTOLOGO" itemValue="37"/>
+                <f:selectItem itemLabel="NUTRICIÓN" itemValue="55"/>
+                <f:selectItem itemLabel="PSICOLOGÍA" itemValue="56"/>
+                <f:selectItem itemLabel="TRABAJO SOCIAL" itemValue="57"/>
+                <f:selectItem itemLabel="LABORATORIO" itemValue="45"/>
+             </p:selectOneMenu>     
+            </p:column> 
+        </p:row>
+        <p:row>
+            <p:column><p:outputLabel id="tipoMedico" value="#{etiq.tipoMedico}:"/></p:column>
+            <p:column colspan="5">
+                <p:autoComplete id="tTipoMedico" size="60" minQueryLength="3" required="true" styleClass="bordes" requiredMessage="INGRESAR TIPO DE MEDICO"
+                                value="#{oAddMedCapa.med.desTipoMed}" completeMethod="#{oAddMedCapa.completar}" effect="fade"
+                                      onkeyup="this.value=this.value.toUpperCase();" scrollHeight="300">
+                </p:autoComplete>
+            </p:column> 
+        </p:row>
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.turno}"/></p:column>
+            <p:column>
+                <p:selectOneMenu id="turno" value="#{oAddMedCapa.tur.clave}">
+                <f:selectItem itemLabel="MATUTINO" itemValue="MAT"/>
+                <f:selectItem itemLabel="VESPERTINO" itemValue="VES"/>
+             </p:selectOneMenu>     
+            </p:column> 
+            <p:column><h:outputLabel value="#{etiq.consultorio}"/></p:column>
+            <p:column colspan="3">
+             <p:selectOneMenu id="consultorio" value="#{oAddMedCapa.consul.noConsultorio}">
+                <f:selectItem itemLabel="CONSULTA EXTERNA 1" itemValue="19"/>
+                <f:selectItem itemLabel="CONSULTA EXTERNA 2" itemValue="20"/>
+                <f:selectItem itemLabel="NUTRICIÓN" itemValue="22"/>
+                <f:selectItem itemLabel="ODONTODOLOGÍA" itemValue="24"/>
+                <f:selectItem itemLabel="PSICOLOGÍA" itemValue="23"/>
+                <f:selectItem itemLabel="TRABAJO SOCIAL" itemValue="21"/>
+                <f:selectItem itemLabel="LABORATORIO" itemValue="25"/>
+             </p:selectOneMenu>     
+            </p:column>
+        </p:row> 
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.cedulaProf}"/></p:column>
+            <p:column><p:inputText id="cprof" value="#{oAddMedCapa.med.cedProf}" maxlength="7"/></p:column> 
+            <p:column><h:outputLabel value="#{etiq.cedulaEsp}"/></p:column>
+            <p:column><p:inputText id="cesp" value="#{oAddMedCapa.med.cedEsp}" maxlength="7"/></p:column> 
+            <p:column><h:outputLabel value="#{etiq.cedulaIMSS}"/></p:column>
+            <p:column><p:inputText id="cimss" value="#{oAddMedCapa.med.cedIMSS}" maxlength="7"/></p:column> 
+        </p:row>                
+        <p:row>
+            <p:column colspan="6" styleClass="ui-widget-header">
+                <center>  <h:outputLabel value="#{etiq.datosUsuario}"/> </center>
+             </p:column>    
+        </p:row>
+        <p:row>
+            <p:column><h:outputLabel value="#{etiq.nombUsuario}"/></p:column>
+            <p:column><p:inputText id="nomusu" value="#{oAddMedCapa.usua.idUsuario}" maxlength="10" required="true" requiredMessage="INGRESAR USUARIO" onkeyup="this.value=this.value.toUpperCase();"/></p:column>
+            <p:column> <h:outputLabel value="#{etiq.contraseña}"/></p:column>
+            <p:column colspan="3">
+                <p:password id="constrasena" value="#{oAddMedCapa.usua.password}" feedback="true" maxlength="20" required="true" requiredMessage="INGRESAR CONTRASEÑA"/>
+            </p:column> 
+        </p:row>
+        <p:row>
+            <p:column styleClass="centrado_texto" colspan="6">
+                <p:commandButton value="#{etiq.registrar}" icon="ui-icon-disk" ajax="false" action="#{oAddMedCapa.almacena()}" update="mensajes"/>
+            </p:column>   
+        </p:row>      
+</p:panelGrid> 
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml"> 
+    
+    <ui:define name="cuerpo">
+     <h:form>
+        <f:loadBundle basename="mx.gob.hrrb.modelo.core.hrrb_labels" var="etiq"/>
+        <h3 class="centrado_texto"><p:outputLabel id="titDetPac" value="#{etiq.detallePacientes}"/></h3>
+        
+        <p:panelGrid styleClass="frm_centrado">
+               <p:row>
+                   <p:column rowspan="3"><img src="#{facesContext.externalContext.requestContextPath}/imgs/#{oCamCons.asigCon.PH.noTarjeta}.jpg" align="middle" height="101" width="100"/></p:column>
+                   <p:column styleClass="ui-widget-header"><p:outputLabel id="medico" value="#{etiq.medico}:"/></p:column>
+                   <p:column><p:outputLabel value="#{oCamCons.asigCon.PH.apPaterno} #{oCamCons.asigCon.PH.apMaterno} #{oCamCons.asigCon.PH.nombres}"/></p:column>
+               </p:row>
+               <p:row>
+                   <p:column styleClass="ui-widget-header"><p:outputLabel id="consultorio" value="#{etiq.consultorio}:"/></p:column>
+                   <p:column><p:outputLabel value="#{oCamCons.asigCon.cons.noConsultorio}"/></p:column>
+               </p:row>
+               <p:row>
+                   <p:column styleClass="ui-widget-header"><p:outputLabel id="fecha" value="#{etiq.fecha}:"/></p:column>
+                   <p:column><p:outputLabel value="#{oCamCons.asigCon.fechaConsultaFormat()}"/></p:column>
+               </p:row>
+    </p:panelGrid>
+        
+        <br/><hr/><br/>
+        
+        <p:dataTable id="tablaConsulBit" var="oCamVar" value="#{oCamCons.asigna}" styleClass="cambiocon">
+              <f:facet name="header">
+                  <h:outputText id="titVac" value="#{etiq.cambiarConsultorio}"/>
+              </f:facet>    
+            <p:column headerText="#{etiq.noConsulta}" styleClass="centrado_texto columnamed7">
+                <h:outputText value="#{oCamVar.cita.noConsulta}" />
+            </p:column>
+            <p:column headerText="#{etiq.folioCita}" styleClass="centrado_texto columnamed7">
+                <h:outputText value="#{oCamVar.cita.folioCita}"/>
+            </p:column>
+            <p:column headerText="#{etiq.nombreCompleto}">
+                <h:outputText value="#{oCamVar.cita.paciente.apPaterno} #{oCamVar.cita.paciente.apMaterno} #{oCamVar.cita.paciente.nombres}"/>
+            </p:column>
+            <p:column headerText="#{etiq.noExp}" styleClass="centrado_texto columnamed10">
+                <h:outputText value="#{oCamVar.cita.paciente.expediente.numero}" />
+            </p:column>
+            <p:column headerText="#{etiq.segpop}" styleClass="centrado_texto columnamed10">
+                <h:outputText value="#{oCamVar.cita.paciente.seg.numero}" />
+            </p:column>
+            <p:column headerText="#{etiq.tipoSol}" styleClass="centrado_texto">
+                <h:outputText value="#{oCamVar.cita.paciente.tipoSol.valor}" />
+            </p:column>
+            <p:column headerText="#{etiq.tipoPacienteEsp}" styleClass="centrado_texto columnamed10">
+                <h:outputText value="#{oCamVar.cita.primEsp}" />
+            </p:column>    
+         </p:dataTable>
+        <br/>
+        <div class="centrado_texto">
+            <p:commandButton value="#{etiq.descargar}" icon="ui-icon-arrowthickstop-1-s" ajax="false">
+                <p:dataExporter type="xls" target="tablaConsulBit" fileName="Bitacora_#{oCamCons.asigCon.fechaConsulTexto}" postProcessor="#{oCamCons.postProcessXLS}"/>
+            </p:commandButton>
+            <p:commandButton value="#{etiq.volver}" icon="ui-icon-arrowreturnthick-1-w" action="#{oCamCons.asigCon.volver()}" ajax="false"></p:commandButton>
+        </div>
+       </h:form>
+        <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+            <f:facet name="start">  
+                <p:graphicImage value="/imgs/loading.gif" />  
+            </f:facet>    
+     </p:ajaxStatus> 
+    </ui:define>
+    </ui:composition>
+</html>

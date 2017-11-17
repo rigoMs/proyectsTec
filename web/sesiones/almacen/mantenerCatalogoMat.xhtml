@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.MantenimientoCatalogoMaterial}"/>
+                </h2>
+                <div>
+                    <h:form id="inicio">     
+                        <p:dataTable    var="material" 
+                                        id="tblMat" 
+                                        editable="true"
+                                        value="#{oConMat.lista}"  
+                                        paginator="true"
+                                        rows="10"                                       
+                                        filteredValue="#{oConMat.matFiltrado}"
+                                        paginatorPosition="bottom" >   
+
+                            <p:column headerText="#{etiq.clave}" width="15" filterBy="#{material.claveMaterial}" filterMatchMode="startsWith" >
+                                <h:outputLabel value="#{material.claveMaterial}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.nombre}"    width="30" filterBy="#{material.nombre}" filterMatchMode="startsWith">
+                                <h:outputLabel value="#{material.nombre}"/>                                             
+                            </p:column>
+                            <p:column headerText="#{etiq.Concentrado}"    width="30" >
+                                <h:outputLabel value="#{material.concentrado}"/>                                             
+                            </p:column>
+
+                            <p:column headerText="#{etiq.Presentacion}"    width="30" >
+                                <h:outputLabel value="#{material.presentacion}"/>                                             
+                            </p:column>                             
+                        </p:dataTable>  
+                        <div align="center">
+
+                            <p:outputLabel  title="Exportar PDF" value="Exportar" styleClass="mensaje" />
+                            <h:commandLink id="pdf"   >
+                                <p:graphicImage value="/imgs/pdf.jpg" width="30" />
+                                <poue:exporter type="pdf" target="tblMat" fileName="Materiales"
+                                               orientation="center"  cellFontColor="#090908" cellFontStyle="oblique" facetBackground="#85F8FC" 
+                                               tableTitle="#{etiq.MaterialCuracion}"  cellFontSize="8" fontName="Verdana" 
+                                               facetFontSize="10"  facetFontStyle="italic" />                                    
+                            </h:commandLink>
+                        </div>
+                    </h:form> 
+                    <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                        <f:facet name="start">  
+                            <p:graphicImage value="/imgs/loading.gif" />  
+                        </f:facet>    
+                    </p:ajaxStatus> 
+                </div>
+            </ui:define>         
+        </ui:composition>
+</html>

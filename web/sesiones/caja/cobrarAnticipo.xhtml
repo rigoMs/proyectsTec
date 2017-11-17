@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+            value="#{etiq.cobrar} #{etiq.anticipo}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            
+            <h:form>
+                <p:dialog id="dlgRegPago" widgetVar="dlgRegP"
+                          position="center" closable="false" 
+                          dynamic="true" resizable="false"
+                          appendTo="@(body)" modal="true" 
+                          header="#{etiq.anticipo}"
+                          width="500"
+                          >
+                <center>
+                    <h:form>
+                        <p:panelGrid style="width: 100%;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="#{etiq.noCuenta}:"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oCobrarAnt.selectedAutPag.cuenta.numCta}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="width: 145px;">
+                                    <h:outputText value="#{etiq.nombrePaciente}:"></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{oCobrarAnt.selectedAutPag.cuenta.episodio.paciente.nombreCompleto}"></h:outputText>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:panelGrid style="width: 100%;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{etiq.detalles}"></h:outputText>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header" style="width: 33%;">
+                                    <center>
+                                    <h:outputText value="#{etiq.claveServicio}"></h:outputText>
+                                    </center>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 33%;">
+                                    <center>
+                                    <h:outputText value="#{etiq.concepto}"></h:outputText>
+                                    </center>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header" style="width: 33%;">
+                                    <center>
+                                    <h:outputText value="#{etiq.costo}"></h:outputText>
+                                    </center>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText></h:outputText>
+                                </p:column>
+                            </p:row>
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <center>
+                                        <h:outputLabel value="#{etiq.subtotal}:#{oCobrarAnt.selectedAutPag}"></h:outputLabel>
+                                        <br/>
+                                        <h:outputLabel value="#{etiq.subsidio}:#{oCobrarAnt.selectedAutPag.montoSubsidio}"></h:outputLabel>
+                                        <br/>
+                                        <h:outputLabel value="#{etiq.total}:#{oCobrarAnt.selectedAutPag.monto}"></h:outputLabel>
+                                        </center>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                        <br/>
+                        <p:commandButton value="#{etiq.cancelar}" oncomplete="PF('dlgRegP').hide()"></p:commandButton>
+                        <p:commandButton value="#{etiq.cobrar}" oncomplete="PF('dlgRegP').hide()"></p:commandButton>
+                    </h:form>
+                </center>
+                </p:dialog>           
+                <p:dataTable id="dtCuentas" emptyMessage="#{etiq.emptydataTable}"  rows="5" value="#{oCobrarAnt.autorizacionesPago}" var="oAut">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{etiq.anticipos} #{etiq.autorizados}"/>
+                    </f:facet>
+                    <p:column width="20">
+                        
+                    </p:column>
+                    <p:column headerText="Cuenta" width="50">
+                        <h:outputText value="113344"/>
+                    </p:column>
+                    <p:column headerText="#{etiq.nombrePaciente}">
+                        <h:outputText value="#{oAut.cuenta.episodio.paciente.nombres}" />
+                    </p:column>
+                    <p:column headerText="#{etiq.appat}">
+                        <h:outputText value="#{oAut.cuenta.episodio.paciente.apPaterno}" />
+                    </p:column>
+                    <p:column headerText="#{etiq.apmat}">
+                        <h:outputText value="#{oAut.cuenta.episodio.paciente.apPaterno}" />
+                    </p:column>
+                    <p:column headerText="#{etiq.montoAnticipo}">
+                        <h:outputText value="#{oAut.monto}" />
+                    </p:column>
+                    <p:column headerText="#{etiq.concepto}">
+                        <h:outputText value="#{oAut.monto}" />
+                    </p:column>
+                    <f:facet  name="footer" >
+                        <p:commandButton value="Detalles" oncomplete="PF('dlgRegP').show()" actionListener="#{oCobrarAnt.metodo()}">
+                        </p:commandButton>
+                    </f:facet>
+                </p:dataTable>                 
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+</html>

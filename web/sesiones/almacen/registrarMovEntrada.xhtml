@@ -1,0 +1,394 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    
+        
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" 
+                                   value="#{etiq.llegadaDeMaterial}"/>
+                </h2> 
+                <div id="page-wrap" style="min-height:100vh;"> 
+                    <br/>
+                    <!-- ....................................cabecera de entrada..................-->
+                    <h:form id="DatosCabecera" >
+                        <p:panelGrid id="btn" >                          
+                            <p:row>
+                                <p:column style="font-weight: bold;">                      
+                                    <p:commandButton type="button" id="data" value="Captura Datos Factura" icon="ui-icon-table"  onclick="PF('regDatos').show();" 
+                                                     disabled="#{oRegCabecera.ocultaCabecera}" />
+                                </p:column>
+                            </p:row>           
+                        </p:panelGrid>
+                    </h:form>
+                    <br/><br/>
+
+                    <h:form id="RegData">
+                        <div align="center">
+                            <p:dialog header="#{etiq.detallefactura}"   style=" background-position:  center;"   showEffect="explode"  hideEffect="explode" 
+                                      widgetVar="regDatos"  height="350" width="500" modal="true" minHeight="30" draggable="false"   resizable="false" >
+                                <br/>                      
+
+                                <p:growl id="msgs" showDetail="true" /> 
+                                <p:panelGrid   columns="2" style="margin-top:20px; width: 420px">               
+
+                                    <h:outputLabel value="#{etiq.identrada}:" styleClass="mensaje"/>
+                                    <p:inputText value="#{oRegCabecera.detCabe.idEntrada}" id="idEntrada" size="10" required="true" requiredMessage="Ingrese el id de entrada" onkeyup="this.value = this.value.toUpperCase();" >
+                                        <poue:keyFilter  regEx="/[A-Z0-9.]/i"/>
+                                    </p:inputText>
+
+
+                                    <h:outputLabel value="#{etiq.docprovedor}:" styleClass="mensaje"/>
+                                    <p:inputTextarea value="#{oRegCabecera.detCabe.infoDocProv}" id="idDoc" onkeyup="this.value = this.value.toUpperCase();" />                 
+
+                                    <h:outputLabel value="#{etiq.proveedor}: "  styleClass="mensaje"/>                                     
+                                    <p:selectOneMenu id="provedor"
+                                                     value="#{oRegCabecera.detCabe.proveedor.nombre}"  
+                                                     style="width: 200px" >
+                                        <f:selectItems value="#{oRegCabecera.proveedores}" 
+                                                       var="oPro" itemValue="#{oPro.nombre}" 
+                                                       itemLabel="#{oPro.nombre}"/>
+                                    </p:selectOneMenu>  
+
+                                    <h:outputLabel value="#{etiq.adquisicion}:" styleClass="mensaje"/>                                     
+                                    <p:selectOneMenu id="adquisicion"  value="#{oRegCabecera.tipoAdquisicion}"  style="width: 200px;">
+                                        <f:selectItems value="#{oRegCabecera.adquisicion}" var="Adqui"
+                                                       itemLabel="#{Adqui.valor}" itemValue="#{Adqui.valor}"/> 
+                                    </p:selectOneMenu>  
+
+                                    <h:outputLabel value="#{etiq.fecrecepcion}:" styleClass="mensaje"/>
+                                    <p:calendar value="#{oRegCabecera.detCabe.fechaRecepcion}" locale="es" mode="popup"  effect="fold" showOn="button"
+                                                placeholder="dd/mm/aa"  readonlyInput="true" id="fechaRecep"  pattern="dd/MM/yyyy" navigator="true"  
+                                                required="true"  requiredMessage="Ingrese Fecha de Recepcion" onkeypress="return validaCaracter(event)"
+                                                maxdate="#{oRegCabecera.fechaActual()}">
+                                        <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                                    </p:calendar>
+                                    <h:outputLabel value="#{etiq.fecaptura}:" styleClass="mensaje"/>
+                                    <h:outputLabel value="#{oRegCabecera.detCabe.registro}" styleClass="mensaje"/> 
+                                </p:panelGrid><br/> 
+                                <p:commandButton                                                                                                                   
+                                    update="msgs :RegData :Cabecera :DatosCabecera:btn  :Cabecera:tblCab  :capturaInicio" icon="ui-icon-disk" 
+                                    value="#{etiq.añadir}"  onclick="PF('regDatos').show();"   actionListener="#{oRegCabecera.setListaCabecera()}" >                                           
+                                </p:commandButton>  
+                            </p:dialog> 
+                        </div>
+                    </h:form>   
+
+
+
+                    <!-- .................cierre de la cabecera....................-->                    
+                    <br/>
+                    <h:form id="Cabecera" style=" alignment-adjust: 30px" >   
+
+                        <p:dataTable var="oCab" id="tblCab" editable="true"                                                 
+                                     value="#{oRegCabecera.lisCabecera}"
+                                     rendered="#{oRegCabecera.ocultaCabecera}"                                      
+                                     emptyMessage="#{etiq.NReg}"                          
+                                     >
+                            <f:facet name="header">
+                                <h:outputLabel value="Formato de entradas almacen"/>
+                            </f:facet>
+                            <p:ajax event="rowEdit"  listener="#{oRegCabecera.onRowEdit}" update=":Cabecera:tblCab :RegData:msgs" />
+                            <p:ajax event="rowEditCancel" listener="#{oRegCabecera.onRowCancel}" update=":RegData:msgs" />
+                            <br/>                       
+                            <p:column headerText="#{etiq.identrada}"  width="10" >  
+                                <h:outputLabel value="#{oCab.idEntrada}"/> 
+                            </p:column>                           
+                            <p:column headerText="#{etiq.docprovedor}" width="30">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{oCab.infoDocProv}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oCab.infoDocProv}" onkeyup="this.value = this.value.toUpperCase();">
+                                            <p:ajax event="change"/>
+                                        </p:inputText>    
+                                    </f:facet>   
+                                </p:cellEditor>      
+                            </p:column>                            
+                            <p:column headerText="#{etiq.adquisicion}" width="30">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{oRegCabecera.tipoAdquisicion}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <h:outputLabel value="#{etiq.motivo} : " style="font-weight: bold;"/>
+                                        <p:selectOneMenu id="adquisicion" 
+                                                         value="#{oCab.adquisicion.valor}"  style="width: 200px;">
+                                            <f:selectItems value="#{oRegCabecera.adquisicion}" var="Adqui"
+                                                           itemLabel="#{Adqui.valor}" itemValue="#{Adqui.valor}"/> 
+                                        </p:selectOneMenu> 
+                                    </f:facet>   
+                                </p:cellEditor>      
+                            </p:column>
+                            <p:column headerText="#{etiq.proveedor}" width="18">
+                                <h:outputLabel value="#{oCab.proveedor.nombre}" />
+                            </p:column> 
+                            <p:column headerText="#{etiq.fecrecepcion}" width="30" >                                                                          
+                                <h:outputLabel value="#{oCab.fechaRecepcion}" >
+                                    <f:convertDateTime pattern="dd-MM-yyyy" />
+                                </h:outputLabel>                               
+                            </p:column>    
+                            <p:column headerText="#{etiq.fecaptura} " width="30" >     
+                                <h:outputLabel value="#{oCab.registro}"/>
+                            </p:column>                              
+                            <p:column headerText="#{etiq.Usuario}" width="30" >                                       
+                                <h:outputLabel value="#{oCab.quienRegistra.nombreCompleto}"/>                              
+                            </p:column> 
+                            <p:column   width="10" >
+                                <p:commandButton icon="ui-icon-trash" onclick="PF('confirmation').show()"   immediate="true" actionListener="#{oRegCabecera.identificadorSeleccionado(oCab)}" /> 
+                                <p:rowEditor/>    
+                            </p:column>
+                        </p:dataTable> 
+                    </h:form>
+                    <br/><br/><br/>
+                    <h:form id="capturaInicio"   >  
+                        <p:panelGrid  rendered="#{oRegCabecera.ocultaCabecera}"  >                            
+                            <p:row>                          
+                                <p:column style="font-weight: bold;">
+                                    <h:outputLabel value="Nombre De Material:&nbsp;"/>
+                                    <p:autoComplete id="clave"  onkeypress="return validaCaracter(event);"  queryDelay="10" size="30" 
+                                                    minQueryLength="1" required="true" styleClass="bordes"
+                                                    value="#{oRegCabecera.nombre}" 
+                                                    completeMethod="#{oRegCabecera.complete}" effect="fade"
+                                                    onkeyup="this.value = this.value.toUpperCase();" 
+                                                    scrollHeight="300" 
+                                                    requiredMessage="Debe ingresar un nombre del material">
+                                    </p:autoComplete>  &nbsp; &nbsp; &nbsp;  
+                                    <p:commandButton value="#{etiq.buscar}" icon="ui-icon-search"   onclick="location.replace()"  ajax="false"  />
+                                </p:column>
+                            </p:row>           
+                        </p:panelGrid>
+                    </h:form>
+
+                    <!--................................................................... dialogo para  registrar...............................................................................-->
+                    <h:form id="capturaDatos" >
+                        <p:dialog header="#{etiq.recepcionMateriales}"  widgetVar="dlg1"  height="300" width="400" modal="true" visible="#{oRegCabecera.encontrado}"  closable="false" draggable="false" resizable="false" >
+                            <div style="font-weight: bold; text-align: center;">
+                                <h:outputLabel id="resultado" value="#{oRegCabecera.buscaNombreMaterial}"/><br/>                                                         
+                                <h:outputLabel id="cm" value="#{oRegCabecera.mat.claveMaterial}"/> 
+                            </div>
+                            <br/>  
+                            <p:growl id="msgs" showDetail="true" /> 
+                            <p:panelGrid id="datos">               
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="3"> <h:outputLabel value="#{etiq.detalle}"/></p:column>
+                                    </p:row> 
+                                </f:facet>                               
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.lote} "/>
+                                        <p:inputText value="#{oRegCabecera.detInv.primero.inv.lote}" id="lote" size="20" onkeyup="this.value = this.value.toUpperCase();"  >
+                                            <poue:keyFilter  regEx="/[a-z0-9_]/i"/>
+                                        </p:inputText>
+                                    </p:column>  
+                                </p:row> 
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.cantidad}* "/>
+                                        <p:inputText value="#{oRegCabecera.detInv.primero.inv.existencia}" id="cantidad" size="20" required="true" requiredMessage="Ingrese Cantida" converterMessage="Cantidad, Solo ingresar números">
+                                            <poue:keyFilter  regEx="/[0-9_]/i"/>
+                                        </p:inputText>
+                                    </p:column>  
+                                </p:row> 
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.precio} "/>
+                                        <p:inputText value="#{oRegCabecera.detInv.primero.inv.precio}" id="precio" size="20" required="true" requiredMessage="Ingrese Precio" converterMessage="Precio, Solo ingresar números"/>                 
+                                    </p:column>  
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold;">
+                                        <h:outputLabel value="#{etiq.caducidad}:"/>
+                                        <p:calendar value="#{oRegCabecera.detInv.primero.inv.caducidad}" locale="es" mode="popup"  effect="fold" showOn="button"
+                                                    placeholder="dd/mm/aa"  readonlyInput="true" id="fechaRecep"  pattern="dd/MM/yyyy" navigator="true"  
+                                                    onkeypress="return validaCaracter(event)"
+                                                    mindate="#{oRegCabecera.fechaActualMasUno()}">
+                                            <f:validator validatorId="mx.gob.hrrb.validadores.FechaValidator"/>
+                                        </p:calendar>
+                                    </p:column>
+                                </p:row> 
+                                <p:row>
+                                    <p:column colspan="3" style="font-weight: bold; text-align: center;">
+                                        <p:commandButton  update="msgs :capturaDatos  :productos :productos:tblPro  :capturaInicio:clave :pd:pdf "
+                                                          value="#{etiq.añadir}"  icon="ui-icon-disk" onclick="PF('dlg').show();" 
+                                                          actionListener="#{oRegCabecera.setListaControl()}">
+  
+                                        </p:commandButton>
+                                        <p:commandButton type="submit"  update=":capturaInicio:clave" icon="ui-icon-disk" value="#{etiq.cancelar}" action="#{oRegCabecera.valoresNulos()}" onclick="PF('dlg1').hide()"/>
+                                    </p:column> 
+                                </p:row>      
+                            </p:panelGrid> 
+                        </p:dialog> 
+                    </h:form>    
+                    <br/>
+                    <br/>
+
+                    <!-- ..................................................................cierre del dialogo del registro......................................................................................................-->
+
+                    <!-- ........................................................ representacion de los registros capturados de la tabla productos.....................................................................................  -->
+                    <h:form id="productos" style=" alignment-adjust: 30px" > 
+                        <p:remoteCommand name="refreshFooter" update=":productos:tblPro:outputTotal"/>                           
+                        <p:dataTable var="oMat" value="#{oRegCabecera.lisInventario}"  
+                                     id="tblPro" editable="true" resizableColumns="true"
+                                     emptyMessage="#{etiq.noMedicamentosRegistrados}" 
+                                     rendered="#{oRegCabecera.ocultaTabla}">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{etiq.registroLlegada}"/>
+
+                            </f:facet>                            
+                            <p:ajax event="rowEdit"  listener="#{oRegCabecera.editarMaterial}" update=":productos:tblPro :capturaDatos:msgs" />
+                            <p:ajax event="rowEditCancel" listener="#{oRegCabecera.cancelarMaterial}" update=":capturaDatos:msgs" />
+
+                            <p:column headerText="#{etiq.clave}" width="1">
+                                <h:outputLabel value="#{oMat.primero.inv.material.claveMaterial}"/>
+                            </p:column>
+                            <p:column headerText="#{etiq.nombre}" width="19">                
+                                <h:outputLabel value="#{oMat.primero.inv.material.nombre}"/>                              
+                            </p:column>
+
+                            <p:column headerText="#{etiq.cantidad}" width="1">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{oMat.primero.inv.existencia}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oMat.primero.inv.existencia}" size="3" required="true" requiredMessage="Ingrese cantidad" converterMessage="Cantidad,solo ingresar número">
+                                            <p:ajax event="change" oncomplete="refreshFooter();"/>
+                                        </p:inputText>    
+                                    </f:facet>   
+                                </p:cellEditor>      
+                            </p:column>
+                            <p:column headerText="#{etiq.Unidad}" width="10">
+                                <h:outputLabel value="#{oMat.primero.inv.material.presentacion}"/>
+                            </p:column>
+
+                            <p:column headerText="#{etiq.PrecioUnitario}" width="10">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputLabel value="#{oMat.primero.inv.precio}">
+                                            <f:convertNumber type="currency"/>
+                                        </h:outputLabel>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oMat.primero.inv.precio}" 
+                                                     size="3" required="true" 
+                                                     requiredMessage="Ingrese Precio" 
+                                                     converterMessage="Precio, sólo ingresar números" >
+                                            <p:ajax event="change" oncomplete="refreshFooter();"/>       
+                                        </p:inputText>
+                                    </f:facet>   
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{etiq.importe}" width="10">
+                                <h:outputLabel value="#{oMat.primero.inv.subTotal}">
+                                    <f:convertNumber type="currency"/>
+                                </h:outputLabel>              
+                            </p:column>  
+                            <p:column headerText="#{etiq.lote}" width="5">
+                                <p:cellEditor>
+                                    <f:facet name ="output">
+                                        <h:outputLabel value="#{oMat.primero.inv.lote}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{oMat.primero.inv.lote}" size="3" required="true" requiredMessage="ingrese lote"  >
+                                            <poue:keyFilter  regEx="/[a-z0-9_]/i"  />
+                                        </p:inputText>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="#{etiq.caducidad}" width="45">                
+                                <h:outputLabel value="#{oMat.primero.inv.caducidad}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy" />
+                                </h:outputLabel>
+                            </p:column>
+
+                            <p:column  width="10" >
+                                <p:commandButton icon="ui-icon-trash" onclick="PF('limEntrada').show()" immediate="true" actionListener="#{oRegCabecera.materialSeleccionado(oMat)}"/> 
+                                <p:rowEditor>
+                                </p:rowEditor>    
+                            </p:column>
+
+                            <f:facet name="footer" class="centrar">                    
+                                <h:outputLabel  value="#{etiq.total}: "/>  <h:outputLabel value="#{oRegCabecera.total}" id="outputTotal"/>   
+                            </f:facet>                  
+                        </p:dataTable>
+                        <p:growl id="messages" showDetail="true"/>
+                        <br/>
+                        <div style="text-align: center" id="botones"> 
+                            <p:column>
+                                <p:commandButton  update=":productos :productos:tblPro :Cabecera  :Cabecera:tblCab :capturaInicio :DatosCabecera:btn"
+                                                  value="Guardar" actionListener="#{oRegCabecera.eventoGuardaCabecera}" 
+                                                  rendered="#{oRegCabecera.ocultaTabla}"    icon="ui-icon-disk"  > 
+                                </p:commandButton> 
+                                <p:commandButton  value="Limpiar" rendered="#{oRegCabecera.ocultaTabla}" onclick="PF('confLimp').show()"/>                                
+                            </p:column>
+                        </div>
+                    </h:form>
+                    <h:form id="pd">
+                        <p:commandLink id="pdf" ajax="false"   rendered="#{oRegCabecera.lisInventario.size()>0}" >  
+                            <p:graphicImage rendered="#{oRegCabecera.lisCabecera.size()>0}" value="/imgs/pdf.jpg" /> 
+                            <f:setPropertyActionListener value="false" target="#{oRegCabecera.customExporter}" />  
+                            <pe:exporter type="pdf" target=":Cabecera:tblCab,:productos:tblPro" fileName="Factura Entrada"    
+                                        datasetPadding="1"  facetBackground="#85F8FC"   />  
+                        </p:commandLink>
+                    </h:form>
+                    <p:confirmDialog message="¿¿#{etiq.preguntaEliminacion}??" style="background-color: lightblue"
+                                     showEffect="bounce" hideEffect="explode"  
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="limEntrada">
+                        <h:form>
+                            <p:commandButton value="#{etiq.aceptar}" actionListener="#{oRegCabecera.remueveMaterial(1)}" update=":productos"  
+                                             onclick="PF('limEntrada').hide()"/>
+                            <p:commandButton value="#{etiq.cancelar}"  onclick="PF('limEntrada').hide()" actionListener="#{oRegCabecera.remueveMaterial(0)}" />
+                        </h:form>
+                    </p:confirmDialog>
+
+                    <!-- entrada material eliminacion-->
+
+                    <p:confirmDialog message="¿¿#{etiq.preguntaLimpLista}??" style="background-color: lightblue"
+                                     showEffect="bounce" hideEffect="explode" 
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="confLimp">
+                        <h:form>
+                            <p:commandButton value="#{etiq.aceptar}" actionListener="#{oRegCabecera.limpiaControl()}" styleClass="button" 
+                                             update=":productos"   onclick="PF('confLimp').hide();recarga();"/>
+                            <p:commandButton value="#{etiq.cancelar}"  styleClass="button" onclick="PF('confLimp').hide()" />
+                        </h:form>
+                    </p:confirmDialog> 
+                    <!-- cabecera control--> 
+                    <p:confirmDialog message="¿¿#{etiq.preguntaEliminacion}??" style="background-color: lightblue"
+                                     showEffect="bounce" hideEffect="explode"  
+                                     header="#{etiq.confirmar}" severity="alert" widgetVar="confirmation">
+                        <h:form>
+                            <p:commandButton value="#{etiq.aceptar}" actionListener="#{oRegCabecera.limpiaControl()}"
+                                             update=":productos :Cabecera  :capturaInicio :DatosCabecera:btn "  
+                                             onclick="PF('confirmation').hide()" >
+                                <p:ajax    listener="#{oRegCabecera.limpia()}"  update=":productos :Cabecera :capturaInicio :DatosCabecera:btn"/>
+                            </p:commandButton>
+
+                            <p:commandButton value="#{etiq.cancelar}"  onclick="PF('confirmation').hide()" actionListener="#{oRegCabecera.remueveCabecera(0)}" />
+                        </h:form>
+                    </p:confirmDialog>
+
+
+                </div>
+                <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                    <f:facet name="start">  
+                        <p:graphicImage value="/imgs/loading.gif" />  
+                    </f:facet>    
+                </p:ajaxStatus> 
+            </ui:define>         
+        </ui:composition>
+    
+</html>

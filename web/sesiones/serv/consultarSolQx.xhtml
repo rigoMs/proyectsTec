@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.programacionQx2}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:panelGrid style="width: 380px">
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" width="300">
+                            <p:outputLabel value="#{etiq.fecha}"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaPro" 
+                                        value="#{EstRealEndos.fechaQx}" 
+                                        required="true"
+                                        locale="es" effect="explode" >
+                            </p:calendar>
+                        </p:column>
+                        <p:column styleClass="ui-widget-header" width="20">
+                            <p:commandButton id="btnBusFecha" icon="ui-icon-search" 
+                                             value="#{etiq.buscar}" 
+                                             actionListener="#{EstRealEndos.buscarProceQxEndos}"
+                                             update="tabla_Proc" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <!--Presenta la información de la programación-->
+                <p:dataTable  id="tabla_Proc" 
+                              value="#{EstRealEndos.proceQx}"
+                              var="oProgra" rows="9" 
+                              style="visibility: #{oProgramacionQx.visibilidad};" 
+                              emptyMessage="No se encontraron resultados"
+                              styleClass="frm_centrado">
+                    <p:column width="10%">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.medAnes2}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.procedimientos.anestesio.nombres} #{oProgra.procedimientos.anestesio.apPaterno} #{oProgra.procedimientos.anestesio.apMaterno}" />
+                    </p:column>
+                    <p:column width="10%">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.resid}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.procedimientos.residente.nombres} #{oProgra.procedimientos.residente.apPaterno} #{oProgra.procedimientos.residente.apMaterno}"/>
+                    </p:column>
+                    <p:column width="15%">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.proceQx2}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.procedimientos.CIE9.descripcion}"/>
+                    </p:column>
+                    <p:column width="15%">
+                        <f:facet name="header" >
+                            <h:outputLabel value="#{etiq.anestesia}"/>
+                        </f:facet>
+                        <h:outputLabel value="#{oProgra.procedimientos.anestEspecifica.descripcion}"/>  
+                    </p:column>
+                    <p:column width="10%">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.fechaProgramada}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProgra.procedimientos.fechaRealizacion}">
+                            <f:convertDateTime pattern="HH:mm"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column width="15%">
+                        <f:facet name="header">
+                            <h:outputLabel value="#{etiq.nompac}"/>
+                        </f:facet>
+                        <h:outputText value="#{oProgra.episodio.paciente.nombres} #{oProgra.episodio.paciente.apPaterno} #{oProgra.episodio.paciente.apMaterno}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton icon="ui-icon-print" value="#{etiq.imprimir}"/>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

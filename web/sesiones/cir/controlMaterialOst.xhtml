@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:body> 
+        <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+            <ui:define name="cuerpo">
+                <f:loadBundle 
+                    basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+                    var="etiq"/>
+                <h2 class="centrado_texto">
+                    <p:outputLabel id="tituloPag" value="#{etiq.controlMaterialOsteo}"/>
+                </h2>
+                <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <h:panelGrid class="frm_centrado" columns="4">
+                    <p:outputLabel id="fechaSolicitud" value="#{etiq.fecha}:" styleClass="mensaje"/>
+                    <p:calendar  id="fechaSol" 
+                                 value="#{oSolicitudesOsteo.fecha}"
+                                 locale="es" effect="explode" required="true"  requiredMessage="Selecciona Una Fecha">
+                    </p:calendar>
+                    <p:commandButton id="btnBusFecha" icon="ui-icon-search" 
+                                     value="#{etiq.buscar}" actionListener="#{oSolicitudesOsteo.buscaSolicitudes(5)}"
+                                     update="tablaSolicitudes btnSurte btnCancela" >
+                    </p:commandButton>
+                </h:panelGrid>
+                <br/>
+                <p:dataTable id="tablaSolicitudes" value="#{oSolicitudesOsteo.listaSolicitudes}"
+                             var="oSolicitudes" emptyMessage="#{etiq.noDatos}"
+                             style="width: 900px; visibility: #{oSolicitudesOsteo.visibilidadTabla}"
+                             rowKey="#{oSolicitudes.episodioMedico.paciente.folioPaciente}"
+                             selection="#{oSolicitudesOsteo.seleccionado}"
+                             class="frm_centrado">
+                    <p:ajax event="rowSelectRadio"></p:ajax>
+                    <p:column selectionMode="single" style=" width: 20px"></p:column>
+                    <p:column style="width: 80px">
+                        <f:facet name="header" >
+                            <p:outputLabel value="#{etiq.fecha}"/>
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.fechaSolicitud}" />
+                    </p:column>
+                    <p:column style="width: 70px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.expediente}"/>
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.episodioMedico.paciente.expediente.numero}"/>
+                    </p:column>
+                    <p:column style="width: 200px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.nombrePaciente}"/>
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.episodioMedico.paciente.nombreCompleto}"/>
+                    </p:column>
+                    <p:column style=" width: 120px;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.segpop}"/>
+                        </f:facet>
+                        <h:outputText value="#{oSolicitudes.episodioMedico.paciente.seg.numero}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{oSolicitudes.valeMat.situacionVale}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton id="btnSurte" icon="ui-icon-note" value="#{etiq.surtir}" 
+                                 onclick="PF('lisMateriales').show();"
+                                 style=" visibility: #{oSolicitudesOsteo.visibilidadTabla}">
+                    <p:ajax listener="#{oSolicitudesOsteo.llenaDatos()}" 
+                            update=":frm_ListaMateriales:panel_Material: :frm_ListaMateriales:sListaMat:"></p:ajax>
+                </p:commandButton>
+                &nbsp;
+                <p:commandButton id="btnCancela" icon="ui-icon-cancel" value="#{etiq.cancelar}" 
+                                 onclick="PF('cancelaVale').show();"
+                                 style=" visibility: #{oSolicitudesOsteo.visibilidadTabla}">
+                    <p:ajax listener="#{oSolicitudesOsteo.llenaDatos()}"
+                            update=":frm_CancelaVale:panel_Material: :frm_CancelaVale:sListaMat:" />
+                </p:commandButton>
+            </h:form>
+            <h:form id="frm_ListaMateriales">
+                <p:dialog header="Lista de Materiales de Osteosintesís" widgetVar="lisMateriales"
+                          showEffect="bounce" hideEffect="explode"
+                          resizable="false" style="width: 600px" modal="true">
+                    <p:panelGrid id="panel_Material" style=" width:  900px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" >
+                                <h:outputLabel value="#{etiq.paciente}"/>
+                            </p:column>
+                            <p:column >
+                                <h:outputText value="#{oSolicitudesOsteo.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.segpop}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oSolicitudesOsteo.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.expediente}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oSolicitudesOsteo.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.fecha} Emision"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oSolicitudesOsteo.procedimientos.valeMat.fechaEmision}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.fecha} Surtido"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oSolicitudesOsteo.fechaHoy}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:dataTable id="sListaMat" 
+                                 value="#{oSolicitudesOsteo.procedimientos.valeMat.arrDetalle}"
+                                 var="oDetalles"
+                                 emptyMessage="#{etiq.noDatos}"
+                                 style="width: 1100px;"
+                                 rowKey="#{oDetalles.identificador}"
+                                 class="frm_centrado" editable="true" editMode="cell">
+                         <p:ajax event="cellEdit" listener="#{oSolicitudesOsteo.editaCantidad}" 
+                        update=":frm_ListaMateriales:messages" />
+                        <p:ajax event="rowSelect" update=":frm_ListaMateriales:messages" />
+                        <p:column style=" width: 100px">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.clave}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oDetalles.material.claveMat}"/>
+                        </p:column>
+                        <p:column style="width: 180px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.materialUtilizado}"/>
+                        </f:facet>
+                            <h:outputText value="#{oDetalles.material.nombre}"/>
+                        </p:column>
+                        <p:column style="width: 70px">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.cantidad}"/>
+                            </f:facet>
+                            <h:outputText value="#{oDetalles.cantSol}"/>
+                        </p:column>
+                        <p:column style="width: 180px">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.observaciones}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oDetalles.observaciones}" />
+                        </p:column>
+                        <p:column style=" width: 80px" headerText="#{etiq.surtido}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{oDetalles.cantSurtida}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{oDetalles.cantSurtida}" label="canSurtida" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton icon="ui-icon-disk" value="#{etiq.guardar}">
+                                <p:ajax  listener="#{oSolicitudesOsteo.almacena()}" process="@this" 
+                                         update=":frm_ListaMateriales:messages" />
+                            </p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                    <p:growl id="messages" showDetail="true" />
+                </p:dialog>
+            </h:form>
+            <h:form id="frm_CancelaVale">
+                <p:dialog header="Lista de Materiales de Osteosintesís" widgetVar="cancelaVale"
+                          showEffect="bounce" hideEffect="explode"
+                          resizable="false" style="width: 600px" modal="true">
+                    <p:panelGrid id="panel_Material" style=" width:  800px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header" >
+                                <h:outputLabel value="#{etiq.nombreCompleto}"/>
+                            </p:column>
+                            <p:column >
+                                <h:outputText value="#{oSolicitudesOsteo.procedimientos.episodioMedico.paciente.nombreCompleto}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.segpop}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oSolicitudesOsteo.procedimientos.episodioMedico.paciente.seg.numero}"/>
+                            </p:column>
+                            <p:column styleClass="ui-widget-header">
+                                <h:outputLabel value="#{etiq.expediente}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{oSolicitudesOsteo.procedimientos.episodioMedico.paciente.expediente.numero}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:dataTable id="sListaMat" 
+                                 value="#{oSolicitudesOsteo.procedimientos.valeMat.arrDetalle}"
+                                 var="oMat"
+                                 emptyMessage="#{etiq.noDatos}"
+                                 style="width: 1100px;"
+                                 rowKey="#{oDetalles.identificador}"
+                                 class="frm_centrado">
+                        <p:column style=" width: 100px">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.clave}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oMat.material.claveMat}"/>
+                        </p:column>
+                        <p:column style="width: 180px">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{etiq.materialUtilizado}"/>
+                        </f:facet>
+                            <h:outputText value="#{oMat.material.nombre}"/>
+                        </p:column>
+                        <p:column style="width: 70px">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.cantidad}"/>
+                            </f:facet>
+                            <h:outputText value="#{oMat.cantSol}"/>
+                        </p:column>
+                        <p:column style="width: 180px">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{etiq.observaciones}"/>
+                            </f:facet>
+                            <p:outputLabel value="#{oMat.observaciones}" />
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton icon="ui-icon-disk" value="Confirma Cancelación" actionListener="#{oSolicitudesOsteo.cancelaValeOsteosinteis()}">
+                                <p:ajax update=":frm_CancelaVale:messages:" />
+                            </p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                    <p:growl id="messages" showDetail="true" />
+                </p:dialog>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus>
+        </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

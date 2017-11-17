@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <f:loadBundle 
+            basename="mx.gob.hrrb.modelo.core.hrrb_labels" 
+            var="etiq"/>
+        <h2 class="centrado_texto">
+            <p:outputLabel id="tituloPag" 
+                           value="#{etiq.consultar} #{etiq.relAnticipos}"/>
+        </h2>
+        <!--
+        Colocar en caso de mensajes de atributos requeridos
+        <div class="msjrequerido">
+            <h:outputLabel value="("/>
+            <h:outputLabel class="requerido" value="*"/>
+            <h:outputLabel  value=")"/>
+            <h:outputLabel value="#{etiq.campo}"/>
+        </div>
+        -->
+        <br/>
+        <div class="centrado_texto">
+            <h:form>
+                <p:growl id="mensajes"  showDetail="true" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="#{etiq.anticipos}:"></h:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{oConRelAnt.tipoAnt}" required="true" 
+                                             requiredMessage="Seleccione un tipo de anticipo." >
+                                <f:selectItem itemLabel="Seleccione" itemValue=""></f:selectItem>
+                                <f:selectItem  itemLabel="Cuenta" itemValue="1"></f:selectItem> 
+                                <f:selectItem  itemLabel="Distinción" itemValue="2"></f:selectItem>
+                                <f:selectItem  itemLabel="Otros" itemValue="3"></f:selectItem>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{etiq.realizadosDel}:"></h:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaIni" value="#{oConRelAnt.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha inicial.">
+                                <p:ajax event="dateSelect" update="fechaFin" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{etiq.al}:"></h:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="fechaFin" value="#{oConRelAnt.fechaF}" 
+                                        mindate="#{oConRelAnt.fechaI}" 
+                                        readonlyInput="true" effect="fold" 
+                                        locale="es" pattern="dd/MM/yyyy" 
+                                        required="true" requiredMessage="Ingrese una fecha final.">
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{etiq.consultar}" actionListener="#{oConRelAnt.preBusqueda}" 
+                                             icon="ui-icon-search" styleClass="frm_login"
+                                             update="mensajes dtAnticipos">
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> 
+                <br/>
+                <p:dataTable id="dtAnticipos"  value="#{oConRelAnt.anticipos}" var="oAnt" style="#{oConRelAnt.activaTabla}"
+                             emptyMessage="#{etiq.emptydataTable}">
+                    <p:column headerText="#{etiq.fecha}">
+                        <h:outputText value="#{oAnt.fechaPago}"></h:outputText>
+                    </p:column>
+                    <p:column headerText="#{etiq.nombrePaciente}">
+                        <h:outputText value="#{oAnt.cuenta.episodio.paciente.nombreCompleto}"></h:outputText>
+                    </p:column>
+                    <p:column headerText="#{etiq.NoReciboOfic}">
+                        <h:outputText value="#{(oConRelAnt.getRecibo(Ant.cuenta.recibos)).folio}"></h:outputText>
+                    </p:column>
+                    <p:column headerText="#{etiq.concepto}">
+                        <h:outputText value="#{(oConRelAnt.getServicioRealziado(Ant.cuenta.serviciosReallzados)).servicioCobrable.descripcion}">
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="#{etiq.importeAnticipo}">
+                        <h:outputText value="#{oAnt.monto}"></h:outputText>
+                    </p:column>
+                    <p:column headerText="#{etiq.caja}">
+                        <h:outputText value="#{oAnt.cuenta.recibos}"></h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+            <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+                 <f:facet name="start">  
+                     <p:graphicImage value="/imgs/loading.gif" />  
+                 </f:facet>    
+            </p:ajaxStatus> 
+        </div>
+    </ui:define>         
+</ui:composition>
+
+</html>

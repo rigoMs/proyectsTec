@@ -1,0 +1,861 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">    
+    <ui:composition template="/WEB-INF/facelets/planthrrb.xhtml">
+    <ui:define name="cuerpo">
+        <div class="centrar">
+            
+    <p:growl id="messages" showDetail="true"/>
+        <h:form id="datos">
+          <c:choose>
+            <c:when test="${oAlta.ope=='a' || oAlta.folioPac gt 0 }">  
+       
+            <br/>
+            <div class="msjrequerido"><h:outputLabel value="("/><h:outputLabel class="requerido" value="*"/><h:outputLabel  value=")"/><h:outputLabel value="#{etiq.campo}"/></div><br/>
+            <p:panelGrid id="cama1">
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.altaHospitalaria}"/></p:column>
+                </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.nombres}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.appat}:"/><br></br></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.apmat}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.sexo}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.curp}:"/><br/></p:column>
+                     </p:row>
+                      <p:row>
+                          <p:column>
+                              <p:outputLabel value="#{oAlta.altaHosp.paciente.nombres}"/>
+                          </p:column>
+                          <p:column>
+                              <p:outputLabel value=" #{oAlta.altaHosp.paciente.apPaterno}"/>
+                          </p:column>
+                          <p:column>
+                              <p:outputLabel value="#{oAlta.altaHosp.paciente.apMaterno}"/>
+                          </p:column>
+                          
+                          <p:column>
+                              <p:selectOneRadio id="sexo" value="#{oAlta.altaHosp.paciente.sexoP}" disabled="true" validatorMessage="Debe ingresar el sexo del paciente">
+                                <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                <f:selectItem itemLabel="Femenino" itemValue="F" />
+                                </p:selectOneRadio>
+                        </p:column>
+                          
+                          <p:column>
+                              <p:outputLabel value="#{oAlta.altaHosp.paciente.curp}"/>
+                          </p:column>
+                          
+                      </p:row>
+                     <p:row>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.fechanac}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><p:outputLabel value="#{etiq.seguro}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoVialidad}"/></p:column>
+                       <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.domicilio}:"/></p:column>
+                        <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.tipoAsentamiento}"/></p:column>
+                        
+                     </p:row>
+                     <p:row>
+                         <p:column>
+                             <p:outputLabel  id="fechaNac" value="#{oAlta.altaHosp.paciente.fechaNacTexto}"/>
+                         </p:column>
+                         <p:column>
+                             <p:outputLabel value="#{oAlta.altaHosp.paciente.seg.derechohabienteP}"/>
+                         </p:column>
+                         <p:column> 
+                            <p:outputLabel value="#{oAlta.altaHosp.paciente.tipoVialidad.cveTipoVial}"/>
+                        </p:column>
+                        <p:column>
+                        <p:outputLabel id="dom" value="#{oAlta.altaHosp.paciente.calleNum}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                        </p:column>
+                        <p:column> 
+                            <p:outputLabel value="#{oAlta.altaHosp.paciente.tipoAsentamiento.cveAsenta}"/>
+                        </p:column>
+                     </p:row>
+                     
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.colonia}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.pais}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.entidad}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.municipio}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.localidad}:"/><br/></p:column>
+             </p:row>
+             
+             <p:row>
+                 
+                 <p:column>
+                     <p:outputLabel id="colonia" value="#{oAlta.altaHosp.paciente.colonia}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();"/>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel value="#{oAlta.altaHosp.paciente.pais}" styleClass="bordes" onkeyup="this.value=this.value.toUpperCase();">
+                     </p:outputLabel>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="enti" disabled="true" value="#{oAlta.altaHosp.paciente.estado.claveEdo}" >
+                         <p:ajax update="muni" event="valueChange"/>
+                         <f:selectItem itemLabel="ENTIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oAlta.listaEstados}" var="oEdo" 
+                                        itemLabel="#{oEdo.descripcionEdo}" itemValue="#{oEdo.claveEdo}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="muni" disabled="true" value="#{oAlta.altaHosp.paciente.municipio.claveMun}">
+                         <p:ajax update="loc" event="valueChange"/>
+                         <f:selectItem itemLabel="MUNICIPIO" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oAlta.listaMunicipios}" var="oMun" 
+                                        itemLabel="#{oMun.descripcionMun}" itemValue="#{oMun.claveMun}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                 
+                 <p:column>
+                     <p:selectOneMenu id="loc" disabled="true" value="#{oAlta.altaHosp.paciente.ciudad.claveCiu}">
+                         <p:ajax update="codp" event="valueChange"/>
+                         <f:selectItem itemLabel="LOCALIDAD" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oAlta.listaCiudades}" var="oCiu"
+                                        itemLabel="#{oCiu.descripcionCiu}" itemValue="#{oCiu.claveCiu}"/>
+                        </p:selectOneMenu>
+                 </p:column>
+                 
+               </p:row>
+             
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.cp}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicioIngreso}:"/><br/></p:column> 
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.medicoRecibe}:"/></p:column> 
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.servicioHosp}:"/></p:column> 
+                
+             </p:row>
+                 
+             <p:row>
+                 
+                 <p:column>      
+                     <p:selectOneMenu id="codp" disabled="true" value="#{oAlta.altaHosp.paciente.ciudadCP.cp}">
+                         <f:selectItem itemLabel="COD. POSTAL" itemValue="" noSelectionOption="true" />
+                         <f:selectItems value="#{oAlta.listaCP}" var="oCP" 
+                                        itemLabel="#{oCP.cp}" itemValue="#{oCP.cp}"/>
+                        </p:selectOneMenu>
+                  </p:column>
+                            
+                 <p:column>
+                     <p:outputLabel  id="serurg" value="#{oAlta.altaHosp.areaServicioSTR}"/>
+                  </p:column>
+                       
+                 <p:column colspan="2">
+                     <p:outputLabel id="med" value="#{oAlta.altaHosp.medicoRecibe.nombres}"/>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel id="serH" value="#{oAlta.altaHosp.areaServicioHRRB}"/>
+                  </p:column>
+                 
+            </p:row> 
+                     
+             <p:row>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.subservicio}:"/><br/></p:column> 
+                <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.medicoTratante}:"/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.noCama}:"/><br/></p:column>
+                <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.estadoDeSalud}:"/><br/></p:column>
+             </p:row> 
+                    
+             <p:row>
+                 
+                 <p:column>
+                     <p:outputLabel id="subser" value="#{oAlta.altaHosp.subServicioHRRBSTR}"/>
+                  </p:column>
+                 
+                 <p:column colspan="2">
+                     <p:outputLabel  id="medUrg" value="#{oAlta.altaHosp.medicoTratante.nombres}"/>
+                 </p:column>
+                 
+                 <p:column>
+                     <p:outputLabel  id="noCama" value="#{oAlta.altaHosp.cama.numero}"/>
+                 </p:column>
+                 <p:column>
+                     <p:outputLabel  id="medUrgn" value="#{oAlta.altaHosp.edoSaludStr}"/>
+                 </p:column>
+             </p:row> 
+                
+            </p:panelGrid>
+            <br/>
+            
+            <p:panelGrid id="tab1">
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="5"><h:outputLabel value="#{etiq.datosParaAlta}:"/><br/></p:column> 
+                </p:row>
+                
+                <p:row>
+                    <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.destino}:"/></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.documentacionEnt}:"/></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel class="requerido" value="*"/><h:outputLabel value="#{etiq.motivoEgreso}:"/></p:column> 
+                    <p:column styleClass="ui-widget-header"><h:outputLabel value="#{etiq.razonAltaV}:"/></p:column> 
+                </p:row>
+                
+                <p:row>
+                    <p:column>
+                        <p:selectOneMenu id="destino" value="#{oAlta.altaHosp.destinoSTR}" disabled="#{oAlta.destino}" requiredMessage="Se debe indicar un destino" required="true">
+                         <f:selectItems value="#{oAlta.altaHosp.listaDestinos}" var="oDes"
+                                        itemLabel="#{oDes.valor}" itemValue="#{oDes.claveParametro}#{oDes.tipoParametro}"/>
+                         
+                     </p:selectOneMenu>
+                 </p:column>
+                    
+                    <p:column>
+                        <p:selectOneRadio id="docE" value="#{oAlta.altaHosp.docEntregada}" requiredMessage="Se debe indicar si la documentacion fue o no entregada" required="true" >
+                                <f:selectItem itemLabel="SI" itemValue="S" />
+                                <f:selectItem itemLabel="NO" itemValue="N" />
+                        </p:selectOneRadio>
+                    </p:column>
+                    
+                    <p:column>
+                        <p:selectOneMenu id="motivoEgreso" value="#{oAlta.altaHosp.motivoEgresoP}" requiredMessage="Se debe ingresar un motivo de egreso" disabled="#{oAlta.motivoEgreso}" required="true">
+                         <f:selectItems value="#{oAlta.altaHosp.listaMotivosEgreso}" var="oMot"
+                                        itemLabel="#{oMot.valor}" itemValue="#{oMot.claveParametro}#{oMot.tipoParametro}"/>
+                         <p:ajax update="razonAlta" event="change" listener="#{oAlta.lanzaDialogo()}"/>
+                     </p:selectOneMenu>
+                 </p:column>
+                    
+                    <p:column>
+                        <p:inputTextarea id="razonAlta" value="#{oAlta.altaHosp.razonAltaVolunTrasl}" required="#{oAlta.requiereRazonAlta()}" 
+                                         requiredMessage="Debe ingresan la razon de egreso" 
+                                         disabled="#{oAlta.habilitaRazonAltaVolun()}" onkeyup="this.value=this.value.toUpperCase();" rows="2" maxlength="200"  
+                                         onkeypress="return validaCaracter(event);" scrollHeight="4" autoResize="false" />
+                    </p:column>
+                    
+                </p:row>
+            </p:panelGrid>
+            
+            <br/>
+            
+            <p:panelGrid id="tab2" style="#{oAlta.altaHosp.estadoAlta}">
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="2"><h:outputLabel value="#{etiq.elijaAlta}"/></p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column>
+                        <p:commandButton value="#{etiq.altaHospitalaria}" disabled="#{oAlta.altaHosp.btnAltaHosp}" action="#{oAlta.insertaAltaHospitalaria}" style="#{oAlta.altaHosp.estadoAlta}" validateClient="true" ajax="false" icon="ui-icon-disk" update="tab1, tab2"/>
+                    </p:column>
+                    
+                    <p:column>
+                        <p:commandButton value="#{etiq.altaFisica}" action="#{oAlta.insertaAltaFisica()}" disabled="#{oAlta.altaHosp.habAltaFisica}" validateClient="true" ajax="false" icon="ui-icon-disk"/>
+                    </p:column>
+                </p:row> 
+            </p:panelGrid>
+            </c:when> 
+          <c:otherwise>
+              <h1>El Paciente ya se encuentra Admitido u Hospitalizado</h1>
+          </c:otherwise>
+        </c:choose> 
+      </h:form>
+    </div>
+    <div>
+        <p:dialog id="datos_dialogo" header="#{etiq.datosAltaVoluntaria}" 
+                  widgetVar="dialogo_datos" modal="true" resizable="false">
+            <h:form class="centrar">
+                <p:panelGrid styleClass="frm_centrado">
+                    <p:row>
+                        <p:column style="padding: 0px;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.fecha}:"/>                            
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.hora}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.parentesco}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:calendar value="#{oAlta.fecha}" mindate="#{oAlta.fechaActual}" 
+                                                    readonlyInput="true" required="true" requiredMessage="#{etiq.notificacion2}"
+                                                    pattern="dd/MM/yyyy" locale="es">
+                                            <p:ajax event="dateSelect"/>
+                                        </p:calendar>
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar value="#{oAlta.hora}" timeOnly="true" readonlyInput="true"
+                                                    required="true" requiredMessage="#{etiq.notificacion4}" 
+                                                    pattern="HH:mm" locale="es">
+                                            <p:ajax event="dateSelect"/>
+                                        </p:calendar>                            
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu value="#{oAlta.parentesco}"
+                                                         required="true" requiredMessage="#{etiq.notificacion3}">
+                                            <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{oAlta.listaParentesco}" var="parentesco"
+                                                           itemLabel="#{parentesco.valor}" itemValue="#{parentesco.valor}"/>                                            
+                                            <p:ajax/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="padding: 0px;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.nombreCompleto}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.edad}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.cama}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.piso}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.servc}:"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{oAlta.altaHosp.paciente.nombreCompleto}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{oAlta.altaHosp.paciente.calculaEdad()}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{oAlta.altaHosp.cama.numero}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu value="#{oAlta.piso}" required="true" requiredMessage="#{etiq.notificacion3}">
+                                            <f:selectItem itemLabel="#{etiq.notificacion12}" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItem itemLabel="Urgencias" itemValue="Urgencias"/>
+                                            <f:selectItem itemLabel="Piso 1" itemValue="1"/>
+                                            <f:selectItem itemLabel="Piso 2" itemValue="2"/>
+                                            <f:selectItem itemLabel="Piso 3" itemValue="3"/>
+                                            <p:ajax/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{oAlta.altaHosp.areaServicioHRRB}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="padding: 0px;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.razonAltaV}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:inputTextarea value="#{oAlta.altaHosp.razonAltaVolunTrasl}" 
+                                                         style="text-transform: uppercase;" rows="5" cols="100" autoResize="false"
+                                                         required="true" requiredMessage="#{etiq.notificacion3}">
+                                            <p:ajax/>
+                                        </p:inputTextarea>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="padding: 0px;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.recomendacionesMedicas}"/>
+                                    </p:column>                                    
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:inputTextarea value="#{oAlta.recomendaciones}" 
+                                                         style="text-transform: uppercase;" rows="5" cols="100" autoResize="false"
+                                                         required="true" requiredMessage="#{etiq.notificacion3}">
+                                            <p:ajax/>
+                                        </p:inputTextarea>
+                                    </p:column>                                    
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="padding: 0px;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.famAltaVolun}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.tel}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.nombreTestigo}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.nombreTestigo}:"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:inputText value="#{oAlta.nombreFamiliar}" style="text-transform: uppercase;" 
+                                                     required="true" requiredMessage="#{etiq.notificacion32}" size="30">
+                                            <p:ajax/>
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputMask mask="(999) 999-9999" value="#{oAlta.telefono}" required="true" requiredMessage="#{etiq.mensajeTelefono}">
+                                            <p:ajax/>
+                                        </p:inputMask>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{oAlta.testigo1}" size="30" required="true" requiredMessage="#{etiq.notificacion33}">
+                                            <p:ajax/>
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{oAlta.testigo2}" size="30" required="true" requiredMessage="#{etiq.notificacion33}">
+                                            <p:ajax/>
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>                                
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="padding: 0px;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.medicoResponsable}:"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="#{etiq.cedulaProf}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="#{oAlta.altaHosp.medicoTratante.nombres}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{oAlta.altaHosp.medicoTratante.cedProf}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>                    
+                </p:panelGrid>
+                <p:panelGrid>
+                    <p:row>
+                        <p:column style="border-color: white; background-color: white;">
+                            <p:commandButton icon="ui-icon-check" value="Listo" actionListener="#{oAlta.lanzaDialogo2()}" oncomplete="PF('dialogo_datos').hide();" 
+                                             update=":datos :messages :impresion_dialogo" validateClient="true"/>
+                        </p:column>
+                        <p:column style="border-color: white; background-color: white;">
+                            <p:commandButton icon="ui-icon-arrowrefresh-1-w" value="Regresar" onclick="PF('dialogo_datos').hide();" resetValues="true">
+                                <p:ajax listener="#{oAlta.reset()}" update=":datos"/>
+                            </p:commandButton>                            
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </div>
+    <div>
+        <p:dialog id="dx" widgetVar="dialogo_impresion" width="1000" height="600" modal="true" resizable="false">
+            <h:form id="impresion_dialogo" class="centrar">
+                <p:panelGrid styleClass="frm_centrado" id="fav00">
+                    <!--ENCABEZADO-->
+                    <p:row>
+                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">                                            
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                        <h:graphicImage value="/imgs/005.jpg" style="width: 898px; height: 98px;"/>
+                                    </p:column>                                                    
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>                        
+                    <!--TERMINA ENCABEZADO-->
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:outputLabel value="#{etiq.nombUnidad}:"/>
+                        </p:column>
+                        <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:outputLabel value="#{etiq.hrrb}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:outputLabel value="#{etiq.direccionUnidad}:"/>
+                        </p:column>
+                        <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:outputLabel value="#{etiq.direccion}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:outputLabel value="#{etiq.telefonoUnidad}:"/>
+                        </p:column>
+                        <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:outputLabel value="(01 272 72) 5 27 03"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="border-color: #000000; background-color: #ffffff;">
+                                        <p:outputLabel value="#{etiq.altaVoluntaria}"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.fecha}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.fecha}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es" timeZone="America/Mexico_City"/>
+                                            </p:outputLabel>
+                                        </p:column>
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.hora00}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.hora}">
+                                                <f:convertDateTime locale="es" timeZone="America/Mexico_City" pattern="HH:mm"/>                                            
+                                            </p:outputLabel>                                        
+                                        </p:column>
+                                        <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo}:"/>
+                                        </p:column> 
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff; text-o">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo1}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.parentesco}"/>                                     
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo2}:"/>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.altaHosp.paciente.nombreCompleto}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo3}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.altaHosp.paciente.calculaEdad()}"/>
+                                        </p:column>
+                                        <p:column colspan="2" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo4}"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo5}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.altaHosp.cama.numero}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo6}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.piso}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo7}:"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.altaHosp.areaServicioHRRB}"/>
+                                        </p:column>
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo8}."/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo9},"/>
+                                        </p:column>        
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo10}"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.anexo11}."/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:outputLabel value="#{etiq.motivo}"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>    
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:inputTextarea value="#{oAlta.altaHosp.razonAltaVolunTrasl}" cols="100"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                            <p:outputLabel value="#{etiq.recomendacionesMedicas}"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:inputTextarea value="#{oAlta.recomendaciones}" cols="100"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: left;">
+                                            <b><p:outputLabel value="#{etiq.anexarResumenC}"/></b>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.ffr}"/>
+                                        </p:column>
+                                        <p:column style="border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.nombreFamiliar}"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>   
+                    <p:row>
+                        <p:column colspan="6" style="border-color: white; background-color: white;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p align="justify">
+                                        <p:column styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{etiq.telefonoFamiliar}"/>
+                                        </p:column>
+                                        <p:column style="border-bottom-color: #000000; border-left-color: #ffffff; border-right-color: #ffffff; border-top-color: #ffffff; background-color: #ffffff;">
+                                            <p:outputLabel value="#{oAlta.telefono}"/>
+                                        </p:column>
+                                    </p>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>                
+                    <p:row>
+                        <p:column colspan="6" style="border-color: #ffffff; background-color: #ffffff;">
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                        <p:outputLabel value="#{etiq.testigo}"/>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column colspan="3" styleClass="ui-widget-header" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                        <p:outputLabel value="#{etiq.testigo}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="7" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="border-bottom-color: #000000; border-top-color: #ffffff; border-left-color: #ffffff; border-right-color: #ffffff; width: 350px; text-align: center;">
+                                        <p:outputLabel value="#{oAlta.testigo1}"/>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; width: 198px;"/>
+                                    <p:column colspan="3" style="border-bottom-color: #000000; border-top-color: #ffffff; border-left-color: #ffffff; border-right-color: #ffffff; width: 350px; text-align: center;">
+                                        <p:outputLabel value="#{oAlta.testigo2}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                        <p:outputLabel value="#{etiq.nombreFirma}"/>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column colspan="3" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                        <p:outputLabel value="#{etiq.nombreFirma}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff;"/>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff;"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column colspan="5" style="border-bottom-color: #000000; border-top-color: #ffffff; border-left-color: #ffffff; border-right-color: #ffffff; background-color: #ffffff; width: 350px; text-align: center;">
+                                        <p:outputLabel value="#{oAlta.altaHosp.medicoTratante.nombres} #{oAlta.altaHosp.medicoTratante.cedProf}"/>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                    <p:column colspan="5" style="border-color: #ffffff; background-color: #ffffff; text-align: center;">
+                                        <p:outputLabel value="#{etiq.nombreCedulaFirmaMedico}"/>
+                                    </p:column>
+                                    <p:column style="border-color: #ffffff; background-color: #ffffff; text-align: center;"/>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>                
+                <p:panelGrid>
+                    <p:row>
+                        <p:column colspan="6" styleClass="ui-widget-header" style="text-align: center; border-color: #ffffff; background-color: #ffffff;">                            
+                            <p:commandButton value="#{etiq.impr}" icon="ui-icon-print">                                    
+                                <p:printer target="fav00" />
+                            </p:commandButton>
+                        </p:column>                            
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </div>
+    <div>
+        <p:ajaxStatus style="width:64px;height:64px;position:fixed;right:5px;bottom:5px">  
+           <f:facet name="start">  
+               <p:graphicImage value="/imgs/loading.gif" />  
+           </f:facet>    
+        </p:ajaxStatus>
+    </div>
+    
+  </ui:define>
+</ui:composition>
+    
+
+
+</html>
